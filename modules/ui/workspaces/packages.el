@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/workspaces/packages.el
 
-(package! persp-mode :pin "df95ea710e2a72f7a88293b72137acb0ca024d90")
+(package! persp-mode :pin "345baaa520ab2d62205f85cc5f29d57d6063c141")

@@ -35,9 +35,9 @@ If STRICT only accept an unset lock file."
          (when (or strict (/= (emacs-pid) pid)) t))))
 
 ;;;###autoload
-(defun +mu4e-lock-file-delete-maybe ()
+(defun +mu4e-lock-file-delete-maybe (&optional bury)
   "Check `+mu4e-lock-file', and delete it if this process is responsible for it."
-  (when (+mu4e-lock-available)
+  (when (and (+mu4e-lock-available) (not bury))
     (delete-file +mu4e-lock-file)
     (file-notify-rm-watch +mu4e-lock--request-watcher)))
 

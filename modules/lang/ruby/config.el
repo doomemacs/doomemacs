@@ -48,7 +48,7 @@
           (bound-and-true-p lsp--buffer-deferred)
           (robe-mode +1))))
   :config
-  (set-repl-handler! 'ruby-mode #'robe-start)
+  (set-repl-handler! 'ruby-mode #'+ruby-robe-repl-handler)
   (set-company-backend! 'ruby-mode 'company-robe 'company-dabbrev-code)
   (set-lookup-handlers! 'ruby-mode
     :definition #'robe-jump

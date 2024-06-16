@@ -33,8 +33,11 @@ default/fallback account."
                     :enter-func
                     (lambda () (mu4e-message "Switched to %s" label))
                     :leave-func
-                    (lambda () (progn (setq +mu4e-personal-addresses nil)
-                                      (mu4e-clear-caches)))
+                    (lambda ()
+                      (setq +mu4e-personal-addresses nil)
+                      ;; REVIEW: `mu4e-clear-caches' was removed in 1.12.2, but
+                      ;;   may still be useful to users on older versions.
+                      (if (fboundp 'mu4e-clear-caches) (mu4e-clear-caches)))
                     :match-func
                     (lambda (msg)
                       (when msg

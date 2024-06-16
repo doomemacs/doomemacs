@@ -186,7 +186,7 @@ non-nil, treat FILES as pre-generated autoload files instead."
           (let ((load-file-name file)
                 (load-path
                  (append (list doom-user-dir)
-                         doom-modules-dirs
+                         doom-module-load-path
                          load-path)))
             (condition-case _
                 (while t

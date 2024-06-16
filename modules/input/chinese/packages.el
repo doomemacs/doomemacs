@@ -1,15 +1,15 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; input/chinese/packages.el
 
-(package! pyim :pin "de7eff2a58d88b168e35c3c81484ea874991391c")
-(package! fcitx :pin "12dc2638ddd15c8f6cfaecb20e1f428ab2bb5624")
+(package! pyim :pin "64067b20ce0e964b1342b378180f24a1d4503797")
+(package! fcitx :pin "b399482ed8db5893db2701df01db4c38cccda495")
 (package! ace-pinyin :pin "47662c0b05775ba353464b44c0f1a037c85e746e")
 (package! pangu-spacing :pin "2303013e5cd7852136f1429162fea0e1c8cb0221")
 (when (modulep! +rime)
-  (package! liberime :pin "8291e22cd0990a99cb2f88ca67a9065a157f39af"))
+  (package! liberime :pin "cc9eb9812fd6f68e78ed6a0c0a85da7a18765753"))
 (when (modulep! +childframe)
-  (package! posframe :pin "0d23bc5f7cfac00277d83ae7ba52c48685bcbc68"))
+  (package! posframe :pin "017deece88360c7297265680d78a0bb316470716"))
 (when (modulep! :editor evil +everywhere)
   (package! evil-pinyin
     :recipe (:build (:not autoloads))
-    :pin "3e9e501ded86f88e01a4edec5d526ab0fab879d7"))
+    :pin "0fae5ad8761417f027b33230382a50f826ad3bfb"))

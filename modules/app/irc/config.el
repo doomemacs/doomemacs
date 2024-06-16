@@ -187,8 +187,8 @@ playback.")
   (setq circe-notifications-watch-strings +irc-notifications-watch-strings
         circe-notifications-emacs-focused nil
         circe-notifications-alert-style
-        (cond (IS-MAC 'osx-notifier)
-              (IS-LINUX 'libnotify)
+        (cond ((featurep :system 'macos) 'osx-notifier)
+              ((featurep :system 'linux) 'libnotify)
               (circe-notifications-alert-style))))
 
 

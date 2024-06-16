@@ -110,12 +110,13 @@
           :desc "Remove notes"          "n" #'sly-remove-notes
           :desc "Compile region"        "r" #'sly-compile-region)
          (:prefix ("e" . "evaluate")
-          :desc "Evaluate buffer"     "b" #'sly-eval-buffer
-          :desc "Evaluate last"       "e" #'sly-eval-last-expression
-          :desc "Evaluate/print last" "E" #'sly-eval-print-last-expression
-          :desc "Evaluate defun"      "f" #'sly-eval-defun
-          :desc "Undefine function"   "F" #'sly-undefine-function
-          :desc "Evaluate region"     "r" #'sly-eval-region)
+          :desc "Evaluate buffer"        "b" #'sly-eval-buffer
+          :desc "Evaluate defun"         "d" #'sly-overlay-eval-defun
+          :desc "Evaluate last"          "e" #'sly-eval-last-expression
+          :desc "Evaluate/print last"    "E" #'sly-eval-print-last-expression
+          :desc "Evaluate defun (async)" "f" #'sly-eval-defun
+          :desc "Undefine function"      "F" #'sly-undefine-function
+          :desc "Evaluate region"        "r" #'sly-eval-region)
          (:prefix ("g" . "goto")
           :desc "Go back"              "b" #'sly-pop-find-definition-stack
           :desc "Go to"                "d" #'sly-edit-definition
@@ -141,7 +142,7 @@
           :desc "Who sets"                "S" #'sly-who-sets)
          (:prefix ("r" . "repl")
           :desc "Clear REPL"         "c" #'sly-mrepl-clear-repl
-          :desc "Load Project"       "l" #'+lisp/load-project-systems
+          :desc "Load System"        "l" #'sly-asdf-load-system
           :desc "Quit connection"    "q" #'sly-quit-lisp
           :desc "Restart connection" "r" #'sly-restart-inferior-lisp
           :desc "Reload Project"     "R" #'+lisp/reload-project
@@ -154,7 +155,7 @@
           :desc "Replay stickers"          "r" #'sly-stickers-replay
           :desc "Add/remove sticker"       "s" #'sly-stickers-dwim)
          (:prefix ("t" . "test")
-          :desc "Test System" "s" #'+lisp/test-system)
+          :desc "Test System" "s" #'sly-asdf-test-system)
          (:prefix ("T" . "trace")
           :desc "Toggle"         "t" #'sly-toggle-trace-fdefinition
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
@@ -168,3 +169,13 @@
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-repl-ansi-color))
+
+(use-package! sly-asdf
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-asdf 'append))
+
+(use-package! sly-stepper
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-stepper))

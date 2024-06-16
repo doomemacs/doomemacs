@@ -6,7 +6,7 @@
 (defun +org-msg-img-scale-css (img-uri)
   "For a given IMG-URI, use imagemagick to find its width."
   (if +org-msg-currently-exporting
-      (when (and (not IS-WINDOWS)) ; relies on posix path
+      (when (and (not (featurep :system 'windows))) ; relies on posix path
         (let ((width-call (and (executable-find "identify")
                                (doom-call-process "identify" "-format" "%w"
                                                   (substring img-uri 7))))) ; 7=(length "file://")

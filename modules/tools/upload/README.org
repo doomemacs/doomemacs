@@ -45,9 +45,9 @@ Uses ~ssh-deploy~ to map a local folder to a remote one. Set
 ~ssh-deploy-root-remote~ and ~ssh-deploy-root-local~ in a =.dir-locals.el= file
 to establish this mapping. E.g.
 #+begin_src emacs-lisp
-((nil . ((ssh-deploy-root-local . "/local/path/to/project")
+((nil . ((ssh-deploy-root-local . "/local/path/to/project/")
          (ssh-deploy-root-remote . "/ssh:user@server:/remote/project/")
-         (ssh-deploy-on-explicit-save . t))))
+         (ssh-deploy-on-explicit-save . 1))))
 #+end_src
 
 #+begin_quote
@@ -66,7 +66,7 @@ Check out [[https://github.com/cjohansson/emacs-ssh-deploy#deployment-configurat
 ** ~root-local~ and ~root-remote~ must match
 The final directory names much match:
 #+begin_src emacs-lisp
-((nil . ((ssh-deploy-root-local . "/local/path/to/example-project")
+((nil . ((ssh-deploy-root-local . "/local/path/to/example-project/")
          (ssh-deploy-root-remote . "/ssh:user@server:/remote/example-project/")
 #+end_src
 

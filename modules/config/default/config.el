@@ -59,11 +59,16 @@
 (after! woman
   ;; The woman-manpath default value does not necessarily match man. If we have
   ;; man available but aren't using it for performance reasons, we can extract
-  ;; it's manpath.
-  (when (executable-find "man")
-    (setq woman-manpath
-          (split-string (cdr (doom-call-process "man" "--path"))
-                        path-separator t))))
+  ;; its manpath.
+  (let ((manpath (cond
+                  ((executable-find "manpath")
+                   (split-string (cdr (doom-call-process "manpath"))
+                                 path-separator t))
+                  ((executable-find "man")
+                   (split-string (cdr (doom-call-process "man" "--path"))
+                                 path-separator t)))))
+    (when manpath
+      (setq woman-manpath manpath))))
 
 
 (use-package! drag-stuff
@@ -76,7 +81,7 @@
 
 
 ;;;###package tramp
-(unless IS-WINDOWS
+(unless (featurep :system 'windows)
   (setq tramp-default-method "ssh")) ; faster than the default scp
 
 
@@ -295,7 +300,7 @@ Continues comments if executed from a commented line. Consults
   (define-key tabulated-list-mode-map "q" #'quit-window))
 
 ;; OS specific fixes
-(when IS-MAC
+(when (featurep :system 'macos)
   ;; Fix MacOS shift+tab
   (define-key key-translation-map [S-iso-lefttab] [backtab])
   ;; Fix conventional OS keys in Emacs
@@ -453,6 +458,48 @@ Continues comments if executed from a commented line. Consults
                          '(evil-ex-completion-map)))
       "C-s" command))
 
+  (map! :when (modulep! :completion corfu)
+        :after corfu
+        (:map corfu-map
+         [remap corfu-insert-separator] #'+corfu-smart-sep-toggle-escape
+         "C-S-s" #'+corfu-move-to-minibuffer
+         "C-p" #'corfu-previous
+         "C-n" #'corfu-next
+         "S-TAB" #'corfu-previous
+         [backtab] #'corfu-previous
+         "TAB" #'corfu-next
+         [tab] #'corfu-next))
+  (let ((cmds-del
+         `(menu-item "Reset completion" corfu-reset
+           :filter ,(lambda (cmd)
+                      (when (and (>= corfu--index 0)
+                                 (eq corfu-preview-current 'insert))
+                        cmd))))
+         (cmds-ret
+          `(menu-item "Insert completion DWIM" corfu-insert
+             :filter ,(lambda (cmd)
+                        (interactive)
+                        (cond ((null +corfu-want-ret-to-confirm)
+                               (corfu-quit)
+                               nil)
+                              ((eq +corfu-want-ret-to-confirm 'minibuffer)
+                               (funcall-interactively cmd)
+                               nil)
+                              ((and (or (not (minibufferp nil t))
+                                        (eq +corfu-want-ret-to-confirm t))
+                                    (>= corfu--index 0))
+                               cmd)
+                              ((or (not (minibufferp nil t))
+                                   (eq +corfu-want-ret-to-confirm t))
+                               nil)
+                              (t cmd))))))
+    (map! :when (modulep! :completion corfu)
+          :map corfu-map
+          [backspace] cmds-del
+          "DEL" cmds-del
+          :gi [return] cmds-ret
+          :gi "RET" cmds-ret))
+
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except
   ;; it will ignore comments+trailing whitespace before jumping to eol.
@@ -482,7 +529,7 @@ Continues comments if executed from a commented line. Consults
         :gi "C-S-RET"       #'+default/newline-above
         :gn [C-S-return]    #'+default/newline-above
 
-        (:when IS-MAC
+        (:when (featurep :system 'macos)
          :gn "s-RET"        #'+default/newline-below
          :gn [s-return]     #'+default/newline-below
          :gn "S-s-RET"      #'+default/newline-above

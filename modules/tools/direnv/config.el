@@ -15,7 +15,9 @@
   ;;   hooks, but not the body.
   (add-hook! 'envrc-global-mode-hook
     (defun +direnv-init-global-mode-earlier-h ()
-      (let ((fn #'envrc-global-mode-enable-in-buffers))
+      (let ((fn (if (fboundp #'envrc-global-mode-enable-in-buffers)
+                    #'envrc-global-mode-enable-in-buffers ; Removed in Emacs 30.
+                  #'envrc-global-mode-enable-in-buffer)))
         (if (not envrc-global-mode)
             (remove-hook 'change-major-mode-after-body-hook fn)
           (remove-hook 'after-change-major-mode-hook fn)

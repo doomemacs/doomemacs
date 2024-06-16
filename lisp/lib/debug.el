@@ -59,9 +59,6 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
   (let ((enabled doom-debug-mode))
     (doom-log "debug: enabled!")
     (mapc #'doom-debug--set-var doom-debug-variables)
-    (when (called-interactively-p 'any)
-      (when (fboundp 'explain-pause-mode)
-        (explain-pause-mode (if enabled +1 -1))))
     ;; Watch for changes in `doom-debug-variables', or when packages load (and
     ;; potentially define one of `doom-debug-variables'), in case some of them
     ;; aren't defined when `doom-debug-mode' is first loaded.
@@ -260,7 +257,8 @@ ready to be pasted in a bug report on github."
                              (bound-and-true-p emacs-repository-branch)
                              (and (stringp emacs-repository-version)
                                   (substring emacs-repository-version 0 9))
-                             (symlink-path doom-emacs-dir))))
+                             (format "EMACSDIR=%s" (symlink-path doom-emacs-dir))
+                             (format "EMACS=%s" (expand-file-name invocation-name invocation-directory)))))
         (doom . ,(list doom-version
                        (if doom-profile
                            (format "PROFILE=%s@%s"
@@ -300,7 +298,7 @@ ready to be pasted in a bug report on github."
                             'compiled-user-config)
                         (if (doom-files-in doom-core-dir :type 'files :match "\\.elc$")
                             'compiled-core)
-                        (if (doom-files-in doom-modules-dirs :type 'files :match "\\.elc$")
+                        (if (doom-files-in doom-module-load-path :type 'files :match "\\.elc$")
                             'compiled-modules)))))
         (custom
          ,@(when (and (stringp custom-file)

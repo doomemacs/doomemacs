@@ -102,26 +102,6 @@ were followed."
 
 ;;;###package evil
 (progn
-  ;; Make evil-mode cooperate with popups
-  (defadvice! +popup--evil-command-window-a (hist cmd-key execute-fn)
-    "Monkey patch the evil command window to use `pop-to-buffer' instead of
-`switch-to-buffer', allowing the popup manager to handle it."
-    :override #'evil-command-window
-    (when (eq major-mode 'evil-command-window-mode)
-      (user-error "Cannot recursively open command line window"))
-    (dolist (win (window-list))
-      (when (equal (buffer-name (window-buffer win))
-                   "*Command Line*")
-        (kill-buffer (window-buffer win))
-        (delete-window win)))
-    (setq evil-command-window-current-buffer (current-buffer))
-    (ignore-errors (kill-buffer "*Command Line*"))
-    (with-current-buffer (pop-to-buffer "*Command Line*")
-      (setq-local evil-command-window-execute-fn execute-fn)
-      (setq-local evil-command-window-cmd-key cmd-key)
-      (evil-command-window-mode)
-      (evil--command-window-insert-commands hist)))
-
   (defadvice! +popup--evil-command-window-execute-a ()
     "Execute the command under the cursor in the appropriate buffer, rather than
 the command buffer."

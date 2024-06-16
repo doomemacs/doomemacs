@@ -15,12 +15,12 @@
     (width . 70)
     (height . 25)
     (transient . t)
-    ,@(when IS-LINUX
+    ,@(when (featurep :system 'linux)
         `((window-system . ,(if (boundp 'pgtk-initialized) 'pgtk 'x))
           (display . ,(or (getenv "WAYLAND_DISPLAY")
                           (getenv "DISPLAY")
                           ":0"))))
-    ,(if IS-MAC '(menu-bar-lines . 1)))
+    ,(if (featurep :system 'macos) '(menu-bar-lines . 1)))
   "TODO")
 
 ;;;###autoload

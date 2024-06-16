@@ -468,14 +468,12 @@ will open with point on that line."
 
 (defun doom--help-package-configs (package)
   (let ((default-directory doom-emacs-dir))
-    ;; TODO Use ripgrep instead
     (split-string
      (cdr (doom-call-process
-           "git" "grep" "--no-break" "--no-heading" "--line-number"
-           (format "%s %s\\($\\| \\)"
-                   "\\(^;;;###package\\|(after!\\|(use-package!\\)"
-                   package)
-           ":(exclude)*.org"))
+           "rg" "--no-heading" "--line-number" "--iglob" "!*.org"
+           (format "%s %s($| )"
+                   "(^;;;###package|\\(after!|\\(use-package!)"
+                   package)))
      "\n" t)))
 
 (defvar doom--help-packages-list nil)

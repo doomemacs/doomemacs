@@ -25,22 +25,22 @@
 
   ;; HACK: Load `cl' and site files manually to prevent polluting logs and
   ;;   stdout with deprecation and/or file load messages.
-  (let ((inhibit-message (not init-file-debug)))
-    (require 'cl nil t)
-    (unless site-run-file
-      (let ((site-run-file "site-start")
-            (tail load-path)
-            (lispdir (expand-file-name "../lisp" data-directory))
-            dir)
-        (while tail
-          (setq dir (car tail))
-          (let ((default-directory dir))
-            (load (expand-file-name "subdirs.el") t inhibit-message t))
-          (unless (string-prefix-p lispdir dir)
-            (let ((default-directory dir))
-              (load (expand-file-name "leim-list.el") t inhibit-message t)))
-          (setq tail (cdr tail)))
-        (load site-run-file t inhibit-message))))
+  (quiet!
+   (require 'cl nil t)
+   (unless site-run-file
+     (let ((site-run-file "site-start")
+           (tail load-path)
+           (lispdir (expand-file-name "../lisp" data-directory))
+           dir)
+       (while tail
+         (setq dir (car tail))
+         (let ((default-directory dir))
+           (load (expand-file-name "subdirs.el") t inhibit-message t))
+         (unless (string-prefix-p lispdir dir)
+           (let ((default-directory dir))
+             (load (expand-file-name "leim-list.el") t inhibit-message t)))
+         (setq tail (cdr tail)))
+       (load site-run-file t inhibit-message))))
 
   (setq-default
    ;; PERF: Don't generate superfluous files when writing temp buffers.
@@ -92,15 +92,14 @@
   :group 'doom)
 
 (defvar doom-cli-load-path
-  (let ((paths (split-string (or (getenv "DOOMPATH") "") path-separator)))
-    (if (member "" paths)
-        (cl-substitute (doom-path (dir!) "cli/") "" paths :test #'equal)
-      paths))
+  (append (when-let ((doompath (getenv "DOOMPATH")))
+            (cl-loop for dir in (split-string doompath path-separator)
+                     collect (expand-file-name dir)))
+          (list (file-name-concat (dir!) "cli")))
   "A list of paths to search for autoloaded Doom CLIs.
 
 It is prefilled by the DOOMPATH envvar (a colon-separated list on Linux/macOS,
-semicolon otherwise). Empty entries in DOOMPATH are replaced with the
-$EMACSDIR/cli/.")
+semicolon otherwise).")
 
 ;;; CLI definition variables
 (defvar doom-cli-argument-types
@@ -1050,9 +1049,9 @@ considered as well."
               "\n")))
       (print! (warn "Wrote extended straight log to %s")
               (path (let ((coding-system-for-write 'utf-8-auto))
-                      (with-temp-file error-file
-                        (insert-buffer-substring (straight--process-buffer)))
-                      (set-file-modes error-file #o600)
+                      (with-file-modes #o600
+                        (with-temp-file error-file
+                          (insert-buffer-substring (straight--process-buffer))))
                       error-file))))
      ((eq type 'error)
       (let* ((generic? (eq (car data) 'error))
@@ -1123,11 +1122,12 @@ See `doom-cli-log-file-format' for details."
     (let* ((buffer (doom-cli-context-stderr context))
            (file (doom-cli--output-file "log" context)))
       (when (> (buffer-size buffer) 0)
-        (make-directory (file-name-directory file) t)
-        (with-temp-file file
-          (insert-buffer-substring buffer)
-          (ansi-color-filter-region (point-min) (point-max)))
-        (set-file-modes file #o600)))))
+        (with-file-modes #o700
+          (make-directory (file-name-directory file) t))
+        (with-file-modes #o600
+          (with-temp-file file
+            (insert-buffer-substring buffer)
+            (ansi-color-filter-region (point-min) (point-max))))))))
 
 (defun doom-cli--output-benchmark-h (context)
   "Write this session's benchmark to stdout or stderr, depending.
@@ -1350,11 +1350,12 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
            (doom-cli--exit 0 context))
 
           ((let ((tmpfile (doom-cli--output-file 'output context))
-                 (coding-system-for-write 'utf-8-auto))
-             (make-directory (file-name-directory tmpfile) t)
-             (with-temp-file tmpfile
-               (insert-buffer-substring (doom-cli-context-stdout context)))
-             (set-file-modes tmpfile #o600)
+                 (coding-system-for-write 'utf-8))
+             (with-file-modes #o700
+               (make-directory (file-name-directory tmpfile) t))
+             (with-file-modes #o600
+               (with-temp-file tmpfile
+                 (insert-buffer-substring (doom-cli-context-stdout context))))
              (doom-cli--restart
               (format "%s <%s; rm -f%s %s"
                       (or pager
@@ -1782,7 +1783,7 @@ See `defcli!' for information about COMMANDSPEC.
 TARGET is simply a command list.
 WHEN specifies what version this command was rendered obsolete."
   `(let ((ncommand (doom-cli-command-normalize (backquote ,target) doom-cli--group-plist)))
-     (defcli! ,commandspec (&context context &cli cli &rest args)
+     (defcli! ,commandspec (&context _context &cli cli &rest args)
        :docs (format "An obsolete alias for '%s'." (doom-cli-command-string ncommand))
        :hide t
        (print! (warn "'%s' was deprecated in %s")

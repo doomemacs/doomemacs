@@ -2,7 +2,7 @@
 # name: GNU LGPL v3 License
 # uuid: __license-lgpl3
 # group: Licenses
-# contribuer: https://choosealicense.com/licenses/lgpl-3.0/
+# contributor: https://choosealicense.com/licenses/lgpl-3.0/
 # expand-env: ((yas-indent-line 'fixed))
 # --
                    GNU LESSER GENERAL PUBLIC LICENSE

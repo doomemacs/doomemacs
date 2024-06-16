@@ -66,7 +66,7 @@ Intended to replace `lisp-outline-level'."
                           (re-search-backward
                            "\\_<:\\(?:\\sw\\|\\s_\\)+\\_>" ;; Find a keyword.
                            doom-start 'noerror))
-                (unless (looking-back "(")
+                (unless (looking-back "(" (bol))
                   (let ((kw-syntax (syntax-ppss)))
                     (when (and (= (ppss-depth kw-syntax) doom-depth)
                                (not (ppss-string-terminator kw-syntax))
@@ -277,25 +277,81 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
                                  file-base)))))))
          (not (locate-dominating-file default-directory ".doommodule")))))
 
-;;;###autoload
-(define-minor-mode +emacs-lisp-non-package-mode
-  "Reduce flycheck verbosity where it is appropriate.
+(defvar-local +emacs-lisp-reduced-flymake-byte-compile--process nil)
 
-Essentially, this means in any elisp file that either:
-- Is not a theme in `custom-theme-load-path',
-- Lacks a `provide' statement,
-- Lives in a project with a .doommodule file,
-- Is a dotfile (like .dir-locals.el or .doomrc).
+(defun +emacs-lisp-reduced-flymake-byte-compile (report-fn &rest _args)
+  "A Flymake backend for byte compilation in non-package elisp files.
 
-This generally applies to your private config (`doom-user-dir') or Doom's source
-\(`doom-emacs-dir')."
+This checker reduces the amount of false positives the byte compiler throws off
+compared to `elisp-flymake-byte-compile'. The linter warnings that are enabled
+are set by `+emacs-lisp-linter-warnings'
+
+This backend does not need to be added directly
+as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers."
+  ;; if a process already exists. kill it.
+  (when (and +emacs-lisp-reduced-flymake-byte-compile--process
+             (process-live-p +emacs-lisp-reduced-flymake-byte-compile--process))
+    (kill-process +emacs-lisp-reduced-flymake-byte-compile--process))
+  (let ((source (current-buffer))
+        (tmp-file (make-temp-file "+emacs-lisp-byte-compile-src"))
+        (out-buf (generate-new-buffer "+emacs-lisp-byte-compile-out")))
+    ;; write the content to a temp file
+    (save-restriction
+      (widen)
+      (write-region nil nil tmp-file nil 'nomessage))
+    ;; make the process
+    (setq +emacs-lisp-reduced-flymake-byte-compile--process
+          (make-process
+           :name "+emacs-reduced-flymake"
+           :noquery t
+           :connection-type 'pipe
+           :buffer out-buf
+           :command `(,(expand-file-name invocation-name invocation-directory)
+                      "-Q"
+                      "--batch"
+                      ,@(mapcan (lambda (p) (list "-L" p)) elisp-flymake-byte-compile-load-path)
+                      ;; this is what silences the byte compiler
+                      "--eval" ,(prin1-to-string `(setq doom-modules ',doom-modules
+                                                        doom-disabled-packages ',doom-disabled-packages
+                                                        byte-compile-warnings ',+emacs-lisp-linter-warnings))
+                      "-f" "elisp-flymake--batch-compile-for-flymake"
+                      ,tmp-file)
+           :stderr "*stderr of +elisp-flymake-byte-compile-out*"
+           :sentinel
+           ;; deal with the process when it exits
+           (lambda (proc _event)
+             (when (memq (process-status proc) '(exit signal))
+               (unwind-protect
+                   (cond
+                    ;; if the buffer is dead or the process is not the same, log the process as old.
+                    ((or (not (buffer-live-p source))
+                         (not (with-current-buffer source (eq proc +emacs-lisp-reduced-flymake-byte-compile--process))))
+                     (flymake-log :warning "byte compile process %s is old" proc))
+                    ;; if the process exited without problem process the buffer
+                    ((zerop (process-exit-status proc))
+                     (elisp-flymake--byte-compile-done report-fn source out-buf))
+                    ;; otherwise something else horrid has gone wrong and we panic
+                    (t (funcall report-fn :panic
+                                :explanation
+                                (format "byte compile process %s died" proc))))
+                 ;; cleanup
+                 (ignore-errors (delete-file tmp-file))
+                 (kill-buffer out-buf))))))))
+
+(define-minor-mode +emacs-lisp--flymake-non-package-mode
+  ""
   :since "3.0.0"
-  (unless (and (bound-and-true-p flycheck-mode)
-               (not (+emacs-lisp--in-package-buffer-p)))
-    (setq +emacs-lisp-non-package-mode nil))
-  (when (derived-mode-p 'emacs-lisp-mode)
-    (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
-  (if (not +emacs-lisp-non-package-mode)
+  (if +emacs-lisp--flymake-non-package-mode
+      (progn
+        (remove-hook! 'flymake-diagnostic-functions :local #'elisp-flymake-checkdoc #'elisp-flymake-byte-compile)
+        (add-hook 'flymake-diagnostic-functions #'+emacs-lisp-reduced-flymake-byte-compile nil t))
+    (add-hook! 'flymake-diagnostic-functions :local #'elisp-flymake-checkdoc #'elisp-flymake-byte-compile)
+    (remove-hook 'flymake-diagnostic-functions #'+emacs-lisp-reduced-flymake-byte-compile t)))
+
+(define-minor-mode +emacs-lisp--flycheck-non-package-mode
+  ""
+  :since "3.0.0"
+  (if (not +emacs-lisp--flycheck-non-package-mode)
       (when (get 'flycheck-disabled-checkers 'initial-value)
         (setq-local flycheck-disabled-checkers (get 'flycheck-disabled-checkers 'initial-value))
         (kill-local-variable 'flycheck-emacs-lisp-check-form))
@@ -324,23 +380,38 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
                 flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
                                                  flycheck-disabled-checkers))))
 
+;;;###autoload
+(define-minor-mode +emacs-lisp-non-package-mode
+  "Reduce flycheck/flymake verbosity where it is appropriate.
+
+Essentially, this means in any elisp file that either:
+- Is not a theme in `custom-theme-load-path',
+- Lacks a `provide' statement,
+- Lives in a project with a .doommodule file,
+- Is a dotfile (like .dir-locals.el or .doomrc).
+
+This generally applies to your private config (`doom-user-dir') or Doom's source
+\(`doom-emacs-dir')."
+  :since "3.0.0"
+  (unless (and (or (bound-and-true-p flycheck-mode)
+                   (bound-and-true-p flymake-mode))
+               (derived-mode-p 'emacs-lisp-mode)
+               (not (+emacs-lisp--in-package-buffer-p)))
+    (setq +emacs-lisp-non-package-mode nil))
+  (when-let ((modesym (cond ((modulep! :checkers syntax +flymake)
+                             #'+emacs-lisp--flymake-non-package-mode)
+                            ((modulep! :checkers syntax)
+                             #'+emacs-lisp--flycheck-non-package-mode))))
+    (if (not +emacs-lisp-non-package-mode)
+        (when (symbol-value modesym)
+          (funcall modesym -1))
+      (when (derived-mode-p 'emacs-lisp-mode)
+        (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
+      (funcall modesym +1))))
+
 
 ;;
 ;;; Fontification
-
-;;;###autoload
-(defun +emacs-lisp-truncate-pin ()
-  "Truncates long SHA1 hashes in `package!' :pin's."
-  (save-excursion
-    (goto-char (match-beginning 0))
-    (and (stringp (plist-get (sexp-at-point) :pin))
-         (search-forward ":pin" nil t)
-         (let ((start (re-search-forward "\"[^\"\n]\\{12\\}" nil t))
-               (finish (and (re-search-forward "\"" (line-end-position) t)
-                            (match-beginning 0))))
-           (when (and start finish)
-             (put-text-property start finish 'display "...")))))
-  nil)
 
 (defvar +emacs-lisp--face nil)
 ;;;###autoload
@@ -383,31 +454,6 @@ library/userland functions"
 
 ;;
 ;;; Advice
-
-;;;###autoload
-(defun +emacs-lisp--add-doom-elisp-demos-a (fn symbol)
-  "Add Doom's own demos to `elisp-demos'.
-
-Intended as :around advice for `elisp-demos--search'."
-  (let ((org-inhibit-startup t)
-        enable-dir-local-variables
-        org-mode-hook)
-    (or (funcall fn symbol)
-        (with-file-contents! (doom-path doom-docs-dir "examples.org")
-          (save-excursion
-            (when (re-search-forward
-                   (format "^\\*+[ \t]+\\(?:TODO \\)?%s$"
-                           (regexp-quote (symbol-name symbol)))
-                   nil t)
-              (forward-line 1)
-              (let ((demos
-                     (string-trim
-                      (buffer-substring-no-properties
-                       (point) (if (re-search-forward "^\\*+ " nil t)
-                                   (line-beginning-position)
-                                 (point-max))))))
-                (unless (string-blank-p demos)
-                  demos))))))))
 
 ;;;###autoload (put 'map! 'indent-plists-as-data t)
 ;;;###autoload

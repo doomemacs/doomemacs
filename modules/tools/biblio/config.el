@@ -3,9 +3,7 @@
 ;;
 ;;; `org-cite'
 
-(use-package! oc
-  :defer t
-  :config
+(after! oc
   (setq org-cite-global-bibliography
         (ensure-list
          (or (bound-and-true-p citar-bibliography)
@@ -13,16 +11,24 @@
         ;; Setup export processor; default csl/citeproc-el, with biblatex for
         ;; latex
         org-cite-export-processors '((latex biblatex) (t csl))
-        org-support-shift-select t))
+        org-support-shift-select t)
+
+  (require 'oc-biblatex))
+
+;; oc-csl requires citeproc, which requires the top-level org, so loading oc-csl
+;; after oc interferes with incremental loading of Org
+(after! org (require 'oc-csl))
 
 
 (use-package! citar
   :when (modulep! :completion vertico)
-  :no-require
-  :config
+  :defer t
+  :init
   (setq org-cite-insert-processor 'citar
         org-cite-follow-processor 'citar
         org-cite-activate-processor 'citar)
+
+  :config
   (when (modulep! :completion vertico +icons)
     (defvar citar-indicator-files-icons
       (citar-indicator-create
@@ -65,25 +71,23 @@
                 citar-indicator-notes-icons
                 citar-indicator-cited-icons))))
 
-(use-package! citar-embark
-  :when (modulep! :completion vertico)
-  :after citar embark
-  :config (citar-embark-mode))
-
-(use-package! citar-org-roam
-  :when (and (modulep! +roam2)
-             (modulep! :completion vertico))
-  :after citar org-roam
-  :config (citar-org-roam-mode))
-
-;; `org-cite' processors
-(use-package! oc-biblatex :after oc)
-(use-package! oc-csl :after oc)
-(use-package! oc-natbib :after oc)
-
 
 ;;
 ;;; Third-party
+
+(use-package! citar-embark
+  :defer t
+  :init
+  (after! (citar embark)
+    (citar-embark-mode)))
+
+
+(use-package! citar-org-roam
+  :defer t
+  :init
+  (after! (citar org-roam)
+    (citar-org-roam-mode)))
+
 
 (use-package! bibtex-completion
   :when (or (modulep! :completion ivy)

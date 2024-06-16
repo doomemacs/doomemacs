@@ -7,9 +7,6 @@ The completion/vertico module uses the orderless completion style by default,
 but this returns too broad a candidate set for company completion. This variable
 overrides `completion-styles' during company completion sessions.")
 
-(defvar +vertico-consult-fd-args nil
-  "Shell command and arguments the vertico module uses for fd.")
-
 (defvar +vertico-consult-dir-container-executable "docker"
   "Command to call for listing container hosts.")
 
@@ -86,6 +83,9 @@ orderless."
      ((string= "!" pattern) `(orderless-literal . ""))
      ;; Without literal
      ((string-prefix-p "!" pattern) `(orderless-without-literal . ,(substring pattern 1)))
+     ;; Annotation
+     ((string-prefix-p "&" pattern) `(orderless-annotation . ,(substring pattern 1)))
+     ((string-suffix-p "&" pattern) `(orderless-annotation . ,(substring pattern 0 -1)))
      ;; Character folding
      ((string-prefix-p "%" pattern) `(char-fold-to-regexp . ,(substring pattern 1)))
      ((string-suffix-p "%" pattern) `(char-fold-to-regexp . ,(substring pattern 0 -1)))
@@ -110,7 +110,7 @@ orderless."
         ;; find-file etc.
         completion-category-overrides '((file (styles +vertico-basic-remote orderless partial-completion)))
         orderless-style-dispatchers '(+vertico-orderless-dispatch)
-        orderless-component-separator "[ &]")
+        orderless-component-separator #'orderless-escapable-split-on-space)
   ;; ...otherwise find-file gets different highlighting than other commands
   (set-face-attribute 'completions-first-difference nil :inherit nil))
 
@@ -142,31 +142,34 @@ orderless."
     :before (list #'consult-recent-file #'consult-buffer)
     (recentf-mode +1))
 
-  (setq consult-project-root-function #'doom-project-root
+  (setq consult-project-function #'doom-project-root
         consult-narrow-key "<"
         consult-line-numbers-widen t
         consult-async-min-input 2
         consult-async-refresh-delay  0.15
         consult-async-input-throttle 0.2
-        consult-async-input-debounce 0.1)
-  (unless +vertico-consult-fd-args
-    (setq +vertico-consult-fd-args
-          (if doom-projectile-fd-binary
-              (format "%s --color=never -i -H -E .git --regex %s"
-                      doom-projectile-fd-binary
-                      (if IS-WINDOWS "--path-separator=/" ""))
-            consult-find-args)))
+        consult-async-input-debounce 0.1
+        consult-fd-args
+        '((if (executable-find "fdfind" 'remote) "fdfind" "fd")
+          "--color=never"
+          ;; https://github.com/sharkdp/fd/issues/839
+          "--full-path --absolute-path"
+          "--hidden --exclude .git"
+          (if (featurep :system 'windows) "--path-separator=/")))
 
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file
-   +default/search-project +default/search-other-project
-   +default/search-project-for-symbol-at-point
-   +default/search-cwd +default/search-other-cwd
-   +default/search-notes-for-symbol-at-point
-   +default/search-emacsd
    consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
    :preview-key "C-SPC")
+  (when (modulep! :config default)
+    (consult-customize
+     +default/search-project +default/search-other-project
+     +default/search-project-for-symbol-at-point
+     +default/search-cwd +default/search-other-cwd
+     +default/search-notes-for-symbol-at-point
+     +default/search-emacsd
+     :preview-key "C-SPC"))
   (consult-customize
    consult-theme
    :preview-key (list "C-SPC" :debounce 0.5 'any))
@@ -198,13 +201,20 @@ orderless."
 
 
 (use-package! consult-dir
-  :bind (([remap list-directory] . consult-dir)
+  :defer t
+  :init
+  (map! [remap list-directory] #'consult-dir
+        (:after vertico
          :map vertico-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file))
+         "C-x C-d" #'consult-dir
+         "C-x C-j" #'consult-dir-jump-file))
   :config
+  ;; DEPRECATED: Remove when Doom core replaces projectile with project.el
+  (setq consult-dir-project-list-function #'consult-dir-projectile-dirs)
+
   (when (modulep! :tools docker)
-    ;; TODO Replace with `tramp-container--completion-function' when we drop support for <29
+    ;; TODO: Replace with `tramp-container--completion-function' when we drop
+    ;;   support for <29
     (defun +vertico--consult-dir-container-hosts (host)
       "Get a list of hosts from HOST."
       (cl-loop for line in (cdr
@@ -212,10 +222,7 @@ orderless."
                               (apply #'process-lines +vertico-consult-dir-container-executable
                                      (append +vertico-consult-dir-container-args (list "ps")))))
                for cand = (split-string line "[[:space:]]+" t)
-               collect (let ((user (unless (string-empty-p (car cand))
-                                     (concat (car cand) "@")))
-                             (hostname (car (last cand))))
-                         (format "/%s:%s%s:/" host user hostname))))
+               collect (format "/%s:%s:/" host (car (last cand)))))
 
     (defun +vertico--consult-dir-podman-hosts ()
       (let ((+vertico-consult-dir-container-executable "podman"))
@@ -232,7 +239,7 @@ orderless."
         :face     consult-file
         :history  file-name-history
         :items    ,#'+vertico--consult-dir-podman-hosts)
-      "Podman candiadate source for `consult-dir'.")
+      "Podman candidate source for `consult-dir'.")
 
     (defvar +vertico--consult-dir-source-tramp-docker
       `(:name     "Docker"
@@ -241,7 +248,7 @@ orderless."
         :face     consult-file
         :history  file-name-history
         :items    ,#'+vertico--consult-dir-docker-hosts)
-      "Docker candiadate source for `consult-dir'.")
+      "Docker candidate source for `consult-dir'.")
 
     (add-to-list 'consult-dir-sources '+vertico--consult-dir-source-tramp-podman t)
     (add-to-list 'consult-dir-sources '+vertico--consult-dir-source-tramp-docker t))
@@ -253,6 +260,11 @@ orderless."
   :when (and (modulep! :checkers syntax)
              (not (modulep! :checkers syntax +flymake)))
   :after (consult flycheck))
+
+(use-package! consult-yasnippet
+  :when (modulep! :editor snippets)
+  :defer t
+  :init (map! [remap yas-insert-snippet] #'consult-yasnippet))
 
 
 (use-package! embark
@@ -305,9 +317,10 @@ orderless."
   (map! (:map embark-file-map
          :desc "Open target with sudo"        "s"   #'doom/sudo-find-file
          (:when (modulep! :tools magit)
-          :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
+           :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
          (:when (modulep! :ui workspaces)
-          :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace))))
+           :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace
+           :desc "Open in new workspace"       "<tab>" #'+vertico/embark-open-in-new-workspace))))
 
 
 (use-package! marginalia
@@ -343,3 +356,44 @@ orderless."
   :hook (vertico-mode . vertico-posframe-mode)
   :config
   (add-hook 'doom-after-reload-hook #'posframe-delete-all))
+
+;; From https://github.com/minad/vertico/wiki#candidate-display-transformations-custom-candidate-highlighting
+;;
+;; Uses `add-face-text-property' instead of `propertize' unlike the above snippet
+;; because `'append' is necessary to not override the match font lock
+;; See: https://github.com/minad/vertico/issues/389
+(use-package! vertico-multiform
+  :hook (vertico-mode . vertico-multiform-mode)
+  :config
+  (defvar +vertico-transform-functions nil)
+
+  (cl-defmethod vertico--format-candidate :around
+    (cand prefix suffix index start &context ((not +vertico-transform-functions) null))
+    (dolist (fun (ensure-list +vertico-transform-functions))
+      (setq cand (funcall fun cand)))
+    (cl-call-next-method cand prefix suffix index start))
+
+  (defun +vertico-highlight-directory (file)
+    "If FILE ends with a slash, highlight it as a directory."
+    (when (string-suffix-p "/" file)
+      (add-face-text-property 0 (length file) 'marginalia-file-priv-dir 'append file))
+    file)
+
+  (defun +vertico-highlight-enabled-mode (cmd)
+    "If MODE is enabled, highlight it as font-lock-constant-face."
+    (let ((sym (intern cmd)))
+      (with-current-buffer (nth 1 (buffer-list))
+      (if (or (eq sym major-mode)
+              (and
+               (memq sym minor-mode-list)
+               (boundp sym)
+               (symbol-value sym)))
+          (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
+        cmd))
+
+  (add-to-list 'vertico-multiform-categories
+               '(file
+                 (+vertico-transform-functions . +vertico-highlight-directory)))
+  (add-to-list 'vertico-multiform-commands
+               '(execute-extended-command
+                 (+vertico-transform-functions . +vertico-highlight-enabled-mode))))

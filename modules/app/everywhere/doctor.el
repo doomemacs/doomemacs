@@ -1,9 +1,9 @@
 ;;; app/everywhere/doctor.el -*- lexical-binding: t; -*-
 
-(when IS-WINDOWS
+(when (featurep :system 'windows)
   (error! "emacs-everywhere package does not support windows."))
 
-(when IS-LINUX
+(when (featurep :system 'linux)
   (let (unmet-deps)
     (dolist (dep '("xclip" "xdotool" "xprop" "xwininfo"))
       (unless (executable-find dep)

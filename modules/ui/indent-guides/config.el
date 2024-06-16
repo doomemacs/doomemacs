@@ -2,7 +2,9 @@
 
 (use-package! highlight-indent-guides
   :hook ((prog-mode text-mode conf-mode) . highlight-indent-guides-mode)
-  :init (setq highlight-indent-guides-method 'character)
+  :init
+  (setq highlight-indent-guides-method (if (display-graphic-p) 'bitmap 'character)
+        highlight-indent-guides-bitmap-function #'highlight-indent-guides--bitmap-line)
   :config
   ;; HACK: If this package is loaded too early (by the user, and in terminal
   ;;   Emacs), then `highlight-indent-guides-auto-set-faces' will have been

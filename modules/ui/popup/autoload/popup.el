@@ -106,7 +106,7 @@ the buffer is visible, then set another timer and try again later."
                   (param (if (memq side '(left right))
                              'window-width
                            'window-height)))
-        (setq list (assq-delete-all 'size alist))
+        (setq alist (assq-delete-all 'size alist))
         (setf (alist-get param alist) size))
       (setf (alist-get 'window-parameters alist)
             parameters)
@@ -139,6 +139,8 @@ the buffer is visible, then set another timer and try again later."
 (defun +popup--maybe-select-window (window origin)
   "Select a window based on `+popup--inhibit-select' and this window's `select' parameter."
   (unless +popup--inhibit-select
+    ;; REVIEW: Once our minimum version is bumped up to Emacs 30.x, replace this
+    ;;   with `post-command-select-window' window parameter.
     (let ((select (+popup-parameter 'select window)))
       (if (functionp select)
           (funcall select window origin)
@@ -505,11 +507,29 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
           ((not (numberp vslot))
            (error "Invalid vslot %s specified" vslot)))
 
-    (let* ((major (get-window-with-predicate
+    (let* ((live (get-window-with-predicate
                    (lambda (window)
                      (and (eq (window-parameter window 'window-side) side)
                           (eq (window-parameter window 'window-vslot) vslot)))
                    nil))
+           ;; As opposed to the `window-side' property, our `window-vslot'
+           ;; parameter is set only on a single live window and never on internal
+           ;; windows. Moreover, as opposed to `window-with-parameter' (as used
+           ;; by the original `display-buffer-in-side-window'),
+           ;; `get-window-with-predicate' only returns live windows anyway. In
+           ;; any case, we will have missed the major side window and got a
+           ;; child instead if the major side window happens to be an internal
+           ;; window with multiple children. In that case, all childen should
+           ;; have the same `window-vslot' parameter, and the major side window
+           ;; is the parent of the live window.
+           (prev (and live (window-prev-sibling live)))
+           (next (and live (window-next-sibling live)))
+           (prev-vslot (and prev (window-parameter prev 'window-vslot)))
+           (next-vslot (and next (window-parameter next 'window-vslot)))
+           (major (and live
+                       (if (or (eq prev-vslot vslot) (eq next-vslot vslot))
+                           (window-parent live)
+                         live)))
            (reversed (window--sides-reverse-on-frame-p (selected-frame)))
            (windows
             (cond ((window-live-p major)
@@ -601,6 +621,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                                  (setq window
                                        (ignore-errors (split-window prev-window nil prev-side))))))
                       (set-window-parameter window 'window-slot slot)
+                      (set-window-parameter window 'window-vslot vslot)
                       (with-current-buffer buffer
                         (setq window--sides-shown t))
                       (window--display-buffer

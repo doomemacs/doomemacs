@@ -3,6 +3,11 @@
 #+created:  October 11, 2019
 #+since:    2.0.0
 
+#+begin_quote
+  *This module is deprecated.* Changes upstream to Twitter's API has rendered
+    twittering-mode non-functional, and there is no known alternative.
+#+end_quote
+
 * Description :unfold:
 Enjoy twitter from emacs.
 

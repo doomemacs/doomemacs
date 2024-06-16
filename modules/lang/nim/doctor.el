@@ -1,4 +1,3 @@
-
 ;;; lang/nim/doctor.el
 
 (unless (executable-find "nimsuggest")
@@ -8,5 +7,5 @@
   (warn! "Could not find nim executable; build commands will be disabled."))
 
 (when (modulep! :editor format)
-  (unless (executable-find "nimfmt")
-    (warn! "Could not find nimfmt. Formatting will be disabled.")))
+  (unless (executable-find "nimpretty")
+    (warn! "Could not find nimpretty. Formatting will be disabled.")))

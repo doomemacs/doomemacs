@@ -234,6 +234,7 @@ They are (with examples):
 - ~github:hlissner/doom-emacs~
 - ~gmap:Toronto, Ontario~ (Google Maps)
 - ~google:search terms~
+- ~kagi:search terms~
 - ~org:todo.org~ -> ={org-directory}/%s=
 - ~wolfram:sin(x^3)~
 - ~wikipedia:Emacs~

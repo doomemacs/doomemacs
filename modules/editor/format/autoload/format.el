@@ -17,7 +17,7 @@
               (indent 0))
     (with-current-buffer formatted-buffer
       (erase-buffer)
-      (unless IS-WINDOWS
+      (unless (featurep :system 'windows)
         (setq-local coding-system-for-read 'utf-8)
         (setq-local coding-system-for-write 'utf-8))
       ;; Ensure this temp buffer seems as much like the origin buffer as
@@ -61,12 +61,8 @@
 (defun +format/buffer (&optional arg)
   "Reformat the current buffer using LSP or `format-all-buffer'."
   (interactive "P")
-  (call-interactively
-   (if (and +format-with-lsp
-            (bound-and-true-p lsp-mode)
-            (lsp-feature? "textDocument/formatting"))
-       #'lsp-format-buffer
-     #'apheleia-format-buffer)))
+  (or (run-hook-with-args-until-success '+format-functions (point-min) (point-max) 'buffer)
+      (call-interactively #'apheleia-format-buffer)))
 
 ;;;###autoload
 (defun +format/region (beg end &optional arg)
@@ -76,11 +72,8 @@ WARNING: this may not work everywhere. It will throw errors if the region
 contains a syntax error in isolation. It is mostly useful for formatting
 snippets or single lines."
   (interactive "rP")
-  (if (and +format-with-lsp
-           (bound-and-true-p lsp-mode)
-           (lsp-feature? "textDocument/rangeFormatting"))
-      (call-interactively #'lsp-format-region)
-    (+format-region beg end)))
+  (or (run-hook-with-args-until-success '+format-functions beg end 'region)
+      (+format-region beg end)))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()
@@ -91,3 +84,73 @@ is selected)."
    (if (doom-region-active-p)
        #'+format/region
      #'+format/buffer)))
+
+
+;;
+;;; Specialized formatters
+
+;;;###autoload
+(defun +format-with-lsp-fn (beg end op)
+  "Format the region/buffer using any available lsp-mode formatter.
+
+Does nothing if `+format-with-lsp' is nil or the active server doesn't support
+the requested feature."
+  (and +format-with-lsp
+       (bound-and-true-p lsp-mode)
+       (pcase op
+         ('buffer (condition-case _
+                      ;; Avoid lsp-feature? checks for this, since
+                      ;; `lsp-format-buffer' does its own, and allows clients
+                      ;; without formatting support (but with rangeFormatting,
+                      ;; for some reason) to work.
+                      (always (lsp-format-buffer))
+                    ('lsp-capability-not-supported nil)))
+         ('region (if (lsp-feature? "textDocument/rangeFormatting")
+                      (always (lsp-format-region beg end))))
+         (_ (error "Invalid formatter operation: %s" op)))))
+
+;;;###autoload
+(defun +format-with-eglot-fn (beg end op)
+  "Format the region/buffer using any available eglot formatter.
+
+Does nothing if `+format-with-lsp' is nil or the active server doesn't support
+the requested feature."
+  (and +format-with-lsp
+       (bound-and-true-p eglot--managed-mode)
+       (pcase op
+         ('buffer (if (eglot--server-capable :documentFormattingProvider)
+                      (always (eglot-format-buffer))))
+         ('region (if (eglot--server-capable :documentRangeFormattingProvider)
+                      (always (eglot-format beg end))))
+         (_ (error "Invalid formatter operation: %s" op)))))
+
+;;;###autoload
+(defun +format-in-org-src-blocks-fn (beg end _op)
+  "Reformat org src blocks with apheleia as if they were independent buffers."
+  (when (derived-mode-p 'org-mode)
+    (goto-char beg)
+    (while (re-search-forward org-babel-src-block-regexp end t)
+      (let* ((element (org-element-at-point))
+             (block-beg (save-excursion
+                          (goto-char (org-babel-where-is-src-block-head element))
+                          (line-beginning-position 2)))
+             (block-end (save-excursion
+                          (goto-char (org-element-property :end element))
+                          (skip-chars-backward " \t\n")
+                          (line-beginning-position)))
+             (beg (max beg block-beg))
+             (end (min end block-end))
+             (lang (org-element-property :language element))
+             (major-mode (org-src-get-lang-mode lang)))
+        (save-excursion
+          (if (eq major-mode 'org-mode)
+              (user-error "Cannot reformat an org src block in org-mode")
+            ;; Determine formatter based on language and format the region
+            (let ((formatter (apheleia--get-formatters 'interactive)))
+              (unless formatter
+                (setq formatter (apheleia--get-formatters 'prompt))
+                (unless formatter
+                  (user-error "No formatter configured for language: %s" lang)))
+              (let ((apheleia-formatter formatter))
+                (+format-region beg end)))))))
+    t))
