@@ -75,8 +75,7 @@ recommended.
 + clangd (must be v9 or newer) :: clangd is included with =llvm= which should be
   available through your OS' package manager.
   - Linux:
-    - Debian 11 & Ubuntu 20.10: ~$ apt-get install clangd-11~
-      - 20.04 LTS: [[https://pkgs.org/search/?q=clangd][clangd-10]]
+    - Debian & Ubuntu: ~$ apt-get install clangd~
     - Fedora & CentOS/RHEL 8+: ~$ dnf install clang-tools-extra~
     - openSUSE: ~$ zypper install clang~
     - Arch: ~$ pacman -S clang~
