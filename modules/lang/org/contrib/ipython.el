@@ -33,7 +33,7 @@
   (advice-add #'org-babel-ipython-initiate-session :override #'+org-ob-ipython-initiate-session-a)
 
   ;; retina resolution image hack
-  (when IS-MAC
+  (when (featurep :system 'macos)
     (advice-add #'ob-ipython--write-base64-string :around #'+org-ob-ipython-write-base64-string-a))
 
   ;; ipython has its own async keyword, disable ipython in ob-async.

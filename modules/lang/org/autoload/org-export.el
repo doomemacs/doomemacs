@@ -3,13 +3,14 @@
 (defun +org--yank-html-buffer (buffer)
   (with-current-buffer buffer
     (require 'ox-clip)
-    (cond ((or IS-WINDOWS IS-MAC)
+    (cond ((or (featurep :system 'windows)
+               (featurep :system 'macos))
            (shell-command-on-region
             (point-min)
             (point-max)
-            (cond (IS-WINDOWS ox-clip-w32-cmd)
-                  (IS-MAC     ox-clip-osx-cmd))))
-          (IS-LINUX
+            (cond ((featurep :system 'windows) ox-clip-w32-cmd)
+                  ((featurep :system 'macos)   ox-clip-osx-cmd))))
+          ((featurep :system 'linux)
            (let ((html (buffer-string)))
              (with-temp-file (make-temp-file "ox-clip-md" nil ".html")
                (insert html))

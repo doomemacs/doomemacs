@@ -76,10 +76,10 @@ See `+emacs-lisp-non-package-mode' for details.")
                                     face warning
                                     mouse-face mode-line-highlight)))))
 
-  ;; Fixed indenter that intends plists sensibly.
+  ;; Introduces logic to improve plist indentation in emacs-lisp-mode.
   (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
 
-  ;; variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
+  ;; Variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
   ;; and `editorconfig' would force fixed indentation on elisp.
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode)
 
@@ -95,11 +95,19 @@ See `+emacs-lisp-non-package-mode' for details.")
              ;; Ensure straight sees modifications to installed packages
              #'+emacs-lisp-init-straight-maybe-h)
 
-  ;; UX: Flycheck's two emacs-lisp checkers produce a *lot* of false positives
-  ;;   in non-packages (like Emacs configs or elisp scripts), so I disable
-  ;;   `emacs-lisp-checkdoc' and set `byte-compile-warnings' to a subset of the
-  ;;   original in the flycheck instance (see `+emacs-lisp-linter-warnings').
-  (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
+  ;; UX: Both Flycheck's and Flymake's two emacs-lisp checkers produce a *lot*
+  ;;   of false positives in non-packages (like Emacs configs or elisp scripts),
+  ;;   so I disable `checkdoc' (`emacs-lisp-checkdoc', `elisp-flymake-checkdoc')
+  ;;   and set `byte-compile-warnings' to a subset that makes more sense (see
+  ;;   `+emacs-lisp-linter-warnings')
+  (add-hook! '(flycheck-mode-hook flymake-mode-hook) #'+emacs-lisp-non-package-mode)
+
+  (defadvice! +syntax--fix-elisp-flymake-load-path (orig-fn &rest args)
+    "Set load path for elisp byte compilation Flymake backend"
+    :around #'elisp-flymake-byte-compile
+    (let ((elisp-flymake-byte-compile-load-path
+           (append elisp-flymake-byte-compile-load-path load-path)))
+      (apply orig-fn args)))
 
   ;; Enhance elisp syntax highlighting, by highlighting Doom-specific
   ;; constructs, defined symbols, and truncating :pin's in `package!' calls.
@@ -107,8 +115,6 @@ See `+emacs-lisp-non-package-mode' for details.")
    'emacs-lisp-mode
    (append `(;; custom Doom cookies
              ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
-           ;; Shorten the :pin of `package!' statements to 10 characters
-           `(("(package!\\_>" (0 (+emacs-lisp-truncate-pin))))
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
              `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
@@ -209,7 +215,28 @@ See `+emacs-lisp-non-package-mode' for details.")
   (advice-add #'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
   (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update)
   :config
-  (advice-add #'elisp-demos--search :around #'+emacs-lisp--add-doom-elisp-demos-a))
+  ;; Add Doom's core and module demo files, so additional demos can be specified
+  ;; by end-users (in $DOOMDIR/demos.org), by modules (modules/X/Y/demos.org),
+  ;; or Doom's core (lisp/demos.org).
+  (dolist (file (doom-module-locate-paths (doom-module-list) "demos.org"))
+    (add-to-list 'elisp-demos-user-files file))
+
+  ;; HACK: These functions open Org files non-interactively without any
+  ;;   performance optimizations. Given how prone org-mode is to being tied to
+  ;;   expensive functionality, this will often introduce unexpected freezes
+  ;;   without this advice.
+  ;; TODO: PR upstream?
+  (defvar org-inhibit-startup)
+  (defvar org-mode-hook)
+  (defadvice! +emacs-lisp--optimize-org-init-a (fn &rest args)
+    "Disable unrelated functionality to optimize calls to `org-mode'."
+    :around #'elisp-demos--export-json-file
+    :around #'elisp-demos--symbols
+    :around #'elisp-demos--syntax-highlight
+    (let ((org-inhibit-startup t)
+          enable-dir-local-variables
+          org-mode-hook)
+      (apply fn args))))
 
 
 (use-package! buttercup

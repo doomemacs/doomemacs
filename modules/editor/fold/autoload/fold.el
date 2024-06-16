@@ -75,8 +75,20 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
            (cl-letf (((symbol-function #'outline-hide-subtree)
                       (symbol-function #'outline-hide-entry)))
              (outline-toggle-children)))
-          ((+fold--ts-fold-p) (ts-fold-toggle))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding))))))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding)))
+          ((+fold--ts-fold-p) (ts-fold-toggle)))))
+
+;;;###autoload
+(defun +fold/open-rec ()
+  "Recursively open the folded region at point.
+
+Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
+  (interactive)
+  (save-excursion
+    (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
+          ((+fold--outline-fold-p) (outline-show-subtree))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
+          ((+fold--ts-fold-p) (ts-fold-open)))))
 
 ;;;###autoload
 (defun +fold/open ()
@@ -87,10 +99,10 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
           ((+fold--outline-fold-p)
-           (outline-show-children)
+           (outline-show-branches)
            (outline-show-entry))
-          ((+fold--ts-fold-p) (ts-fold-open))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block))))))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
+          ((+fold--ts-fold-p) (ts-fold-open)))))
 
 ;;;###autoload
 (defun +fold/close ()
@@ -100,9 +112,9 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-refold))
-          ((+fold--ts-fold-p) (ts-fold-close))
+          ((+fold--outline-fold-p) (outline-hide-subtree))
           ((+fold--hideshow-fold-p) (+fold-from-eol (hs-hide-block)))
-          ((+fold--outline-fold-p) (outline-hide-subtree)))))
+          ((+fold--ts-fold-p) (ts-fold-close)))))
 
 ;;;###autoload
 (defun +fold/open-all (&optional level)
@@ -111,7 +123,7 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
   (cond ((+fold--ts-fold-p)
          (ts-fold-open-all))
-        ((featurep 'vimish-fold)
+        ((and (featurep 'vimish-fold) (+fold--vimish-fold-p))
          (vimish-fold-unfold-all))
         ((save-excursion
            (+fold--ensure-hideshow-mode)
@@ -138,8 +150,12 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
         (+fold--ensure-hideshow-mode)
         (hs-life-goes-on
          (if (integerp level)
-             (hs-hide-level-recursive (1- level) (point-min) (point-max))
-           (hs-hide-all)))))))
+             (progn
+               (outline--show-headings-up-to-level (1+ level))
+               (hs-hide-level-recursive (1- level) (point-min) (point-max)))
+           (hs-hide-all)
+           (when (fboundp 'outline-hide-sublevels)
+             (outline-show-only-headings))))))))
 
 ;;;###autoload
 (defun +fold/next (count)

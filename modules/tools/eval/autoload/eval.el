@@ -24,34 +24,33 @@
 (defun +eval-display-results-in-overlay (output &optional source-buffer)
   "Display OUTPUT in a floating overlay next to the cursor."
   (require 'eros)
-  (let* ((this-command #'+eval/buffer-or-region)
-         (prefix eros-eval-result-prefix)
-         (lines (split-string output "\n"))
-         (prefixlen (length prefix))
-         (len (+ (apply #'max (mapcar #'length lines))
-                 prefixlen))
-         (col (- (current-column) (window-hscroll)))
-         (next-line? (or (cdr lines)
-                         (< (- (window-width)
-                               (save-excursion (goto-char (point-at-eol))
-                                               (- (current-column)
-                                                  (window-hscroll))))
-                            len)))
-         (pad (if next-line?
-                  (+ (window-hscroll) prefixlen)
-                0))
-         (where (if next-line?
-                    (line-beginning-position 2)
-                  (line-end-position)))
-         eros-eval-result-prefix
-         eros-overlays-use-font-lock)
-    (with-current-buffer (or source-buffer (current-buffer))
+  (with-current-buffer (or source-buffer (current-buffer))
+    (let* ((this-command #'+eval/buffer-or-region)
+           (prefix eros-eval-result-prefix)
+           (lines (split-string output "\n"))
+           (prefixlen (length prefix))
+           (len (+ (apply #'max (mapcar #'length lines))
+                   prefixlen))
+           (col (- (current-column) (window-hscroll)))
+           (next-line? (or (cdr lines)
+                           (< (- (window-width)
+                                 (save-excursion (goto-char (line-end-position))
+                                                 (- (current-column)
+                                                    (window-hscroll))))
+                              len)))
+           (pad (if next-line?
+                    (+ (window-hscroll) prefixlen)
+                  0))
+           eros-overlays-use-font-lock)
       (eros--make-result-overlay
           (concat (make-string (max 0 (- pad prefixlen)) ?\s)
                   prefix
-                  (string-join lines (concat "\n" (make-string pad ?\s))))
-        :where where
-        :duration eros-eval-result-duration))))
+                  (string-join lines (concat hard-newline (make-string pad ?\s))))
+        :where (if next-line?
+                   (line-beginning-position 2)
+                 (line-end-position))
+        :duration eros-eval-result-duration
+        :format "%s"))))
 
 ;;;###autoload
 (defun +eval-display-results (output &optional source-buffer)
@@ -72,6 +71,38 @@
              #'+eval-display-results-in-overlay)
            output source-buffer)
   output)
+
+;;;###autoload
+(defun +eval-region-as-major-mode (beg end &optional runner-major-mode)
+  "Evaluate a region between BEG and END and display the output.
+
+Evaluate as in RUNNER-MAJOR-MODE. If RUNNER-MAJOR-MODE is nil, use major-mode
+of the buffer instead."
+  (let ((load-file-name buffer-file-name)
+        (load-true-file-name
+         (or buffer-file-truename
+             (if buffer-file-name
+                 (file-truename buffer-file-name))))
+        (runner-major-mode (or runner-major-mode major-mode)))
+    (cond ((if (fboundp '+eval--ensure-in-repl-buffer)
+               (ignore-errors
+                 (get-buffer-window (or (+eval--ensure-in-repl-buffer)
+                                        t))))
+           (funcall (or (plist-get (cdr (alist-get runner-major-mode +eval-repls)) :send-region)
+                        #'+eval/send-region-to-repl)
+                    beg end))
+          ((let (lang)
+             (if-let ((runner
+                       (or (alist-get runner-major-mode +eval-runners)
+                           (and (require 'quickrun nil t)
+                                (equal (setq
+                                        lang (quickrun--command-key
+                                              (buffer-file-name (buffer-base-buffer))))
+                                       "emacs")
+                                (alist-get 'emacs-lisp-mode +eval-runners)))))
+                 (funcall runner beg end)
+               (let ((quickrun-option-cmdkey lang))
+                 (quickrun-region beg end))))))))
 
 
 ;;
@@ -104,31 +135,7 @@
 (defun +eval/region (beg end)
   "Evaluate a region between BEG and END and display the output."
   (interactive "r")
-  (let ((load-file-name buffer-file-name)
-        (load-true-file-name
-         (or buffer-file-truename
-             (if buffer-file-name
-                 (file-truename buffer-file-name)))))
-    (cond ((and (fboundp '+eval--ensure-in-repl-buffer)
-                (ignore-errors
-                  (get-buffer-window (or (+eval--ensure-in-repl-buffer)
-                                         t))))
-           (funcall (or (plist-get (cdr (alist-get major-mode +eval-repls)) :send-region)
-                        #'+eval/send-region-to-repl)
-                    beg end))
-          ((let ((runner
-                  (or (alist-get major-mode +eval-runners)
-                      (and (require 'quickrun nil t)
-                           (equal (setq
-                                   lang (quickrun--command-key
-                                         (buffer-file-name (buffer-base-buffer))))
-                                  "emacs")
-                           (alist-get 'emacs-lisp-mode +eval-runners))))
-                 lang)
-             (if runner
-                 (funcall runner beg end)
-               (let ((quickrun-option-cmdkey lang))
-                 (quickrun-region beg end))))))))
+  (+eval-region-as-major-mode beg end))
 
 ;;;###autoload
 (defun +eval/line-or-region ()

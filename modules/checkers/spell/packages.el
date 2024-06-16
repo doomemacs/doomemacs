@@ -2,8 +2,10 @@
 ;;; checkers/spell/packages.el
 
 (if (not (modulep! +flyspell))
-    (package! spell-fu :pin "aed6e87aa31013534b7a6cbedb26e4f29ccea735")
-  (package! flyspell-correct :pin "7d7b6b01188bd28e20a13736ac9f36c3367bd16e")
+    (package! spell-fu
+      :recipe (:host github :repo "emacsmirror/spell-fu")
+      :pin "e4031935803c66eca2f076dce72b0a6a770d026c")
+  (package! flyspell-correct :pin "1e7a5a56362dd875dddf848b9a9e25d1395b9d37")
   (cond ((modulep! :completion ivy)
          (package! flyspell-correct-ivy))
         ((modulep! :completion helm)

@@ -175,15 +175,18 @@ Use `winner-undo' to undo this. Alternatively, use
   "Interactively change the current frame's opacity.
 
 OPACITY is an integer between 0 to 100, inclusive."
-  (interactive
-   (list (read-number "Opacity (0-100): "
-                      (or (frame-parameter
-                           nil (if (> emacs-major-version 28)
-                                   'alpha-background 'alpha))
-                          100))))
-  (set-frame-parameter nil (if (> emacs-major-version 28)
-                               'alpha-background 'alpha)
-                       opacity))
+  (interactive '(interactive))
+  (let* ((parameter
+          (if (eq window-system 'pgtk)
+              'alpha-background
+            'alpha))
+         (opacity
+          (if (eq opacity 'interactive)
+              (read-number "Opacity (0-100): "
+                           (or (frame-parameter nil parameter)
+                               100))
+            opacity)))
+    (set-frame-parameter nil parameter opacity)))
 
 (defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
@@ -195,12 +198,9 @@ narrowing doesn't affect other windows displaying the same buffer. Call
 `doom/widen-indirectly-narrowed-buffer' to undo it (incrementally).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
-  (interactive
-   (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
-         (or (bound-and-true-p evil-visual-end)       (region-end))))
-  (unless (region-active-p)
-    (setq beg (line-beginning-position)
-          end (line-end-position)))
+  (interactive (if (region-active-p)
+                   (list (doom-region-beginning) (doom-region-end))
+                 (list (bol) (eol))))
   (deactivate-mark)
   (let ((orig-buffer (current-buffer)))
     (with-current-buffer (switch-to-buffer (clone-indirect-buffer nil nil))
@@ -239,12 +239,9 @@ If the current buffer is not an indirect buffer, it is `widen'ed."
 ;;;###autoload
 (defun doom/toggle-narrow-buffer (beg end)
   "Narrow the buffer to BEG END. If narrowed, widen it."
-  (interactive
-   (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
-         (or (bound-and-true-p evil-visual-end)       (region-end))))
+  (interactive (if (region-active-p)
+                   (list (doom-region-beginning) (doom-region-end))
+                 (list (bol) (eol))))
   (if (buffer-narrowed-p)
       (widen)
-    (unless (region-active-p)
-      (setq beg (line-beginning-position)
-            end (line-end-position)))
     (narrow-to-region beg end)))

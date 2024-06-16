@@ -4,6 +4,7 @@
 
 ;;; Custom error types
 (define-error 'doom-error "An unexpected Doom error")
+(define-error 'doom-font-error "Could not find a font on your system" 'doom-error)
 (define-error 'doom-nosync-error "Doom hasn't been initialized yet; did you remember to run 'doom sync' in the shell?" 'doom-error)
 (define-error 'doom-core-error "Unexpected error in Doom's core" 'doom-error)
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
@@ -245,29 +246,29 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
       (fset
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs has initialized.
-            (when (and after-init-time
-                       (not running?)
+            (when (and (not running?)
+                       (not (doom-context-p 'init))
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
                            ;; inhibit them during expensive batch operations on
                            ;; buffers (such as when processing buffers
-                           ;; internally). In these cases we should assume this
-                           ;; hook wasn't invoked interactively.
+                           ;; internally). In that case assume this hook was
+                           ;; invoked non-interactively.
                            (and (boundp hook)
                                 (symbol-value hook))))
               (setq running? t)  ; prevent infinite recursion
               (doom-run-hooks hook-var)
               (set hook-var nil))))
-      (cond ((daemonp)
-             ;; In a daemon session we don't need all these lazy loading
-             ;; shenanigans. Just load everything immediately.
-             (add-hook 'after-init-hook fn 'append))
-            ((eq hook 'find-file-hook)
-             ;; Advise `after-find-file' instead of using `find-file-hook'
-             ;; because the latter is triggered too late (after the file has
-             ;; opened and modes are all set up).
-             (advice-add 'after-find-file :before fn '((depth . -101))))
-            ((add-hook hook fn -101)))
+      (when (daemonp)
+        ;; In a daemon session we don't need all these lazy loading shenanigans.
+        ;; Just load everything immediately.
+        (add-hook 'server-after-make-frame-hook fn 'append))
+      (if (eq hook 'find-file-hook)
+          ;; Advise `after-find-file' instead of using `find-file-hook' because
+          ;; the latter is triggered too late (after the file has opened and
+          ;; modes are all set up).
+          (advice-add 'after-find-file :before fn '((depth . -101)))
+        (add-hook hook fn -101))
       fn)))
 
 (defun doom-compile-functions (&rest fns)
@@ -302,9 +303,9 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
    (error "file!: cannot deduce the current file path")))
 
 (defmacro dir! ()
-  "Return the directory of the file this macro was called."
-   (let (file-name-handler-alist)
-     (file-name-directory (macroexpand '(file!)))))
+  "Return the directory of the file in which this macro was called."
+  (let (file-name-handler-alist)
+    (file-name-directory (macroexpand '(file!)))))
 
 ;; REVIEW Should I deprecate this? The macro's name is so long...
 (defalias 'letenv! 'with-environment-variables)
@@ -801,7 +802,7 @@ This macro accepts, in order:
               func-forms)))
     `(progn
        ,@defn-forms
-       (dolist (hook (nreverse ',hook-forms))
+       (dolist (hook ',(nreverse hook-forms))
          (dolist (func (list ,@func-forms))
            ,(if remove-p
                 `(remove-hook hook func ,local-p)
@@ -882,15 +883,15 @@ testing advice (when combined with `rotate-text').
        (dolist (target (cdr targets))
          (advice-remove target #',symbol)))))
 
+
+;;
+;;; Backports
+
 (defmacro defbackport! (type symbol &rest body)
   "Backport a function/macro/alias from later versions of Emacs."
   (declare (indent defun) (doc-string 4))
   (unless (fboundp (doom-unquote symbol))
     `(,type ,symbol ,@body)))
-
-
-;;
-;;; Backports
 
 ;; `format-spec' wasn't autoloaded until 28.1
 (defbackport! autoload 'format-spec "format-spec")
@@ -935,7 +936,7 @@ VARIABLES is a list of variable settings of the form (VAR VALUE),
 where VAR is the name of the variable (a string) and VALUE
 is its value (also a string).
 
-The previous values will be be restored upon exit."
+The previous values will be restored upon exit."
   (declare (indent 1) (debug (sexp body)))
   (unless (consp variables)
     (error "Invalid VARIABLES: %s" variables))

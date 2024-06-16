@@ -176,7 +176,16 @@ A wgrep buffer can be opened from swiper with [[kbd:][C-c C-e]].
 ** TODO Change the position of the ivy childframe
 
 * TODO Troubleshooting
-/There are no known problems with this module./ [[doom-report:][Report one?]]
+** Sorting is not applied at all sometimes
+If the number of candidates is greater than ~ivy-sort-max-size~, sorting will be
+disabled completely. Doom lowers the default value to prevent performance
+issues, so increasing the value may fix your issue:
+#+begin_src elisp
+;;; add to $DOOMDIR/config.el
+(after! ivy
+  (setq ivy-sort-max-size 30000))  ; Doom sets this to 7500, but Ivy's default is 30k
+#+end_src
+
 
 * Frequently asked questions
 [[doom-suggest-faq:][Ask a question?]]

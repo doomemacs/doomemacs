@@ -6,7 +6,7 @@
 * Description :unfold:
 This module adds support for various web languages, including HTML5, CSS,
 SASS/SCSS, Pug/Jade/Slim, and HAML, as well as various web frameworks, like
-ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
+ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Django, and more.
 
 ** Maintainers
 - @hlissner
@@ -41,6 +41,9 @@ ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
  󱌣 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
 #+end_quote
 
+- Fixes ~//~ line commenting in JSX and Javascript files (if you aren't using
+  :lang javascript for some reason)
+
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
 /This module does not have a changelog yet./
@@ -49,12 +52,7 @@ ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
 ** Formatter
-
 Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
-
-#+begin_quote
- 󱌣 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
-#+end_quote
 
 * TODO Usage
 #+begin_quote

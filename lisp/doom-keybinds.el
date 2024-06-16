@@ -15,6 +15,12 @@
   "An alternative leader prefix key, used for Insert and Emacs states, and for
 non-evil users.")
 
+(defvar doom-leader-key-states '(normal visual motion)
+  "which evil modes to activate the leader key for")
+
+(defvar doom-leader-alt-key-states '(emacs insert)
+  "which evil modes to activate the alternative leader key for")
+
 (defvar doom-localleader-key "SPC m"
   "The localleader prefix key, for major-mode specific commands.")
 
@@ -30,7 +36,7 @@ and Emacs states, and for non-evil users.")
 ;;; Global keybind settings
 
 (cond
- (IS-MAC
+ (doom--system-macos-p
   ;; mac-* variables are used by the special emacs-mac build of Emacs by
   ;; Yamamoto Mitsuharu, while other builds use ns-*.
   (setq mac-command-modifier      'super
@@ -40,18 +46,18 @@ and Emacs states, and for non-evil users.")
         ;; Free up the right option for character composition
         mac-right-option-modifier 'none
         ns-right-option-modifier  'none))
- (IS-WINDOWS
+ (doom--system-windows-p
   (setq w32-lwindow-modifier 'super
         w32-rwindow-modifier 'super)))
 
 ;; HACK: Emacs cannot distinguish between C-i from TAB. This is largely a
 ;;   byproduct of its history in the terminal, which can't distinguish them
-;;   either, however, when GUIs came about Emacs greated separate input events
+;;   either, however, when GUIs came about Emacs created separate input events
 ;;   for more contentious keys like TAB and RET. Therefore [return] != RET,
 ;;   [tab] != TAB, and [backspace] != DEL.
 ;;
-;;   In the same vein, this keybind adds a [C-i] event, so users can bind to it.
-;;   Otherwise, it falls back to regular C-i keybinds.
+;;   In the same vein, this keybind adds a [C-i] event, so users can bind to it
+;;   independently of TAB. Otherwise, it falls back to keys bound to C-i.
 (define-key key-translation-map [?\C-i]
   (cmd! (if (let ((keys (this-single-command-raw-keys)))
               (and keys
@@ -212,8 +218,8 @@ localleader prefix."
                   ((equal doom-leader-alt-key "C-x")
                    (set-keymap-parent doom-leader-map ctl-x-map)))
             (define-key map (kbd doom-leader-alt-key) 'doom/leader))
-        (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
-        (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader))
+        (evil-define-key* doom-leader-key-states map (kbd doom-leader-key) 'doom/leader)
+        (evil-define-key* doom-leader-alt-key-states map (kbd doom-leader-alt-key) 'doom/leader))
       (general-override-mode +1))))
 
 

@@ -5,7 +5,7 @@
     (format "%s %s"
             (if (executable-find "love")
                 "love"
-              (if IS-MAC "open -a love.app"))
+              (if (featurep :system 'macos) "open -a love.app"))
             (shell-quote-argument root))))
 
 ;;;###autoload

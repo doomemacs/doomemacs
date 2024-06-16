@@ -24,7 +24,7 @@ If ARG (universal argument), runs `compile' from the current directory."
 generate `completing-read' candidates."
   (interactive)
   (call-interactively
-   (if (and (not IS-MAC) (executable-find "man"))
+   (if (and (not (featurep :system 'macos)) (executable-find "man"))
        (or (command-remapping #'man)
            #'man)
      #'woman)))
@@ -33,7 +33,7 @@ generate `completing-read' candidates."
 (defun +default/new-buffer ()
   "TODO"
   (interactive)
-  (if (modulep! 'evil)
+  (if (modulep! +evil)
       (call-interactively #'evil-buffer-new)
     (let ((buffer (generate-new-buffer "*new*")))
       (set-window-buffer nil buffer)
@@ -52,7 +52,7 @@ generate `completing-read' candidates."
 ;;;###autoload
 (defun +default/diagnostics (&rest arg)
   "List diagnostics for the current buffer/project.
-If the the vertico and lsp modules are active, list lsp diagnostics for the
+If the vertico and lsp modules are active, list lsp diagnostics for the
 current project. Otherwise list them for the current buffer"
   (interactive)
   (cond ((and (modulep! :completion vertico)

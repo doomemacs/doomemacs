@@ -105,7 +105,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defun +org-init-appearance-h ()
   "Configures the UI for `org-mode'."
   (setq org-indirect-buffer-display 'current-window
-        org-eldoc-breadcrumb-separator " → "
         org-enforce-todo-dependencies t
         org-entities-user
         '(("flat"  "\\flat" nil "" "" "266D" "♭")
@@ -160,7 +159,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
            "|"
            "DONE(d)"  ; Task successfully completed
-           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
+           "KILL(k)") ; Task was cancelled, aborted, or is no longer applicable
           (sequence
            "[ ](T)"   ; A task that needs doing
            "[-](S)"   ; Task is in progress
@@ -181,9 +180,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
           ("PROJ" . +org-todo-project)
           ("NO"   . +org-todo-cancel)
           ("KILL" . +org-todo-cancel)))
-
-  ;; Automatic indent detection in org files is meaningless
-  (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode)
 
   (set-ligatures! 'org-mode
     :name "#+NAME:"
@@ -505,10 +501,15 @@ relative to `org-directory', unless it is an absolute path."
   ;; Modify default file: links to colorize broken file links red
   (org-link-set-parameters
    "file" :face (lambda (path)
-                  (if (or (file-remote-p path)
-                          ;; filter out network shares on windows (slow)
-                          (if IS-WINDOWS (string-prefix-p "\\\\" path))
-                          (file-exists-p path))
+                  (if (or
+                       ;; file uris is not a valid path on windows
+                       ;; ref https://lists.gnu.org/archive/html/bug-gnu-emacs/2024-05/threads.html#00729
+                       ;; emacs <= 29 crashes for (file-exists-p "file://whatever")
+                       (if (featurep :system 'windows) (string-prefix-p "//" path))
+                       (file-remote-p path)
+                       ;; filter out network shares on windows (slow)
+                       (if (featurep :system 'windows) (string-prefix-p "\\\\" path))
+                       (file-exists-p path))
                       'org-link
                     '(warning org-link))))
 
@@ -519,6 +520,7 @@ relative to `org-directory', unless it is an absolute path."
             '("google"      . "https://google.com/search?q=")
             '("gimages"     . "https://google.com/images?q=%s")
             '("gmap"        . "https://maps.google.com/maps?q=%s")
+            '("kagi"        . "https://kagi.com/search?q=%s")
             '("duckduckgo"  . "https://duckduckgo.com/?q=%s")
             '("wikipedia"   . "https://en.wikipedia.org/wiki/%s")
             '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
@@ -614,7 +616,9 @@ relative to `org-directory', unless it is an absolute path."
                 (format "https://github.com/%s"
                         (string-remove-prefix
                          "@" (+org-link-read-desc-at-point link)))))
-     :face 'org-priority)
+     :face (lambda (_)
+             ;; Avoid confusion with function `org-priority'
+             'org-priority))
     (org-link-set-parameters
      "doom-changelog"
      :follow (lambda (link)
@@ -811,14 +815,6 @@ Unlike showNlevels, this will also unfold parent trees."
                               :weight bold))))
       (apply fn args)))
 
-  (after! org-eldoc
-    ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or
-    ;;      'python' src blocks.
-    ;; TODO Should be reported upstream!
-    (puthash "org" #'ignore org-eldoc-local-functions-cache)
-    (puthash "plantuml" #'ignore org-eldoc-local-functions-cache)
-    (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
-
   (defun +org--restart-mode-h ()
     "Restart `org-mode', but only once."
     (quiet! (org-mode-restart))
@@ -849,6 +845,17 @@ can grow up to be fully-fledged org-mode buffers."
           (with-current-buffer buffer
             (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
                       nil 'local))))))
+
+  (defadvice! +org--restart-mode-before-indirect-buffer-a (base-buffer &rest _)
+    "Restart `org-mode' in buffers in which the mode has been deferred (see
+`+org-defer-mode-in-agenda-buffers-h') before they become the base buffer for an
+indirect buffer. This ensures that the buffer is fully functional not only when
+the *user* visits it, but also when some code interacts with it via an indirect
+buffer as done, e.g., by `org-capture'."
+    :before #'make-indirect-buffer
+    (with-current-buffer base-buffer
+     (when (memq #'+org--restart-mode-h doom-switch-buffer-hook)
+       (+org--restart-mode-h))))
 
   (defvar recentf-exclude)
   (defadvice! +org--optimize-backgrounded-agenda-buffers-a (fn file)
@@ -918,7 +925,7 @@ between the two."
         [C-return]   #'+org/insert-item-below
         [C-S-return] #'+org/insert-item-above
         [C-M-return] #'org-insert-subheading
-        (:when IS-MAC
+        (:when (featurep :system 'macos)
          [s-return]   #'+org/insert-item-below
          [s-S-return] #'+org/insert-item-above
          [s-M-return] #'org-insert-subheading)
@@ -943,7 +950,7 @@ between the two."
         (:when (modulep! :completion vertico)
          "." #'consult-org-heading
          "/" #'consult-org-agenda)
-        "A" #'org-archive-subtree
+        "A" #'org-archive-subtree-default
         "e" #'org-export-dispatch
         "f" #'org-footnote-action
         "h" #'org-toggle-heading
@@ -1076,7 +1083,7 @@ between the two."
          "n" #'org-narrow-to-subtree
          "r" #'org-refile
          "s" #'org-sparse-tree
-         "A" #'org-archive-subtree
+         "A" #'org-archive-subtree-default
          "N" #'widen
          "S" #'org-sort)
         (:prefix ("p" . "priority")
@@ -1178,6 +1185,20 @@ between the two."
         ;; The default value (5) is too conservative.
         org-clock-history-length 20)
   (add-hook 'kill-emacs-hook #'org-clock-save))
+
+
+(use-package! org-eldoc
+  ;; HACK: Fix #7633: this hook is no longer autoloaded by org-eldoc (in
+  ;;   org-contrib), so we have to add it ourselves.
+  :hook (org-mode . org-eldoc-load)
+  :init (setq org-eldoc-breadcrumb-separator " → ")
+  :config
+  ;; HACK Fix #2972: infinite recursion when eldoc kicks in 'org' or 'python'
+  ;;   src blocks.
+  ;; TODO Should be reported upstream!
+  (puthash "org" #'ignore org-eldoc-local-functions-cache)
+  (puthash "plantuml" #'ignore org-eldoc-local-functions-cache)
+  (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
 
 
 (use-package! org-pdftools
@@ -1339,7 +1360,7 @@ between the two."
       ))
 
   ;;; Custom org modules
-  (dolist (flag (doom-module-context-get 'flags))
+  (dolist (flag (doom-module-context-get :flags))
     (load! (concat "contrib/" (substring (symbol-name flag) 1)) nil t))
 
   ;; Add our general hooks after the submodules, so that any hooks the
@@ -1352,7 +1373,7 @@ between the two."
              #'doom-disable-show-trailing-whitespace-h
              ;; #'+org-enable-auto-reformat-tables-h
              ;; #'+org-enable-auto-update-cookies-h
-             #'+org-make-last-point-visible-h)
+             )
 
   (add-hook! 'org-load-hook
              #'+org-init-org-directory-h
@@ -1378,7 +1399,7 @@ between the two."
     "Advise `server-visit-files' to load `org-protocol' lazily."
     :around #'server-visit-files
     (if (not (cl-loop with protocol =
-                      (if IS-WINDOWS
+                      (if (featurep :system 'windows)
                           ;; On Windows, the file arguments for `emacsclient'
                           ;; get funnelled through `expand-file-path' by
                           ;; `server-process-filter'. This substitutes
@@ -1418,6 +1439,21 @@ between the two."
     :definition #'+org-lookup-definition-handler
     :references #'+org-lookup-references-handler
     :documentation #'+org-lookup-documentation-handler)
+
+  (add-hook! 'org-mode-hook
+    ;; HACK: Somehow, users/packages still find a way to modify tab-width in
+    ;;   org-mode. Since org-mode treats a non-standerd tab-width as an error
+    ;;   state, I use this hook to makes it much harder to change by accident.
+    (add-hook! 'after-change-major-mode-hook :local
+      ;; The second check is necessary, in case of `org-edit-src-code' which
+      ;; clones a buffer and changes its major-mode.
+      (when (derived-mode-p 'org-mode)
+        (setq tab-width 8)))
+
+    ;; HACK: `save-place' can position the cursor in an invisible region. This
+    ;;   makes it visible unless `org-inhibit-startup' or
+    ;;   `org-inhibit-startup-visibility-stuff' is non-nil.
+    (add-hook 'save-place-after-find-file-hook #'+org-make-last-point-visible-h nil t))
 
   ;; Save target buffer after archiving a node.
   (setq org-archive-subtree-save-file-p t)

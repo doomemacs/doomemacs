@@ -15,6 +15,9 @@
 - +gmail ::
   Enable gmail-specific configuration for mail ~To~ or ~From~ a gmail address.
 
+- +xface ::
+  Enable support of [X-Face] powered by [compface].
+
 ** Packages
 - [[doom-package:wanderlust]]
 
@@ -52,3 +55,6 @@
 #+begin_quote
  󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote
+
+[X-Face]: https://en.wikipedia.org/wiki/X-Face
+[compface]: http://freecode.com/projects/compface/

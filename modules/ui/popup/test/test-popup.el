@@ -44,14 +44,14 @@
                 :to-contain '(size . 5)))))
 
   (describe "popup rules"
-    :var (origin a b c d e f g)
+    :var (origin a b c d e f g h i)
     (before-all (setq origin (current-buffer)))
     (before-each
-      (dolist (name '(a b c d e f g))
+      (dolist (name '(a b c d e f g h i))
         (set name (get-buffer-create (symbol-name name)))))
     (after-each
       (let (kill-buffer-query-functions kill-buffer-hook)
-        (dolist (x (list a b c d e f g))
+        (dolist (x (list a b c d e f g h i))
           (ignore-errors (delete-window (get-buffer-window x)))
           (kill-buffer x))))
 
@@ -64,11 +64,13 @@
             ("d" :slot 2 :vslot 2)
             ("e" :slot 1 :vslot 3)
             ("f" :slot 1 :vslot 3)
-            ("g"))))
+            ("g" :slot 2 :vslot 3)
+            ("h" :slot 2 :vslot 3)
+            ("i"))))
 
       (it "replaces popups with the same slots"
-        (mapc #'display-buffer (list e f))
-        (expect (length (+popup-windows)) :to-be 1))
+        (mapc #'display-buffer (list e f g h))
+        (expect (length (+popup-windows)) :to-be 2))
 
       (it "replaces popups among multiple that have the same slots"
         (let ((first  (display-buffer a))
@@ -92,7 +94,7 @@
             (expect (window-in-direction 'right first t)
                     :to-equal second)))
         (it "obeys default :slot"
-          (let ((window (display-buffer g)))
+          (let ((window (display-buffer i)))
             (expect (window-parameter window 'window-slot)  :to-be 1)
             (expect (window-parameter window 'window-vslot) :to-be 1))))
 

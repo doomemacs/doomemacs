@@ -13,3 +13,9 @@ open."
           (when (processp process)
             (kill-process (get-buffer-process inf-buffer))
             (kill-buffer inf-buffer)))))))
+
+;;;###autoload
+(defun +ruby-robe-repl-handler ()
+  "Start Robe and open a REPL (for `set-repl-handler!')."
+  (robe-start)
+  (robe-inf-buffer))

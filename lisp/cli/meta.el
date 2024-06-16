@@ -183,32 +183,69 @@ OPTIONS:
                             input (doom-cli-command-string (cdr command)))
                            command)))))
 
-(defun doom-cli-help--similarity (s1 s2)
-  ;; Ratcliff-Obershelp similarity
-  (let* ((s1 (downcase s1))
-         (s2 (downcase s2))
-         (s1len (length s1))
-         (s2len (length s2)))
-    (if (or (zerop s1len)
-            (zerop s2len))
-        0.0
-      (/ (let ((i 0) (j 0) (score 0) jlast)
-           (while (< i s1len)
-             (unless jlast (setq jlast j))
-             (if (and (< j s2len)
-                      (= (aref s1 i) (aref s2 j)))
-                 (progn (cl-incf score)
-                        (cl-incf i)
-                        (cl-incf j))
-               (setq m 0)
-               (cl-incf j)
-               (when (>= j s2len)
-                 (setq j (or jlast j)
-                       jlast nil)
-                 (cl-incf i))))
-           (* 2.0 score))
-         (+ (length s1)
-            (length s2))))))
+(defun doom-cli-help--similarity (a b)
+  (- 1 (/ (float (doom-cli-help--string-distance a b))
+          (max (length a) (length b)))))
+
+(defun doom-cli-help--string-distance (a b)
+  "Calculate the Restricted Damerau-Levenshtein distance between A and B.
+This is also known as the Optimal String Alignment algorithm.
+
+It is assumed that A and B are both strings, and before processing both are
+converted to lowercase.
+
+This returns the minimum number of edits required to transform A
+to B, where each edit is a deletion, insertion, substitution, or
+transposition of a character, with the restriction that no
+substring is edited more than once."
+  (let ((a (downcase a))
+        (b (downcase b))
+        (alen (length a))
+        (blen (length b))
+        (start 0))
+    (when (> alen blen)
+      (let ((c a)
+            (clen alen))
+        (setq a b alen blen
+              b c blen clen)))
+    (while (and (< start (min alen blen))
+                (= (aref a start) (aref b start)))
+      (cl-incf start))
+    (cl-decf start)
+    (if (= (1+ start) alen)
+        (- blen start)
+      (let ((v0 (make-vector (- blen start) 0))
+            (v1 (make-vector (- blen start) 0))
+            (a_i (aref a (max 0 start)))
+            (current 0)
+            a_i-1 b_j b_j-1
+            left transition-next
+            above this-transition)
+        (dotimes (vi (length v0))
+          (aset v0 vi (1+ vi)))
+        (dolist (i (number-sequence (1+ start) (1- alen)))
+          (setq a_i-1 a_i
+                a_i (aref a i)
+                b_j (aref b (max 0 start))
+                left (- i start 1)
+                current (- i start)
+                transition-next 0)
+          (dolist (j (number-sequence (1+ start) (1- blen)))
+            (setq b_j-1 b_j
+                  b_j (aref b j)
+                  above current
+                  current left
+                  this-transition transition-next
+                  transition-next (aref v1 (- j start)))
+            (aset v1 (- j start) current)
+            (setq left (aref v0 (- j start)))
+            (unless (= a_i b_j)
+              ;; Minimum between substitution, deletion, and insertion
+              (setq current (min (1+ current) (1+ above) (1+ left)))
+              (when (and (> i (1+ start)) (> j (1+ start)) (= a_i b_j-1) (= a_i-1 b_j))
+                (setq current (min current (cl-incf this-transition)))))
+            (aset v0 (- j start) current)))
+        current))))
 
 ;;; Help: printers
 ;; TODO Parameterize optional args with `cl-defun'

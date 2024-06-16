@@ -3,7 +3,6 @@
 ;;; Code:
 
 (load! "packages")
-(load! "compile")
 
 
 ;;
@@ -22,6 +21,7 @@
 (defcli! ((upgrade up))
     ((packages?  ("-p" "--packages") "Only upgrade packages, not Doom")
      (jobs       ("-j" "--jobs" num) "How many CPUs to use for native compilation")
+     (nobuild?   ("-B") "Don't rebuild packages when hostname or Emacs version has changed")
      &context context)
   "Updates Doom and packages.
 
@@ -30,10 +30,11 @@ following shell commands:
 
     cd ~/.emacs.d
     git pull --rebase
-    doom clean
     doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
-         (sync-cmd (append '("sync" "-u") (if jobs `("-j" ,num)))))
+         (sync-cmd (append '("sync" "-u")
+                           (if nobuild? '("-B"))
+                           (if jobs `("-j" ,jobs)))))
     (cond
      (packages?
       ;; HACK It's messy to use straight to upgrade straight, due to the
@@ -54,7 +55,9 @@ following shell commands:
       ;; Reload Doom's CLI & libraries, in case there were any upstream changes.
       ;; Major changes will still break, however
       (print! (item "Reloading Doom Emacs"))
+      (doom-cli-context-put context 'upgrading t)
       (exit! "doom" "upgrade" "-p"
+             (if nobuild? "-B")
              (if force? "--force")
              (if jobs (format "--jobs=%d" jobs))))
 
@@ -96,6 +99,8 @@ following shell commands:
           (sh! "git" "reset" "--hard" (format "origin/%s" branch))
           (sh! "git" "clean" "-ffd")))
 
+      ;; In case of leftover state from a partial/incomplete 'doom upgrade'
+      (sh! "git" "branch" "-D" target-remote)
       (sh! "git" "remote" "remove" doom-upgrade-remote)
       (unwind-protect
           (let (result)
@@ -136,7 +141,6 @@ following shell commands:
                     (ignore (print! (error "Aborted")))
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
-                   (doom-compile-clean)
                    (doom-cli-context-put context 'straight-recipe (doom-upgrade--get-straight-recipe))
                    (or (and (zerop (car (sh! "git" "reset" "--hard" target-remote)))
                             (equal (cdr (sh! "git" "rev-parse" "HEAD")) new-rev))

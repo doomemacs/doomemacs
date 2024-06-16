@@ -1,0 +1,654 @@
+#+title: Doom Emacs API Demos
+#+property: header-args:elisp :results pp :exports both :eval never-export
+
+This module installs the elisp-demos package, which adds code examples to
+documentation buffers (the ones help.el or helpful produces). The built-in demos
+are great, but this file exists to add demos for Doom's API and beyond.
+
+#+begin_quote
+ 󰐃 Please make sure new additions to this file are arranged alphabetically and
+    has a :PROPERTIES: drawer that includes in what version of Doom that the
+    symbol/function was added.
+#+end_quote
+
+#+begin_quote
+ 󰐃 Please don't add demos for code outside of Doom Emacs. PR those to the parent
+    project: https://github.com/xuchunyang/elisp-demos. And please don't add
+    functions from modules, put those in that module's demo.org file, or your
+    own in $DOOMDIR/demos.org.
+#+end_quote
+
+* add-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+;; With only one hook and one function, this is identical to `add-hook'. In that
+;; case, use that instead.
+(add-hook! 'some-mode-hook #'enable-something)
+
+;; Adding many-to-many functions to hooks
+(add-hook! some-mode #'enable-something #'and-another)
+(add-hook! some-mode '(enable-something and-another))
+(add-hook! '(one-mode-hook second-mode-hook) #'enable-something)
+(add-hook! (one-mode second-mode) #'enable-something)
+
+;; Appending and local hooks
+(add-hook! (one-mode second-mode) :append #'enable-something)
+(add-hook! (one-mode second-mode) :local #'enable-something)
+
+;; With arbitrary forms
+(add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+(add-hook! (one-mode second-mode) :append :local (setq v 5) (setq a 2))
+
+;; Inline named hook functions
+(add-hook! '(one-mode-hook second-mode-hook)
+  (defun do-something ()
+    ...)
+  (defun do-another-thing ()
+    ...))
+#+end_src
+
+* TODO add-transient-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+* after!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;;; `after!' will take:
+
+;; An unquoted package symbol (the name of a package)
+(after! helm ...)
+
+;; An unquoted list of package symbols (i.e. BODY is evaluated once both magit
+;; and git-gutter have loaded)
+(after! (magit git-gutter) ...)
+
+;; An unquoted, nested list of compound package lists, using any combination of
+;; :or/:any and :and/:all
+(after! (:or package-a package-b ...)  ...)
+(after! (:and package-a package-b ...) ...)
+(after! (:and package-a (:or package-b package-c) ...) ...)
+;; (Without :or/:any/:and/:all, :and/:all are implied.)
+
+;; A common mistake is to pass it the names of major or minor modes, e.g.
+(after! rustic-mode ...)
+(after! python-mode ...)
+;; But the code in them will never run! rustic-mode is in the `rustic' package
+;; and python-mode is in the `python' package. This is what you want:
+(after! rustic ...)
+(after! python ...)
+#+end_src
+* appendq!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(let ((x '(a b c)))
+  (appendq! x '(c d e))
+  x)
+#+end_src
+
+#+RESULTS:
+: (a b c c d e)
+
+#+begin_src emacs-lisp
+(let ((x '(a b c))
+      (y '(c d e))
+      (z '(f g)))
+  (appendq! x y z '(h))
+  x)
+#+end_src
+
+#+RESULTS:
+: (a b c c d e f g h)
+
+* cmd!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(map! "C-j" (cmd! (newline) (indent-according-to-mode)))
+#+end_src
+
+* cmd!!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
+inserts N newlines. We can use ~cmd!!~ to easily create a keybinds that bakes in
+the prefix arg into the command call:
+
+#+begin_src emacs-lisp :eval no
+(map! "C-j" (cmd!! #'newline 5))
+#+end_src
+
+Or to create aliases for functions that behave differently:
+
+#+begin_src emacs-lisp :eval no
+(fset 'insert-5-newlines (cmd!! #'newline 5))
+
+;; The equivalent of C-u M-x org-global-cycle, which resets the org document to
+;; its startup visibility settings.
+(fset 'org-reset-global-visibility (cmd!! #'org-global-cycle '(4))
+#+end_src
+
+* cmds!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(map! :i [tab] (cmds! (and (modulep! :editor snippets)
+                           (bound-and-true-p yas-minor-mode)
+                           (yas-maybe-expand-abbrev-key-filter 'yas-expand))
+                      #'yas-expand
+                      (modulep! :completion company +tng)
+                      #'company-indent-or-complete-common)
+      :m [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
+                           (evil-visual-state-p)
+                           (or (eq evil-visual-selection 'line)
+                               (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
+                      #'yas-insert-snippet
+                      (and (modulep! :editor fold)
+                           (save-excursion (end-of-line) (invisible-p (point))))
+                      #'+fold/toggle
+                      (fboundp 'evil-jump-item)
+                      #'evil-jump-item))
+#+end_src
+
+* custom-set-faces!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(custom-set-faces!
+ '(outline-1 :weight normal)
+ '(outline-2 :weight normal)
+ '(outline-3 :weight normal)
+ '(outline-4 :weight normal)
+ '(outline-5 :weight normal)
+ '(outline-6 :weight normal)
+ '(default :background "red" :weight bold)
+ '(region :background "red" :weight bold))
+
+(custom-set-faces!
+ '((outline-1 outline-2 outline-3 outline-4 outline-5 outline-6)
+   :weight normal)
+ '((default region)
+   :background "red" :weight bold))
+
+(let ((red-bg-faces '(default region)))
+  (custom-set-faces!
+   `(,(cl-loop for i from 0 to 6 collect (intern (format "outline-%d" i)))
+     :weight normal)
+   `(,red-bg-faces
+     :background "red" :weight bold)))
+
+;; You may utilise `doom-themes's theme API to fetch or tweak colors from their
+;; palettes. No need to wait until the theme or package is loaded. e.g.
+(custom-set-faces!
+ `(outline-1 :foreground ,(doom-color 'red))
+ `(outline-2 :background ,(doom-color 'blue)))
+#+end_src
+
+* custom-theme-set-faces!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(custom-theme-set-faces! 'doom-one
+ '(outline-1 :weight normal)
+ '(outline-2 :weight normal)
+ '(outline-3 :weight normal)
+ '(outline-4 :weight normal)
+ '(outline-5 :weight normal)
+ '(outline-6 :weight normal)
+ '(default :background "red" :weight bold)
+ '(region :background "red" :weight bold))
+
+(custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
+ '((outline-1 outline-2 outline-3 outline-4 outline-5 outline-6)
+   :weight normal)
+ '((default region)
+   :background "red" :weight bold))
+
+(let ((red-bg-faces '(default region)))
+  (custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
+   `(,(cl-loop for i from 0 to 6 collect (intern (format "outline-%d" i)))
+     :weight normal)
+   `(,red-bg-faces
+     :background "red" :weight bold)))
+
+;; You may utilise `doom-themes's theme API to fetch or tweak colors from their
+;; palettes. No need to wait until the theme or package is loaded. e.g.
+(custom-theme-set-faces! 'doom-one
+ `(outline-1 :foreground ,(doom-color 'red))
+ `(outline-2 :background ,(doom-color 'blue)))
+#+end_src
+
+* TODO defer-feature!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+* TODO defer-until!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+* disable-packages!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; Disable packages enabled by DOOM
+(disable-packages! some-package second-package)
+#+end_src
+
+* doom!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(doom! :completion
+       company
+       ivy
+       ;;helm
+
+       :tools
+       (:if (featurep :system 'macos) macos)
+       docker
+       lsp
+
+       :lang
+       (cc +lsp)
+       (:cond ((string= system-name "work-pc")
+               python
+               rust
+               web)
+              ((string= system-name "writing-pc")
+               (org +dragndrop)
+               ruby))
+       (:if (featurep :system 'linux)
+           (web +lsp)
+         web)
+
+       :config
+       literate
+       (default +bindings +smartparens))
+
+(doom!
+ (pin "v3.0.0")
+
+ (source "modules/")  ; Modules in $DOOMDIR/modules/*/*
+ (source :name doom :repo "doomemacs/modules" :pin "v21.12.0")  ; Doom's default modules
+ (source :name contrib :repo "doomemacs/contrib-modules" :pin "v21.12.0")  ; Community-contributed
+ ;; Examples:
+ (source :name my :repo "my/modules" :root "unorthodox/path/to/modules/")
+ (source :name more :host gitlab :repo "more/modules")
+
+ ;;; To enable (or disable) flags globally, they can be given at top-level:
+ +lsp -tree-sitter
+
+ ;;;; Examples of explicit and/or remote modules:
+ :lang
+ (rust   :repo "doomemacs/modules" :branch "somePR" :pin "1a2b3c4d"
+         :path "lang/rust"
+         :flags '(-lsp))
+ ;; A local, out-of-tree module
+ (python :path "/nonstandard/location/for/modules/python"
+         :flags '(+pyenv +conda))
+ (cc     :source 'doom)         ; explicit source
+ (agda   :source '(doom more))  ; multiple sources
+
+ :lang
+ (clojure +lsp)  ; shorthand format still works for flags
+ nix
+
+ ;; Conditional modules
+ (:os :if (featurep :system 'macos))  ; category-wide
+ macos
+ (tty :if (equal (system-name) "headless-machine"))  ; per-module
+
+ ...)
+#+end_src
+
+* file-exists-p!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(file-exists-p! "init.el" doom-emacs-dir)
+#+end_src
+
+#+begin_src emacs-lisp
+(file-exists-p! (and (or "doesnotexist" "init.el")
+                     "LICENSE")
+                doom-emacs-dir)
+#+end_src
+
+* fn!
+#+begin_src emacs-lisp
+(mapcar (fn! (symbol-name %)) '(hello world))
+#+end_src
+
+#+begin_src emacs-lisp
+(seq-sort (fn! (string-lessp (symbol-name %1)
+                             (symbol-name %2)))
+          '(bonzo foo bar buddy doomguy baz zombies))
+#+end_src
+
+#+begin_src emacs-lisp
+(format "You passed %d arguments to this function"
+        (funcall (fn! (length %*)) :foo :bar :baz "hello" 123 t))
+#+end_src
+
+* kbd!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(map! "," (kbd! "SPC")
+      ";" (kbd! ":"))
+#+end_src
+
+* lambda!
+#+begin_src emacs-lisp
+(mapcar (lambda! ((&key foo bar baz))
+          (list foo bar baz))
+        '((:foo 10 :bar 25)
+          (:baz hello :boop nil)
+          (:bar 42)))
+#+end_src
+
+* load!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;;; Lets say we're in ~/.doom.d/config.el
+(load! "lisp/module")                  ; loads ~/.doom.d/lisp/module.el
+(load! "somefile" doom-emacs-dir)      ; loads ~/.emacs.d/somefile.el
+(load! "anotherfile" doom-user-dir)    ; loads ~/.doom.d/anotherfile.el
+
+;; If you don't want a `load!' call to throw an error if the file doesn't exist:
+(load! "~/.maynotexist" nil t)
+#+end_src
+
+* map!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(map! :map magit-mode-map
+      :m  "C-r" 'do-something           ; C-r in motion state
+      :nv "q" 'magit-mode-quit-window   ; q in normal+visual states
+      "C-x C-r" 'a-global-keybind
+      :g "C-x C-r" 'another-global-keybind  ; same as above
+
+      (:when (featurep :system 'macos)
+        :n "M-s" 'some-fn
+        :i "M-o" (cmd! (message "Hi"))))
+
+(map! (:when (modulep! :completion company) ; Conditional loading
+        :i "C-@" #'+company/complete
+        (:prefix "C-x"                       ; Use a prefix key
+          :i "C-l" #'+company/whole-lines)))
+
+(map! (:when (modulep! :lang latex)    ; local conditional
+        (:map LaTeX-mode-map
+          :localleader                  ; Use local leader
+          :desc "View" "v" #'TeX-view)) ; Add which-key description
+      :leader                           ; Use leader key from now on
+      :desc "Eval expression" ";" #'eval-expression)
+#+end_src
+
+These are side-by-side comparisons, showing how to bind keys with and without
+~map!~:
+
+#+begin_src emacs-lisp :eval no
+;; bind a global key
+(global-set-key (kbd "C-x y") #'do-something)
+(map! "C-x y" #'do-something)
+
+;; bind a key on a keymap
+(define-key emacs-lisp-mode-map (kbd "C-c p") #'do-something)
+(map! :map emacs-lisp-mode-map "C-c p" #'do-something)
+
+;; unbind a key defined elsewhere
+(define-key lua-mode-map (kbd "SPC m b") nil)
+(map! :map lua-mode-map "SPC m b" nil)
+
+;; bind multiple keys
+(global-set-key (kbd "C-x x") #'do-something)
+(global-set-key (kbd "C-x y") #'do-something-else)
+(global-set-key (kbd "C-x z") #'do-another-thing)
+(map! "C-x x" #'do-something
+      "C-x y" #'do-something-else
+      "C-x z" #'do-another-thing)
+
+;; bind global keys in normal mode
+(evil-define-key* 'normal 'global
+  (kbd "C-x x") #'do-something
+  (kbd "C-x y") #'do-something-else
+  (kbd "C-x z") #'do-another-thing)
+(map! :n "C-x x" #'do-something
+      :n "C-x y" #'do-something-else
+      :n "C-x z" #'do-another-thing)
+
+;; or on a deferred keymap
+(evil-define-key 'normal emacs-lisp-mode-map
+  (kbd "C-x x") #'do-something
+  (kbd "C-x y") #'do-something-else
+  (kbd "C-x z") #'do-another-thing)
+(map! :map emacs-lisp-mode-map
+      :n "C-x x" #'do-something
+      :n "C-x y" #'do-something-else
+      :n "C-x z" #'do-another-thing)
+
+;; or multiple maps
+(dolist (map (list emacs-lisp-mode go-mode-map ivy-minibuffer-map))
+  (evil-define-key '(normal insert) map
+    "a" #'a
+    "b" #'b
+    "c" #'c))
+(map! :map (emacs-lisp-mode go-mode-map ivy-minibuffer-map)
+      :ni "a" #'a
+      :ni "b" #'b
+      :ni "c" #'c)
+
+;; or in multiple states (order of states doesn't matter)
+(evil-define-key* '(normal visual) emacs-lisp-mode-map (kbd "C-x x") #'do-something)
+(evil-define-key* 'insert emacs-lisp-mode-map (kbd "C-x x") #'do-something-else)
+(evil-define-key* '(visual normal insert emacs) emacs-lisp-mode-map (kbd "C-x z") #'do-another-thing)
+(map! :map emacs-lisp-mode
+      :nv   "C-x x" #'do-something      ; normal+visual
+      :i    "C-x y" #'do-something-else ; insert
+      :vnie "C-x z" #'do-another-thing) ; visual+normal+insert+emacs
+
+;; You can nest map! calls:
+(evil-define-key* '(normal visual) emacs-lisp-mode-map (kbd "C-x x") #'do-something)
+(evil-define-key* 'normal go-lisp-mode-map (kbd "C-x x") #'do-something-else)
+(map! (:map emacs-lisp-mode :nv "C-x x" #'do-something)
+      (:map go-lisp-mode    :n  "C-x x" #'do-something-else))
+#+end_src
+
+* package!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; To install a package that can be found on ELPA or any of the sources
+;; specified in `straight-recipe-repositories':
+(package! evil)
+(package! js2-mode)
+(package! rainbow-delimiters)
+
+;; To disable a package included with Doom (which will no-op all its `after!'
+;; and `use-package!' blocks):
+(package! evil :disable t)
+(package! rainbow-delimiters :disable t)
+
+;; To install a package from a github repo
+(package! so-long :host 'github :repo "hlissner/emacs-so-long")
+
+;; If a package is particularly big and comes with submodules you don't need,
+;; you can tell the package manager not to clone the repo recursively:
+(package! ansible :nonrecursive t)
+
+;; To pin a package to a specific commit:
+(package! evil :pin "e7bc39de2f9")
+;; ...or branch:
+(package! evil :branch "stable")
+;; To unpin a pinned package:
+(package! evil :pin nil)
+
+;; If you share your config between two computers, and don't want bin/doom
+;; refresh to delete packages used only on one system, use :ignore
+(package! evil :ignore (not (equal system-name "my-desktop")))
+#+end_src
+* prependq!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(let ((x '(a b c)))
+  (prependq! x '(c d e))
+  x)
+#+end_src
+
+#+RESULTS:
+: (c d e a b c)
+
+#+begin_src emacs-lisp
+(let ((x '(a b c))
+      (y '(c d e))
+      (z '(f g)))
+  (prependq! x y z '(h))
+  x)
+#+end_src
+
+#+RESULTS:
+: (c d e f g h a b c)
+
+* pushnew!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(let ((list '(a b c)))
+  (pushnew! list 'c 'd 'e)
+  list)
+#+end_src
+
+#+RESULTS:
+: (e d a b c)
+
+* quiet!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; Enters recentf-mode without extra output
+(quiet! (recentf-mode +1))
+#+end_src
+* remove-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; With only one hook and one function, this is identical to `remove-hook'. In
+;; that case, use that instead.
+(remove-hook! 'some-mode-hook #'enable-something)
+
+;; Removing N functions from M hooks
+(remove-hook! some-mode #'enable-something #'and-another)
+(remove-hook! some-mode #'(enable-something and-another))
+(remove-hook! '(one-mode-hook second-mode-hook) #'enable-something)
+(remove-hook! (one-mode second-mode) #'enable-something)
+
+;; Removing buffer-local hooks
+(remove-hook! (one-mode second-mode) :local #'enable-something)
+
+;; Removing arbitrary forms (must be exactly the same as the definition)
+(remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+#+end_src
+* setq!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+;; Each of these have a setter associated with them, which must be triggered in
+;; order for their new values to have an effect.
+(setq! evil-want-Y-yank-to-eol nil
+       evil-want-C-u-scroll nil
+       evil-want-C-d-scroll nil)
+#+end_src
+* setq-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; Set multiple variables after a hook
+(setq-hook! 'markdown-mode-hook
+  line-spacing 2
+  fill-column 80)
+
+;; Set variables after multiple hooks
+(setq-hook! '(eshell-mode-hook term-mode-hook)
+  hscroll-margin 0)
+#+end_src
+
+* unsetq-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(unsetq-hook! 'markdown-mode-hook line-spacing)
+
+;; Removes the following variable hook
+(setq-hook! 'markdown-mode-hook line-spacing 2)
+
+;; Removing N variables from M hooks
+(unsetq-hook! some-mode enable-something and-another)
+(unsetq-hook! some-mode (enable-something and-another))
+(unsetq-hook! '(one-mode-hook second-mode-hook) enable-something)
+(unsetq-hook! (one-mode second-mode) enable-something)
+#+end_src
+* use-package!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; Use after-call to load package before hook
+(use-package! projectile
+  :after-call (pre-command-hook after-find-file dired-before-readin-hook))
+
+;; defer recentf packages one by one
+(use-package! recentf
+  :defer-incrementally easymenu tree-widget timer
+  :after-call after-find-file)
+
+;; This is equivalent to :defer-incrementally (abc)
+(use-package! abc
+  :defer-incrementally t)
+#+end_src
+
+* versionp!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(versionp! "25.3" > "27.1")
+#+end_src
+
+#+RESULTS:
+: nil
+
+#+begin_src emacs-lisp
+(versionp! "28.0" <= emacs-version <= "28.1")
+#+end_src
+
+#+RESULTS:
+: t

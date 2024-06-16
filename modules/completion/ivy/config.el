@@ -237,7 +237,7 @@ results buffer.")
   (add-to-list 'ivy-sort-functions-alist '(counsel-imenu))
 
   ;; `counsel-locate'
-  (when IS-MAC
+  (when (featurep :system 'macos)
     ;; Use spotlight on mac by default since it doesn't need any additional setup
     (setq counsel-locate-cmd #'counsel-locate-cmd-mdfind))
 
@@ -276,13 +276,13 @@ results buffer.")
                          (cl-loop for dir in projectile-globally-ignored-directories
                                   collect "--exclude"
                                   collect dir)
-                         (if IS-WINDOWS '("--path-separator=/")))))
+                         (if (featurep :system 'windows) '("--path-separator=/")))))
               ((executable-find "rg" t)
                (append (list "rg" "--hidden" "--files" "--follow" "--color=never" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob"
                                 collect (concat "!" dir))
-                       (if IS-WINDOWS '("--path-separator=/"))))
+                       (if (featurep :system 'windows) '("--path-separator=/"))))
               ((cons find-program args)))
       (unless (listp args)
         (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))

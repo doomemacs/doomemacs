@@ -53,7 +53,8 @@
   :hook (+julia-repl-start . +julia-override-repl-escape-char-h)
   :hook (+julia-repl-start . julia-repl-use-emacsclient)
   :config
-  (set-popup-rule! "^\\*julia.*\\*$" :ttl nil)
+  (unless (modulep! +snail)
+    (set-popup-rule! "^\\*julia.*\\*$" :ttl nil))
 
   (when (modulep! :ui workspaces)
     (defadvice! +julia--namespace-repl-buffer-to-workspace-a (&optional executable-key suffix)
@@ -106,11 +107,9 @@
   :when (modulep! :term vterm)
   :hook (julia-mode . julia-snail-mode)
   :config
-  (setq julia-snail-popup-display-eval-results :command)
-  (setq julia-snail-multimedia-enable t)
-  (setq julia-snail-popup-display-face '(:background base3 :box `(:line-width -1 :color base5)))
-
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
+
+  (setq-default julia-snail-multimedia-enable t)
 
   (after! julia-mode
     (set-repl-handler! 'julia-mode #'+julia/open-snail-repl

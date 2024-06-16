@@ -9,7 +9,7 @@
 You may not have a way of fetching mail."))
 
 (when (and (modulep! +org)
-           (not IS-WINDOWS))
+           (not (featurep :system 'windows)))
   (unless (executable-find "identify")
     (warn! "Couldn't find the identify command from imagemagick. \
 LaTeX fragment re-scaling with org-msg will not work.")))

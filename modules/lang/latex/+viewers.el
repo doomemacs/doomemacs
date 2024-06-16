@@ -9,7 +9,7 @@
     (`skim
      (when-let
          (app-path
-          (and IS-MAC
+          (and (featurep :system 'macos)
                (file-exists-p! (or "/Applications/Skim.app"
                                    "~/Applications/Skim.app"))))
        (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))
@@ -18,7 +18,7 @@
                                          app-path)))))
 
     (`sumatrapdf
-     (when (and IS-WINDOWS
+     (when (and (featurep :system 'windows)
                 (executable-find "SumatraPDF"))
        (add-to-list 'TeX-view-program-selection '(output-pdf "SumatraPDF"))))
 
@@ -40,7 +40,7 @@
     (`pdf-tools
      (when (modulep! :tools pdf)
        (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
-       (when IS-MAC
+       (when (featurep :system 'macos)
          ;; PDF Tools isn't in `TeX-view-program-list-builtin' on macs.
          (add-to-list 'TeX-view-program-list '("PDF Tools" TeX-pdf-tools-sync-view)))
        ;; Update PDF buffers after successful LaTeX runs.

@@ -102,16 +102,23 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
                :append #'lsp!))
+  ;; Define a function to compile the project.
+  (defun +latex/compile ()
+    (interactive)
+    (TeX-save-document (TeX-master-file))
+    (TeX-command TeX-command-default 'TeX-master-file -1))
   (map! :localleader
         :map latex-mode-map
         :desc "View"          "v" #'TeX-view
-        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Compile"       "c" #'+latex/compile
+        :desc "Run all"       "a" #'TeX-command-run-all
         :desc "Run a command" "m" #'TeX-command-master)
   (map! :after latex
         :localleader
         :map LaTeX-mode-map
         :desc "View"          "v" #'TeX-view
-        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Compile"       "c" #'+latex/compile
+        :desc "Run all"       "a" #'TeX-command-run-all
         :desc "Run a command" "m" #'TeX-command-master))
 
 
@@ -175,19 +182,21 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   (dolist (env '("itemize" "enumerate" "description"))
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex-indent-item-fn)))
 
-  ;; Fix #1849: allow fill-paragraph in itemize/enumerate.
-  (defadvice! +latex--re-indent-itemize-and-enumerate-a (fn &rest args)
+  ;; Fix #1849: allow fill-paragraph in itemize/enumerate/description.
+  (defadvice! +latex--re-indent-itemize-and-enumerate-and-description-a (fn &rest args)
     :around #'LaTeX-fill-region-as-para-do
     (let ((LaTeX-indent-environment-list
            (append LaTeX-indent-environment-list
-                   '(("itemize"   +latex-indent-item-fn)
-                     ("enumerate" +latex-indent-item-fn)))))
+                   '(("itemize"     +latex-indent-item-fn)
+                     ("enumerate"   +latex-indent-item-fn)
+                     ("description" +latex-indent-item-fn)))))
       (apply fn args)))
-  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (fn &rest args)
+  (defadvice! +latex--dont-indent-itemize-and-enumerate-and-description-a (fn &rest args)
     :around #'LaTeX-fill-region-as-paragraph
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
       (delq! "itemize" LaTeX-indent-environment-list 'assoc)
       (delq! "enumerate" LaTeX-indent-environment-list 'assoc)
+      (delq! "description" LaTeX-indent-environment-list 'assoc)
       (apply fn args))))
 
 

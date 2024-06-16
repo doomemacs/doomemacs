@@ -18,17 +18,11 @@ capture, the end position, and the output buffer.")
 (use-package! markdown-mode
   :mode ("/README\\(?:\\.md\\)?\\'" . gfm-mode)
   :init
-  (setq markdown-enable-math t ; syntax highlighting for latex fragments
-        markdown-enable-wiki-links t
-        markdown-italic-underscore t
+  (setq markdown-italic-underscore t
         markdown-asymmetric-header t
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
         markdown-fontify-whole-heading-line t
-
-        ;; HACK Due to jrblevin/markdown-mode#578, invoking `imenu' throws a
-        ;;      'wrong-type-argument consp nil' error if you use native-comp.
-        markdown-nested-imenu-heading-index (not (ignore-errors (native-comp-available-p)))
 
         ;; `+markdown-compile' offers support for many transpilers (see
         ;; `+markdown-compile-functions'), which it tries until one succeeds.
@@ -36,8 +30,8 @@ capture, the end position, and the output buffer.")
         ;; This is set to `nil' by default, which causes a wrong-type-arg error
         ;; when you use `markdown-open'. These are more sensible defaults.
         markdown-open-command
-        (cond (IS-MAC "open")
-              (IS-LINUX "xdg-open"))
+        (cond ((featurep :system 'macos) "open")
+              ((featurep :system 'linux) "xdg-open"))
 
         ;; A sensible and simple default preamble for markdown exports that
         ;; takes after the github asthetic (plus highlightjs syntax coloring).

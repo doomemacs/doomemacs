@@ -1,5 +1,14 @@
 ;;; ui/tabs/config.el -*- lexical-binding: t; -*-
 
+(defcustom +tabs-buffer-update-groups-delay 0.1
+  "Minimum wait time (in seconds) before tab groups are recalculated."
+  :type 'float
+  :group 'doom)
+
+
+;;
+;;; Packages
+
 (use-package! centaur-tabs
   :hook (doom-first-file . centaur-tabs-mode)
   :init
@@ -20,7 +29,20 @@
     (defun +tabs-disable-centaur-tabs-mode-maybe-h ()
       "Disable `centaur-tabs-mode' in current buffer."
       (when (centaur-tabs-mode-on-p)
-        (centaur-tabs-local-mode)))))
+        (centaur-tabs-local-mode))))
+
+  ;; HACK: `centaur-tabs-buffer-update-groups' is both expensive and called too
+  ;;   frequently. There really is no reason to call it more than 10 times per
+  ;;   second, as buffers rarely change groups more frequently than that.
+  (let ((time (float-time)))
+    (defadvice! +tabs--rate-limit-buffer-update-groups-a (fn)
+      :around #'centaur-tabs-buffer-update-groups
+      (let ((now (float-time)))
+        (if-let ((buf (and (< now (+ time +tabs-buffer-update-groups-delay))
+                           (assq (current-buffer) centaur-tabs--buffers))))
+            (car (nth 2 buf))
+          (setq time now)
+          (funcall fn))))))
 
 
 ;; TODO tab-bar-mode (emacs 27)

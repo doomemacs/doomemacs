@@ -113,7 +113,7 @@ There are two caveats with this profile system:
 1. Delete [[https://github.com/plexus/chemacs2][Chemacs]] from =$EMACSDIR=.
 
 2. Install Doom there: ~$ git clone https://github.com/doomemacs/doomemacs
-   ~/.config/emacs~
+   \~/.config/emacs~
 
 3. Move =~/.emacs-profiles.el= to =~/.config/doom/profiles.el= and transform the
    string keys to symbols and adapt =env= entries like so:

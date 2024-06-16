@@ -43,6 +43,8 @@ This module adds support for the Clojure(Script) language.
 
 This module requires:
 - [[https://clojure.org/][clojure]]
+
+This module optionally requires:
 - [[https://github.com/borkdude/clj-kondo][clj-kondo]], for linting code (if [[doom-module::checkers syntax]])
 - [[https://clojure-lsp.github.io/clojure-lsp/][clojure-lsp]], for LSP support (if [[doom-module:+lsp]])
 - [[https://github.com/babashka/neil][neil]] for the ability to add packages to your Clojure project from Emacs
@@ -147,10 +149,17 @@ Several bindings used for viewing documentation for various functions, both insi
 | [[kbd:][K]]                 | ~+lookup/documentation~ |
 
 
-* TODO Configuration
-#+begin_quote
- 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
-#+end_quote
+* Configuration
+** =enrich-classpath=
+In recent versions, an option has been introduced that attempts to improve the experience of CIDER by accessing java source & javadocs, though this option is still currently considered beta.
+
+In order to opt into this, add the following to your =config.el=
+
+#+begin_src emacs-lisp
+(setq cider-enrich-classpath t)
+#+end_src
+
+See [[https://docs.cider.mx/cider/config/basic_config.html#use-enrich-classpath][the docs]] for more
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]

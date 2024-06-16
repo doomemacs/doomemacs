@@ -20,6 +20,7 @@
             ("Google"            +lookup--online-backend-google "https://google.com/search?q=%s")
             ("Google images"     "https://www.google.com/images?q=%s")
             ("Google maps"       "https://maps.google.com/maps?q=%s")
+            ("Kagi"              "https://kagi.com/search?q=%s")
             ("Project Gutenberg" "http://www.gutenberg.org/ebooks/search/?query=%s")
             ("DuckDuckGo"        +lookup--online-backend-duckduckgo "https://duckduckgo.com/?q=%s")
             ("DevDocs.io"        "https://devdocs.io/#q=%s")
@@ -31,6 +32,10 @@
             ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s")
             ("Internet archive"  "https://web.archive.org/web/*/%s")
             ("Sourcegraph"       "https://sourcegraph.com/search?q=context:global+%s&patternType=literal"))
+          (when (modulep! +yandex)
+            '(("Yandex"            "https://yandex.com/search/?text=%s")
+              ("Yandex images"     "https://yandex.com/images/search?text=%s")
+              ("Yandex maps"       "https://yandex.com/maps?text=%s")))
           (when (modulep! :lang rust)
             '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
@@ -216,7 +221,7 @@ Dictionary.app behind the scenes to get definitions.")
 
 (use-package! define-word
   :when (modulep! +dictionary)
-  :unless IS-MAC
+  :unless (featurep :system 'macos)
   :defer t
   :config
   (setq define-word-displayfn-alist

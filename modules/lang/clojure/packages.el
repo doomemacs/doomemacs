@@ -10,17 +10,17 @@
 
 ;; HACK Forward declare these clj-refactor/cider deps so that their deps are
 ;;      byte-compiled first.
-(package! parseclj :pin "4d0e780e00f1828b00c43099e6eebc6582998f72")
-(package! parseedn :pin "a09686fbb9113b8b1b4f20c9e1dc0d6fea01a64f")
+(package! parseclj :pin "6af22372e0fe14df882dd300b22b12ba2d7e00b0")
+(package! parseedn :pin "3407e4530a367b6c2b857dae261cdbb67a440aaa")
 
 ;;; Core packages
-(package! clojure-mode :pin "3453cd229b412227aaffd1dc2870fa8fa213c5b1")
-(package! clj-refactor :pin "b5abe655e572a6ecfed02bb8164b64716ef76b8e")
-(package! cider :pin "1ed5163433c991c00ea83fdd4447e8daf4aeccbe")
+(package! clojure-mode :pin "222fdafa2add56a171ded245339a383e5e3078ec")
+(package! clj-refactor :pin "fa3efe18e7150df5153a7d05c54e96d59398a0a8")
+(package! cider :pin "aa26d62ac59930079e47e652ccd73e8e447defd5")
 (when (and (modulep! :checkers syntax)
            (not (modulep! :checkers syntax +flymake)))
-  (package! flycheck-clj-kondo :pin "ff7bed2315755cfe02ef471edf522e27b78cd5ca"))
-(package! jet :pin "f007660c568e924e32d486a02aa4cd18203313cc")
+  (package! flycheck-clj-kondo :pin "9089ade9e01b091139321c78ad75946944ff845d"))
+(package! jet :pin "7d5157aac692fc761d8ed7a9f820fa6522136254")
 (package! neil
   :recipe (:host github :repo "babashka/neil" :files ("*.el"))
-  :pin "1dbac785cee4af8ad499839adbb83a8a297e7c70")
+  :pin "a1db63d420b85db814207113ca4a0b4b959073cc")

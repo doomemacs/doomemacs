@@ -86,8 +86,8 @@ buffer will be opened in the current workspace instead."
           (funcall consult--buffer-display (car buffer)))))))
 
 ;;;###autoload
-(defun +vertico/embark-open-in-new-workspace (x)
-  "Open X (a file) in a new workspace."
-  (interactive)
+(defun +vertico/embark-open-in-new-workspace (file)
+  "Open file in a new workspace."
+  (interactive "GFile:")
   (+workspace/new)
-  (find-file x))
+  (find-file file))
