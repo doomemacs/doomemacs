@@ -469,7 +469,7 @@ directives. By default, this only recognizes C directives.")
        :nv "K"   #'+lookup/documentation
        :nv "gd"  #'+lookup/definition
        :nv "gD"  #'+lookup/references
-       :nv "gf"  #'+lookup/file
+       :nv "gf"  #'+lookup/open-file-under-cursor
        :nv "gI"  #'+lookup/implementations
        :nv "gA"  #'+lookup/assignments)
       (:when (modulep! :tools eval)

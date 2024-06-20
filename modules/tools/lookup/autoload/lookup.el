@@ -399,6 +399,30 @@ Otherwise, falls back on `find-file-at-point'."
 
         ((user-error "Couldn't find any files here"))))
 
+;;;###autoload
+(defun +lookup/open-file-under-cursor ()
+  "Open the file under cursor and go to position if present.
+
+Supports both relative path and absolute path. If path is relative,
+ then find common ancestor of path and current buffer file. If path is
+ absolute path, go to the file directly. Otherwise, fallback to +lookup/file."
+  (interactive)
+  (let* ((file-path (thing-at-point 'filename t)))
+    (if (file-name-absolute-p file-path)
+        (find-file file-path)
+      (let* ((parts (split-string (buffer-file-name) "/"))
+             (target-filename "")
+             (target-exists nil))
+
+        (dolist (n (number-sequence 1 (length parts)) target-filename)
+          (let* ((new-filename (string-join (append (-take n parts) (list file-path)) "/")))
+            (if (file-exists-p new-filename)
+                (setq target-filename new-filename
+                      target-exists t))))
+
+        (if target-exists
+            (find-file target-filename)
+          (+lookup/file))))))
 
 ;;
 ;;; Dictionary
