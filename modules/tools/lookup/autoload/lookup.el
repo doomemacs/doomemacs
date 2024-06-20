@@ -263,29 +263,41 @@ current buffer."
                     (<  pt end))))))))
 
 (defun +lookup-ffap-backend-fn (identifier)
-  "Tries to locate the file at point (or in active selection).
-Uses find-in-project functionality (provided by ivy, helm, or project),
-otherwise falling back to ffap.el (find-file-at-point)."
-  (let ((guess
+  "Tries to locate the file or URL at point (or in active selection).
+
+See `ffap-alist' for ways to tweak how files are resolved. Falls back to
+whatever find-in-project functionality is available in your active completion
+framework (ivy, helm, vertico, etc), otherwise falling back to
+`find-file-at-point''s file prompt."
+  (let ((initial-buffer (current-buffer))
+        (guess
          (cond (identifier)
                ((doom-region-active-p)
                 (buffer-substring-no-properties
                  (doom-region-beginning)
                  (doom-region-end)))
-               ((if (require 'ffap) (ffap-guesser)))
+               ((if (require 'ffap) (ffap-guesser))) ; Powerful! See `ffap-alist'
                ((thing-at-point 'filename t)))))
     (cond ((and (stringp guess)
                 (or (file-exists-p guess)
                     (ffap-url-p guess)))
            (find-file-at-point guess))
-          ((and (modulep! :completion ivy)
-                (doom-project-p))
+          ;; Walk the file tree up to the project's root for relative paths.
+          ((and (stringp guess)
+                ;; Only do this with paths that contain segments, to reduce
+                ;; false positives.
+                (string-match-p "/" guess)
+                (when-let ((dir (locate-dominating-file default-directory guess)))
+                  (when (file-in-directory-p dir (doom-project-root))
+                    (find-file (doom-path dir guess))
+                    t))))
+          ;; Fallback prompters
+          ((and (modulep! :completion ivy) (doom-project-p))
            (counsel-file-jump guess (doom-project-root)))
-          ((and (modulep! :completion vertico)
-                (doom-project-p))
+          ((and (modulep! :completion vertico) (doom-project-p))
            (+vertico/consult-fd-or-find (doom-project-root) guess))
           ((find-file-at-point (ffap-prompter guess))))
-    t))
+    (not (eq initial-buffer (current-buffer)))))
 
 (defun +lookup-bug-reference-backend-fn (_identifier)
   "Searches for a bug reference in user/repo#123 or #123 format and opens it in
