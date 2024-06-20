@@ -10,7 +10,7 @@
 ;;; Packages
 
 (use-package! centaur-tabs
-  :hook (doom-first-file . centaur-tabs-mode)
+  :defer t
   :init
   (setq centaur-tabs-set-icons t
         centaur-tabs-gray-out-icons 'buffer
@@ -23,6 +23,10 @@
         ;; replaces the tab list with that of another Doom workspace. This
         ;; prevents that.
         centaur-tabs-cycle-scope 'tabs)
+
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook #'centaur-tabs-mode)
+    (add-hook 'doom-first-file-hook #'centaur-tabs-mode))
 
   :config
   (add-hook! '(+doom-dashboard-mode-hook +popup-buffer-mode-hook)
