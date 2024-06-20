@@ -35,6 +35,12 @@
       (when (centaur-tabs-mode-on-p)
         (centaur-tabs-local-mode))))
 
+  (add-hook! 'doom-load-theme-hook
+    (defun +tabs-reload-centaur-tabs-h ()
+      (when (bound-and-true-p centaur-tabs-mode)
+        (centaur-tabs-mode -1)
+        (centaur-tabs-mode +1))))
+
   ;; HACK: `centaur-tabs-buffer-update-groups' is both expensive and called too
   ;;   frequently. There really is no reason to call it more than 10 times per
   ;;   second, as buffers rarely change groups more frequently than that.
