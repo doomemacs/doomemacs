@@ -36,25 +36,25 @@ emacs="$EMACS -q --no-site-file --batch"
 # on it to provide TMPDIR. And can second as a quick existence check for Emacs.
 TMPDIR="${TMPDIR:-$($emacs --eval '(princ (temporary-file-directory))' 2>/dev/null)}"
 if [ -z "$TMPDIR" ]; then
-    >&2 echo "Error: failed to run Emacs with command '$EMACS'"
-    >&2 echo
-    >&2 echo "Are you sure Emacs is installed and in your \$PATH?"
+    echo "Error: failed to run Emacs with command '$EMACS'"
+    echo
+    echo "Are you sure Emacs is installed and in your \$PATH?"
     exit 1
-fi
+fi >&2
 
 # Doom respects $EMACSDIR to tell it where Doom lives. If it fails, then this is
 # either isn't bash, or it's a posix shell being directly sourced with sh, which
 # is unsupported.
 export EMACSDIR="${EMACSDIR:-$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE:-$0}")/.." && pwd)}"
 if [ ! -f "$EMACSDIR/early-init.el" ]; then
-    >&2 echo "Error: cannot load $EMACSDIR/early-init.el."
-    >&2 echo
-    >&2 echo "Either the file doesn't exist (indicating a broken or missing Doom install)"
-    >&2 echo "or that doomscript is being source directly (which is unsupported)."
-    >&2 echo
-    >&2 echo "Set \$EMACSDIR to the path of an existing Doom installation."
+    echo "Error: cannot load $EMACSDIR/early-init.el."
+    echo
+    echo "Either the file doesn't exist (indicating a broken or missing Doom install)"
+    echo "or that doomscript is being source directly (which is unsupported)."
+    echo
+    echo "Set \$EMACSDIR to the path of an existing Doom installation."
     exit 1
-fi
+fi >&2
 # Some state that Doom's CLI framework needs to know about the terminal. Read
 # the comments at the top of bin/doom for explanations.
 export __DOOMPID="${__DOOMPID:-$$}"
@@ -75,8 +75,8 @@ $emacs --load "$EMACSDIR/early-init" \
        -- "$@"
 exit=$?
 
-# To simulate execve syscalls, Doom generates a temporary exit-script if a
-# Doomscript returns a 254 exit code.
+# To simulate execve syscalls (which replaces the running process), Doom
+# generates a temporary exit-script if a Doomscript returns a 254 exit code.
 if [ "${exit:-0}" -eq 254 ]; then
     # The user may have a noexec flag set on /tmp, so the exit-script should be
     # passed to /bin/sh rather than executed directly.
