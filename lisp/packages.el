@@ -29,10 +29,10 @@
 
 ;; doom-editor.el
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
-(package! dtrt-indent :pin "5d1b44f9a1a484ca229cc14f8062609a10ef4891")
-(package! helpful :pin "a32a5b3d959a7fccf09a71d97b3d7c888ac31c69")
+(package! dtrt-indent :pin "939c5e374ac0175bb7d561542e22e47a72d04aa8")
+(package! helpful :pin "4ba24cac9fb14d5fdc32582cd947572040e82b2c")
 (package! pcre2el :pin "380723b2701cceb75c266440fb8db918f3340d50")
-(package! smartparens :pin "a5c68cac1bea737b482a37aa92de4f6efbf7580b")
+(package! smartparens :pin "f7cf316715e5018186c226aab8242c9e5ce131c8")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
@@ -41,8 +41,8 @@
 
 ;; doom-projects.el
 (package! projectile :pin "0163b335a18af0f077a474d4dc6b36e22b5e3274")
-(package! project :pin "93aa1872e93a681a44cae03fecb8df4101719897")
+(package! project :pin "bf4c3cfcfbf3423d79170aa880a1abb332ed942e")
 
 ;; doom-keybinds.el
 (package! general :pin "826bf2b97a0fb4a34c5eb96ec2b172d682fd548f")
-(package! which-key :pin "1e89fa000e9ba9549f15ef57abccd118d5f2fe1a")
+(package! which-key :pin "ed389312170df955aaf10c2e120cc533ed5c509e")
