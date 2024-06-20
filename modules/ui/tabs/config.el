@@ -42,8 +42,18 @@
                            (assq (current-buffer) centaur-tabs--buffers))))
             (car (nth 2 buf))
           (setq time now)
-          (funcall fn))))))
+          (funcall fn)))))
 
+  ;; This is deferred twice to ensure these settings apply *after* any user
+  ;; configuration!
+  (after! centaur-tabs
+    ;; HACK: `centaur-tabs-line-tab' reads `centaur-tabs-ace-jump-keys' without
+    ;;   length guards. If there are fewer entries than you have tabs, you'll
+    ;;   see an error (ema2159/centaur-tabs#231).
+    ;; REVIEW: Remove when ema2159/centaur-tabs#231 is dealt with.
+    (when (< (length centaur-tabs-ace-jump-keys) 100)
+      (setq centaur-tabs-ace-jump-keys
+            (append centaur-tabs-ace-jump-keys (make-list 100 ?\ ))))))
 
 ;; TODO tab-bar-mode (emacs 27)
 ;; TODO tab-line-mode (emacs 27)
