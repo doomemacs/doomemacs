@@ -39,31 +39,7 @@
     (defun +tabs-reload-centaur-tabs-h ()
       (when (bound-and-true-p centaur-tabs-mode)
         (centaur-tabs-mode -1)
-        (centaur-tabs-mode +1))))
-
-  ;; HACK: `centaur-tabs-buffer-update-groups' is both expensive and called too
-  ;;   frequently. There really is no reason to call it more than 10 times per
-  ;;   second, as buffers rarely change groups more frequently than that.
-  (let ((time (float-time)))
-    (defadvice! +tabs--rate-limit-buffer-update-groups-a (fn)
-      :around #'centaur-tabs-buffer-update-groups
-      (let ((now (float-time)))
-        (if-let ((buf (and (< now (+ time +tabs-buffer-update-groups-delay))
-                           (assq (current-buffer) centaur-tabs--buffers))))
-            (car (nth 2 buf))
-          (setq time now)
-          (funcall fn)))))
-
-  ;; This is deferred twice to ensure these settings apply *after* any user
-  ;; configuration!
-  (after! centaur-tabs
-    ;; HACK: `centaur-tabs-line-tab' reads `centaur-tabs-ace-jump-keys' without
-    ;;   length guards. If there are fewer entries than you have tabs, you'll
-    ;;   see an error (ema2159/centaur-tabs#231).
-    ;; REVIEW: Remove when ema2159/centaur-tabs#231 is dealt with.
-    (when (< (length centaur-tabs-ace-jump-keys) 100)
-      (setq centaur-tabs-ace-jump-keys
-            (append centaur-tabs-ace-jump-keys (make-list 100 ?\ ))))))
+        (centaur-tabs-mode +1)))))
 
 ;; TODO tab-bar-mode (emacs 27)
 ;; TODO tab-line-mode (emacs 27)
