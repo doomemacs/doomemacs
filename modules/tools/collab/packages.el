@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/collab/packages.el
 
-(package! crdt :pin "4a18cd8539c8f3364e3ae903580328dd8b05fa78")
+(package! crdt :pin "9bf99e2ce35d23c3d60ad245b77ab3b5313184d4")
