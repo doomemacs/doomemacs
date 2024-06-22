@@ -92,8 +92,8 @@ and `format!' into colored output, where COLOR is any car of this list (or
                          (not (stringp str))
                          (string-blank-p str))
                      str
-                   (let ((dir (or dir (file-truename default-directory)))
-                         (str (file-truename str)))
+                   (let* ((dir (or dir default-directory))
+                          (str (expand-file-name str dir)))
                      (if (file-in-directory-p str dir)
                          (file-relative-name str dir)
                        (abbreviate-file-name str))))))
