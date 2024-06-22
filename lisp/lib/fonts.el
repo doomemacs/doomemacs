@@ -29,7 +29,6 @@ The font will be normalized (i.e. :weight, :slant, and :width will set to
 
 FONT can be a `font-spec', a font object, an XFT font string, or an XLFD font
 string."
-  (cl-check-type font (or font string vector))
   (when (and (stringp font)
              (string-prefix-p "-" font))
     (setq font (x-decompose-font-name font)))
@@ -45,7 +44,8 @@ string."
                 ((vectorp font)
                  (dolist (i '(1 2 3) (x-compose-font-name font))
                    (unless (aref font i)
-                     (aset font i "normal"))))))
+                     (aset font i "normal"))))
+                ((signal 'wrong-type-of-argument (list '(font string vectorp) font)))))
          (font (x-resolve-font-name font))
          (font (font-spec :name font)))
     (unless (font-get font :size)

@@ -538,7 +538,7 @@ which case it will save it without prompting."
        (when (or (derived-mode-p 'dired-mode)
                  (derived-mode-p 'wdired-mode))
          default-directory)
-       (user-error "Cannot determine the file path of the current buffer"))))
+       (user-error "Current buffer isn't visiting a file"))))
 
 ;;;###autoload
 (defun doom/sudo-save-buffer ()
