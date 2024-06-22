@@ -82,6 +82,6 @@ This is controlled by `+format-on-save-disabled-modes'."
        (save-excursion
          (font-lock-fontify-region web-mode-scan-beg web-mode-scan-end)))))
 
- (defun +format--refresh-git-gutter-h ()
+ (defun +format--refresh-vc-gutter-h ()
    (when (fboundp '+vc-gutter-update-h)
      (+vc-gutter-update-h))))

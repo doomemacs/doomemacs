@@ -8,7 +8,6 @@ This module gives Doom its signature look: powered by the [[doom-package:doom-th
 (loosely inspired by [[https://github.com/atom/one-dark-syntax][Atom's One Dark theme]]) and [[doom-package:solaire-mode]]. Includes:
 
 - A custom folded-region indicator for [[doom-package:hideshow]].
-- "Thin bar" fringe bitmaps for [[doom-package:git-gutter-fringe]].
 - File-visiting buffers are slightly brighter (thanks to [[doom-package:solaire-mode]]).
 
 ** Maintainers

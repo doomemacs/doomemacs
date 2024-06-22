@@ -64,8 +64,8 @@ are great, but this file exists to add demos for Doom's API and beyond.
 (after! helm ...)
 
 ;; An unquoted list of package symbols (i.e. BODY is evaluated once both magit
-;; and git-gutter have loaded)
-(after! (magit git-gutter) ...)
+;; and diff-hl have loaded)
+(after! (magit diff-hl) ...)
 
 ;; An unquoted, nested list of compound package lists, using any combination of
 ;; :or/:any and :and/:all

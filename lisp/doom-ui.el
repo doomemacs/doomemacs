@@ -242,7 +242,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;; Fringes
 
 ;; Reduce the clutter in the fringes; we'd like to reserve that space for more
-;; useful information, like git-gutter and flycheck.
+;; useful information, like diff-hl and flycheck.
 (setq indicate-buffer-boundaries nil
       indicate-empty-lines nil)
 

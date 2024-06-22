@@ -108,7 +108,7 @@ modified."
 
 ;;;###autoload
 (defun +magit-revert-buffer-maybe-h ()
-  "Update `vc' and `git-gutter' if out of date."
+  "Update `vc' and `diff-hl' if out of date."
   (when +magit--stale-p
     (+magit--revert-buffer (current-buffer))))
 

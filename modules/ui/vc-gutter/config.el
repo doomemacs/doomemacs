@@ -1,13 +1,5 @@
 ;;; ui/vc-gutter/config.el -*- lexical-binding: t; -*-
 
-;; TODO Implement me
-(defvar +vc-gutter-in-margin nil
-  "If non-nil, use the margin for diffs instead of the fringe.")
-
-(defvar +vc-gutter-in-remote-files nil
-  "If non-nil, enable the vc gutter in remote files (e.g. open through TRAMP).")
-
-
 ;;
 ;;; Default styles
 
@@ -23,36 +15,28 @@
   ;;   having to shrink the fringe and sacrifice precious space for other fringe
   ;;   indicators (like flycheck or flyspell).
   ;; REVIEW: Extract these into a package with faces that themes can target.
-  (if (not (modulep! +diff-hl))
-      (after! git-gutter-fringe
-        (define-fringe-bitmap 'git-gutter-fr:added [224]
-          nil nil '(center repeated))
-        (define-fringe-bitmap 'git-gutter-fr:modified [224]
-          nil nil '(center repeated))
-        (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
-          nil nil 'bottom))
-    (defadvice! +vc-gutter-define-thin-bitmaps-a (&rest args)
-      :override #'diff-hl-define-bitmaps
-      (define-fringe-bitmap 'diff-hl-bmp-middle [224] nil nil '(center repeated))
-      (define-fringe-bitmap 'diff-hl-bmp-delete [240 224 192 128] nil nil 'top))
-    (defun +vc-gutter-type-face-fn (type _pos)
-      (intern (format "diff-hl-%s" type)))
-    (defun +vc-gutter-type-at-pos-fn (type _pos)
-      (if (eq type 'delete)
-          'diff-hl-bmp-delete
-        'diff-hl-bmp-middle))
-    (advice-add #'diff-hl-fringe-bmp-from-pos  :override #'+vc-gutter-type-at-pos-fn)
-    (advice-add #'diff-hl-fringe-bmp-from-type :override #'+vc-gutter-type-at-pos-fn)
-    (setq diff-hl-draw-borders nil)
-    (add-hook! 'diff-hl-mode-hook
-      (defun +vc-gutter-fix-diff-hl-faces-h ()
-        (mapc (doom-rpartial #'set-face-background nil)
-              '(diff-hl-insert
-                diff-hl-delete
-                diff-hl-change)))))
+  (defadvice! +vc-gutter-define-thin-bitmaps-a (&rest args)
+    :override #'diff-hl-define-bitmaps
+    (define-fringe-bitmap 'diff-hl-bmp-middle [224] nil nil '(center repeated))
+    (define-fringe-bitmap 'diff-hl-bmp-delete [240 224 192 128] nil nil 'top))
+  (defun +vc-gutter-type-face-fn (type _pos)
+    (intern (format "diff-hl-%s" type)))
+  (defun +vc-gutter-type-at-pos-fn (type _pos)
+    (if (eq type 'delete)
+        'diff-hl-bmp-delete
+      'diff-hl-bmp-middle))
+  (advice-add #'diff-hl-fringe-bmp-from-pos  :override #'+vc-gutter-type-at-pos-fn)
+  (advice-add #'diff-hl-fringe-bmp-from-type :override #'+vc-gutter-type-at-pos-fn)
+  (setq diff-hl-draw-borders nil)
+  (add-hook! 'diff-hl-mode-hook
+    (defun +vc-gutter-fix-diff-hl-faces-h ()
+      (mapc (doom-rpartial #'set-face-background nil)
+            '(diff-hl-insert
+              diff-hl-delete
+              diff-hl-change))))
 
-  ;; FIX: To minimize overlap between flycheck indicators and git-gutter/diff-hl
-  ;;   indicators in the left fringe.
+  ;; FIX: To minimize overlap between flycheck indicators and diff-hl indicators
+  ;;   in the left fringe.
   (after! flycheck
     ;; Let diff-hl have left fringe, flycheck can have right fringe
     (setq flycheck-indication-mode 'right-fringe)
@@ -62,98 +46,9 @@
 
 
 ;;
-;;; git-gutter
-
-(use-package! git-gutter
-  :unless (modulep! +diff-hl)
-  :commands git-gutter:revert-hunk git-gutter:stage-hunk git-gutter:previous-hunk git-gutter:next-hunk
-  :init
-  (add-hook! 'find-file-hook
-    (defun +vc-gutter-init-maybe-h ()
-      "Enable `git-gutter-mode' in the current buffer.
-If the buffer doesn't represent an existing file, `git-gutter-mode's activation
-is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
-      (let ((file-name (buffer-file-name (buffer-base-buffer))))
-        (cond
-         ((and (file-remote-p (or file-name default-directory))
-               (not +vc-gutter-in-remote-files)))
-         ;; UX: If not a valid file, wait until it is written/saved to activate
-         ;;   git-gutter.
-         ((not (and file-name (vc-backend file-name)))
-          (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil 'local))
-         ;; UX: Allow git-gutter or git-gutter-fringe to activate based on the
-         ;;   type of frame we're in. This allows git-gutter to work for silly
-         ;;   geese who open both tty and gui frames from the daemon.
-         ((if (and (display-graphic-p)
-                   (require 'git-gutter-fringe nil t))
-              (setq-local git-gutter:init-function      #'git-gutter-fr:init
-                          git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos
-                          git-gutter:clear-function     #'git-gutter-fr:clear
-                          git-gutter:window-width -1)
-            (setq-local git-gutter:init-function      'nil
-                        git-gutter:view-diff-function #'git-gutter:view-diff-infos
-                        git-gutter:clear-function     #'git-gutter:clear-diff-infos
-                        git-gutter:window-width 1))
-          (unless (memq major-mode git-gutter:disabled-modes)
-            (git-gutter-mode +1)
-            (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
-
-  ;; UX: Disable in Org mode, as per syl20bnr/spacemacs#10555 and
-  ;;   syohex/emacs-git-gutter#24. Apparently, the mode-enabling function for
-  ;;   global minor modes gets called for new buffers while they are still in
-  ;;   `fundamental-mode', before a major mode has been assigned. I don't know
-  ;;   why this is the case, but adding `fundamental-mode' here fixes the issue.
-  (setq git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
-  :config
-  (set-popup-rule! "^\\*git-gutter" :select nil :size '+popup-shrink-to-fit)
-
-  ;; PERF: Only enable the backends that are available, so it doesn't have to
-  ;;   check when opening each buffer.
-  (setq git-gutter:handled-backends
-        (cons 'git (cl-remove-if-not #'executable-find (list 'hg 'svn 'bzr)
-                                     :key #'symbol-name)))
-
-  ;; UX: update git-gutter on focus (in case I was using git externally)
-  (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
-
-  ;; Stop git-gutter doing things when we don't want
-  (remove-hook 'post-command-hook #'git-gutter:post-command-hook)
-  (advice-remove #'quit-window #'git-gutter:quit-window)
-  (advice-remove #'switch-to-buffer #'git-gutter:switch-to-buffer)
-
-  (add-hook! '(doom-escape-hook doom-switch-window-hook) :append
-    (defun +vc-gutter-update-h (&rest _)
-      "Refresh git-gutter on ESC. Return nil to prevent shadowing other
-`doom-escape-hook' hooks."
-      (ignore (or (memq this-command '(git-gutter:stage-hunk
-                                       git-gutter:revert-hunk))
-                  inhibit-redisplay
-                  (if git-gutter-mode
-                      (git-gutter)
-                    (+vc-gutter-init-maybe-h))))))
-  ;; UX: update git-gutter when using magit commands
-  (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
-  (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
-
-  ;; UX: update git-gutter after reverting a buffer
-  (add-hook 'after-revert-hook #'+vc-gutter-update-h)
-
-  ;; FIX: stop git-gutter:{next,previous}-hunk from jumping to random hunks.
-  (defadvice! +vc-gutter--fix-linearity-of-hunks-a (diffinfos is-reverse)
-    :override #'git-gutter:search-near-diff-index
-    (cl-position-if (let ((lineno (line-number-at-pos))
-                          (fn (if is-reverse #'> #'<)))
-                      (lambda (line) (funcall fn lineno line)))
-                    diffinfos
-                    :key #'git-gutter-hunk-start-line
-                    :from-end is-reverse)))
-
-
-;;
 ;;; diff-hl
 
 (use-package! diff-hl
-  :when (modulep! +diff-hl)
   :hook (find-file    . diff-hl-mode)
   :hook (vc-dir-mode  . diff-hl-dir-mode)
   :hook (dired-mode   . diff-hl-dired-mode)
@@ -162,8 +57,6 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   :config
   (set-popup-rule! "^\\*diff-hl" :select nil :size '+popup-shrink-to-fit)
 
-  ;; PERF: reduce load on remote
-  (defvaralias 'diff-hl-disable-on-remote '+vc-gutter-in-remote-files)
   ;; PERF: A slightly faster algorithm for diffing.
   (setq vc-git-diff-switches '("--histogram"))
   ;; PERF: Slightly more conservative delay before updating the diff
@@ -185,7 +78,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
           :n "{" #'diff-hl-show-hunk-previous
           :n "}" #'diff-hl-show-hunk-next
           :n "S" #'diff-hl-show-hunk-stage-hunk))
-  ;; UX: Refresh git-gutter on ESC or refocusing the Emacs frame.
+  ;; UX: Refresh gutter on ESC or refocusing the Emacs frame.
   (add-hook! '(doom-escape-hook doom-switch-window-hook) :append
     (defun +vc-gutter-update-h (&rest _)
       "Return nil to prevent shadowing other `doom-escape-hook' hooks."

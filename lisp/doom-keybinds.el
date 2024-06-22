@@ -82,7 +82,7 @@ and Emacs states, and for non-evil users.")
 ;; 1. Quit active states; e.g. highlights, searches, snippets, iedit,
 ;;    multiple-cursors, recording macros, etc.
 ;; 2. Close popup windows remotely (if it is allowed to)
-;; 3. Refresh buffer indicators, like git-gutter and flycheck
+;; 3. Refresh buffer indicators, like diff-hl and flycheck
 ;; 4. Or fall back to `keyboard-quit'
 ;;
 ;; And it should do these things incrementally, rather than all at once. And it
