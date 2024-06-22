@@ -118,6 +118,12 @@ Any of these classes can be called like functions from within `format!' and
 
 Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 
+(defvar doom-print-stream nil
+  "The default value for `standard-output' for Doom's print API.
+
+If non-nil, this is used instead of `standard-output' because changes to that
+variable don't survive translation units.")
+
 (defvar doom-print-level 'notice
   "The current, default logging level.")
 
@@ -143,11 +149,11 @@ Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
             (format nil)
             (level doom-print-level)
             (newline t)
-            (stream standard-output))
+            (stream (or doom-print-stream standard-output)))
   "Print OUTPUT to stdout.
 
 Unlike `message', this:
-- Respects the value of `standard-output'.
+- Respects the value of `standard-output' (if `doom-print-stream' is nil).
 - Indents according to `doom-print-indent' (if FORMAT is non-nil).
 - Prints to stdout instead of stderr in batch mode.
 - Recognizes more terminal escape codes (only in batch mode).
@@ -236,7 +242,7 @@ based on the print level of the message. For example:
     `(letf! ((,sym ,streamspec)
              (standard-output (doom-print--redirect-standard-output ,sym t))
              (#'message (doom-print--redirect-message ,sym (if noninteractive 'debug 'notice)))
-             (doom-print--output-depth (1+ doom-print--output-depth)))
+             (doom-print-stream standard-output))
        ,@body)))
 
 
@@ -260,8 +266,8 @@ based on the print level of the message. For example:
                                 (get (car spec) 'print-level)))
                            (cadr spec)))))
 
-(defun doom-print--redirect-standard-output (streamspec level)
-  (let ((old standard-output)
+(defun doom-print--redirect-standard-output (streamspec level &optional old-stream)
+  (let ((old (or old-stream standard-output))
         (streams (doom-print--redirect-streams streamspec level)))
     (lambda (ch)
       (let ((str (char-to-string ch)))
@@ -273,7 +279,8 @@ based on the print level of the message. For example:
 
 (defun doom-print--redirect-message (streamspec level)
   (let ((old (symbol-function #'message))
-        (streams (doom-print--redirect-streams streamspec level)))
+        (streams (doom-print--redirect-streams streamspec level))
+        (doom-print--output-depth (1+ doom-print--output-depth)))
     (lambda (message &rest args)
       (when message
         (let ((output (apply #'doom-print--format message args)))
