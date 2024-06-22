@@ -232,10 +232,12 @@ Must be run from a magit diff buffer."
                         :test #'equal)))
         (save-excursion
           (while (re-search-forward "^-" nil t)
-            (cl-pushnew (read-package) before :test #'equal)))
+            (when-let (pkg (read-package))
+              (cl-pushnew pkg before :test #'equal))))
         (save-excursion
           (while (re-search-forward "^+" nil t)
-            (cl-pushnew (read-package) after :test #'equal)))
+            (when-let (pkg (read-package))
+              (cl-pushnew pkg after :test #'equal))))
         (unless (= (length before) (length after))
           (user-error "Uneven number of packages being bumped"))
         (dolist (p1 before)
