@@ -111,6 +111,7 @@ variable for an explanation of the defaults (in comments). See
       consult
       corfu
       crdt
+      (csv "csv-mode")
       (custom cus-edit)
       cus-theme
       dashboard
@@ -128,6 +129,7 @@ variable for an explanation of the defaults (in comments). See
       distel
       doc-view
       docker
+      eat
       ebib
       ebuku
       edbi
@@ -182,6 +184,7 @@ variable for an explanation of the defaults (in comments). See
       info
       ivy
       js2-mode
+      ,@(if (>= emacs-major-version 30) '(kmacro))
       leetcode
       lispy
       lms
@@ -193,6 +196,7 @@ variable for an explanation of the defaults (in comments). See
       macrostep
       man
       (magit magit-repos magit-submodule)
+      magit-repos
       magit-section
       magit-todos
       markdown-mode
