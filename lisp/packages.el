@@ -33,11 +33,7 @@
 (package! helpful :pin "4ba24cac9fb14d5fdc32582cd947572040e82b2c")
 (package! pcre2el :pin "380723b2701cceb75c266440fb8db918f3340d50")
 (package! smartparens :pin "f7cf316715e5018186c226aab8242c9e5ce131c8")
-(package! ws-butler
-  ;; Use my fork of ws-butler, which has a few choice improvements and
-  ;; optimizations (the original has been abandoned).
-  :recipe (:host github :repo "hlissner/ws-butler")
-  :pin "572a10c11b6cb88293de48acbb59a059d36f9ba5")
+(package! ws-butler :pin "e3a38d93e01014cd47bf5af4924459bd145fd7c4")
 
 ;; doom-projects.el
 (package! projectile :pin "0163b335a18af0f077a474d4dc6b36e22b5e3274")
