@@ -31,7 +31,7 @@
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                          "(provide 'org-version)\n")))))
-  :pin "7fa1694ec6baade1937fffeed422a8eb33ba1ced")
+  :pin "39272e2165ad9c49cfa9b5d749a5bb528dbadd87")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
