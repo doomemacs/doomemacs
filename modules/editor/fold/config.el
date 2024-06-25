@@ -86,6 +86,7 @@
   :config
   (vimish-fold-global-mode +1))
 
+
 (use-package! ts-fold
   :when (modulep! :tools tree-sitter)
   :after tree-sitter
@@ -97,4 +98,4 @@
                                                 :inherit font-lock-comment-face
                                                 :weight light))
   (setq ts-fold-replacement "  [...]  ")
-  (ts-fold-mode +1))
+  (global-ts-fold-mode +1))
