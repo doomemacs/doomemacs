@@ -1,0 +1,13 @@
+← [[doom-module-index:][Back to module index]]              ↖ [[doom-module-history:emacs/ibuffer][History]]  ! [[doom-module-issues:::emacs ibuffer][Issues]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+--------------------------------------------------------------------------------
+#+title:    :eww
+#+subtitle: emacs-web-wowser
+#+created:  October 2, 2022
+
+* Description
+eww and helper functions
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
