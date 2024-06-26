@@ -216,7 +216,7 @@ uses a straight or package.el command directly).")
                                   :repo "melpa/melpa"
                                   :build nil)
               (nongnu-elpa        :type git
-                                  :repo "https://git.savannah.gnu.org/git/emacs/nongnu.git"
+                                  :repo "https://git.savannah.gnu.org/cgit/emacs/nongnu.git"
                                   :local-repo "nongnu-elpa"
                                   :build nil)
               (gnu-elpa-mirror    :type git :host github
