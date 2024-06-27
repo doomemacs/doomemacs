@@ -225,7 +225,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                (when (or ;; if there aren't more real buffers than visible buffers,
                       ;; then there are no real, non-visible buffers left.
                       (not (cl-set-difference (doom-real-buffer-list)
-                                              (doom-visible-buffers)))
+                                              (doom-visible-buffers nil t)))
                       ;; if we end up back where we start (or previous-buffer
                       ;; returns nil), we have nowhere left to go
                       (memq (switch-to-prev-buffer nil t) (list buf 'nil)))
