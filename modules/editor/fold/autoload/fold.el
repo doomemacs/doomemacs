@@ -189,9 +189,9 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
            (+fold--ensure-hideshow-mode)
            (if (integerp level)
                (progn
-                 (outline-hide-sublevels (max 1 (1- level)))
+                 (outline-hide-sublevels (max 1 level))
                  (hs-life-goes-on
-                  (hs-hide-level-recursive (1- level) (point-min) (point-max))))
+                  (hs-hide-level-recursive level (point-min) (point-max))))
              (hs-show-all)
              (when (fboundp 'outline-show-all)
                (outline-show-all)))))))
@@ -211,8 +211,8 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
         (hs-life-goes-on
          (if (integerp level)
              (progn
-               (outline--show-headings-up-to-level (1+ level))
-               (hs-hide-level-recursive (1- level) (point-min) (point-max)))
+               (outline--show-headings-up-to-level level)
+               (hs-hide-level-recursive level (point-min) (point-max)))
            (hs-hide-all)
            (when (fboundp 'outline-hide-sublevels)
              (outline-show-only-headings))))))))
