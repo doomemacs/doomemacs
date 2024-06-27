@@ -4,8 +4,8 @@
 (package! auctex
   :recipe (:files ("*.el" "*.info" "dir"
                    "doc" "etc" "images" "latex" "style"))
-  :pin "86b2397abdc20a638e5751251026727bc6282022")
-(package! adaptive-wrap :pin "70005d2012ab57c20be03c05aebd49318fe49c99")
+  :pin "280cd4a0ca5a9c80e67efc2bec354b3052258e8d")
+(package! adaptive-wrap :pin "a3b179ea21aeb4e8cfaf5646bb66d9d045263780")
 (package! latex-preview-pane :pin "5297668a89996b50b2b62f99cba01cc544dbed2e")
 (when (modulep! :editor evil +everywhere)
   (package! evil-tex :pin "2a3177c818f106e6c11032ac261f8691f5e11f74"))

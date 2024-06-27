@@ -1,7 +1,6 @@
 ;;; lang/beancount/config.el -*- lexical-binding: t; -*-
 
 (use-package! beancount
-  :mode ("\\.beancount\\'" . beancount-mode)
   :hook (beancount-mode . outline-minor-mode)
   :init
   (after! nerd-icons

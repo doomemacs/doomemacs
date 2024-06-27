@@ -4,4 +4,4 @@
 (package! beancount
   :recipe (:host github
            :repo "beancount/beancount-mode")
-  :pin "546163fd2ccc007f28812faf5170eb954d3ca979")
+  :pin "71c16222461d947b82e45e4b986d01880b492bbb")

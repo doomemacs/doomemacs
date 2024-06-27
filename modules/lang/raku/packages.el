@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/raku/packages.el
 
-(package! raku-mode :pin "977b14a7c1295ebf2aad2f807d3f8e7c27aeb47f")
+(package! raku-mode :pin "14f9b9bba08c0bbb7f3895380d0b1a9feb7a168d")
 
 (when (and (modulep! :checkers syntax)
            (not (modulep! :checkers syntax +flymake)))

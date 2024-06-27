@@ -6,9 +6,9 @@
 (package! opam-switch-mode :pin "1069e56a662f23ea09d4e05611bdedeb99257012")
 
 (unless (modulep! +lsp)
-  (package! merlin :pin "8404f96693727f7b0edc0d0b14db57843d79e27b")
+  (package! merlin :pin "b6ff2d4d569c23dd8fa91639d26fb984e9411862")
   (package! merlin-eldoc :pin "bf8edc63d85b35e4def352fa7ce4ea39f43e1fd8")
-  (package! merlin-company :pin "8404f96693727f7b0edc0d0b14db57843d79e27b")
+  (package! merlin-company :pin "b6ff2d4d569c23dd8fa91639d26fb984e9411862")
   (when (and (modulep! :checkers syntax)
              (not (modulep! :checkers syntax +flymake)))
     (package! flycheck-ocaml :pin "77f8ddbd9bfc3a11957ac7ec7e45d5fa9179b192")))
@@ -16,13 +16,13 @@
 (package! ocp-indent :pin "f38578c25d62701847b1bcb45099a9020e2032fe")
 
 (when (modulep! :tools eval)
-  (package! utop :pin "8cc563282597abdb8f5cca64df41166c5ebca6b5"))
+  (package! utop :pin "384b3098c8c4a2e26b87167053952b753aa8a63a"))
 
 (when (modulep! :editor format)
   (package! ocamlformat
     :recipe (:host github :repo "ocaml-ppx/ocamlformat" :files ("emacs/*.el"))
-    :pin "b8b09566904cf290cca294d3bf06a4f51793dfb7"))
+    :pin "c43f89bc0ebd536009151814214320bdf3988c50"))
 
 (package! dune
   :recipe (:host github :repo "ocaml/dune" :files ("editor-integration/emacs/*.el"))
-  :pin "64d19876ad6d2ca8b36d6158d5ac58c6eae8bc9a")
+  :pin "aac3d84f1d5abdf276d72be3dccac23bf99b3c7c")

@@ -2,7 +2,7 @@
 ;;; lang/web/packages.el
 
 ;; +html.el
-(package! emmet-mode :pin "63b6932603184956b5ea8919036d2b307b48d7fd")
+(package! emmet-mode :pin "322d3bb112fced57d63b44863357f7a0b7eee1e3")
 (package! haml-mode :pin "a64d58df8f098f858c6c11fa1629a90969f9c7e8")
 (package! pug-mode :pin "73f8c2f95eba695f701df20c8436f49abadebdc1")
 (package! slim-mode :pin "8c92169817f2fa59255f547f0a9fb4fbb8309db9")

@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/sml/packages.el
 
-(package! sml-mode :pin "e5354371f361fb6b60e53d0e6743baf6088ad810")
+(package! sml-mode :pin "d114e5a27f3d213b3e32c02f9320cd2041b6376b")
 (when (modulep! :completion company)
   (package! company-mlton
     :recipe (:host github :repo "MatthewFluet/company-mlton" :files ("*.el" "*.basis"))
