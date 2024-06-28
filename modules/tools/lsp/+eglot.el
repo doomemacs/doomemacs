@@ -64,8 +64,7 @@ server an expensive restart when its buffer is reverted."
 (use-package! consult-eglot
   :defer t
   :when (modulep! :completion vertico)
-  :init
-  (map! :map eglot-mode-map [remap xref-find-apropos] #'consult-eglot-symbols))
+  :init (define-key eglot-mode-map [remap xref-find-apropos] #'consult-eglot-symbols))
 
 
 (use-package! flycheck-eglot

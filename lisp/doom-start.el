@@ -143,9 +143,9 @@
 ;; ...but `set-language-environment' also sets `default-input-method', which is
 ;; a step too opinionated.
 (setq default-input-method nil)
-;; ...And the clipboard on Windows could be in a wider encoding (UTF-16), so
-;; leave Emacs to its own devices there.
-(eval-when! (not doom--system-windows-p)
+;; ...And the clipboard on Windows is often a wider encoding (UTF-16), so leave
+;; Emacs to its own devices there.
+(unless doom--system-windows-p
   (setq selection-coding-system 'utf-8))
 
 
