@@ -316,16 +316,14 @@ exist, and `org-link' otherwise."
 (defun +org-image-file-data-fn (protocol link _description)
   "Intepret LINK as an image file path and return its data."
   (setq
-   link (expand-file-name
-         link (pcase protocol
-                ("download"
-                 (or (if (require 'org-download nil t) org-download-image-dir)
-                     (if (require 'org-attach)         org-attach-id-dir)
-                     default-directory))
-                ("attachment"
-                 (require 'org-attach)
-                 org-attach-id-dir)
-                (_ default-directory))))
+   link (pcase protocol
+          ("download"
+           (expand-file-name link (or (if (require 'org-download nil t) org-download-image-dir)
+               default-directory)))
+          ("attachment"
+           (require 'org-attach)
+           (org-attach-expand link))
+          (_ (expand-file-name link default-directory))))
   (when (and (file-exists-p link)
              (image-type-from-file-name link))
     (with-temp-buffer
