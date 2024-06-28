@@ -1459,6 +1459,9 @@ between the two."
   (setq org-num-face '(:inherit org-special-keyword :underline nil :weight bold)
         org-num-skip-tags '("noexport" "nonum"))
 
+  ;; Other org properties are all-caps. Be consistent.
+  (setq org-effort-property "EFFORT")
+
   ;; Prevent modifications made in invisible sections of an org document, as
   ;; unintended changes can easily go unseen otherwise.
   (setq org-catch-invisible-edits 'smart)
