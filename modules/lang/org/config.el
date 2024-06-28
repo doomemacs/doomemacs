@@ -1153,15 +1153,12 @@ between the two."
 (use-package! org-crypt ; built-in
   :when (modulep! +crypt)
   :commands org-encrypt-entries org-encrypt-entry org-decrypt-entries org-decrypt-entry
-  :hook (org-reveal-start . org-decrypt-entry)
+  :hook (org-load . org-crypt-use-before-save-magic)
   :preface
   ;; org-crypt falls back to CRYPTKEY property then `epa-file-encrypt-to', which
   ;; is a better default than the empty string `org-crypt-key' defaults to.
   (defvar org-crypt-key nil)
-  (after! org
-    (add-to-list 'org-tags-exclude-from-inheritance "crypt")
-    (add-hook! 'org-mode-hook
-      (add-hook 'before-save-hook 'org-encrypt-entries nil t))))
+  (after! org (add-to-list 'org-tags-exclude-from-inheritance "crypt")))
 
 
 (use-package! org-clock ; built-in
