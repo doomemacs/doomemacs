@@ -33,13 +33,7 @@
     (defun +tabs-disable-centaur-tabs-mode-maybe-h ()
       "Disable `centaur-tabs-mode' in current buffer."
       (when (centaur-tabs-mode-on-p)
-        (centaur-tabs-local-mode))))
-
-  (add-hook! 'doom-load-theme-hook
-    (defun +tabs-reload-centaur-tabs-h ()
-      (when (bound-and-true-p centaur-tabs-mode)
-        (centaur-tabs-mode -1)
-        (centaur-tabs-mode +1)))))
+        (centaur-tabs-local-mode)))))
 
 ;; TODO tab-bar-mode (emacs 27)
 ;; TODO tab-line-mode (emacs 27)
