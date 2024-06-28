@@ -723,6 +723,11 @@ original state.")
   (let (autoload-compute-prefixes)
     (apply fn args)))
 
+(defadvice! doom-cli--straight-suppress-confirm-a (&rest _)
+  :before-until #'straight-are-you-sure
+  (and (bound-and-true-p doom-cli--context)
+       (doom-cli-context-suppress-prompts-p doom-cli--context)))
+
 (defadvice! doom-cli--straight-fallback-to-tty-prompt-a (fn prompt actions)
   "Modifies straight to prompt on the terminal when in noninteractive sessions."
   :around #'straight--popup-raw
