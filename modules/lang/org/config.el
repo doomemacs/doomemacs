@@ -494,7 +494,7 @@ relative to `org-directory', unless it is an absolute path."
       (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
 
   ;; Add inline image previews for attachment links
-  (org-link-set-parameters "attachment" :image-data-fun #'+org-inline-image-data-fn))
+  (org-link-set-parameters "attachment" :image-data-fun #'+org-image-file-data-fn))
 
 
 (defun +org-init-custom-links-h ()
