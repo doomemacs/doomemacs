@@ -66,7 +66,7 @@
 
 (when (modulep! :editor evil +everywhere)
   (package! evil-org
-    :recipe (:host github :repo "hlissner/evil-org-mode")
+    :recipe (:host github :repo "doomelpa/evil-org-mode")
     :pin "a9706da260c45b98601bcd72b1d2c0a24a017700"))
 (when (modulep! :tools pdf)
   (package! org-pdftools :pin "4e420233a153a9c4ab3d1a7e1d7d3211c836f0ac"))
