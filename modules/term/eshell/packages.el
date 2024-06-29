@@ -6,8 +6,8 @@
 (package! shrink-path :pin "c14882c8599aec79a6e8ef2d06454254bb3e1e41")
 (package! esh-help :pin "417673ed18a983930a66a6692dbfb288a995cb80")
 (package! eshell-did-you-mean :pin "80cd8c4b186a2fb29621cf634bcf2bcd914f1e3d")
-(package! eshell-syntax-highlighting :pin "1d25386bf7d1a97e083d33750a98fbd1c6598138")
+(package! eshell-syntax-highlighting :pin "b960d036c22f818ccb9c381a2e9cdd89b29b659c")
 
 (unless (featurep :system 'windows)
-  (package! fish-completion :pin "006c613ff7f846b7d0a14422f2bdcc28b21205b8")
+  (package! fish-completion :pin "1256f137a2039805d4e87f8e6c11a162ed019587")
   (package! bash-completion :pin "f1daac0386c24cbe8a244a62c7588cc6847b07ae"))
