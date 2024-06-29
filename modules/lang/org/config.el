@@ -747,48 +747,6 @@ mutating hooks on exported output, like formatters."
   ;; Open help:* links with helpful-* instead of describe-*
   (advice-add #'org-link--open-help :around #'doom-use-helpful-a)
 
-  ;; Unlike the stock showNlevels options, these will also show the parents of
-  ;; the target level, recursively.
-  (pushnew! org-startup-options
-            '("show2levels*" org-startup-folded show2levels*)
-            '("show3levels*" org-startup-folded show3levels*)
-            '("show4levels*" org-startup-folded show4levels*)
-            '("show5levels*" org-startup-folded show5levels*))
-
-  ;; TODO Upstream this.
-  (defadvice! +org--recursive-org-persist-mkdir-a (fn &rest args)
-    "`org-persist-write:index' does not recursively create
-`org-persist-directory', which causes an error if it's a parent doesn't exist."
-    :before #'org-persist-write:index
-    (make-directory org-persist-directory t))
-
-  (defadvice! +org--more-startup-folded-options-a ()
-    "Adds support for 'showNlevels*' startup options.
-Unlike showNlevels, this will also unfold parent trees."
-    :before-until #'org-cycle-set-startup-visibility
-    (when-let (n (pcase org-startup-folded
-                   (`show2levels* 2)
-                   (`show3levels* 3)
-                   (`show4levels* 4)
-                   (`show5levels* 5)))
-      (org-fold-show-all '(headings))
-      (save-excursion
-        (goto-char (point-max))
-        (save-restriction
-          (narrow-to-region (point-min) (or (re-search-forward org-outline-regexp-bol nil t) (point-max)))
-          (org-fold-hide-drawer-all))
-        (goto-char (point-max))
-        (let ((regexp (if (and (wholenump n) (> n 0))
-                          (format "^\\*\\{%d,%d\\} " (1- n) n)
-                        "^\\*+ "))
-              (last (point)))
-          (while (re-search-backward regexp nil t)
-            (when (or (not (wholenump n))
-                      (= (org-current-level) n))
-              (org-fold-core-region (line-end-position) last t 'outline))
-            (setq last (line-end-position 0)))))
-      t))
-
   ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
   ;; `org-auto-align-tags', such as in `org-self-insert-command' and
   ;; `org-delete-backward-char'.
@@ -870,19 +828,8 @@ buffer as done, e.g., by `org-capture'."
           find-file-hook)
       (funcall fn file)))
 
-  ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
-  ;;      image previews broke for users with imagemagick support built in. This
-  ;;      reverses the problem, but should be removed once it is addressed
-  ;;      upstream (if ever).
-  (defadvice! +org--fix-inline-images-for-imagemagick-users-a (fn &rest args)
-    :around #'org-display-inline-images
-    (letf! (defun create-image (file-or-data &optional type data-p &rest props)
-             (let ((type (if (plist-get props :width) type)))
-               (apply create-image file-or-data type data-p props)))
-      (apply fn args)))
-
   (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)
-    "Ensure uuidgen always produces lowercase output regardless of system."
+    "Ensure uuidgen is always lowercase (consistent) regardless of system."
     :filter-return #'org-id-new
     (if (eq org-id-method 'uuid)
         (downcase uuid)
