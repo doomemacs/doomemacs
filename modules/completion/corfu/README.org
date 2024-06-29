@@ -193,9 +193,13 @@ A few variables may be set to change behavior of this module:
 - [[var:corfu-preview-current]] ::
   Configures current candidate preview.
 - [[var:+corfu-want-ret-to-confirm]] ::
-  Enables commiting with [[RET]] when the popup is visible. Default is ~t~, may be set to
-  ~'minibuffer~ if you want to commit both the completion and the minibuffer when
-  active. When ~nil~, it is always passed-through.
+  Controls the behavior of [[kbd:][RET]] when the popup is visible - whether it confirms
+  the selected candidate, and whether [[kbd:][RET]] is passed through (ie. the normal
+  behavior of [[kbd:][RET]] is performed). The default value of ~t~ enables confirmation
+  and disables pass-through. Other variations are ~nil~ for pass-through and no
+  confirmation and ~both~ for confirmation followed by pass-through. Finally,
+  the value of ~minibuffer~ will both confirm and pass-through (like ~both~)
+  when in the minibuffer, and only confirm (like ~t~) otherwise.
 - [[var:+corfu-buffer-scanning-size-limit]]  ::
   Sets the maximum buffer size to be scanned by ~cape-dabbrev~. Defaults to 1 MB.
   Set this if you are having performance problems using the CAPF.
