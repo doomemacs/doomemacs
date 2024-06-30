@@ -464,41 +464,76 @@ Continues comments if executed from a commented line. Consults
          [remap corfu-insert-separator] #'+corfu-smart-sep-toggle-escape
          "C-S-s" #'+corfu-move-to-minibuffer
          "C-p" #'corfu-previous
-         "C-n" #'corfu-next
-         "S-TAB" #'corfu-previous
-         [backtab] #'corfu-previous
-         "TAB" #'corfu-next
-         [tab] #'corfu-next))
+         "C-n" #'corfu-next))
   (let ((cmds-del
          `(menu-item "Reset completion" corfu-reset
            :filter ,(lambda (cmd)
-                      (when (and (>= corfu--index 0)
-                                 (eq corfu-preview-current 'insert))
-                        cmd))))
-         (cmds-ret
-          `(menu-item "Insert completion DWIM" corfu-insert
-             :filter ,(lambda (cmd)
-                        (interactive)
-                        (cond ((null +corfu-want-ret-to-confirm)
-                               (corfu-quit)
-                               nil)
-                              ((eq +corfu-want-ret-to-confirm 'minibuffer)
-                               (funcall-interactively cmd)
-                               nil)
-                              ((and (or (not (minibufferp nil t))
-                                        (eq +corfu-want-ret-to-confirm t))
-                                    (>= corfu--index 0))
-                               cmd)
-                              ((or (not (minibufferp nil t))
-                                   (eq +corfu-want-ret-to-confirm t))
-                               nil)
-                              (t cmd))))))
+                      (cond
+                       ((and (>= corfu--index 0)
+                             (eq corfu-preview-current 'insert))
+                        cmd)))))
+        (cmds-ret
+         `(menu-item "Insert completion DWIM" corfu-insert
+           :filter ,(lambda (cmd)
+                      (cond
+                       ((null +corfu-want-ret-to-confirm)
+                        (corfu-quit)
+                        nil)
+                       ((eq +corfu-want-ret-to-confirm 'minibuffer)
+                        (funcall-interactively cmd)
+                        nil)
+                       ((and (or (not (minibufferp nil t))
+                                 (eq +corfu-want-ret-to-confirm t))
+                             (>= corfu--index 0))
+                        cmd)
+                       ((or (not (minibufferp nil t))
+                            (eq +corfu-want-ret-to-confirm t))
+                        nil)
+                       (t cmd)))))
+        (cmds-tab
+         `(menu-item "Select next candidate or expand/traverse snippet" corfu-next
+           :filter (lambda (cmd)
+                     (cond
+                      ,@(when (modulep! :editor snippets)
+                          '(((and +corfu-want-tab-prefer-navigating-snippets
+                                  (memq (bound-and-true-p yas--active-field-overlay)
+                                        (overlays-in (1- (point)) (1+ (point)))))
+                             #'yas-next-field-or-maybe-expand)
+                            ((and +corfu-want-tab-prefer-expand-snippets
+                                  (yas-maybe-expand-abbrev-key-filter 'yas-expand))
+                             #'yas-expand)))
+                      ,@(when (modulep! :lang org)
+                          '(((and +corfu-want-tab-prefer-navigating-org-tables
+                                  (featurep 'org)
+                                  (org-at-table-p))
+                             #'org-table-next-field)))
+                      (t cmd)))) )
+        (cmds-s-tab
+         `(menu-item "Select previous candidate or expand/traverse snippet"
+           corfu-previous
+           :filter (lambda (cmd)
+                     (cond
+                      ,@(when (modulep! :editor snippets)
+                          '(((and +corfu-want-tab-prefer-navigating-snippets
+                                  (memq (bound-and-true-p yas--active-field-overlay)
+                                        (overlays-in (1- (point)) (1+ (point)))))
+                             #'yas-prev-field)))
+                      ,@(when (modulep! :lang org)
+                          '(((and +corfu-want-tab-prefer-navigating-org-tables
+                                  (featurep 'org)
+                                  (org-at-table-p))
+                             #'org-table-previous-field)))
+                      (t cmd))))))
     (map! :when (modulep! :completion corfu)
           :map corfu-map
           [backspace] cmds-del
           "DEL" cmds-del
           :gi [return] cmds-ret
-          :gi "RET" cmds-ret))
+          :gi "RET" cmds-ret
+          "S-TAB" cmds-s-tab
+          [backtab] cmds-s-tab
+          :gi "TAB" cmds-tab
+          :gi [tab] cmds-tab))
 
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except

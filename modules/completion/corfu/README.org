@@ -202,6 +202,15 @@ A few variables may be set to change behavior of this module:
 - [[var:+corfu-want-minibuffer-completion]] ::
   Whether to enable Corfu in the minibuffer. See its documentation for
   additional tweaks.
+- [[var:+corfu-want-tab-prefer-expand-snippets]] ::
+  Whether to prefer expanding snippets over cycling candidates when pressing
+  [[kbd:][TAB]].
+- [[var:+corfu-want-tab-prefer-navigating-snippets]] ::
+  Whether to prefer navigating snippets over cycling candidates when pressing
+  [[kbd:][TAB]] and [[kbd:][S-TAB]].
+- [[var:+corfu-want-tab-prefer-navigating-org-tables]] ::
+  Whether to prefer navigating org tables over cycling candidates when pressing
+  [[kbd:][TAB]] and [[kbd:][S-TAB]].
 
 ** Turning off auto-completion
 To disable idle (as-you-type) completion, unset ~corfu-auto~:
@@ -241,6 +250,8 @@ all CAPFs are interactive to be called this way, in which case you can use
 * Troubleshooting
 [[doom-report:][Report an issue?]]
 
+** Troubleshooting ~cape-dabbrev~
+
 If you have performance issues with ~cape-dabbrev~, the first thing I recommend
 doing is to look at the list of buffers Dabbrev is scanning:
 
@@ -267,6 +278,34 @@ debug the issue:
 ;; Why are these weird characters appearing in my completions?
 (search-in-dabbrev-buffers "\342\200\231")
 #+end_src
+
+** Fixing TAB Keybindings
+
+If you encounter an issue where your ~TAB~ keybindings are not responding in Doom
+Emacs while the ~:editor evil~ module is active, it's likely caused by a conflict
+where ~<tab>~ keybindings and insert state bindings are overriding your ~TAB~ key
+assignments.
+
+In Evil mode, keybinding priorities are set such that:
+1. ~<tab>~ keybindings supersede ~TAB~ keybindings and only work in GUI Emacs.
+2. Bindings in insert state take precedence whenever the insert state is active.
+
+To resolve this conflict and to assign your desired command to the ~TAB~ key, you
+must redefine the keybindings with insert state set explicitly. You can do this
+by configuring your ~evil~ keybindings for the insert state as follows:
+
+#+begin_src emacs-lisp
+(map! :gi "TAB"   #'your-command
+      :gi "<tab>" #'your-command)
+#+end_src
+
+Place this code in your Doom Emacs configuration file to set the function ~your-command~ as the response to pressing ~TAB~ during insert mode.
+
+Remember to replace ~#'your-command~ with the actual command you wish to invoke
+with the ~TAB~ key.
+
+If ever in a situation like this, use ~describe-key~ with ~C-h k~ and look at what
+command is being called as well as what keymaps the command is defined in.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
