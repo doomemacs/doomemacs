@@ -25,6 +25,9 @@ This module provides syntax checking and error highlighting, powered by
 ** Hacks
 - If ~lsp-ui-mode~ is active, most of the aesthetic functionality of this module
   is turned off, as they show the same information.
+- If childframes are enabled, and the flycheck childframe is shown, it will be
+  hidden on the next user input (as well as the default behavior: to hide it the
+  next time the user is idle for ~flycheck-display-errors-delay~ seconds).
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
