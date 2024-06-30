@@ -54,9 +54,6 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
         lsp-xml-jar-file (expand-file-name "org.eclipse.lsp4xml-0.3.0-uber.jar" lsp-server-install-dir)
         lsp-groovy-server-file (expand-file-name "groovy-language-server-all.jar" lsp-server-install-dir))
 
-  ;; REVIEW Remove this once this is fixed upstream.
-  (add-to-list 'lsp-client-packages 'lsp-racket)
-
   (add-hook! 'doom-escape-hook
     (defun +lsp-signature-stop-maybe-h ()
       "Close the displayed `lsp-signature'."
