@@ -37,4 +37,8 @@
 (defun +lisp/find-file-in-quicklisp ()
   "Find a file belonging to a library downloaded by Quicklisp."
   (interactive)
-  (doom-project-find-file "~/.quicklisp/dists/"))
+  (doom-project-find-file
+   (or (cl-loop for dir in +lisp-quicklisp-paths
+                if (file-directory-p dir)
+                return (expand-file-name "dists/" dir))
+       (user-error "Couldn't find your Quicklisp directory (customize `+lisp-quicklisp-paths')"))))

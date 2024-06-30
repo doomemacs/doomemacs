@@ -1,5 +1,9 @@
 ;;; lang/common-lisp/config.el -*- lexical-binding: t; -*-
 
+(defcustom +lisp-quicklisp-paths '("~/quicklisp" "~/.quicklisp")
+  "A list of directories to search for Quicklisp's site files."
+  :type '(repeat directory))
+
 ;; `lisp-mode' is loaded at startup. In order to lazy load its config we need to
 ;; pretend it isn't loaded
 (defer-feature! lisp-mode)
