@@ -131,7 +131,6 @@ modules/tools/make/              @doomemacs/tools-make
 modules/tools/pass/              @doomemacs/tools-pass
 modules/tools/pdf/               @doomemacs/tools-pdf
 modules/tools/prodigy/           @doomemacs/tools-prodigy
-modules/tools/rgb/               @doomemacs/tools-rgb
 modules/tools/taskrunner/        @doomemacs/tools-taskrunner
 modules/tools/terraform/         @doomemacs/tools-terraform
 modules/tools/tmux/              @doomemacs/tools-tmux
