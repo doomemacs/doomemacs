@@ -104,6 +104,12 @@
                   (bound-and-true-p lsp--buffer-deferred)
                   (not (executable-find python-shell-interpreter t)))
         (anaconda-mode +1))))
+
+  (add-hook! 'eglot-server-initialized-hook
+    (defun +python-disable-anaconda-mode-h ()
+      "Ensure `anaconda-mode' doesn't interfere with `eglot'."
+      (when (bound-and-true-p anaconda-mode)
+        (anaconda-mode -1))))
   :config
   (set-company-backend! 'anaconda-mode '(company-anaconda))
   (set-lookup-handlers! 'anaconda-mode
