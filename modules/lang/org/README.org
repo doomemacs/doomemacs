@@ -111,7 +111,6 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - [[doom-package:org-pomodoro]] if [[doom-module:+pomodoro]]
 - [[doom-package:org-roam]] (v1) if [[doom-module:+roam]]
 - [[doom-package:org-roam]] (v2) if [[doom-module:+roam2]]
-- [[doom-package:org-yt]]
 - [[doom-package:ox-clip]]
 - [[doom-package:ox-hugo]] if [[doom-module:+hugo]]
 - [[doom-package:ox-pandoc]] if [[doom-module:+pandoc]]

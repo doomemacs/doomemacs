@@ -39,9 +39,6 @@
 
 (package! avy)
 (package! htmlize :pin "ed5e5b05fd260e8f161a488d56f10e7f6e01fb75")
-(package! org-yt
-  :recipe (:host github :repo "TobiasZawada/org-yt")
-  :pin "56166f48e04d83668f70ed84706b7a4d8b1e5438")
 (package! ox-clip :pin "a549cc8e1747beb6b7e567ffac27e31ba45cb8e8")
 (package! toc-org :pin "6d3ae0fc47ce79b1ea06cabe21a3c596395409cd")
 (package! org-cliplink :pin "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
