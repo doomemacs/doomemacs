@@ -19,20 +19,24 @@
 
 (after! doom-cli-make
   ;;; Codeowners
-  (dolist (path (doom-module-load-path (list doom-modules-dir)))
-    ;; I will be the default owner for everything in the repo unless a later
-    ;; match takes precedence.
-    (add-to-list 'doom-make-codeowners "# The default owner(s) unless another takes precedence")
-    (add-to-list 'doom-make-codeowners '("*" . "@doomemacs/maintainers"))
-    ;; Module maintainers (see https://git.doomemacs.org/teams)
-    (save-match-data
-      (add-to-list 'doom-make-codeowners "# Module maintainers")
-      (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)/$" path)
-        (push (cons (substring (match-string 0 path) 1)
-                    (format "@doomemacs/%s-%s"
-                            (match-string 1 path)
-                            (match-string 2 path)))
-              doom-make-codeowners)))))
+  ;; I will be the default owner for everything in the repo unless a later match
+  ;; takes precedence.
+  (add-to-list 'doom-make-codeowners "# The default owner(s) unless another takes precedence")
+  (add-to-list 'doom-make-codeowners '("*" . "@doomemacs/maintainers"))
+  ;; Module maintainers (see https://git.doomemacs.org/teams)
+  (add-to-list 'doom-make-codeowners "# Module maintainers")
+  (save-match-data
+    (setq doom-make-codeowners
+          (nreverse
+           (append doom-make-codeowners
+                   (cl-sort
+                    (cl-loop for path in (doom-module-load-path (list doom-modules-dir))
+                             if (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)$" path)
+                             collect (cons (substring (match-string 0 path) 1)
+                                           (format "@doomemacs/%s-%s"
+                                                   (match-string 1 path)
+                                                   (match-string 2 path))))
+                    #'string-lessp :key #'car))))))
 
 ;;; Helpers
 (defun ci-check-module-scope (scope _plist)
