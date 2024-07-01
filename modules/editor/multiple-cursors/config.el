@@ -166,7 +166,25 @@
   ;; Can't use `mc/cmds-to-run-once' because mc-lists.el overwrites it
   (add-to-list 'mc--default-cmds-to-run-once 'swiper-mc)
 
-  ;; TODO multiple-cursors config for Emacs users?
+  ;; Use transient commands with vanilla Emacs.
+  (when (not (modulep! :editor evil))
+    ;; Transient map used to better control multiple-cursors in vanilla Emacs.
+    ;; This map is disabled if a key not in the map is pressed (e.g., "q").
+    (setq +mc-transient-map
+          (let ((t-map (make-sparse-keymap)))
+            (define-key t-map (kbd "n") #'mc/mark-next-like-this)
+            (define-key t-map (kbd "N") #'mc/unmark-next-like-this)
+            (define-key t-map (kbd "p") #'mc/mark-previous-like-this)
+            (define-key t-map (kbd "P") #'mc/unmark-previous-like-this)
+            t-map))
+    ;; All functions called from the transient map need to be named (i.e., not
+    ;; be lambdas). These functions need to be further added to the "run once"
+    ;; category to avoid duplicating calls.
+    (mapc (lambda (func) (add-to-list 'mc--default-cmds-to-run-once func))
+          '(+mc/transient-mark-next-like-this
+            +mc/transient-mark-previous-like-this
+            +mc/transient-unmark-next-like-this
+            +mc/transient-unmark-previous-like-this)))
 
   ;; mc doesn't play well with evil, this attempts to assuage some of its
   ;; problems so that any plugins that depend on multiple-cursors (which I have
