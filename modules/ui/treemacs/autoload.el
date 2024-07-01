@@ -12,6 +12,6 @@ Use `treemacs' command for old functionality."
   (require 'treemacs)
   (pcase (treemacs-current-visibility)
     (`visible (delete-window (treemacs-get-local-window)))
-    (_ (if (doom-project-p)
-           (treemacs-add-and-display-current-project)
+    (_ (if (treemacs--find-current-user-project)
+           (treemacs-add-and-display-current-project-exclusively)
          (treemacs)))))
