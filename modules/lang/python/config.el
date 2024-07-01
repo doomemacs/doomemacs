@@ -106,7 +106,7 @@
         (anaconda-mode +1))))
 
   (add-hook! 'eglot-server-initialized-hook
-    (defun +python-disable-anaconda-mode-h ()
+    (defun +python-disable-anaconda-mode-h (&rest _)
       "Ensure `anaconda-mode' doesn't interfere with `eglot'."
       (when (bound-and-true-p anaconda-mode)
         (anaconda-mode -1))))
