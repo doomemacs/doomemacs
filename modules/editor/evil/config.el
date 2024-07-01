@@ -155,14 +155,6 @@ directives. By default, this only recognizes C directives.")
     :after-until #'evil-global-marker-p
     (and (>= char ?2) (<= char ?9)))
 
-  ;; REVIEW Fix #2493: dir-locals cannot target fundamental-mode when evil-mode
-  ;;        is active. See hlissner/doom-emacs#2493. Revert this if
-  ;;        emacs-evil/evil#1268 is resolved upstream.
-  (defadvice! +evil--fix-local-vars-a (&rest _)
-    :before #'turn-on-evil-mode
-    (when (eq major-mode 'fundamental-mode)
-      (hack-local-variables)))
-
   ;; HACK Invoking helpful from evil-ex throws a "No recursive edit is in
   ;;      progress" error because, between evil-ex and helpful,
   ;;      `abort-recursive-edit' gets called one time too many.
