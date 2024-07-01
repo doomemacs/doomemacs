@@ -469,15 +469,7 @@
         (:when (modulep! :completion ivy)
          :desc "Jump to channel"  "j" #'+irc/ivy-jump-to-channel)
         (:when (modulep! :completion vertico)
-         :desc "Jump to channel"  "j" #'+irc/vertico-jump-to-channel)))
-
-      ;;; <leader> T --- twitter
-      (:when (modulep! :app twitter)
-       (:prefix-map ("T" . "twitter")
-        :desc "Open twitter app" "T" #'=twitter
-        :desc "Quit twitter"     "q" #'+twitter/quit
-        :desc "Rerender twits"   "r" #'+twitter/rerender-all
-        :desc "Ace link"         "l" #'+twitter/ace-link)))
+         :desc "Jump to channel"  "j" #'+irc/vertico-jump-to-channel))))
 
 
 ;;

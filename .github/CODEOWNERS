@@ -11,7 +11,6 @@ modules/app/emms/                @doomemacs/app-emms
 modules/app/everywhere/          @doomemacs/app-everywhere
 modules/app/irc/                 @doomemacs/app-irc
 modules/app/rss/                 @doomemacs/app-rss
-modules/app/twitter/             @doomemacs/app-twitter
 modules/checkers/grammar/        @doomemacs/checkers-grammar
 modules/checkers/spell/          @doomemacs/checkers-spell
 modules/checkers/syntax/         @doomemacs/checkers-syntax
