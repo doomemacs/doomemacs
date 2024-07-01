@@ -31,7 +31,6 @@
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
 (package! dtrt-indent :pin "939c5e374ac0175bb7d561542e22e47a72d04aa8")
 (package! helpful :pin "4ba24cac9fb14d5fdc32582cd947572040e82b2c")
-(package! pcre2el :pin "380723b2701cceb75c266440fb8db918f3340d50")
 (package! smartparens :pin "f7cf316715e5018186c226aab8242c9e5ce131c8")
 (package! ws-butler :pin "e3a38d93e01014cd47bf5af4924459bd145fd7c4")
 

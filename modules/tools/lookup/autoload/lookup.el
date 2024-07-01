@@ -238,7 +238,7 @@ This backend prefers \"just working\" over accuracy."
 Uses and requires `+ivy-file-search', `+helm-file-search', or `+vertico-file-search'.
 Will return nil if neither is available. These require ripgrep to be installed."
   (when identifier
-    (let ((query (rxt-quote-pcre identifier)))
+    (let ((query (doom-pcre-quote identifier)))
       (ignore-errors
         (cond ((modulep! :completion ivy)
                (+ivy-file-search :query query)
