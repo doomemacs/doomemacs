@@ -54,7 +54,7 @@ OPTIONS:
       (dolist (entry (nreverse doom-make-codeowners))
         (if (stringp entry)
             (insert "\n" entry "\n")
-          (insert (car entry) " " (cdr entry) "\n")))
+          (insert (format "%-35s %s" (car entry) (cdr entry)) "\n")))
       (insert "\n# End of CODEOWNERS")
       (setq indent-tabs-mode nil) ; align w/ spaces, not tabs
       (align-regexp (point-min) (point-max) "/\\(\\s-+\\)@" 1)
