@@ -32,6 +32,11 @@ e.g. ~cargo~.
 - rustic has been modified /not/ to automatically install lsp-mode or eglot if
   they're missing. Doom expects you to have enabled the [[doom-module::tools lsp]] module
   yourself.
+- If doom-package:rust-ts-mode is loaded, it'll add itself as the default major mode for rust
+  with higher priority than doom-package:rustic-mode. This package disables doom-package:rust-ts-mode
+  setting itself as the default major mode when it loads, so do not depend on
+  this behaviour. Instead, set ~rust-mode-treesitter-derive~ to have this module use
+  the tree-sitter mode as the "base mode" automatically.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.

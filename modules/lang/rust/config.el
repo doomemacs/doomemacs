@@ -20,6 +20,11 @@
     (remove-hook 'rustic-mode-hook #'flymake-mode-off)
     (remove-hook 'flycheck-mode-hook #'rustic-flycheck-setup))
   :init
+  ;; HACK if `rust-ts-mode' is used as the base of `rust-mode'
+  ;; it will set itself as a higher priority major mode for
+  ;; rust files.
+  (after! rust-ts-mode
+    (setq auto-mode-alist (delete '("\\.rs\\'" . rust-ts-mode) auto-mode-alist)))
   ;; HACK Certainly, `rustic-babel' does this, but the package (and many other
   ;;   rustic packages) must be loaded in order for them to take effect. To lazy
   ;;   load it all, we must do it early:
