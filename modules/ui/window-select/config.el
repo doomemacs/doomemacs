@@ -23,12 +23,9 @@
 
 (use-package! winum
   :when (modulep! +numbers)
-  :after-call doom-switch-window-hook
+  :hook (doom-after-init . winum-mode)
   :config
-  ;; winum modifies `mode-line-format' in a destructive manner. I'd rather leave
-  ;; it to modeline plugins (or the user) to add this if they want it.
   (setq winum-auto-setup-mode-line nil)
-  (winum-mode +1)
   (map! :map evil-window-map
         "0" #'winum-select-window-0-or-10
         "1" #'winum-select-window-1
