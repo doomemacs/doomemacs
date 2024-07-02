@@ -767,10 +767,9 @@ mutating hooks on exported output, like formatters."
 
   (defun +org--restart-mode-h ()
     "Restart `org-mode', but only once."
+    (remove-hook 'doom-switch-buffer-hook #'+org--restart-mode-h 'local)
     (quiet! (org-mode-restart))
     (delq! (current-buffer) org-agenda-new-buffers)
-    (remove-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
-                 'local)
     (run-hooks 'find-file-hook))
 
   (add-hook! 'org-agenda-finalize-hook
@@ -796,16 +795,16 @@ can grow up to be fully-fledged org-mode buffers."
             (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
                       nil 'local))))))
 
-  (defadvice! +org--restart-mode-before-indirect-buffer-a (base-buffer &rest _)
+  (defadvice! +org--restart-mode-before-indirect-buffer-a (&optional buffer _)
     "Restart `org-mode' in buffers in which the mode has been deferred (see
 `+org-defer-mode-in-agenda-buffers-h') before they become the base buffer for an
 indirect buffer. This ensures that the buffer is fully functional not only when
 the *user* visits it, but also when some code interacts with it via an indirect
 buffer as done, e.g., by `org-capture'."
-    :before #'make-indirect-buffer
-    (with-current-buffer base-buffer
-     (when (memq #'+org--restart-mode-h doom-switch-buffer-hook)
-       (+org--restart-mode-h))))
+    :before #'org-capture-get-indirect-buffer
+    (with-current-buffer (or buffer (current-buffer))
+      (when (memq #'+org--restart-mode-h doom-switch-buffer-hook)
+        (+org--restart-mode-h))))
 
   (defvar recentf-exclude)
   (defadvice! +org--optimize-backgrounded-agenda-buffers-a (fn file)
