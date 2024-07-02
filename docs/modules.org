@@ -113,6 +113,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/ess/README.org][ess]] =+lsp= - TODO
 + [[file:../modules/lang/factor/README.org][factor]] - TODO
 + [[file:../modules/lang/faust/README.org][faust]] - TODO
++ [[file:../modules/lang/flix/README.org][flix]] - TODO
 + [[file:../modules/lang/fsharp/README.org][fsharp]] =+lsp= - TODO
 + [[file:../modules/lang/fstar/README.org][fstar]] - F* support
 + [[file:../modules/lang/gdscript/README.org][gdscript]] =+lsp= - TODO
