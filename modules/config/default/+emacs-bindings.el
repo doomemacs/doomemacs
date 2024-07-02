@@ -79,6 +79,7 @@
        :desc "Browse emacs.d"              "E"   #'doom/browse-in-emacsd
        :desc "Find file"                   "f"   #'find-file
        :desc "Find file from here"         "F"   #'+default/find-file-under-here
+       :desc "Find file under cursor"      "h"   #'find-file-at-point
        :desc "Locate file"                 "l"   #'locate
        :desc "Rename/move this file"       "m"   #'doom/move-this-file
        :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
