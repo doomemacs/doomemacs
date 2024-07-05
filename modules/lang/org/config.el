@@ -289,8 +289,8 @@ Also adds support for a `:sync' parameter to override `:async'."
              initialize)
            args))
 
-  ;; Refresh inline images after executing src blocks (useful for plantuml or
-  ;; ipython, where the result could be an image)
+  ;; Refresh inline images after executing src blocks (useful for plantuml,
+  ;; where the result could be an image)
   (add-hook! 'org-babel-after-execute-hook
     (defun +org-redisplay-inline-images-in-babel-result-h ()
       (unless (or

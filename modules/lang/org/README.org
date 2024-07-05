@@ -19,8 +19,8 @@ intuitive out of the box:
   org files to reveal.js slideshows.
 - Drag-and-drop support for images (with inline preview) and media files (drops
   a file icon and a short link) (requires [[doom-module:+dragndrop]] flag).
-- Integration with pandoc, ipython, jupyter, reveal.js, beamer, and others
-  (requires flags).
+- Integration with pandoc, jupyter, reveal.js, beamer, and others (requires
+  flags).
 - Export-to-clipboard functionality, for copying text into formatted html,
   markdown or rich text to the clipboard (see fn:+org/export-to-clipboard and
   fn:+org/export-to-clipboard-as-rich-text).
@@ -58,8 +58,6 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - +hugo ::
   Enable integration with [[https://gohugo.io][hugo]] to export from Emacs well-formed ([[https://github.com/russross/blackfriday][blackfriday]])
   markdown.
-- +ipython ::
-  (**DEPRECATED**) Enable ipython integration for babel.
 - +journal ::
   Enable [[doom-package:org-journal]] integration.
 - +jupyter ::
@@ -95,7 +93,6 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - [[doom-package:ob-async]]
 - [[doom-package:ob-crystal]] if [[doom-module::lang crystal]]
 - [[doom-package:ob-go]] if [[doom-module::lang go]]
-- [[doom-package:ob-ipython]] if [[doom-module:+ipython]]
 - [[doom-package:ob-nim]] if [[doom-module::lang nim]]
 - [[doom-package:ob-racket]] if [[doom-module::lang racket]]
 - [[doom-package:ob-restclient]] if [[doom-module::lang rest]]

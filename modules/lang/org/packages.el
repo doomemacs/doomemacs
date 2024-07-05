@@ -78,8 +78,6 @@
 (when (modulep! +gnuplot)
   (package! gnuplot :pin "7138b139d2dca9683f1a81325c643b2744aa1ea3")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
-(when (modulep! +ipython) ; DEPRECATED
-  (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (modulep! +jupyter)
   (package! jupyter :pin "b279c90295ed7ef89832d655cf8d9077233f1098"))
 (when (modulep! +journal)
