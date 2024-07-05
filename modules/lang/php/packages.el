@@ -20,8 +20,5 @@
   (when (modulep! :completion company)
     (package! company-phpactor :pin "6b5269ff82785a9bd1e648b2f91e5128353d5a67")))
 
-(when (modulep! :editor format)
-  (package! php-cs-fixer :pin "efe4368d891f1eec6311363cfd6be3e9eadb5e0a"))
-
 ;; For building php-extras
 (package! async :pin "cff2bd0be3c78a2eb76717eed60302972fe9b8c5")
