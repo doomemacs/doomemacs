@@ -342,16 +342,8 @@
 ;;
 ;;; LSP
 
-(eval-when! (and (modulep! +lsp)
-                 (not (modulep! :tools lsp +eglot)))
-
-  (use-package! lsp-python-ms
-    :unless (modulep! +pyright)
-    :after lsp-mode
-    :preface
-    (after! python
-      (setq lsp-python-ms-python-executable-cmd python-shell-interpreter)))
-
-  (use-package! lsp-pyright
-    :when (modulep! +pyright)
-    :after lsp-mode))
+(use-package! lsp-pyright
+  :when (modulep! +lsp)
+  :when (modulep! +pyright)
+  :when (not (modulep! :tools lsp +eglot))
+  :after lsp-mode)

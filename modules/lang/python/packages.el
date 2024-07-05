@@ -11,9 +11,8 @@
 ;; LSP
 (when (modulep! +lsp)
   (unless (modulep! :tools lsp +eglot)
-    (if (modulep! +pyright)
-        (package! lsp-pyright :pin "cc6df06aeaee3053eb800a24193483387b7b545b")
-      (package! lsp-python-ms :pin "7bda327bec7b219d140c34dab4b1e1fbd41bc516"))))
+    (when (modulep! +pyright)
+      (package! lsp-pyright :pin "cc6df06aeaee3053eb800a24193483387b7b545b"))))
 
 ;; Programming environment
 (package! anaconda-mode :pin "79fa9b4d2bda9f69857aeffb30c75276848a2810")
