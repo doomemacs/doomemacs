@@ -412,7 +412,7 @@
         :desc "Rename workspace"             "r" #'+workspace/rename
         :desc "Create workspace"             "c" #'+workspace/new
         :desc "Create named workspace"       "C" #'+workspace/new-named
-        :desc "Delete workspace"             "k" #'+workspace/delete
+        :desc "Delete workspace"             "k" #'+workspace/kill
         :desc "Save workspace"               "S" #'+workspace/save
         :desc "Switch to other workspace"    "o" #'+workspace/other
         :desc "Switch to left workspace"     "p" #'+workspace/switch-left

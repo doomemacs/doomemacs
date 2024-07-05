@@ -32,7 +32,7 @@
   ;; (+popup/close (get-buffer-window "*notmuch-hello*"))
   (doom-kill-matching-buffers "^\\*notmuch")
   (when (modulep! :ui workspaces)
-    (+workspace/delete +notmuch-workspace-name)))
+    (+workspace/kill +notmuch-workspace-name)))
 
 (defun +notmuch-get-sync-command ()
   "Return a shell command string to synchronize your notmuch mail with."

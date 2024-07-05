@@ -36,7 +36,7 @@
   (interactive)
   (if (modulep! :ui workspaces)
       (when (+workspace-exists-p +calendar-workspace-name)
-        (+workspace/delete +calendar-workspace-name))
+        (+workspace/kill +calendar-workspace-name))
     (when (window-configuration-p +calendar--wconf)
       (set-window-configuration +calendar--wconf))
     (setq +calendar--wconf nil))

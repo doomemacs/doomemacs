@@ -150,10 +150,10 @@ success, nil otherwise."
   (persp-rename new-name (+workspace-get name)))
 
 ;;;###autoload
-(defun +workspace-delete (workspace &optional inhibit-kill-p)
-  "Delete the workspace denoted by WORKSPACE, which can be the name of a perspective
-or its hash table. If INHIBIT-KILL-P is non-nil, don't kill this workspace's
-buffers."
+(defun +workspace-kill (workspace &optional inhibit-kill-p)
+  "Kill the workspace denoted by WORKSPACE, which can be the name of a
+perspective or its hash table. If INHIBIT-KILL-P is non-nil, don't kill this
+workspace's buffers."
   (unless (stringp workspace)
     (setq workspace (persp-name workspace)))
   (when (+workspace--protected-p workspace)
@@ -231,14 +231,14 @@ workspace."
     ('error (+workspace-error ex t))))
 
 ;;;###autoload
-(defun +workspace/delete (name)
+(defun +workspace/kill (name)
   "Delete this workspace. If called with C-u, prompts you for the name of the
 workspace to delete."
   (interactive
    (let ((current-name (+workspace-current-name)))
      (list
       (if current-prefix-arg
-          (completing-read (format "Delete workspace (default: %s): " current-name)
+          (completing-read (format "Kill workspace (default: %s): " current-name)
                            (+workspace-list-names)
                            nil nil nil nil current-name)
         current-name))))
@@ -250,9 +250,9 @@ workspace to delete."
           (cond ((delq (selected-frame) (persp-frames-with-persp (get-frame-persp)))
                  (user-error "Can't close workspace, it's visible in another frame"))
                 ((not (equal (+workspace-current-name) name))
-                 (+workspace-delete name))
+                 (+workspace-kill name))
                 ((cdr workspaces)
-                 (+workspace-delete name)
+                 (+workspace-kill name)
                  (+workspace-switch
                   (if (+workspace-exists-p +workspace--last)
                       +workspace--last
@@ -262,7 +262,7 @@ workspace to delete."
                 (t
                  (+workspace-switch +workspaces-main t)
                  (unless (string= (car workspaces) +workspaces-main)
-                   (+workspace-delete name))
+                   (+workspace-kill name))
                  (doom/kill-all-buffers (doom-buffer-list))))
           (+workspace-message (format "Deleted '%s' workspace" name) 'success)))
     ('error (+workspace-error ex t))))
@@ -275,7 +275,7 @@ workspace to delete."
         (persps (length (+workspace-list-names)))
         (buffers 0))
     (let ((persp-autokill-buffer-on-remove t))
-      (unless (cl-every #'+workspace-delete (+workspace-list-names))
+      (unless (cl-every #'+workspace-kill (+workspace-list-names))
         (+workspace-error "Could not clear session")))
     (+workspace-switch +workspaces-main t)
     (setq buffers (doom/kill-all-buffers (buffer-list)))
@@ -401,7 +401,7 @@ the next."
                (let ((frame-persp (frame-parameter nil 'workspace)))
                  (if (string= frame-persp (+workspace-current-name))
                      (delete-frame)
-                   (+workspace/delete current-persp-name))))
+                   (+workspace/kill current-persp-name))))
 
               ((+workspace-error "Can't delete last workspace" t)))))))
 
@@ -490,7 +490,7 @@ created."
       (setq frame (selected-frame)))
     (let ((frame-persp (frame-parameter frame 'workspace)))
       (when (string= frame-persp (+workspace-current-name))
-        (+workspace/delete frame-persp)))))
+        (+workspace/kill frame-persp)))))
 
 ;;;###autoload
 (defun +workspaces-associate-frame-fn (frame &optional _new-frame-p)

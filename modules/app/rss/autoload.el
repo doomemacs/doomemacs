@@ -109,7 +109,7 @@
     (mapc #'kill-buffer show-buffers))
   (if (and (modulep! :ui workspaces)
            (+workspace-exists-p +rss-workspace-name))
-      (+workspace/delete +rss-workspace-name)
+      (+workspace/kill +rss-workspace-name)
     (when (window-configuration-p +rss--wconf)
       (set-window-configuration +rss--wconf))
     (setq +rss--wconf nil)
