@@ -177,4 +177,5 @@ Also resizees `doom-variable-pitch-font' and `doom-serif-font'."
          (font-get (doom-normalize-font doom-big-font) :size))
        t `((doom-font . ,doom-big-font)))
     ;; Resize the current font
+    (doom-adjust-font-size nil)
     (doom-adjust-font-size (if doom-big-font-mode doom-big-font-increment))))
