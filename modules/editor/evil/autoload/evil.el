@@ -44,28 +44,32 @@ replacing its contents."
 If there are no windows there and there is only one window, split in that
 direction and place this window there. If there are no windows and this isn't
 the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
+  (unless (memq direction '(left right up down))
+    (user-error "Invalid direction: %s" direction))
   (when (window-dedicated-p)
     (user-error "Cannot swap a dedicated window"))
   (let* ((this-window (selected-window))
-         (this-buffer (current-buffer))
          (that-window (window-in-direction direction nil this-window))
          (that-buffer (window-buffer that-window)))
     (when (or (minibufferp that-buffer)
               (window-dedicated-p this-window))
       (setq that-buffer nil that-window nil))
     (if (not (or that-window (one-window-p t)))
-        (funcall (pcase direction
-                   ('left  #'evil-window-move-far-left)
-                   ('right #'evil-window-move-far-right)
-                   ('up    #'evil-window-move-very-top)
-                   ('down  #'evil-window-move-very-bottom)))
+        (if (and (window-at-side-p
+                  this-window (pcase direction ('up 'top) ('down 'bottom) (_ direction)))
+                 (not (cl-loop for dir in (if (memq direction '(left right))
+                                              '(up down) '(left right))
+                               if (window-in-direction dir nil this-window)
+                               return t)))
+            (user-error "Window is already at the edge")
+          (call-interactively
+           (pcase direction
+             ('left  #'evil-window-move-far-left)
+             ('right #'evil-window-move-far-right)
+             ('up    #'evil-window-move-very-top)
+             ('down  #'evil-window-move-very-bottom))))
       (unless that-window
-        (setq that-window
-              (split-window this-window nil
-                            (pcase direction
-                              ('up 'above)
-                              ('down 'below)
-                              (_ direction))))
+        (setq that-window (split-window this-window nil direction))
         (with-selected-window that-window
           (switch-to-buffer (doom-fallback-buffer)))
         (setq that-buffer (window-buffer that-window)))
