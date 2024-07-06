@@ -6,6 +6,9 @@
     (skip-chars-forward " \t\n")
     (current-indentation)))
 
+;;;###autoload (autoload 'apheleia--get-formatters "apheleia-formatters")
+
+;;;###autoload
 (defun +format-region (start end &optional callback)
   "Format from START to END with `apheleia'."
   (when-let* ((command (apheleia--get-formatters
@@ -42,15 +45,16 @@
        (lambda ()
          (with-current-buffer formatted-buffer
            (when (> indent 0)
-             ;; restore indentation without affecting new
-             ;; indentation
+             ;; restore indentation without affecting new indentation
              (indent-rigidly (point-min) (point-max)
                              (max 0 (- indent (+format--current-indentation)))))
            (set-buffer-modified-p nil))
          (with-current-buffer cur-buffer
            (delete-region start end)
-           (insert-buffer-substring-no-properties formatted-buffer)
-           (when callback (funcall callback))
+           (goto-char start)
+           (save-excursion
+             (insert-buffer-substring-no-properties formatted-buffer)
+             (when callback (funcall callback)))
            (kill-buffer formatted-buffer)))))))
 
 
@@ -58,22 +62,17 @@
 ;;; Commands
 
 ;;;###autoload
-(defun +format/buffer (&optional arg)
-  "Reformat the current buffer using LSP or `format-all-buffer'."
-  (interactive "P")
-  (or (run-hook-with-args-until-success '+format-functions (point-min) (point-max) 'buffer)
-      (call-interactively #'apheleia-format-buffer)))
+(defalias '+format/buffer #'apheleia-format-buffer)
 
 ;;;###autoload
-(defun +format/region (beg end &optional arg)
+(defun +format/region (beg end &optional _arg)
   "Runs the active formatter on the lines within BEG and END.
 
 WARNING: this may not work everywhere. It will throw errors if the region
 contains a syntax error in isolation. It is mostly useful for formatting
 snippets or single lines."
   (interactive "rP")
-  (or (run-hook-with-args-until-success '+format-functions beg end 'region)
-      (+format-region beg end)))
+  (+format-region beg end))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()
@@ -85,72 +84,29 @@ is selected)."
        #'+format/region
      #'+format/buffer)))
 
-
-;;
-;;; Specialized formatters
-
 ;;;###autoload
-(defun +format-with-lsp-fn (beg end op)
-  "Format the region/buffer using any available lsp-mode formatter.
-
-Does nothing if `+format-with-lsp' is nil or the active server doesn't support
-the requested feature."
-  (and +format-with-lsp
-       (bound-and-true-p lsp-mode)
-       (pcase op
-         ('buffer (condition-case _
-                      ;; Avoid lsp-feature? checks for this, since
-                      ;; `lsp-format-buffer' does its own, and allows clients
-                      ;; without formatting support (but with rangeFormatting,
-                      ;; for some reason) to work.
-                      (always (lsp-format-buffer))
-                    ('lsp-capability-not-supported nil)))
-         ('region (if (lsp-feature? "textDocument/rangeFormatting")
-                      (always (lsp-format-region beg end))))
-         (_ (error "Invalid formatter operation: %s" op)))))
-
-;;;###autoload
-(defun +format-with-eglot-fn (beg end op)
-  "Format the region/buffer using any available eglot formatter.
-
-Does nothing if `+format-with-lsp' is nil or the active server doesn't support
-the requested feature."
-  (and +format-with-lsp
-       (bound-and-true-p eglot--managed-mode)
-       (pcase op
-         ('buffer (if (eglot--server-capable :documentFormattingProvider)
-                      (always (eglot-format-buffer))))
-         ('region (if (eglot--server-capable :documentRangeFormattingProvider)
-                      (always (eglot-format beg end))))
-         (_ (error "Invalid formatter operation: %s" op)))))
-
-;;;###autoload
-(defun +format-in-org-src-blocks-fn (beg end _op)
-  "Reformat org src blocks with apheleia as if they were independent buffers."
-  (when (derived-mode-p 'org-mode)
-    (goto-char beg)
-    (while (re-search-forward org-babel-src-block-regexp end t)
-      (let* ((element (org-element-at-point))
-             (block-beg (save-excursion
-                          (goto-char (org-babel-where-is-src-block-head element))
-                          (line-beginning-position 2)))
-             (block-end (save-excursion
-                          (goto-char (org-element-property :end element))
-                          (skip-chars-backward " \t\n")
-                          (line-beginning-position)))
-             (beg (max beg block-beg))
-             (end (min end block-end))
-             (lang (org-element-property :language element))
-             (major-mode (org-src-get-lang-mode lang)))
+(defun +format/org-block (point)
+  "Reformat the org src block at POINT with a mode approriate formatter."
+  (interactive (list (point)))
+  (unless (derived-mode-p 'org-mode)
+    (user-error "Not an org-mode buffer!"))
+  (let ((element (org-element-at-point point)))
+    (unless (org-in-src-block-p nil element)
+      (user-error "Not in an org src block"))
+    (cl-destructuring-bind (beg end _) (org-src--contents-area element)
+      (let* ((lang (org-element-property :language element))
+             (mode (org-src-get-lang-mode lang)))
         (save-excursion
-          (if (eq major-mode 'org-mode)
-              (user-error "Cannot reformat an org src block in org-mode")
-            ;; Determine formatter based on language and format the region
-            (let ((formatter (apheleia--get-formatters 'interactive)))
-              (unless formatter
-                (setq formatter (apheleia--get-formatters 'prompt))
-                (unless formatter
-                  (user-error "No formatter configured for language: %s" lang)))
-              (let ((apheleia-formatter formatter))
-                (+format-region beg end)))))))
-    t))
+          (if (provided-mode-derived-p mode 'org-mode)
+              (user-error "Cannot reformat an org-mode or org-derived src block")
+            (let* ((major-mode mode)
+                   (after-change-functions
+                    ;; HACK: Silence excessive and unhelpful warnings about
+                    ;;   'org-element-at-point being used in non-org-mode
+                    ;;   buffers'.
+                    (remq 'org-indent-refresh-maybe after-change-functions))
+                   (apheleia-formatter
+                    (or (apheleia--get-formatters 'interactive)
+                        (apheleia--get-formatters 'prompt)
+                        (user-error "No formatter configured for language: %s" lang))))
+              (+format-region beg end))))))))
