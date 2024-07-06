@@ -1222,7 +1222,7 @@ between the two."
             :m "[l"  #'org-previous-link
             :m "]c"  #'org-babel-next-src-block
             :m "[c"  #'org-babel-previous-src-block
-            :n "gQ"  #'org-fill-paragraph
+            :n "gQ"  #'+org/reformat-at-point
             ;; sensible vim-esque folding keybinds
             :n "za"  #'+org/toggle-fold
             :n "zA"  #'org-shifttab

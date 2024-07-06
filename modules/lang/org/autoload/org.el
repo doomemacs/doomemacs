@@ -334,6 +334,24 @@ see how ARG affects this command."
          (org-clock-in))
         ((org-clock-in-last arg))))
 
+;;;###autoload
+(defun +org/reformat-at-point ()
+  "Reformat the element at point.
+
+If in an org src block, invokes `+format/org-block' if the ':editor format'
+  module is enabled.
+If in an org table, realign the cells with `org-table-align'.
+Otherwise, falls back to `org-fill-paragraph' to reflow paragraphs."
+  (interactive)
+  (let ((element (org-element-at-point)))
+    (cond ((org-in-src-block-p nil element)
+           (unless (modulep! :editor format)
+             (user-error ":editor format module is disabled, ignoring reformat..."))
+           (call-interactively #'+format/org-block))
+          ((org-at-table-p)
+           (save-excursion (org-table-align)))
+          ((call-interactively #'org-fill-paragraph)))))
+
 
 ;;; Folds
 ;;;###autoload
