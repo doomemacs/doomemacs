@@ -52,7 +52,7 @@ This is controlled by `+format-on-save-disabled-modes'."
   ;; `+format-with-lsp' is non-nil.
   (cond ((modulep! :tools lsp +eglot)
          (add-to-list 'apheleia-formatters '(eglot . +format-eglot-buffer))
-         (add-hook 'eglot-managed-hook #'+format-toggle-eglot-formatter-h))
+         (add-hook 'eglot-managed-mode-hook #'+format-toggle-eglot-formatter-h))
         ((modulep! :tools lsp)
          (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
          (add-hook 'lsp-configure-hook #'+format-enable-lsp-formatter-h)
