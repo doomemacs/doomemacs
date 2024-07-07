@@ -120,11 +120,13 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
 
 (defvar compilation-read-command)
 ;;;###autoload
-(defun +beancount/balance ()
+(defun +beancount/balance (&optional all-accounts)
   "Display a balance report with bean-report (bean-report bal)."
-  (interactive)
-  (let (compilation-read-command)
-    (beancount--run "bean-report" buffer-file-name "bal")))
+  (interactive "P")
+  (let ((args (unless all-accounts '("-e" "Assets|Liabilities")))
+        compilation-read-command
+        current-prefix-arg)
+    (apply #'beancount--run "bean-report" buffer-file-name "balances" args)))
 
 ;;;###autoload
 (defun +beancount/clone-transaction ()
