@@ -45,18 +45,19 @@ This is controlled by `+format-on-save-disabled-modes'."
             (eq +format-on-save-disabled-modes t)
             (not (null (memq major-mode +format-on-save-disabled-modes)))))))
 
-  :config
-  (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
-
   ;; Use the formatter provided by lsp-mode and eglot, if they are available and
   ;; `+format-with-lsp' is non-nil.
   (cond ((modulep! :tools lsp +eglot)
-         (add-to-list 'apheleia-formatters '(eglot . +format-eglot-buffer))
          (add-hook 'eglot-managed-mode-hook #'+format-toggle-eglot-formatter-h))
         ((modulep! :tools lsp)
-         (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
          (add-hook 'lsp-configure-hook #'+format-enable-lsp-formatter-h)
          (add-hook 'lsp-unconfigure-hook #'+format-disable-lsp-formatter-h)))
+
+  :config
+  (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
+
+  (add-to-list 'apheleia-formatters '(eglot . +format-eglot-buffer))
+  (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
 
   (defadvice! +format--inhibit-reformat-on-prefix-arg-a (orig-fn &optional arg)
     "Make it so \\[save-buffer] with prefix arg inhibits reformatting."
