@@ -54,15 +54,6 @@ re-align the table if necessary. (Necessary because org-mode has a
       (goto-char pt))))
 
 ;;;###autoload
-(defun +org-enable-auto-reformat-tables-h ()
-  "Realign tables & update formulas when exiting insert mode (`evil-mode').
-Meant for `org-mode-hook'."
-  (when (featurep 'evil)
-    (add-hook 'evil-insert-state-exit-hook #'+org-realign-table-maybe-h nil t)
-    (add-hook 'evil-replace-state-exit-hook #'+org-realign-table-maybe-h nil t)
-    (advice-add #'evil-replace :after #'+org-realign-table-maybe-a)))
-
-;;;###autoload
 (defun +org-delete-backward-char-and-realign-table-maybe-h ()
   "Ensure deleting characters with backspace doesn't deform the table cell."
   (when (eq major-mode 'org-mode)

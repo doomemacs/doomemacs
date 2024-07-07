@@ -1305,10 +1305,7 @@ between the two."
              ;; `org-indent-mode', so we turn off show-paren-mode altogether
              #'doom-disable-show-paren-mode-h
              ;; disable `show-trailing-whitespace'; shows a lot of false positives
-             #'doom-disable-show-trailing-whitespace-h
-             ;; #'+org-enable-auto-reformat-tables-h
-             ;; #'+org-enable-auto-update-cookies-h
-             )
+             #'doom-disable-show-trailing-whitespace-h)
 
   (add-hook! 'org-load-hook
              #'+org-init-org-directory-h

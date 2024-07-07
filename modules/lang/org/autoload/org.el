@@ -538,10 +538,3 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
   (when org-occur-highlights
     (org-remove-occur-highlights)
     t))
-
-;;;###autoload
-(defun +org-enable-auto-update-cookies-h ()
-  "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
-  (when (bound-and-true-p evil-local-mode)
-    (add-hook 'evil-insert-state-exit-hook #'org-update-parent-todo-statistics nil t))
-  (add-hook 'before-save-hook #'org-update-parent-todo-statistics nil t))
