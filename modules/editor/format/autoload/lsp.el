@@ -24,8 +24,8 @@
   "TODO"
   (if (bound-and-true-p eglot--managed-mode)
       (when (and +format-with-lsp (null +format-with))
-        (when (or (eglot--server-capable :documentFormattingProvider)
-                  (eglot--server-capable :documentRangeFormattingProvider))
+        (when (or (eglot-server-capable :documentFormattingProvider)
+                  (eglot-server-capable :documentRangeFormattingProvider))
           (setq-local +format-with--last +format-with
                       +format-with 'eglot)))
     (when +format-with--last
