@@ -65,7 +65,7 @@ default/fallback account."
       ;; as otherwise you can accumulate empty workspaces
       (progn
         (unless (+workspace-buffer-list)
-          (+workspace-delete (+workspace-current-name)))
+          (+workspace-kill (+workspace-current-name)))
         (+workspace-switch +mu4e-workspace-name t))
     (setq +mu4e--old-wconf (current-window-configuration))
     (delete-other-windows)
