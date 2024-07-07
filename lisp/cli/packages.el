@@ -769,7 +769,7 @@ original state.")
                            (let ((doom-output-indent 0))
                              (terpri)
                              (print! (warn "Aborted")))
-                           (doom-cli--exit 1))
+                           (doom-cli--exit 1 doom-cli--context))
                          (nreverse options)))
                   (prompt
                    (format! "How to proceed? (%s%s) "
