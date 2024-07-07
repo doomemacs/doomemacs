@@ -152,11 +152,12 @@ If DIR is not a project, it will be indexed (but not cached)."
           ((and (bound-and-true-p ivy-mode)
                 (fboundp 'counsel-file-jump))
            (call-interactively #'counsel-file-jump))
-          ((when-let ((pr (project-current nil dir)))
-             (project-find-file-in nil nil pr)))
           ((and (bound-and-true-p helm-mode)
                 (fboundp 'helm-find-files))
            (call-interactively #'helm-find-files))
+          ((when-let ((project-current-directory-override t)
+                      (pr (project-current t dir)))
+             (project-find-file-in nil nil pr)))
           ((call-interactively #'find-file)))))
 
 ;;;###autoload
