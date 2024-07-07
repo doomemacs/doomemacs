@@ -24,6 +24,7 @@ variable."
   :safe 'booleanp)
 
 (defvaralias '+format-with 'apheleia-formatter)
+(defvaralias '+format-inhibit 'apheleia-inhibit)
 
 
 ;;
