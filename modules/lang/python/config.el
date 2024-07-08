@@ -127,13 +127,13 @@
   (when (featurep 'evil)
     (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
-        :map (python-mode-map anaconda-mode-map)
-        (:prefix ("g" . "conda")
+        :map anaconda-mode-map
+        :prefix ("g" . "conda")
         "d" #'anaconda-mode-find-definitions
         "h" #'anaconda-mode-show-doc
         "a" #'anaconda-mode-find-assignments
         "f" #'anaconda-mode-find-file
-        "u" #'anaconda-mode-find-references)))
+        "u" #'anaconda-mode-find-references))
 
 
 (use-package! pyimport
@@ -142,10 +142,10 @@
   (map! :after python
         :map python-mode-map
         :localleader
-        (:prefix ("i" . "imports")
-          :desc "Insert missing imports" "i" #'pyimport-insert-missing
-          :desc "Remove unused imports"  "R" #'pyimport-remove-unused
-          :desc "Optimize imports"       "o" #'+python/optimize-imports)))
+        :prefix ("i" . "imports")
+        :desc "Insert missing imports" "i" #'pyimport-insert-missing
+        :desc "Remove unused imports"  "R" #'pyimport-remove-unused
+        :desc "Optimize imports"       "o" #'+python/optimize-imports))
 
 
 (use-package! py-isort
@@ -155,8 +155,8 @@
         :map python-mode-map
         :localleader
         (:prefix ("i" . "imports")
-          :desc "Sort imports"      "s" #'py-isort-buffer
-          :desc "Sort region"       "r" #'py-isort-region)))
+         :desc "Sort imports"      "s" #'py-isort-buffer
+         :desc "Sort region"       "r" #'py-isort-region)))
 
 (use-package! nose
   :commands nose-mode
@@ -170,14 +170,14 @@
 
   (map! :localleader
         :map nose-mode-map
-        (:prefix ("t" . "test")
+        :prefix ("t" . "test")
         "r" #'nosetests-again
         "a" #'nosetests-all
         "s" #'nosetests-one
         "v" #'nosetests-module
         "A" #'nosetests-pdb-all
         "O" #'nosetests-pdb-one
-        "V" #'nosetests-pdb-module)))
+        "V" #'nosetests-pdb-module))
 
 
 (use-package! python-pytest
@@ -186,14 +186,14 @@
   (map! :after python
         :localleader
         :map python-mode-map
-        (:prefix ("t" . "test")
+        :prefix ("t" . "test")
         "a" #'python-pytest
         "f" #'python-pytest-file-dwim
         "F" #'python-pytest-file
         "t" #'python-pytest-function-dwim
         "T" #'python-pytest-function
         "r" #'python-pytest-repeat
-        "p" #'python-pytest-dispatch)))
+        "p" #'python-pytest-dispatch))
 
 
 ;;
@@ -214,7 +214,7 @@
       (:description . "Run Python script")))
   (map! :map python-mode-map
         :localleader
-        (:prefix ("e" . "pipenv")
+        :prefix ("e" . "pipenv")
         :desc "activate"    "a" #'pipenv-activate
         :desc "deactivate"  "d" #'pipenv-deactivate
         :desc "install"     "i" #'pipenv-install
@@ -222,7 +222,7 @@
         :desc "open module" "o" #'pipenv-open
         :desc "run"         "r" #'pipenv-run
         :desc "shell"       "s" #'pipenv-shell
-        :desc "uninstall"   "u" #'pipenv-uninstall)))
+        :desc "uninstall"   "u" #'pipenv-uninstall))
 
 
 (use-package! pyvenv
