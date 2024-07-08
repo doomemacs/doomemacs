@@ -42,6 +42,8 @@ be formatted and returned to the buffer using
   works in many cases, but makes no guarantees that it will work with all
   formatters. Lisp, Scheme, Python, or similarly indentation-based languages are
   most likely to see strange results.
+- [[fn:save-buffer]] is advised to suppress format-on-save behavior if passed the
+  universal argument (e.g. [[kbd:SPC u SPC b s]] or [[kbd:C-u C-x C-s]]).
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
