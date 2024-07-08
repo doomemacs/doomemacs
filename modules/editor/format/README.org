@@ -176,7 +176,7 @@ enabled, and the running server supports =textDocument/formatting= or
 =textDocument/rangeFormatting=, it can be used instead of
 [[doom-package:apheleia]]'s (or Doom's) default formatters by enabling this module
 with its =+lsp= flag or manually activating the [[fn:+format-with-lsp-mode]] minor
-mode (though it's a better idea to use [[fn:+format-with-lsp-maybe-h]] if you're
+mode (though it's a better idea to use [[fn:+format-with-lsp-toggle-h]] if you're
 looking for a function to use with mode hooks; this function will respect
 pre-existing modifications to [[var:+format-with]]).
 

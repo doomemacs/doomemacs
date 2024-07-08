@@ -37,8 +37,8 @@ This is controlled by `+format-on-save-disabled-modes'."
 
   ;; Use the formatter provided by lsp-mode and eglot, if available.
   (when (modulep! +lsp)
-    (add-hook 'eglot-managed-mode-hook #'+format-with-lsp-maybe-h)
-    (add-hook 'lsp-managed-mode-hook #'+format-with-lsp-maybe-h))
+    (add-hook 'eglot-managed-mode-hook #'+format-with-lsp-toggle-h)
+    (add-hook 'lsp-managed-mode-hook #'+format-with-lsp-toggle-h))
 
   :config
   (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
