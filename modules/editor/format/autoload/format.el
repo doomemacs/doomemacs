@@ -84,7 +84,7 @@ may not always work. Keep your undo keybind handy!"
      #'+format/buffer)))
 
 ;;;###autoload
-(defun +format/org-block (point)
+(defun +format/org-block (&optional point)
   "Reformat the org src block at POINT with a mode approriate formatter."
   (interactive (list (point)))
   (unless (derived-mode-p 'org-mode)
