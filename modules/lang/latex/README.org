@@ -27,8 +27,6 @@ Provide a helping hand when working with LaTeX documents.
 - +fold ::
   Use TeX-fold (from [[doom-package:auctex]]) to fold LaTeX macros to unicode, and make folding
   hook-based and less manual.
-- +latexmk ::
-  Use LatexMk instead of LaTeX to compile documents.
 - +lsp ::
   Enable LSP support in latex buffers. Requires [[doom-module::tools lsp]] and a langserver
   (supports digestif and TexLab).
@@ -36,7 +34,6 @@ Provide a helping hand when working with LaTeX documents.
 ** Packages
 - [[doom-package:adaptive-wrap]]
 - [[doom-package:auctex]]
-- [[doom-package:auctex-latexmk]] if [[doom-module:+latexmk]]
 - [[doom-package:cdlatex]] if [[doom-module:+cdlatex]]
 - [[doom-package:evil-tex]] if [[doom-module::editor evil +everywhere]]
 - [[doom-package:latex-preview-pane]]

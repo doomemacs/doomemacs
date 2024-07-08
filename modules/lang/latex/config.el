@@ -250,19 +250,6 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   :init (setq-default adaptive-wrap-extra-indent 0))
 
 
-(use-package! auctex-latexmk
-  :when (modulep! +latexmk)
-  :after latex
-  :init
-  ;; Pass the -pdf flag when TeX-PDF-mode is active.
-  (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-  ;; Set LatexMk as the default.
-  (setq-hook! LaTeX-mode TeX-command-default "LatexMk")
-  :config
-  ;; Add LatexMk as a TeX target.
-  (auctex-latexmk-setup))
-
-
 (use-package! evil-tex
   :when (modulep! :editor evil +everywhere)
   :hook (LaTeX-mode . evil-tex-mode))
