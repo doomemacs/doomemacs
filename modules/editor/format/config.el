@@ -56,6 +56,7 @@ This is controlled by `+format-on-save-disabled-modes'."
 
   :config
   (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
+  (add-to-list 'doom-debug-variables '(apheleia-log-debug-info . t))
 
   (add-to-list 'apheleia-formatters '(eglot . +format-eglot-buffer))
   (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
