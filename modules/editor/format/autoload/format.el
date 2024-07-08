@@ -27,10 +27,10 @@
       ;; possible, in case the formatter is an elisp function, like `gofmt'.
       (cl-loop for (var . val)
                in (cl-remove-if-not #'listp (buffer-local-variables cur-buffer))
-               ;; Making enable-multibyte-characters buffer-local causes an
-               ;; error.
+               ;; `enable-multibyte-characters' can change how Emacs reads the
+               ;; buffer's contents (or writes them to the formatters), which
+               ;; can cause errors.
                unless (eq var 'enable-multibyte-characters)
-               ;; Using setq-local would quote var.
                do (set (make-local-variable var) val))
       ;;
       (insert-buffer-substring-no-properties cur-buffer start end)
@@ -66,18 +66,17 @@
 
 ;;;###autoload
 (defun +format/region (beg end &optional _arg)
-  "Runs the active formatter on the lines within BEG and END.
+  "Format the selected region.
 
-WARNING: this may not work everywhere. It will throw errors if the region
-contains a syntax error in isolation. It is mostly useful for formatting
-snippets or single lines."
+WARNING: if the formatter doesn't support partial formatting, this command tries
+to pretend the active selection is the contents of a standalone file, but this
+may not always work. Keep your undo keybind handy!"
   (interactive "rP")
   (+format-region beg end))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()
-  "Runs the active formatter on the selected region (or whole buffer, if nothing
-is selected)."
+  "Format the selected region, or whole buffer if nothing is selected."
   (interactive)
   (call-interactively
    (if (doom-region-active-p)
