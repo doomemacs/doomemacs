@@ -12,17 +12,6 @@ If it is t, it is disabled in all modes, the same as if the +onsave flag wasn't
 If nil, formatting is enabled in all modes."
   :type '(list symbol))
 
-(defcustom +format-with-lsp t
-  "If non-nil, format with LSP formatter if it's available.
-
-LSP formatter is provided by either `lsp-mode' or `eglot'.
-
-This can be set buffer-locally with `setq-hook!' to disable LSP formatting in
-select buffers, from a project's .dir-locals.el file, or as a file-local
-variable."
-  :type 'boolean
-  :safe 'booleanp)
-
 (defvaralias '+format-with 'apheleia-formatter)
 (defvaralias '+format-inhibit 'apheleia-inhibit)
 
@@ -46,19 +35,19 @@ This is controlled by `+format-on-save-disabled-modes'."
             (eq +format-on-save-disabled-modes t)
             (not (null (memq major-mode +format-on-save-disabled-modes)))))))
 
-  ;; Use the formatter provided by lsp-mode and eglot, if they are available and
-  ;; `+format-with-lsp' is non-nil.
-  (cond ((modulep! :tools lsp +eglot)
-         (add-hook 'eglot-managed-mode-hook #'+format-toggle-eglot-formatter-h))
-        ((modulep! :tools lsp)
-         (add-hook 'lsp-configure-hook #'+format-enable-lsp-formatter-h)
-         (add-hook 'lsp-unconfigure-hook #'+format-disable-lsp-formatter-h)))
+  ;; Use the formatter provided by lsp-mode and eglot, if available.
+  (when (modulep! +lsp)
+    (add-hook 'eglot-managed-mode-hook #'+format-with-lsp-maybe-h)
+    (add-hook 'lsp-managed-mode-hook #'+format-with-lsp-maybe-h))
 
   :config
   (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
   (add-to-list 'doom-debug-variables '(apheleia-log-debug-info . t))
 
-  (add-to-list 'apheleia-formatters '(eglot . +format-eglot-buffer))
+  ;; A psuedo-formatter that dispatches to the appropriate LSP client (via
+  ;; `lsp-mode' or `eglot') that is capable of formatting. Without +lsp, users
+  ;; must manually set `+format-with' to `lsp' to use it, or activate
+  ;; `+format-with-lsp-mode' in the appropriate modes.
   (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
 
   (defadvice! +format--inhibit-reformat-on-prefix-arg-a (orig-fn &optional arg)

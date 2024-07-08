@@ -27,6 +27,9 @@ be formatted and returned to the buffer using
   Enable reformatting of a buffer when it is saved. See
   [[var:+format-on-save-disabled-modes]] to disable format on save for certain
   major modes.
+- +lsp ::
+  Use ~lsp-mode~'s or ~eglot~'s formatters, instead of Apheleia's, if the active
+  client has the capabilities.
 
 ** Packages
 - [[doom-package:apheleia]]
