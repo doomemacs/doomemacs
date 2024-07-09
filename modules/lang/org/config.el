@@ -781,19 +781,7 @@ mutating hooks on exported output, like formatters."
         (let (persp-autokill-buffer-on-remove)
           (persp-remove-buffer org-agenda-new-buffers
                                (get-current-persp)
-                               nil))))
-    (defun +org-defer-mode-in-agenda-buffers-h ()
-      "`org-agenda' opens temporary, incomplete org-mode buffers.
-I've disabled a lot of org-mode's startup processes for these invisible buffers
-to speed them up (in `+org--exclude-agenda-buffers-from-recentf-a'). However, if
-the user tries to visit one of these buffers they'll see a gimped, half-broken
-org buffer. To avoid that, restart `org-mode' when they're switched to so they
-can grow up to be fully-fledged org-mode buffers."
-      (dolist (buffer org-agenda-new-buffers)
-        (when (buffer-live-p buffer)      ; Ensure buffer is not killed
-          (with-current-buffer buffer
-            (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
-                      nil 'local))))))
+                               nil)))))
 
   (defadvice! +org--restart-mode-before-indirect-buffer-a (&optional buffer _)
     "Restart `org-mode' in buffers in which the mode has been deferred (see
@@ -808,7 +796,14 @@ buffer as done, e.g., by `org-capture'."
 
   (defvar recentf-exclude)
   (defadvice! +org--optimize-backgrounded-agenda-buffers-a (fn file)
-    "Prevent temporarily opened agenda buffers from polluting recentf."
+    "Disable a lot of org-mode's startup processes for temporary agenda buffers.
+
+    This includes preventing them from polluting recentf.
+
+    However, if the user tries to visit one of these buffers they'll see a
+    gimped, half-broken org buffer. To avoid that, install a hook to restart
+    `org-mode' when they're switched to so they can grow up to be fully-fledged
+    org-mode buffers."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
           (doom-inhibit-large-file-detection t)
@@ -817,7 +812,12 @@ buffer as done, e.g., by `org-capture'."
           vc-handled-backends
           org-mode-hook
           find-file-hook)
-      (funcall fn file)))
+      (let ((buf (funcall fn file)))
+        (if buf
+         (with-current-buffer buf
+            (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
+                      nil 'local)))
+       buf)))
 
   (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)
     "Ensure uuidgen is always lowercase (consistent) regardless of system."
