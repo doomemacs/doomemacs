@@ -23,6 +23,7 @@ capture, the end position, and the output buffer.")
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
         markdown-fontify-whole-heading-line t
+        markdown-fontify-code-blocks-natively t
 
         ;; `+markdown-compile' offers support for many transpilers (see
         ;; `+markdown-compile-functions'), which it tries until one succeeds.
