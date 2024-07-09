@@ -78,10 +78,9 @@ more information on modifiers."
 (defun +evil--insert-newline (&optional above _noextranewline)
   (let ((pos (save-excursion (beginning-of-line-text) (point)))
         comment-auto-fill-only-comments)
-    (require 'smartparens)
     (evil-narrow-to-field
       (if above
-          (if (save-excursion (nth 4 (sp--syntax-ppss pos)))
+          (if (save-excursion (nth 4 (doom-syntax-ppss pos)))
               (evil-save-goal-column
                 (setq evil-auto-indent nil)
                 (goto-char pos)
@@ -103,7 +102,7 @@ more information on modifiers."
             (forward-line -1)
             (back-to-indentation))
         (evil-move-end-of-line)
-        (cond ((sp-point-in-comment pos)
+        (cond ((doom-point-in-comment-p pos)
                (setq evil-auto-indent nil)
                (if comment-line-break-function
                    (funcall comment-line-break-function nil)

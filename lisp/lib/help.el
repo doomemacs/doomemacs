@@ -355,9 +355,8 @@ without needing to check if they are available."
 
 (defun doom--help-current-module-str ()
   (cond ((save-excursion
-           (require 'smartparens)
            (ignore-errors
-             (sp-beginning-of-sexp)
+             (thing-at-point--beginning-of-sexp)
              (unless (eq (char-after) ?\()
                (backward-char))
              (let ((sexp (sexp-at-point)))
