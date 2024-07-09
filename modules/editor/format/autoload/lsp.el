@@ -44,9 +44,9 @@ mode unconditionally, call `+format-with-lsp-mode' instead."
 ;;; Apheleia formatters
 
 ;;;###autoload
-(cl-defun +format-lsp-buffer (&rest plist &key callback &allow-other-keys)
+(cl-defun +format-lsp-buffer (&rest plist &key buffer callback &allow-other-keys)
   "Format the current buffer with any available lsp-mode or eglot formatter."
-  (if-let* ((fn (+format--lsp-fn))
+  (if-let* ((fn (with-current-buffer buffer (+format--lsp-fn)))
             ((apply fn plist)))
       (funcall callback)
     (funcall callback "LSP server doesn't support formatting")))
