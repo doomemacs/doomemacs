@@ -31,9 +31,16 @@ all themes. It will apply to all themes once they are loaded."
            (dolist (theme (ensure-list (or ,theme 'user)))
              (when (or (eq theme 'user)
                        (custom-theme-enabled-p theme))
-               (apply #'custom-theme-set-faces theme
-                      (mapcan #'doom--custom-theme-set-face
-                              (list ,@specs)))))))
+               ;; Skip the 'saved-face(-comment) properties to avoid that the
+               ;; customizations are written to custom.el when saving other
+               ;; customized settings such as variables (e.g., triggered by
+               ;; lisp code calling customize-save-variable).
+               (letf! (defun put (sym prop val)
+                        (unless (memq prop (list 'saved-face 'saved-face-comment))
+                          (funcall put sym prop val)))
+                 (apply #'custom-theme-set-faces theme
+                        (mapcan #'doom--custom-theme-set-face
+                                (list ,@specs))))))))
        ;; Apply the changes immediately if the user is using the default theme
        ;; or the theme has already loaded. This allows you to evaluate these
        ;; macros on the fly and customize your faces iteratively.
