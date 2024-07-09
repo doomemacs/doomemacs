@@ -747,15 +747,6 @@ mutating hooks on exported output, like formatters."
     :before-while #'org-fix-tags-on-the-fly
     org-auto-align-tags)
 
-  (defadvice! +org--recenter-after-follow-link-a (&rest _args)
-    "Recenter after following a link, but only internal or file links."
-    :after '(org-footnote-action
-             org-follow-timestamp-link
-             org-link-open-as-file
-             org-link-search)
-    (when (get-buffer-window)
-      (recenter)))
-
   (defadvice! +org--strip-properties-from-outline-a (fn &rest args)
     "Fix variable height faces in eldoc breadcrumbs."
     :around #'org-format-outline-path
