@@ -6,11 +6,7 @@
 (add-hook! 'doom-load-theme-hook
   (defun doom-apply-customized-faces-h ()
     "Run `doom-customize-theme-hook'."
-    (letf! ((#'custom--should-apply-setting #'ignore)
-            (defun custom-push-theme (prop symbol theme mode &optional value)
-              (funcall custom-push-theme prop symbol theme mode value)
-              (if (facep symbol) (face-spec-set symbol value t))))
-      (run-hooks 'doom-customize-theme-hook))))
+      (run-hooks 'doom-customize-theme-hook)))
 
 (defun doom--normalize-face-spec (spec)
   (cond ((listp (car spec))
@@ -34,9 +30,21 @@ all themes. It will apply to all themes once they are loaded."
          (dolist (theme (ensure-list (or ,theme 'user)))
            (if (or (eq theme 'user)
                    (custom-theme-enabled-p theme))
-               (apply #'custom-theme-set-faces theme
-                      (mapcan #'doom--normalize-face-spec
-                              (list ,@specs))))))
+            ;; Force custom--should-apply-setting to return nil to avoid setting
+            ;; the 'saved-face(-comment) properties, which would lead to the
+            ;; customizations being written to custom.el when saving other
+            ;; customized settings (e.g. when lisp code calls
+            ;; customize-save-variable). Unfortunately, this will also inhibit
+            ;; putting the setting into effect, so we also override
+            ;; custom-push-theme to make up for the inhibited call to
+            ;; face-spec-set.
+            (letf! ((#'custom--should-apply-setting #'ignore)
+                    (defun custom-push-theme (prop symbol theme mode &optional value)
+                      (funcall custom-push-theme prop symbol theme mode value)
+                      (if (facep symbol) (face-spec-set symbol value t))))
+                   (apply #'custom-theme-set-faces theme
+                          (mapcan #'doom--normalize-face-spec
+                                  (list ,@specs)))))))
        ;; Apply the changes immediately if the user is using the default theme
        ;; or the theme has already loaded. This allows you to evaluate these
        ;; macros on the fly and customize your faces iteratively.
