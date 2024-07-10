@@ -608,7 +608,8 @@
 
        :desc "Toggle last org-clock"        "c" #'+org/toggle-last-clock
        :desc "Cancel current org-clock"     "C" #'org-clock-cancel
-       :desc "Open deft"                    "d" #'deft
+       (:when (modulep! :ui deft)
+         :desc "Open deft"                    "d" #'deft)
        (:when (modulep! :lang org +noter)
         :desc "Org noter"                  "e" #'org-noter)
 
