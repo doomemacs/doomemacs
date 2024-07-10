@@ -3,14 +3,18 @@
 ;;;###autoload
 (defconst doom-customize-theme-hook nil)
 
+(defun doom--run-customize-theme-hook (fn)
+  "Run FN, but suppress any writes to `custom-file'."
+  (letf! ((#'custom--should-apply-setting #'ignore)
+          (defun custom-push-theme (prop symbol theme mode &optional value)
+            (funcall custom-push-theme prop symbol theme mode value)
+            (if (facep symbol) (face-spec-set symbol value t))))
+    (funcall fn)))
+
 (add-hook! 'doom-load-theme-hook
   (defun doom-apply-customized-faces-h ()
     "Run `doom-customize-theme-hook'."
-    (letf! ((#'custom--should-apply-setting #'ignore)
-            (defun custom-push-theme (prop symbol theme mode &optional value)
-              (funcall custom-push-theme prop symbol theme mode value)
-              (if (facep symbol) (face-spec-set symbol value t))))
-      (run-hooks 'doom-customize-theme-hook))))
+    (run-hook-wrapped 'doom-customize-theme-hook #'doom--run-customize-theme-hook)))
 
 (defun doom--normalize-face-spec (spec)
   (cond ((listp (car spec))
@@ -42,7 +46,7 @@ all themes. It will apply to all themes once they are loaded."
        ;; macros on the fly and customize your faces iteratively.
        (when (or (get 'doom-theme 'previous-themes)
                  (null doom-theme))
-         (funcall #',fn))
+         (doom--run-customize-theme-hook #',fn))
        ;; FIXME Prevent clobbering this on-the-fly
        (add-hook 'doom-customize-theme-hook #',fn 100))))
 
