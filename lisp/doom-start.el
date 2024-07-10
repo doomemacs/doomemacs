@@ -163,7 +163,12 @@
 
 (defun doom-run-local-var-hooks-h ()
   "Run MODE-local-vars-hook after local variables are initialized."
-  (unless (or doom-inhibit-local-var-hooks delay-mode-hooks)
+  (unless (or doom-inhibit-local-var-hooks
+              delay-mode-hooks
+              ;; Don't trigger local-vars hooks in temporary (internal) buffers
+              (string-prefix-p
+               " " (buffer-name (or (buffer-base-buffer)
+                                    (current-buffer)))))
     (setq-local doom-inhibit-local-var-hooks t)
     (doom-run-hooks (intern-soft (format "%s-local-vars-hook" major-mode)))))
 
