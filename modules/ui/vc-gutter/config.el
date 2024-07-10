@@ -32,17 +32,15 @@
                                        (make-string (- w half-w) ?0)))
                              2))
         nil nil 'center)))
-  (defun +vc-gutter-type-face-fn (type _pos)
-    (intern (format "diff-hl-%s" type)))
   (defun +vc-gutter-type-at-pos-fn (type _pos)
     (if (eq type 'delete)
         'diff-hl-bmp-delete
       'diff-hl-bmp-middle))
-  (advice-add #'diff-hl-fringe-bmp-from-pos  :override #'+vc-gutter-type-at-pos-fn)
-  (advice-add #'diff-hl-fringe-bmp-from-type :override #'+vc-gutter-type-at-pos-fn)
+  (setq diff-hl-fringe-bmp-function #'+vc-gutter-type-at-pos-fn)
   (setq diff-hl-draw-borders nil)
+
   (add-hook! 'diff-hl-mode-hook
-    (defun +vc-gutter-fix-diff-hl-faces-h ()
+    (defun +vc-gutter-make-diff-hl-faces-transparent-h ()
       (mapc (doom-rpartial #'set-face-background nil)
             '(diff-hl-insert
               diff-hl-delete
@@ -122,9 +120,9 @@
   (when (modulep! :editor evil)
     (add-hook! 'diff-hl-flydiff-mode-hook
       (defun +vc-gutter-init-flydiff-mode-h ()
-        (if (not diff-hl-flydiff-mode)
-            (remove-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)
-          (add-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)))))
+        (if diff-hl-flydiff-mode
+            (add-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)
+          (remove-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)))))
 
   ;; FIX: Reverting a hunk causes the cursor to be moved to an unexpected place,
   ;;   often far from the target hunk.
