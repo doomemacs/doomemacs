@@ -3,22 +3,35 @@
 ;;
 ;;; Default styles
 
+;; STYLE: Redefine fringe bitmaps to be sleeker by making them solid bars (with
+;;   no border) that only take up half the horizontal space in the fringe. This
+;;   approach lets us avoid robbing fringe space from other packages/modes that
+;;   may need benefit from it (like magit, flycheck, or flyspell).
 (when (modulep! +pretty)
-  ;; UI: make the fringe small enough that the diff bars aren't too domineering,
-  ;;   while leaving enough room for other indicators.
   (if (fboundp 'fringe-mode) (fringe-mode '8))
-  ;; UI: the gutter looks less cramped with some space between it and  buffer.
   (setq-default fringes-outside-margins t)
 
-  ;; STYLE: Redefine fringe bitmaps to take up only half the horizontal space in
-  ;;   the fringe. This way we avoid overbearingly large diff bars without
-  ;;   having to shrink the fringe and sacrifice precious space for other fringe
-  ;;   indicators (like flycheck or flyspell).
-  ;; REVIEW: Extract these into a package with faces that themes can target.
-  (defadvice! +vc-gutter-define-thin-bitmaps-a (&rest args)
-    :override #'diff-hl-define-bitmaps
-    (define-fringe-bitmap 'diff-hl-bmp-middle [224] nil nil '(center repeated))
-    (define-fringe-bitmap 'diff-hl-bmp-delete [240 224 192 128] nil nil 'top))
+  (defadvice! +vc-gutter-define-thin-bitmaps-a (&rest _)
+    :after #'diff-hl-define-bitmaps
+    (let* ((scale (if (and (boundp 'text-scale-mode-amount)
+                           (numberp text-scale-mode-amount))
+                      (expt text-scale-mode-step text-scale-mode-amount)
+                    1))
+           (spacing (or (and (display-graphic-p) (default-value 'line-spacing)) 0))
+           (h (+ (ceiling (* (frame-char-height) scale))
+                 (if (floatp spacing)
+                     (truncate (* (frame-char-height) spacing))
+                   spacing)))
+           (w (min (frame-parameter nil (intern (format "%s-fringe" diff-hl-side)))
+                   16))
+           (_ (if (zerop w) (setq w 16))))
+      (define-fringe-bitmap 'diff-hl-bmp-middle
+        (make-vector
+         h (string-to-number (let ((half-w (1- (/ w 2))))
+                               (concat (make-string half-w ?1)
+                                       (make-string (- w half-w) ?0)))
+                             2))
+        nil nil 'center)))
   (defun +vc-gutter-type-face-fn (type _pos)
     (intern (format "diff-hl-%s" type)))
   (defun +vc-gutter-type-at-pos-fn (type _pos)
