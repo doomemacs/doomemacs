@@ -302,6 +302,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
     (setq use-short-answers t)
   ;; DEPRECATED: Remove when we drop 27.x support
   (advice-add #'yes-or-no-p :override #'y-or-n-p))
+;; HACK: By default, SPC = yes when `y-or-n-p' prompts you (and
+;;   `y-or-n-p-use-read-key' is off). This seems too easy to hit by accident,
+;;   especially with SPC as our default leader key.
+(define-key y-or-n-p-map " " nil)
 
 ;; Try to keep the cursor out of the read-only portions of the minibuffer.
 (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
