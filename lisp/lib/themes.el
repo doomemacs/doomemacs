@@ -3,6 +3,7 @@
 ;;;###autoload
 (defconst doom-customize-theme-hook nil)
 
+;;;###autoload
 (defun doom--run-customize-theme-hook (fn)
   "Run FN, but suppress any writes to `custom-file'."
   (letf! ((#'custom--should-apply-setting #'ignore)
