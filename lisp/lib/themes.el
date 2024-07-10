@@ -6,11 +6,11 @@
 (add-hook! 'doom-load-theme-hook
   (defun doom-apply-customized-faces-h ()
     "Run `doom-customize-theme-hook'."
-    (letf! (defun custom-push-theme (prop symbol theme mode &optional value)
-             (funcall custom-push-theme prop symbol theme mode value)
-             (if (facep symbol) (face-spec-set symbol value t)))
-      (let ((custom--inhibit-theme-enable t))
-        (run-hooks 'doom-customize-theme-hook)))))
+    (letf! ((#'custom--should-apply-setting #'ignore)
+            (defun custom-push-theme (prop symbol theme mode &optional value)
+              (funcall custom-push-theme prop symbol theme mode value)
+              (if (facep symbol) (face-spec-set symbol value t))))
+      (run-hooks 'doom-customize-theme-hook))))
 
 (defun doom--normalize-face-spec (spec)
   (cond ((listp (car spec))
