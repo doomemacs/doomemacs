@@ -2,7 +2,7 @@
 ;;; tools/tree-sitter/packages.el
 
 (package! tree-sitter :recipe (:branch "master") :pin "02fe7b86d92b1aab954045146469b7893f0ab371")
-(package! tree-sitter-langs :pin "a06804e13fc1d24d0099b44ce23d6ac5e6bac5b8")
+(package! tree-sitter-langs :pin "b2739d07fadf45520a25862342a1790cd905cff9")
 (package! tree-sitter-indent :pin "4ef246db3e4ff99f672fe5e4b416c890f885c09e")
 
 (when (modulep! :editor evil +everywhere)
