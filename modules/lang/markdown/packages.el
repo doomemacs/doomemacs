@@ -3,6 +3,9 @@
 
 (package! markdown-mode :pin "8aab017f4790f7a1e0d8403239cce989c88412f6")
 (package! markdown-toc :pin "3d724e518a897343b5ede0b976d6fb46c46bcc01")
+
+;; Required by `markdown-mode', or it will install it via package.el if it isn't
+;; present when you call `markdown-edit-code-block'.
 (package! edit-indirect :pin "82a28d8a85277cfe453af464603ea330eae41c05")
 
 (when (modulep! +grip)
