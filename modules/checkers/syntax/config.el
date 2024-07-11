@@ -50,7 +50,7 @@
   :commands flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
-  (setq flycheck-popup-tip-error-prefix "X ")
+  (setq flycheck-popup-tip-error-prefix (if (modulep! +icons) "⚠ " "[!] "))
 
   ;; HACK: Only display the flycheck popup if we're in normal mode (for evil
   ;;   users) or if no selection or completion is active. This popup can
@@ -71,9 +71,13 @@
   :unless (modulep! +flymake)
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
-  (setq flycheck-posframe-warning-prefix "! "
-        flycheck-posframe-info-prefix "··· "
-        flycheck-posframe-error-prefix "X ")
+  (if (modulep! +icons)
+      (setq flycheck-posframe-warning-prefix "⚠ "
+            flycheck-posframe-info-prefix "ⓘ "
+            flycheck-posframe-error-prefix "⚠ ")
+    (setq flycheck-posframe-warning-prefix "[?] "
+          flycheck-posframe-info-prefix "[i] "
+          flycheck-posframe-error-prefix "[!] "))
 
   ;; HACK: Hide the flycheck posframe immediately on the next keypress/user
   ;;   action, otherwise it lingers until the next time the user is idle.

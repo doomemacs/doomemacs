@@ -16,6 +16,8 @@ This module provides syntax checking and error highlighting, powered by
   *Requires GUI Emacs.*
 - +flymake :: Leverages the inbuilt [[doom-package:flymake]] for error and
   diagnostics highlighting.
+- +icons :: Use unicode icons rather than ASCII prefixes in error tooltips or
+  childframes.
 
 ** Packages
 - [[doom-package:flycheck]]
