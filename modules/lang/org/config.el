@@ -814,7 +814,8 @@ via an indirect buffer."
        buf)))
 
   (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)
-    "Ensure uuidgen is always lowercase (consistent) regardless of system."
+    "Ensure uuidgen is always lowercase (consistent) regardless of system.
+See https://lists.gnu.org/archive/html/emacs-orgmode/2019-07/msg00081.html."
     :filter-return #'org-id-new
     (if (eq org-id-method 'uuid)
         (downcase uuid)
