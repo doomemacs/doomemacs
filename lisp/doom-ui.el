@@ -212,7 +212,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
     (cond ((eq buf (doom-fallback-buffer))
            (message "Can't kill the fallback buffer.")
            t)
-          ((doom-real-buffer-p buf)
+          ((and (doom-real-buffer-p buf)
+                (run-hook-with-args-until-failure 'kill-buffer-query-functions))
            (let ((visible-p (delq (selected-window) (get-buffer-window-list buf nil t))))
              (unless visible-p
                (when (and (buffer-modified-p buf)
@@ -221,8 +222,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                                         buf))))
                  (user-error "Aborted")))
              (let ((inhibit-redisplay t)
-                   buffer-list-update-hook)
-               (when (or ;; if there aren't more real buffers than visible buffers,
+                   buffer-list-update-hook
+                   kill-buffer-query-functions)
+               (when (or
+                      ;; if there aren't more real buffers than visible buffers,
                       ;; then there are no real, non-visible buffers left.
                       (not (cl-set-difference (doom-real-buffer-list)
                                               (doom-visible-buffers nil t)))
