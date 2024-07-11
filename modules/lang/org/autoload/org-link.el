@@ -412,6 +412,15 @@ exist, and `org-link' otherwise."
       (insert label))))
 
 ;;;###autoload
+(defun +org/yank-link ()
+  "Copy the url at point to the clipboard.
+If on top of an Org link, will only copy the link component."
+  (interactive)
+  (let ((url (thing-at-point 'url)))
+    (kill-new (or url (user-error "No URL at point")))
+    (message "Copied link: %s" url)))
+
+;;;###autoload
 (defun +org/play-gif-at-point ()
   "TODO"
   (interactive)

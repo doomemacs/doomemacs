@@ -988,6 +988,7 @@ between the two."
          "s" #'org-store-link
          "S" #'org-insert-last-stored-link
          "t" #'org-toggle-link-display
+         "y" #'+org/yank-link
          (:when (modulep! :os macos)
           "g" #'org-mac-link-get-link))
         (:prefix ("P" . "publish")
