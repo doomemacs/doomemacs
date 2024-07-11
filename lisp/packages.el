@@ -6,7 +6,7 @@
   :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
 (package! compat
   :recipe (:host github :repo "emacs-compat/compat")
-  :pin "80dbd9bc5efee05a479663f8cfd0cc9e0a30dac5")
+  :pin "09dce8a193c5a70277512263782b82fa1cba84c0")
 (package! gcmh
   :pin "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9")
 
@@ -29,15 +29,15 @@
 
 ;; doom-editor.el
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
-(package! dtrt-indent :pin "939c5e374ac0175bb7d561542e22e47a72d04aa8")
+(package! dtrt-indent :pin "339755e4fb5245862737babf7f2c1e3bae1c129c")
 (package! helpful :pin "4ba24cac9fb14d5fdc32582cd947572040e82b2c")
-(package! smartparens :pin "f7cf316715e5018186c226aab8242c9e5ce131c8")
+(package! smartparens :pin "ab475c78916d7b1666a495e3fe9c54b250195637")
 (package! ws-butler :pin "e3a38d93e01014cd47bf5af4924459bd145fd7c4")
 
 ;; doom-projects.el
 (package! projectile :pin "0163b335a18af0f077a474d4dc6b36e22b5e3274")
-(package! project :pin "bf4c3cfcfbf3423d79170aa880a1abb332ed942e")
+(package! project :pin "093f42a1b612eaae0d2bdd475663c14973fe0325")
 
 ;; doom-keybinds.el
 (package! general :pin "826bf2b97a0fb4a34c5eb96ec2b172d682fd548f")
-(package! which-key :pin "ed389312170df955aaf10c2e120cc533ed5c509e")
+(package! which-key :pin "38d4308d1143b61e4004b6e7a940686784e51500")
