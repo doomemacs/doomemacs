@@ -1126,6 +1126,15 @@ between the two."
   :hook (org-mode . org-eldoc-load)
   :init (setq org-eldoc-breadcrumb-separator " → ")
   :config
+  (defadvice! +org-eldoc--display-link-at-point-a (&rest _)
+    "Display help for doom-*: links in minibuffer when cursor/mouse is over it."
+    :before-until #'org-eldoc-documentation-function
+    (if-let ((url (thing-at-point 'url t)))
+        (format "LINK: %s" url)
+      (and (eq (get-text-property (point) 'help-echo)
+               #'+org-link-doom--help-echo-from-textprop)
+           (+org-link-doom--help-echo-from-textprop nil (current-buffer) (point)))))
+
   ;; HACK Fix #2972: infinite recursion when eldoc kicks in 'org' or 'python'
   ;;   src blocks.
   ;; TODO Should be reported upstream!
