@@ -57,46 +57,18 @@
              (when callback (funcall callback)))
            (kill-buffer formatted-buffer)))))))
 
-(defun +format--org-region (beg end)
-  "Reformat the region within BEG and END.
-If nil, BEG and/or END will default to the boundaries of the src block at point."
-  (when (eq major-mode 'org-mode)
-    (let ((element (org-element-at-point)))
-      (save-excursion
-        (let* ((block-beg (save-excursion
-                            (goto-char (org-babel-where-is-src-block-head element))
-                            (line-beginning-position 2)))
-               (block-end (save-excursion
-                            (goto-char (org-element-property :end element))
-                            (skip-chars-backward " \t\n")
-                            (line-beginning-position)))
-               (beg (if beg (max beg block-beg) block-beg))
-               (end (if end (min end block-end) block-end))
-               (lang (org-element-property :language element))
-               (major-mode (org-src-get-lang-mode lang)))
-          (if (eq major-mode 'org-mode)
-              (user-error "Cannot reformat an org src block in org-mode")
-            ;; Determine formatter based on language and format the region
-            (let ((formatter (apheleia--get-formatters 'interactive)))
-              (unless formatter
-                (setq formatter (apheleia--get-formatters 'prompt))
-                (unless formatter
-                  (user-error "No formatter configured for language: %s" lang)))
-              (let ((apheleia-formatter formatter))
-                (+format-region beg end)))))))))
 ;;
 ;;; Commands
 
 ;;;###autoload
-;; (defalias '+format/buffer #'apheleia-format-buffer)
 (defun +format/buffer (&optional arg)
-  "Reformat the current buffer using LSP or `format-all-buffer'."
+  "Reformat the current buffer using `apheleia-format-buffer`.
+
+If the current major mode is `org-mode`, reformat the current org src block instead."
   (interactive "P")
-  (if (and (eq major-mode 'org-mode)
-           (org-in-src-block-p))
-      (+format--org-region (point-min) (point-max))
-    (or (run-hook-with-args-until-success '+format-functions (point-min) (point-max) 'buffer)
-        (call-interactively #'apheleia-format-buffer))))
+  (if (eq major-mode 'org-mode)
+      (+format/org-block)
+    (call-interactively #'apheleia-format-buffer)))
 
 ;;;###autoload
 (defun +format/region (beg end &optional _arg)
