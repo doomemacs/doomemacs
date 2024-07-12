@@ -1,7 +1,7 @@
 ;;; completion/corfu/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +corfu-move-to-minibuffer ()
+(defun +corfu/move-to-minibuffer ()
   "Move the current list of candidates to your choice of minibuffer completion UI."
   (interactive)
   (pcase completion-in-region--data
@@ -27,7 +27,7 @@
              (t (error "No minibuffer completion UI available for moving to!")))))))
 
 ;;;###autoload
-(defun +corfu-smart-sep-toggle-escape ()
+(defun +corfu/smart-sep-toggle-escape ()
   "Insert `corfu-separator' or toggle escape if it's already there."
   (interactive)
   (cond ((and (char-equal (char-before) corfu-separator)

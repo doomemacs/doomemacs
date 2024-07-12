@@ -461,8 +461,8 @@ Continues comments if executed from a commented line. Consults
   (map! :when (modulep! :completion corfu)
         :after corfu
         (:map corfu-map
-         [remap corfu-insert-separator] #'+corfu-smart-sep-toggle-escape
-         "C-S-s" #'+corfu-move-to-minibuffer
+         [remap corfu-insert-separator] #'+corfu/smart-sep-toggle-escape
+         "C-S-s" #'+corfu/move-to-minibuffer
          "C-p" #'corfu-previous
          "C-n" #'corfu-next))
   (let ((cmds-del
