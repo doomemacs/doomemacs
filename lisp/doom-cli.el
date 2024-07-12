@@ -23,11 +23,12 @@
               doom-cache-dir
               doom-state-dir))
 
-  ;; HACK: bin/doom invokes Emacs with --no-site-lisp solely to allow us to load
-  ;;   site-start manually, here, to suppress any output it produces, and they
-  ;;   almost always produce some. This causes premature redraws of the Emacs
-  ;;   frame during startup (to display those messages in the minibuffer), which
-  ;;   -- as I mention in the comments of doom.el -- really hurts startup time.
+  ;; HACK: bin/doom invokes Emacs with --no-site-lisp so that site files can be
+  ;;   loaded manually, here, where I can suppress any output it produces, and
+  ;;   they almost always produce some. This output pollutes the output of doom
+  ;;   scripts with potentially confusing -- but always unimportant --
+  ;;   information to the user, like deprecation notices, file-loaded messages,
+  ;;   and linter warnings. With this, that output is suppressed.
   (quiet!
    (require 'cl nil t)
    (unless site-run-file
