@@ -23,8 +23,11 @@
               doom-cache-dir
               doom-state-dir))
 
-  ;; HACK: Load `cl' and site files manually to prevent polluting logs and
-  ;;   stdout with deprecation and/or file load messages.
+  ;; HACK: bin/doom invokes Emacs with --no-site-lisp solely to allow us to load
+  ;;   site-start manually, here, to suppress any output it produces, and they
+  ;;   almost always produce some. This causes premature redraws of the Emacs
+  ;;   frame during startup (to display those messages in the minibuffer), which
+  ;;   -- as I mention in the comments of doom.el -- really hurts startup time.
   (quiet!
    (require 'cl nil t)
    (unless site-run-file
