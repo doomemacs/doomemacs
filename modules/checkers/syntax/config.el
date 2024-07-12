@@ -74,7 +74,7 @@
   (if (modulep! +icons)
       (setq flycheck-posframe-warning-prefix "⚠ "
             flycheck-posframe-info-prefix "ⓘ "
-            flycheck-posframe-error-prefix "⚠ ")
+            flycheck-posframe-error-prefix "⮾ ")
     (setq flycheck-posframe-warning-prefix "[?] "
           flycheck-posframe-info-prefix "[i] "
           flycheck-posframe-error-prefix "[!] "))
