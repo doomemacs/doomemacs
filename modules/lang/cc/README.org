@@ -35,7 +35,7 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 - [[doom-package:demangle-mode]]
 - [[doom-package:disaster]]
 - [[doom-package:glsl-mode]]
-- [[doom-package:modern-cpp-font-lock]]
+- [[doom-package:modern-cpp-font-lock]] unless [[doom-module:+tree-sitter]]
 - [[doom-package:opencl-mode]]
 - if [[doom-module:+lsp]]
   - [[doom-package:ccls]] if [[doom-module::tools lsp -eglot]]

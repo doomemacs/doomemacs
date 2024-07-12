@@ -135,6 +135,7 @@ This is ignored by ccls.")
 
 
 (use-package! modern-cpp-font-lock
+  :unless (modulep! +tree-sitter)
   :hook (c++-mode . modern-c++-font-lock-mode))
 
 

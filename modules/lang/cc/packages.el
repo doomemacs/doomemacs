@@ -7,7 +7,8 @@
 (package! cuda-mode :pin "7f593518fd135fc6af994024bcb47986dfa502d2")
 (package! demangle-mode :pin "04f545adab066708d6151f13da65aaf519f8ac4e")
 (package! disaster :pin "16bba9afb92aacf06c088c29ba47813b65a80d87")
-(package! modern-cpp-font-lock :pin "43c6b68ff58fccdf9deef11674a172e4eaa8455c")
+(unless (modulep! +tree-sitter)
+  (package! modern-cpp-font-lock :pin "43c6b68ff58fccdf9deef11674a172e4eaa8455c"))
 (package! opencl-mode :pin "10ae7742d57ae79d96cf52753800b3490589b3f6")
 
 (when (package! glsl-mode :pin "9b2e5f28e489a1f73c4aed734105618ac0dc0c43")
