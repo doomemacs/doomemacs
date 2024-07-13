@@ -25,6 +25,14 @@
   ;; REVIEW: Maybe it's permissible if `gdscript-docs-local-path' is set?
   (setq gdscript-docs-use-eww nil)
 
+  ;; Some systems append the version number to the executable, so ensure that
+  ;; the path is correct. Note that I avoid setting it to an absolute path to
+  ;; preserve TRAMP support.
+  (setq gdscript-godot-executable
+        (cond ((executable-find gdscript-godot-executable) gdscript-godot-executable)
+              ((executable-find "godot") "godot")
+              ((executable-find "godot4") "godot4")))
+
   (when (modulep! +lsp)
     (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
