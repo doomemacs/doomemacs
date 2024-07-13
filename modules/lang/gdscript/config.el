@@ -11,8 +11,7 @@
   :defer t
   :config
   (set-lookup-handlers! 'gdscript-mode
-    :documentation #'gdscript-docs-browse-symbol-at-point)
-
+    :documentation '(gdscript-docs-browse-symbol-at-point :async t))
   (set-formatter! 'gdformat '("gdformat" "-") :modes '(gdscript-mode))
 
   (when (modulep! +lsp)
