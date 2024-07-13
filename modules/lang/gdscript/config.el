@@ -13,6 +13,12 @@
   (set-lookup-handlers! 'gdscript-mode
     :documentation '(gdscript-docs-browse-symbol-at-point :async t))
   (set-formatter! 'gdformat '("gdformat" "-") :modes '(gdscript-mode))
+  (set-popup-rule! "^\\*godot " :ttl 0 :quit t)
+
+  (defadvice! +gdscript--dont-focus-output-buffer-a (fn &rest args)
+    "Don't move cursor into gdscript compilation window."
+    :around #'gdscript-comint--run
+    (save-selected-window (apply fn args)))
 
   ;; eww is clumsy and slow. Best that `gdscript-docs-browse-symbol-at-point'
   ;; simply use the browser.
