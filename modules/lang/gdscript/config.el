@@ -14,6 +14,11 @@
     :documentation '(gdscript-docs-browse-symbol-at-point :async t))
   (set-formatter! 'gdformat '("gdformat" "-") :modes '(gdscript-mode))
 
+  ;; eww is clumsy and slow. Best that `gdscript-docs-browse-symbol-at-point'
+  ;; simply use the browser.
+  ;; REVIEW: Maybe it's permissible if `gdscript-docs-local-path' is set?
+  (setq gdscript-docs-use-eww nil)
+
   (when (modulep! +lsp)
     (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
