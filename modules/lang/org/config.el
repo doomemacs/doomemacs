@@ -56,13 +56,13 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   "Default, centralized target for org-capture templates.")
 
 (defvar +org-habit-graph-padding 2
-  "The padding added to the end of the consistency graph")
+  "The padding added to the end of the consistency graph.")
 
 (defvar +org-habit-min-width 30
-  "Hides the consistency graph if the `org-habit-graph-column' is less than this value")
+  "Hide the consistency graph if `org-habit-graph-column' is less than this.")
 
 (defvar +org-habit-graph-window-ratio 0.3
-  "The ratio of the consistency graphs relative to the window width")
+  "The ratio of the consistency graphs relative to the window width.")
 
 (defvar +org-startup-with-animated-gifs nil
   "If non-nil, and the cursor is over a gif inline-image preview, animate it!")
