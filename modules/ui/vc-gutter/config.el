@@ -104,16 +104,6 @@
     (add-hook 'magit-pre-refresh-hook  #'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
-  ;; FIX: Fixes dgutov/diff-hl#213, where `diff-hl-update-async' stops
-  ;;   with-editor (and by extension, Magit COMMIT_EDITMSG buffers) buffers from
-  ;;   getting properly cleaned up.
-  (defadvice! +vc-gutter--inhibit-async-update-in-with-editor-a (fn &rest args)
-    :around #'diff-hl-update
-    (let ((diff-hl-update-async
-           (unless (bound-and-true-p with-editor-mode)
-             diff-hl-update-async)))
-      (apply fn args)))
-
   ;; FIX: The revert popup consumes 50% of the frame, whether or not you're
   ;;   reverting 2 lines or 20. This resizes the popup to match its contents.
   (defadvice! +vc-gutter--shrink-popup-a (fn &rest args)
