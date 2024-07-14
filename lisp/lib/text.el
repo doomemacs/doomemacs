@@ -136,6 +136,19 @@ Uses `evil-visual-end' if available."
       (region-end)))
 
 ;;;###autoload
+(defun doom-region (&optional as-list)
+  "Return the bounds of the current seelction.
+
+If AS-LIST is non-nil, returns (BEG END). Otherwise returns a cons cell (BEG .
+END)."
+  (let* ((active (doom-region-active-p))
+         (beg (if active (doom-region-beginning)))
+         (end (if active (doom-region-end))))
+    (if as-list
+        (list beg end)
+      (cons beg end))))
+
+;;;###autoload
 (defun doom-thing-at-point-or-region (&optional thing prompt)
   "Grab the current selection, THING at point, or xref identifier at point.
 

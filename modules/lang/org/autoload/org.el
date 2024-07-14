@@ -344,7 +344,19 @@ If in an org table, realign the cells with `org-table-align'.
 Otherwise, falls back to `org-fill-paragraph' to reflow paragraphs."
   (interactive)
   (let ((element (org-element-at-point)))
-    (cond ((org-in-src-block-p nil element)
+    (cond ((doom-region-active-p)
+           ;; TODO Perform additional formatting?
+           ;; (save-restriction
+           ;;   (narrow-to-region beg end)
+           ;;   (org-table-recalculate t)
+           ;;   (org-table-map-tables #'org-table-align)
+           ;;   (org-align-tags t)
+           ;;   (org-update-statistics-cookies t)
+           ;;   ...)
+           (if (modulep! :editor format)
+               (call-interactively #'+format/org-block-in-region)
+             (message ":editor format is disabled, skipping reformatting of org-blocks")))
+          ((org-in-src-block-p nil element)
            (unless (modulep! :editor format)
              (user-error ":editor format module is disabled, ignoring reformat..."))
            (call-interactively #'+format/org-block))

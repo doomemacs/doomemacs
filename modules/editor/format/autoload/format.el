@@ -83,29 +83,4 @@ may not always work. Keep your undo keybind handy!"
        #'+format/region
      #'+format/buffer)))
 
-;;;###autoload
-(defun +format/org-block (&optional point)
-  "Reformat the org src block at POINT with a mode approriate formatter."
-  (interactive (list (point)))
-  (unless (derived-mode-p 'org-mode)
-    (user-error "Not an org-mode buffer!"))
-  (let ((element (org-element-at-point point)))
-    (unless (org-in-src-block-p nil element)
-      (user-error "Not in an org src block"))
-    (cl-destructuring-bind (beg end _) (org-src--contents-area element)
-      (let* ((lang (org-element-property :language element))
-             (mode (org-src-get-lang-mode lang)))
-        (save-excursion
-          (if (provided-mode-derived-p mode 'org-mode)
-              (user-error "Cannot reformat an org-mode or org-derived src block")
-            (let* ((major-mode mode)
-                   (after-change-functions
-                    ;; HACK: Silence excessive and unhelpful warnings about
-                    ;;   'org-element-at-point being used in non-org-mode
-                    ;;   buffers'.
-                    (remq 'org-indent-refresh-maybe after-change-functions))
-                   (apheleia-formatter
-                    (or (apheleia--get-formatters 'interactive)
-                        (apheleia--get-formatters 'prompt)
-                        (user-error "No formatter configured for language: %s" lang))))
-              (+format-region beg end))))))))
+;;; format.el ends here
