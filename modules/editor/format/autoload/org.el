@@ -28,7 +28,7 @@
               (+format-region beg end))))))))
 
 ;;;###autoload
-(defun +format/org-block-in-region (beg end)
+(defun +format/org-blocks-in-region (beg end)
   "Calls `+format/org-block' in each src block between BEG and END (inclusive)."
   (interactive (doom-region t))
   (unless (derived-mode-p 'org-mode)
@@ -53,12 +53,12 @@
     (message "Formatted %d src block(s)" n)))
 
 ;;;###autoload
-(defun +format/org-block-at-point-or-in-region ()
-  "See `+format/org-block' and `+format/org-block-in-region'."
+(defun +format/org-blocks-at-point-or-in-region ()
+  "See `+format/org-block' and `+format/org-blocks-in-region'."
   (interactive)
   (call-interactively
    (if (doom-region-active-p)
-       #'+format/org-block-in-region
+       #'+format/org-blocks-in-region
      #'+format/org-block)))
 
 ;;; org.ell ends here

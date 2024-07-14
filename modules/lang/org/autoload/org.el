@@ -354,7 +354,7 @@ Otherwise, falls back to `org-fill-paragraph' to reflow paragraphs."
            ;;   (org-update-statistics-cookies t)
            ;;   ...)
            (if (modulep! :editor format)
-               (call-interactively #'+format/org-block-in-region)
+               (call-interactively #'+format/org-blocks-in-region)
              (message ":editor format is disabled, skipping reformatting of org-blocks")))
           ((org-in-src-block-p nil element)
            (unless (modulep! :editor format)
