@@ -26,14 +26,14 @@
     "^WSL_INTEROP$"
     ;; XDG variables that are best not persisted.
     "^XDG_CURRENT_DESKTOP$" "^XDG_RUNTIME_DIR$"
-    "^XDG_\\(VTNR\\|SEAT\\|SESSION_\\(TYPE\\|CLASS\\)\\)"
+    "^XDG_\\(VTNR$\\|SEAT$\\|BACKEND$\\|SESSION_\\)"
     ;; Socket envvars, like I3SOCK, GREETD_SOCK, SEATD_SOCK, SWAYSOCK, etc.
     "SOCK$"
     ;; ssh and gpg variables that could quickly become stale if persisted.
     "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$" "^\\(SSH\\|GPG\\)_TTY$"
     "^GPG_AGENT_INFO$"
     ;; Internal Doom envvars
-    "^DEBUG$" "^INSECURE$" "^\\(EMACS\\|DOOM\\)DIR$"
+    "^DEBUG$" "^INSECURE$" "^\\(EMACS\\|DOOM\\(LOCAL\\)?\\)DIR$"
     "^DOOM\\(PATH\\|PROFILE\\)$" "^__")
   "Environment variables to omit from envvar files.
 
