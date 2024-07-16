@@ -155,9 +155,14 @@ If DIR is not a project, it will be indexed (but not cached)."
           ((and (bound-and-true-p helm-mode)
                 (fboundp 'helm-find-files))
            (call-interactively #'helm-find-files))
-          ((when-let ((project-current-directory-override t)
-                      (pr (project-current t dir)))
-             (project-find-file-in nil nil pr)))
+          ((when-let* ((project-current-directory-override t)
+                       (pr (project-current t dir)))
+             (condition-case _
+                 (project-find-file-in nil nil pr)
+               ;; FIX: project.el throws errors if DIR is an empty directory,
+               ;;   which is poor UX.
+               (wrong-type-argument
+                (call-interactively #'find-file)))))
           ((call-interactively #'find-file)))))
 
 ;;;###autoload
