@@ -46,9 +46,11 @@ These rules affect buffers displayed with `pop-to-buffer' and `display-buffer'
 variants) will not be affected by these rules (as they are unaffected by
 `display-buffer-alist', which powers the popup management system).
 
-PREDICATE can be either a) a regexp string (matched against the buffer's name)
-or b) a function that takes two arguments (a buffer name and the ACTION argument
-of `display-buffer') and returns a boolean.
+PREDICATE accepts anything that the CONDITION argument in `buffer-match-p' takes
+(if you're on Emacs 29 or newer). On Emacs 28 or older, it can either be a) a
+regexp string (matched against the buffer's name) or b) a function that takes
+two arguments (a buffer name and the ACTION argument of `display-buffer') and
+returns a boolean.
 
 PLIST can be made up of any of the following properties:
 
