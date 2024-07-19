@@ -23,14 +23,14 @@
      (jobs       ("-j" "--jobs" num) "How many CPUs to use for native compilation")
      (nobuild?   ("-B") "Don't rebuild packages when hostname or Emacs version has changed")
      &context context)
-  "Updates Doom and packages.
+  "Updates Doom's core, module libraries, and installed packages.
 
-This requires that ~/.emacs.d is a git repo, and is the equivalent of the
-following shell commands:
+A convenience command for updating Doom's core and pinned modules/module
+libraries. It is the equivalent of the following shell commands:
 
-    cd ~/.emacs.d
-    git pull --rebase
-    doom sync -u"
+    $ cd ~/.emacs.d
+    $ git pull --rebase
+    $ doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
          (sync-cmd (append '("sync" "-u")
                            (if nobuild? '("-B"))
