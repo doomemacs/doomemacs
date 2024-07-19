@@ -23,7 +23,7 @@
              (with-temp-file "org-version.el"
                (let ((version
                       (with-temp-buffer
-                        (insert-file-contents (doom-path "lisp/org.el") nil 0 1024)
+                        (insert-file-contents "lisp/org.el" nil 0 1024)
                         (if (re-search-forward "^;; Version: \\([^\n-]+\\)" nil t)
                             (match-string-no-properties 1)
                           "Unknown"))))

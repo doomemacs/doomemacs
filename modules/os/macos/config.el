@@ -35,7 +35,7 @@
 
 ;; Delete files to trash on macOS, as an extra layer of precaution against
 ;; accidentally deleting wanted files.
-(setq delete-by-moving-to-trash t)
+(setq delete-by-moving-to-trash (not noninteractive))
 
 
 ;;
