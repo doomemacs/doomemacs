@@ -19,7 +19,7 @@
   (when (modulep! +gauche)
     (package! geiser-gauche :pin "8ff743f6416f00751e24aef8b9791501a40f5421"))
   (when (modulep! +guile)
-    (package! geiser-guile :pin "71a6be00433a157de3936f208c7a1bd0192b12cd")
+    (package! geiser-guile :pin "d5175439c01b177d4f27686e5d6dfdae0505ee1f")
     (when (and (modulep! :checkers syntax)
              (not (modulep! :checkers syntax +flymake)))
       (package! flycheck-guile
