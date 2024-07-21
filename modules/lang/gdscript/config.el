@@ -36,6 +36,9 @@
   (when (modulep! +lsp)
     (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
+  (after! dtrt-indent
+    (add-to-list 'dtrt-indent-hook-mapping-list '(gdscript-mode default gdscript-indent-offset)))
+
   (map! :localleader
         :map gdscript-mode-map
         (:prefix ("r" . "run")
