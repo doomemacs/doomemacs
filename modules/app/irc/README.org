@@ -88,78 +88,61 @@ Use ~set-irc-server! SERVER PLIST~ to configure IRC servers. Its second argument
 #+end_src
 
 However, *it is a obviously a bad idea to store your password in plaintext,* so
-here are ways to avoid that:
+[[https://github.com/emacs-circe/circe/wiki/Configuration#safer-password-management][it's recommend]] that you use ~auth-source~ (built into Emacs) to safely pull
+passwords from a password manager or OS keychain (remember to enable the :os
+macos or :tools pass modules if you want integration into the MacOS keychain or
+[[https://www.passwordstore.org/][Pass]]):
+#+begin_src emacs-lisp
+;;; in $DOOMDIR/config.el
+(after! circe
+  (defun fetch-password (&rest params)
+    (require 'auth-source)
+    (if-let* ((match (car (apply #'auth-source-search params)))
+              (secret (plist-get match :secret)))
+        (if (functionp secret)
+            (funcall secret)
+          secret)
+      (user-error "Password not found for %S" params)))
 
-** TODO Pass: the unix password manager
+  (set-irc-server! "irc.libera.chat"
+    '(:tls t
+      :port 6697
+      :nick "doom"
+      :sasl-password
+      (lambda (server)
+        (fetch-password :user "forcer" :host "irc.libera.chat"))
+      :channels ("#emacs"))))
+#+end_src
+
+If Doom's [[doom-module::tools pass]] module is enabled, ~auth-source~ can integrate
+with [[https://www.passwordstore.org/][Pass]].
+
 #+begin_quote
- 󱌣 /This section is outdated and needs to be rewritten./ [[doom-contrib-module:][Rewrite it?]]
+  A common mistake is to interpolate the return value of your secrets retrieval
+    function into the plist you pass to ~set-irc-server!~. This means that not
+    only will your secrets will be stored, in plaintext, somewhere in Emacs
+    state, but your password manager (or GnuPG) will likely prompt you for your
+    GPG key passphrase when the ~set-irc-server!~ call is made! For example,
+    don't do this!
+
+      (set-irc-server! "irc.libera.chat"
+        `(:tls t
+          :port 6697
+          :nick "doom"
+          :sasl-username ,(fetch-password "irc/libera.chat")
+          :sasl-password ,(fetch-password "irc/libera.chat")
+          :channels ("#emacs")))
+
+    Do this, instead:
+
+      (set-irc-server! "irc.libera.chat"
+        '(:tls t
+          :port 6697
+          :nick "doom"
+          :sasl-username (+pass-get-user   "irc/libera.chat")
+          :sasl-password (+pass-get-secret "irc/libera.chat")
+          :channels ("#emacs")))
 #+end_quote
-
-[[https://www.passwordstore.org/][Pass]] is my tool of choice. I use it to manage my passwords. If you activate the
-[[doom-module::tools pass]] module you get an elisp API through which to access your password
-store.
-
-~set-irc-server!~ accepts a plist can use functions instead of strings.
-~+pass-get-user~ and ~+pass-get-secret~ can help here:
-#+begin_src emacs-lisp
-(set-irc-server! "irc.libera.chat"
-  `(:tls t
-    :port 6697
-    :nick "doom"
-    :sasl-username ,(+pass-get-user   "irc/libera.chat")
-    :sasl-password ,(+pass-get-secret "irc/libera.chat")
-    :channels ("#emacs")))
-#+end_src
-
-But wait, there's more! This stores your password in a public variable which
-could be accessed or appear in backtraces. Not good! So we go a step further:
-#+begin_src emacs-lisp
-(set-irc-server! "irc.libera.chat"
-  `(:tls t
-    :port 6697
-    :nick "doom"
-    :sasl-username ,(+pass-get-user "irc/libera.chat")
-    :sasl-password (lambda (&rest _) (+pass-get-secret "irc/libera.chat"))
-    :channels ("#emacs")))
-#+end_src
-
-And you're good to go!
-
-Note that ~+pass-get-user~ tries to find your username by looking for the fields
-listed in ~+pass-user-fields~ (by default =login=, =user==, =username== and
-=email=)=). An example configuration looks like
-
-#+begin_example
-mysecretpassword
-username: myusername
-#+end_example
-
-** Emacs' auth-source API
-~auth-source~ is built into Emacs. As suggested [[https://github.com/jorgenschaefer/circe/wiki/Configuration#safer-password-management][in the circe wiki]], you can store
-(and retrieve) encrypted passwords with it.
-#+begin_src emacs-lisp
-(setq auth-sources '("~/.authinfo.gpg"))
-
-(defun my-fetch-password (&rest params)
-  (require 'auth-source)
-  (let ((match (car (apply #'auth-source-search params))))
-    (if match
-        (let ((secret (plist-get match :secret)))
-          (if (functionp secret)
-              (funcall secret)
-            secret))
-      (error "Password not found for %S" params))))
-
-(defun my-nickserv-password (server)
-  (my-fetch-password :user "forcer" :host "irc.libera.chat"))
-
-(set-irc-server! "irc.libera.chat"
-  '(:tls t
-    :port 6697
-    :nick "doom"
-    :sasl-password my-nickserver-password
-    :channels ("#emacs")))
-#+end_src
 
 * TODO Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
