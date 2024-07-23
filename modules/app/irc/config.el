@@ -176,9 +176,8 @@ playback.")
   :config
   (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
   (setq lui-fill-type nil)
+  (setq lui-flyspell-p (modulep! :checkers spell +flyspell))
 
-  (when (modulep! :checkers spell)
-    (setq lui-flyspell-p t))
   (setq lui-time-stamp-format "%H:%M"
         lui-time-stamp-position 'right-margin)
 
