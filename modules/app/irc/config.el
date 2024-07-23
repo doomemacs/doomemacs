@@ -132,14 +132,21 @@ playback.")
 
 
 (use-package! circe-color-nicks
-  :hook (circe-channel-mode . enable-circe-color-nicks)
+  :defer t
+  ;; NOTE: I avoid `:after' on purpose, because it convolutes load order and
+  ;;   makes it harder for users to know what to target with `after!' or
+  ;;   `with-eval-after-load' when trying to configure packages.
+  :init (after! circe (require 'circe-color-nicks))
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
-        circe-color-nicks-everywhere t))
+        circe-color-nicks-everywhere t)
+  (enable-circe-color-nicks))
 
 
 (use-package! circe-new-day-notifier
-  :after circe
+  :defer t
+  ;; NOTE: See NOTE in `circe-color-nicks' above.
+  :init (after! circe (require 'circe-new-day-notifier))
   :config
   (enable-circe-new-day-notifier)
   (setq circe-new-day-notifier-format-message
