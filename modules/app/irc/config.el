@@ -141,10 +141,10 @@ playback.")
 
 
 (use-package! circe-color-nicks
-  :hook (circe-channel-mode . enable-circe-color-nicks)
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
-        circe-color-nicks-everywhere t))
+        circe-color-nicks-everywhere t)
+  (enable-circe-color-nicks))
 
 
 (use-package! circe-new-day-notifier
