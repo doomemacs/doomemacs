@@ -169,6 +169,9 @@ playback.")
   (setq lui-time-stamp-format "%H:%M"
         lui-time-stamp-position 'right-margin)
 
+  (enable-lui-autopaste)  ; prompt to use paste service for large pastes
+  (enable-lui-track)      ; horizontal line marking last read message
+
   (add-hook! 'lui-pre-output-hook
     (defun +irc-truncate-nicks-h ()
       "Truncate long nicknames in chat output non-destructively."
@@ -214,9 +217,6 @@ Courtesy of esh-mode.el"
   (add-hook! 'lui-mode-hook
     (add-hook 'pre-command-hook #'+irc-preinput-scroll-to-bottom-h nil t))
 
-  ;; enable a horizontal line marking the last read message
-  (add-hook 'lui-mode-hook #'enable-lui-track-bar)
-
   (add-hook! 'lui-mode-hook
     (defun +irc-init-lui-margins-h ()
       (pcase lui-time-stamp-position
@@ -231,7 +231,3 @@ Courtesy of esh-mode.el"
 (use-package! lui-logging
   :after lui
   :config (enable-lui-logging))
-
-
-(use-package! lui-autopaste
-  :hook (circe-channel-mode . enable-lui-autopaste))
