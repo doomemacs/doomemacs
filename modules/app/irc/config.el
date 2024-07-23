@@ -19,20 +19,9 @@ Useful for scenarios where an instant reconnect will not be successful.")
 (defvar +irc-bot-list '("fsbot" "rudybot")
   "Nicks listed have `circe-fool-face' applied and will not be tracked.")
 
-(defvar +irc-time-stamp-format "%H:%M"
-  "The format of time stamps.
-
-See `format-time-string' for a full description of available
-formatting directives. ")
-
-(defvar +irc-notifications-watch-strings nil
-  "A list of strings which can trigger a notification.  You don't need to put
-your nick here.
-
-See `circe-notifications-watch-strings'.")
-
 (defvar +irc-defer-notifications nil
   "How long to defer enabling notifications, in seconds (e.g. 5min = 300).
+
 Useful for ZNC users who want to avoid the deluge of notifications during buffer
 playback.")
 
@@ -41,6 +30,9 @@ playback.")
 (defsubst +irc--pad (left right)
   (format (format "%%%ds | %%s" +irc-left-padding)
           (concat "*** " left) right))
+
+(define-obsolete-variable-alias '+irc-notifications-watch-strings 'circe-notifications-watch-strings "v3.0.0")
+(define-obsolete-variable-alias '+irc-time-stamp-format 'lui-time-stamp-format "v3.0.0")
 
 
 ;;
@@ -165,8 +157,7 @@ playback.")
                              #'enable-circe-notifications))
         (enable-circe-notifications))))
   :config
-  (setq circe-notifications-watch-strings +irc-notifications-watch-strings
-        circe-notifications-emacs-focused nil
+  (setq circe-notifications-emacs-focused nil
         circe-notifications-alert-style
         (cond ((featurep :system 'macos) 'osx-notifier)
               ((featurep :system 'linux) 'libnotify)
@@ -181,6 +172,8 @@ playback.")
 
   (when (modulep! :checkers spell)
     (setq lui-flyspell-p t))
+  (setq lui-time-stamp-format "%H:%M"
+        lui-time-stamp-position 'right-margin)
 
   (after! evil
     (defun +irc-evil-insert-h ()
@@ -221,9 +214,9 @@ Courtesy of esh-mode.el"
 
   (add-hook! 'lui-mode-hook
     (defun +irc-init-lui-margins-h ()
-      (setq lui-time-stamp-position 'right-margin
-            lui-time-stamp-format +irc-time-stamp-format
-            right-margin-width (length (format-time-string lui-time-stamp-format))))
+      (pcase lui-time-stamp-position
+        (`right-margin (setq right-margin-width (length (format-time-string lui-time-stamp-format))))
+        (`left-margin  (setq left-margin-width  (length (format-time-string lui-time-stamp-format))))))
     (defun +irc-init-lui-wrapping-a ()
       (setq fringes-outside-margins t
             word-wrap t
