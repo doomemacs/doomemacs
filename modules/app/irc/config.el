@@ -171,6 +171,7 @@ playback.")
 
   (enable-lui-autopaste)  ; prompt to use paste service for large pastes
   (enable-lui-track)      ; horizontal line marking last read message
+  (enable-lui-irc-colors) ; enable IRC colors (see https://www.mirc.co.uk/colors.html)
 
   (add-hook! 'lui-pre-output-hook
     (defun +irc-truncate-nicks-h ()
