@@ -36,10 +36,10 @@ playback.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! circe
-  :commands circe circe-server-buffers
+  :commands circe-server-buffers
   :config
   (setq circe-default-quit-message nil
         circe-default-part-message nil
@@ -90,18 +90,6 @@ playback.")
     "Runs `+irc-disconnect-hook' after circe disconnects."
     :after #'circe--irc-conn-disconnected
     (run-hooks '+irc-disconnect-hook))
-
-  (add-hook! 'lui-pre-output-hook
-    (defun +irc-circe-truncate-nicks-h ()
-      "Truncate long nicknames in chat output non-destructively."
-      (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
-        (goto-char beg)
-        (let ((end (next-single-property-change beg 'lui-format-argument))
-              (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)
-                               :nick)))
-          (when (> (length nick) +irc-left-padding)
-            (compose-region (+ beg +irc-left-padding -1) end
-                            +irc-truncate-nick-char))))))
 
   (add-hook! 'circe-message-option-functions
     (defun +irc-circe-message-option-bot-h (nick &rest ignored)
@@ -154,7 +142,7 @@ playback.")
 
 
 (use-package! circe-notifications
-  :commands enable-circe-notifications
+  :defer t
   :init
   (add-hook! 'circe-server-connected-hook
     (defun +irc-init-circe-notifications-h ()
@@ -181,6 +169,18 @@ playback.")
   (setq lui-time-stamp-format "%H:%M"
         lui-time-stamp-position 'right-margin)
 
+  (add-hook! 'lui-pre-output-hook
+    (defun +irc-truncate-nicks-h ()
+      "Truncate long nicknames in chat output non-destructively."
+      (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
+        (goto-char beg)
+        (let ((end (next-single-property-change beg 'lui-format-argument))
+              (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)
+                               :nick)))
+          (when (> (length nick) +irc-left-padding)
+            (compose-region (+ beg +irc-left-padding -1) end
+                            +irc-truncate-nick-char))))))
+
   (after! evil
     (defun +irc-evil-insert-h ()
       "Ensure entering insert mode will put us at the prompt, unless editing
@@ -194,7 +194,6 @@ after prompt marker."
 
     (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
-
 
   (defun +irc-preinput-scroll-to-bottom-h ()
     "Go to the end of the buffer in all windows showing it.
