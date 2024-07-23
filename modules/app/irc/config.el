@@ -237,4 +237,5 @@ Courtesy of esh-mode.el"
 
 
 (use-package! lui-autopaste
-  :hook (circe-channel-mode . enable-lui-autopaste))
+              :config
+              (enable-lui-autopaste))
