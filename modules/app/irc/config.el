@@ -220,6 +220,9 @@ Courtesy of esh-mode.el"
   ;; enable a horizontal line marking the last read message
   (add-hook 'lui-mode-hook #'enable-lui-track-bar)
 
+  ;; Make modes like Circe who use Lui understand IRC colors
+  (enable-lui-irc-colors)
+
   (add-hook! 'lui-mode-hook
     (defun +irc-init-lui-margins-h ()
       (setq lui-time-stamp-position 'right-margin
