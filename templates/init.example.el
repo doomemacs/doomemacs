@@ -72,6 +72,7 @@
        ;;ibuffer         ; interactive buffer management
        undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
+       eww               ; emacs-web-wowser
 
        :term
        ;;eshell            ; the elisp shell that works everywhere
