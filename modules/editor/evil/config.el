@@ -462,8 +462,7 @@ directives. By default, this only recognizes C directives.")
        :nv "gd"  #'+lookup/definition
        :nv "gD"  #'+lookup/references
        :nv "gf"  #'+lookup/file
-       :nv "gI"  #'+lookup/implementations
-       :nv "gA"  #'+lookup/assignments)
+       :nv "gI"  #'+lookup/implementations)
       (:when (modulep! :tools eval)
        :nv "gr"  #'+eval:region
        :n  "gR"  #'+eval/buffer
