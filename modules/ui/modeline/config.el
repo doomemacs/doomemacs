@@ -42,12 +42,6 @@
           (doom-modeline-set-modeline 'magit)
         (hide-mode-line-mode))))
 
-  ;; Some functions modify the buffer, causing the modeline to show a false
-  ;; modified state, so force them to behave.
-  (defadvice! +modeline--inhibit-modification-hooks-a (fn &rest args)
-    :around #'ws-butler-after-save
-    (with-silent-modifications (apply fn args)))
-
 
   ;;
   ;;; Extensions
