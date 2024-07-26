@@ -308,18 +308,25 @@ based on the print level of the message. For example:
 (defun doom-print--indent (text &optional prefix)
   "Indent TEXT by WIDTH spaces. If ARGS, format TEXT with them."
   (with-temp-buffer
-    (let ((width
-           (cond ((null prefix)
-                  doom-print-indent-increment)
-                 ((integerp prefix)
-                  prefix)
-                 ((length (ansi-color-filter-apply (format "%s" prefix)))))))
-      (insert (format "%s" (or text "")))
+    (let* ((re "^\\( *\\)\r")
+           (line-feed (if (stringp text) (string-match-p re text)))
+           (width (cond ((null prefix) doom-print-indent-increment)
+                        ((integerp prefix) prefix)
+                        ((length (ansi-color-filter-apply (format "%s" prefix)))))))
+      (insert
+       (if text
+           (replace-regexp-in-string re "\\1\033[K" (format "%s" text))
+         ""))
       (indent-rigidly (point-min) (point-max) width)
-      (when (stringp prefix)
-        (goto-char (point-min))
-        (delete-char width)
-        (insert prefix))
+      (save-excursion
+        (when line-feed
+          (goto-char (point-min))
+          (insert "\r")))
+      (save-excursion
+        (when (stringp prefix)
+          (goto-char (point-min))
+          (delete-char (+ width (if line-feed 1 0)))
+          (insert prefix)))
       (buffer-string))))
 
 ;;;###autoload
