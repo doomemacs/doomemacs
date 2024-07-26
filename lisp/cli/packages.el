@@ -830,5 +830,37 @@ However, in batch mode, print to stdout instead of stderr."
        (error "Package was not properly cloned due to a connection failure, please try again later")
      (signal (car e) (cdr e))))))
 
+;; HACK: Fix an issue where straight wasn't byte-compiling some packages (or
+;;   some files in packages) due to missing (invisible) dependencies.
+(defadvice! doom-cli--straight-byte-compile-a (recipe)
+  "See https://github.com/radian-software/straight.el/pull/1132"
+  :override #'straight--build-compile
+  (let* ((pkg (plist-get recipe :package))
+         (dir (straight--build-dir pkg))
+         (emacs (concat invocation-directory invocation-name))
+         (buffer straight-byte-compilation-buffer)
+         (deps
+          (let (tmp)
+            (dolist (dep (straight--flatten (straight-dependencies pkg)) tmp)
+              (let ((build-dir (straight--build-dir dep)))
+                (when (file-exists-p build-dir)
+                  (push build-dir tmp))))))
+         (print-circle nil)
+         (print-length nil)
+         (program
+          (format "%S" `(let ((default-directory ,(straight--build-dir))
+                              (lp load-path))
+                          (setq load-path (list default-directory))
+                          (normal-top-level-add-subdirs-to-load-path)
+                          (setq load-path (append '(,dir) ',deps load-path lp))
+                          (byte-recompile-directory ,dir 0 'force))))
+         (args (list "-Q" "--batch" "--eval" program)))
+    (when buffer
+      (with-current-buffer (get-buffer-create buffer)
+        (insert (format "\n$ %s %s \\\n %S\n" emacs
+                        (string-join (butlast args) " ")
+                        program))))
+    (apply #'call-process `(,emacs nil ,buffer nil ,@args))))
+
 (provide 'doom-cli-packages)
 ;;; packages.el ends here
