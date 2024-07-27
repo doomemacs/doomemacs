@@ -688,7 +688,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
     ("^In repository \"[^\"]+\", [^ ]+ (on branch \"[^\"]+\") is ahead of default branch \"[^\"]+\""
      . "^Checkout branch \"")
     ("^In repository "
-     . "^Reset branch \\|^Delete remote [^,]+, re-create it with correct URL\\|^Checkout \"main\""))
+     . "^Reset branch \\|^Delete remote [^,]+, re-create it with correct URL\\|^Checkout \""))
   "A list of regexps, mapped to regexps.
 
 Their CAR is tested against the prompt, and CDR is tested against the presented
@@ -736,10 +736,12 @@ original state.")
       ;; We can't intercept C-g, so no point displaying any options for this key
       ;; when C-c is the proper way to abort batch Emacs.
       (delq! "C-g" actions 'assoc)
-      ;; HACK: These are associated with opening dired or magit, which isn't
-      ;;   possible in tty Emacs, so...
-      (delq! "e" actions 'assoc)
-      (delq! "g" actions 'assoc)
+      ;; HACK: Remove actions that don't work in noninteractive Emacs (like
+      ;;   opening dired or magit).
+      (setq actions
+            (cl-remove-if (lambda (o)
+                            (string-match-p "^\\(?:Magit\\|Dired\\)" (nth 1 o)))
+                          actions))
       (if (doom-cli-context-suppress-prompts-p doom-cli--context)
           (cl-loop for (_key desc func) in actions
                    when desc
