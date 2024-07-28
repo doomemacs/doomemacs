@@ -3,6 +3,12 @@
 #+created:  February 20, 2017
 #+since:    2.0.0
 
+#+begin_quote
+  *This module is deprecated* in favor of the [[doom-module::completion vertico]]
+    module. This module will be in maintenance mode until it is eventually
+    removed. Consider switching to the Vertico module instead.
+#+end_quote
+
 * Description :unfold:
 This module provides Ivy integration for a variety of Emacs commands, as well as
 a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep/][ripgrep]].
