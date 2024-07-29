@@ -123,6 +123,24 @@ Returns t on success, nil otherwise."
          t)))
 
 ;;;###autoload
+(defun +workspace-delete (workspace)
+  "Delete WORKSPACE from the saved workspaces in `persp-save-dir'.
+
+Return t if WORKSPACE was successfully deleted. Throws error if WORKSPACE is not
+found or wasn't saved with `+workspace-save'."
+  (let* ((fname (expand-file-name +workspaces-data-file persp-save-dir))
+         (workspace-name (if (stringp workspace) workspace (persp-name workspace)))
+         (workspace-names (persp-list-persp-names-in-file fname))
+         (workspace-idx (cl-position workspace-name workspace-names :test #'equal)))
+    (unless workspace-idx
+      (error "Couldn't find saved workspace '%s'" workspace-name))
+    (doom-file-write
+     fname (list (cl-remove-if (lambda (ws) (equal workspace-name (nth 1 ws)))
+                               (doom-file-read fname :by 'read)
+                               :count 1)))
+    (not (member name (persp-list-persp-names-in-file fname)))))
+
+;;;###autoload
 (defun +workspace-new (name)
   "Create a new workspace named NAME. If one already exists, return nil.
 Otherwise return t on success, nil otherwise."
@@ -266,6 +284,23 @@ workspace to delete."
                  (doom/kill-all-buffers (doom-buffer-list))))
           (+workspace-message (format "Deleted '%s' workspace" name) 'success)))
     ('error (+workspace-error ex t))))
+
+;;;###autoload
+(defun +workspace/delete (name)
+  "Delete a saved workspace in `persp-save-dir'.
+
+Can only selete workspaces saved with `+workspace/save' or `+workspace-save'."
+  (interactive
+   (list
+    (completing-read "Delete saved workspace: "
+                     (cl-loop with wsfile = (doom-path persp-save-dir +workspaces-data-file)
+                              for p in (persp-list-persp-names-in-file wsfile)
+                              collect p))))
+  (and (condition-case-unless-debug ex
+           (or (+workspace-delete name)
+               (+workspace-error (format "Couldn't delete '%s' workspace" name)))
+         ('error (+workspace-error ex t)))
+       (+workspace-message (format "Deleted '%s' workspace" name) 'success)))
 
 ;;;###autoload
 (defun +workspace/kill-session (&optional interactive)

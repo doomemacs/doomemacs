@@ -382,6 +382,7 @@
         :desc "Save workspace to file"    "s"   #'+workspace/save
         :desc "Kill session"              "x"   #'+workspace/kill-session
         :desc "Kill this workspace"       "d"   #'+workspace/kill
+        :desc "Delete saved workspace"    "D"   #'+workspace/delete
         :desc "Rename workspace"          "r"   #'+workspace/rename
         :desc "Restore last session"      "R"   #'+workspace/restore-last-session
         :desc "Next workspace"            "]"   #'+workspace/switch-right
