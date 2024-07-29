@@ -3,6 +3,12 @@
 #+created:  February 19, 2017
 #+since:    2.0.0
 
+#+begin_quote
+  *This module is deprecated* in favor of the [[doom-module::completion corfu]]
+    module. This module will be in maintenance mode until it is eventually
+    removed. Consider switching to the Corfu module instead.
+#+end_quote
+
 * Description :unfold:
 This module provides code completion, powered by [[https://github.com/company-mode/company-mode][company-mode]]. Many of Doom's
 [[doom-module::lang]] modules require it for "intellisense" functionality.
