@@ -44,6 +44,8 @@ This is controlled by `+format-on-save-disabled-modes'."
   (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
   (add-to-list 'doom-debug-variables '(apheleia-log-debug-info . t))
 
+  (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt))
+
   ;; A psuedo-formatter that dispatches to the appropriate LSP client (via
   ;; `lsp-mode' or `eglot') that is capable of formatting. Without +lsp, users
   ;; must manually set `+format-with' to `lsp' to use it, or activate
