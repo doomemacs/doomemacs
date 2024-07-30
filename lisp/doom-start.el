@@ -407,11 +407,10 @@ If RETURN-P, return the message as a string instead of displaying it."
          (display-warning
           'initialization
           (format-message "\
-An error occurred while loading `%s':\n\n%s%s%s\n\n\
+An error occurred while booting Doom Emacs:\n\n%s%s%s\n\n\
 To ensure normal operation, you should investigate and remove the
-cause of the error in your initialization file.  Start Emacs with
+cause of the error in your Doom config files. Start Emacs with
 the `--debug-init' option to view a complete error backtrace."
-                          user-init-file
                           (get (car error) 'error-message)
                           (if (cdr error) ": " "")
                           (mapconcat (lambda (s) (prin1-to-string s t))
