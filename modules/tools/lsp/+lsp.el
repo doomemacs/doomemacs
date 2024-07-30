@@ -51,7 +51,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     ;;   Thank god a (non-inlined) function is used to build the URL, so we have
     ;;   something to advise.
     ;; REVIEW: Remove when zigtools/zls#1879 is resolved.
-    (defadvice! +lsp--use-correct-zls-download-url-a (fn &rest _)
+    (defadvice! +lsp--use-correct-zls-download-url-a (fn &rest args)
       "See zigtools/zls#1879."
       :around #'lsp-zig--zls-url
       (let ((lsp-zig-download-url-format
