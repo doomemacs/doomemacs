@@ -44,9 +44,8 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     (setq lsp-keymap-prefix nil))
 
   ;; REVIEW: Remove when zigtools/zls#1879 is resolved.
-  (after! lsp-zig
-    (unless (featurep :system 'windows)
-      (setq lsp-zig-download-url-format "https://github.com/zigtools/zls/releases/latest/download/zls-%s-%s.tar.xz")))
+  (unless (featurep :system 'windows)
+    (setq lsp-zig-download-url-format "https://github.com/zigtools/zls/releases/latest/download/zls-%s-%s.tar.xz"))
 
   :config
   (add-to-list 'doom-debug-variables 'lsp-log-io)
