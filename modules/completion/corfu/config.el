@@ -56,6 +56,7 @@ TAB/S-TAB.")
   (setq corfu-auto t
         corfu-auto-delay 0.18
         corfu-auto-prefix 2
+        global-corfu-minibuffer nil
         global-corfu-modes '((not erc-mode
                                   circe-mode
                                   help-mode
