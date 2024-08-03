@@ -73,7 +73,7 @@ OPTIONS:
           (when (and old-host (not (equal old-host (system-name))))
             (print! (warn "Your system has changed since last sync"))
             (setq to-rebuild t))
-          (when (and to-rebuild (not (doom-cli-context-suppress-prompts-p context)))
+          (when (and to-rebuild (not rebuild?) (not (doom-cli-context-suppress-prompts-p context)))
             (cond (nobuild?
                    (print! (warn "Packages must be rebuilt, but -B has prevented it. Skipping...")))
                   ((doom-cli-context-get context 'upgrading)
