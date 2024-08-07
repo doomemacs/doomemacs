@@ -19,7 +19,8 @@
 ;;; Commands
 
 (defcli! ((upgrade up))
-    ((packages?  ("-p" "--packages") "Only upgrade packages, not Doom")
+    ((aot?       ("--aot") "Natively compile packages ahead-of-time (if available)")
+     (packages?  ("-p" "--packages") "Only upgrade packages, not Doom")
      (jobs       ("-j" "--jobs" num) "How many CPUs to use for native compilation")
      (nobuild?   ("-B") "Don't rebuild packages when hostname or Emacs version has changed")
      &context context)
@@ -33,6 +34,7 @@ libraries. It is the equivalent of the following shell commands:
     $ doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
          (sync-cmd (append '("sync" "-u")
+                           (if aot? '("--aot"))
                            (if nobuild? '("-B"))
                            (if jobs `("-j" ,jobs)))))
     (cond
@@ -57,6 +59,7 @@ libraries. It is the equivalent of the following shell commands:
       (print! (item "Reloading Doom Emacs"))
       (doom-cli-context-put context 'upgrading t)
       (exit! "doom" "upgrade" "-p"
+             (if aot? "--aot")
              (if nobuild? "-B")
              (if force? "--force")
              (if jobs (format "--jobs=%d" jobs))))

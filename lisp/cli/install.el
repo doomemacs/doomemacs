@@ -15,7 +15,8 @@
 ;;; Commands
 
 (defcli! ((install i))
-    (&flags
+    ((aot?     ("--aot") "Enable ahead-of-time native-compilation (if available)")
+     &flags
      (config?  ("--config" :yes)  "Create `$DOOMDIR' or dummy files therein?")
      (envfile? ("--env" :yes)     "(Re)generate an envvars file? (see `$ doom help env`)")
      (install? ("--install" :yes) "Auto-install packages?")
@@ -90,6 +91,10 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
           (print! (item "Envvar file already exists, skipping"))
         (when (or yes? (y-or-n-p "Generate an envvar file? (see `doom help env` for details)"))
           (call! '(env)))))
+
+    (when aot?
+      (after! straight
+        (setq straight--native-comp-available t)))
 
     ;; Install Doom packages
     (if (eq install? :no)

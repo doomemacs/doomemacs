@@ -28,6 +28,7 @@
      (jobs      ("-j" "--jobs" num) "How many threads to use for native compilation")
      (rebuild?  ("-b" "--rebuild") "Rebuild all installed packages, unconditionally")
      (nobuild?  ("-B") "Don't rebuild packages when hostname or Emacs version has changed")
+     (aot?      ("--aot") "Natively compile packages ahead-of-time (if available)")
      &context context)
   "Synchronize your config with Doom Emacs.
 
@@ -48,10 +49,17 @@ stale.
 OPTIONS:
   -j, --jobs
     Defaults to the maximum number of threads (or 1, if your CPU's threadcount
-    can't be determined)."
+    can't be determined).
+  --aot
+    Will only perform AOT native-compilation for packages updated/installed
+    during the execution of this command. Use --rebuild as well to do so for all
+    packages."
   :benchmark t
   (when (doom-profiles-bootloadable-p)
     (call! '(profiles sync "--reload")))
+  (when aot?
+    (after! straight
+      (setq straight--native-comp-available t)))
   (when jobs
     (setq native-comp-async-jobs-number (truncate jobs)))
   (run-hooks 'doom-before-sync-hook)
