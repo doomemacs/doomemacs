@@ -485,6 +485,13 @@ This primes `org-mode' for reading."
          ("" 'warning))))
   "Extra font-lock keywords for Doom documentation.")
 
+(defvar doom-docs-org-mode-map
+  (let ((map (make-sparse-keymap))
+        (cmd (cmds! buffer-read-only #'kill-current-buffer)))
+    (define-key map "q" cmd)
+    (define-key map [remap evil-record-macro] cmd)
+    map))
+
 ;;;###autoload
 (define-derived-mode doom-docs-org-mode org-mode "Doom Docs"
   "A derivative of `org-mode' for Doom's documentation files.
