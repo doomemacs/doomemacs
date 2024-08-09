@@ -50,14 +50,6 @@ to this commmand."
       (+popup/close nil 'force))))
 (global-set-key [remap quit-window] #'+popup/quit-window)
 
-(defadvice! +popup-override-display-buffer-alist-a (fn &rest args)
-  "When `pop-to-buffer' is called with non-nil ACTION, that ACTION should
-override `display-buffer-alist'."
-  :around #'switch-to-buffer-other-tab
-  :around #'switch-to-buffer-other-window
-  :around #'switch-to-buffer-other-frame
-  (let ((display-buffer-alist nil))
-    (apply fn args)))
 
 
 ;;
@@ -295,20 +287,11 @@ Ugh, such an ugly hack."
            (popup-p (+popup-window-p window)))
       (prog1 (apply fn args)
         (when (and popup-p (window-live-p window))
-          (delete-window window)))))
-
-  ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
-  (defadvice! +popup--org-pop-to-buffer-a (fn buf &optional norecord)
-    "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
-    :around #'org-switch-to-buffer-other-window
-    (if +popup-mode
-        (pop-to-buffer buf nil norecord)
-      (funcall fn buf norecord))))
-
+          (delete-window window))))))
 
 ;;;###package org-journal
 (defadvice! +popup--use-popup-window-a (fn &rest args)
-  :around #'org-journal-search-by-string
+  :around #'org-journal--search-by-string
   (letf! ((#'switch-to-buffer #'pop-to-buffer))
     (apply fn args)))
 
