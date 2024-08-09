@@ -17,14 +17,14 @@
 :args LIST
   Arguments to be appended to `consult-ripgrep-args'."
   (declare (indent defun))
-  (unless (executable-find "rg")
+  (unless (executable-find doom-rg-binary)
     (user-error "Couldn't find ripgrep in your PATH"))
   (require 'consult)
   (setq deactivate-mark t)
   (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (consult-ripgrep-args
-          (concat "rg "
+          (concat doom-rg-binary " "
                   (if all-files "-uu ")
                   (unless recursive "--maxdepth 1 ")
                   "--null --line-buffered --color=never --max-columns=1000 "

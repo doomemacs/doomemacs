@@ -10,13 +10,15 @@
 (defvar +clojure-load-clj-refactor-with-lsp nil
   "Whether or not to include clj-refactor along with clojure-lsp.")
 
+(defvar +clojure-cljfmt-binary "cljfmt")
+
 ;;
 ;;; Packages
 
 (use-package! clojure-mode
   :hook (clojure-mode . rainbow-delimiters-mode)
   :config
-  (set-formatter! 'cljfmt '("cljfmt" "fix" "-") :modes '(clojure-mode clojurec-mode clojurescript-mode))
+  (set-formatter! 'cljfmt `(,+clojure-cljfmt-binary "fix" "-") :modes '(clojure-mode clojurec-mode clojurescript-mode))
 
   (when (modulep! +lsp)
     (add-hook! '(clojure-mode-local-vars-hook
