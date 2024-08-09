@@ -2,6 +2,9 @@
 
 (defvar evil-collection-key-blacklist)
 
+;; must be set before evil/evil-collection is loaded
+(defvar evil-want-keybinding nil)
+
 ;; We load evil-collection ourselves for these reasons:
 ;;
 ;; 1. To truly lazy load it. Some of its modules, like
@@ -23,9 +26,7 @@
            (not (doom-context-p 'reload))
            (modulep! +everywhere))
 
-  (setq evil-collection-company-use-tng (modulep! :completion company +tng)
-        ;; must be set before evil/evil-collection is loaded
-        evil-want-keybinding nil)
+  (setq evil-collection-company-use-tng (modulep! :completion company +tng))
 
   (defvar +evil-collection-disabled-list
     '(anaconda-mode
