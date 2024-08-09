@@ -64,18 +64,18 @@ error if NAME doesn't exist."
   (safe-persp-name (+workspace-current)))
 
 ;;;###autoload
+(defun +workspace-list-names ()
+  "Return the list of names of open workspaces."
+  (cl-remove persp-nil-name persp-names-cache :count 1))
+
+;;;###autoload
 (defun +workspace-list ()
   "Return a list of workspace structs (satisifes `+workspace-p')."
   ;; We don't use `hash-table-values' because it doesn't ensure order in older
   ;; versions of Emacs
-  (cl-loop for name in persp-names-cache
+  (cl-loop for name in (+workspace-list-names)
            if (gethash name *persp-hash*)
            collect it))
-
-;;;###autoload
-(defun +workspace-list-names ()
-  "Return the list of names of open workspaces."
-  persp-names-cache)
 
 ;;;###autoload
 (defun +workspace-buffer-list (&optional persp)
@@ -193,7 +193,7 @@ throws an error."
   (let ((old-name (+workspace-current-name)))
     (unless (equal old-name name)
       (setq +workspace--last
-            (or (and (not (string= old-name persp-nil-name))
+            (or (and (not (+workspace--protected-p old-name))
                      old-name)
                 +workspaces-main))
       (persp-frame-switch name))
@@ -398,7 +398,7 @@ end of the workspace list."
   "Cycle n workspaces to the right (default) or left."
   (interactive (list 1))
   (let ((current-name (+workspace-current-name)))
-    (if (equal current-name persp-nil-name)
+    (if (+workspace--protected-p current-name)
         (+workspace-switch +workspaces-main t)
       (condition-case-unless-debug ex
           (let* ((persps (+workspace-list-names))
@@ -446,9 +446,10 @@ the next."
   (interactive "p")
   (let* ((current-name (+workspace-current-name))
          (count (or count 1))
-         (index (- (cl-position current-name persp-names-cache :test #'equal)
+         (persps (+workspace-list-names))
+         (index (- (cl-position current-name persps :test #'equal)
                    count))
-         (names (remove current-name persp-names-cache)))
+         (names (remove current-name persps)))
     (unless names
       (user-error "Only one workspace"))
     (let ((index (min (max 0 index) (length names))))
@@ -575,7 +576,7 @@ This be hooked to `projectile-after-switch-project-hook'."
       (unwind-protect
           (if (and (not (null +workspaces-on-switch-project-behavior))
                    (or (eq +workspaces-on-switch-project-behavior t)
-                       (equal (safe-persp-name (get-current-persp)) persp-nil-name)
+                       (+workspace--protected-p (safe-persp-name (get-current-persp)))
                        (+workspace-buffer-list)))
               (let* ((persp
                       (let ((project-name (doom-project-name +workspaces--project-dir)))

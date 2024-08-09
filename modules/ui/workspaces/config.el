@@ -73,10 +73,6 @@ stored in `persp-save-dir'.")
       "Ensure a main workspace exists."
       (when persp-mode
         (let (persp-before-switch-functions)
-          ;; Try our best to hide the nil perspective.
-          (when (equal (car persp-names-cache) persp-nil-name)
-            (pop persp-names-cache))
-          ;; ...and create a *real* main workspace to fill this role.
           (unless (or (persp-get-by-name +workspaces-main)
                       ;; Start from 2 b/c persp-mode counts the nil workspace
                       (> (hash-table-count *persp-hash*) 2))
