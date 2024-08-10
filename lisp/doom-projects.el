@@ -33,6 +33,10 @@ Is nil if no executable is found in your PATH during startup.")
   :init
   (setq project-list-file (file-name-concat doom-profile-state-dir "projects"))
   :config
+  ;; Not valid vc backends, but I use it to inform (global) file index
+  ;; exclusions below and elsewhere.
+  (add-to-list 'project-vc-backend-markers-alist '(Jujutsu . ".jj"))
+  (add-to-list 'project-vc-backend-markers-alist '(Sapling . ".sl"))
   (add-to-list 'project-vc-extra-root-markers ".jj")
 
   ;; TODO: Advice or add command for project-wide `find-sibling-file'.
@@ -213,6 +217,10 @@ And if it's a function, evaluate it."
                           (if (version< version "8.3.0")
                               (replace-regexp-in-string "--strip-cwd-prefix" "" projectile-git-fd-args t t)
                             projectile-git-fd-args)
+                          (when project-vc-backend-markers-alist
+                            (mapconcat (fn! (format "-E %s" (shell-quote-argument (cdr %))))
+                                       project-vc-backend-markers-alist
+                                       " "))
                           (if doom--system-windows-p " --path-separator=/" "")))
                " ")))
            ;; Otherwise, resort to ripgrep, which is also faster than find
@@ -221,6 +229,10 @@ And if it's a function, evaluate it."
              (delq
               nil (list doom-ripgrep-executable
                         "-0 --files --follow --color=never --hidden"
+                        (when project-vc-backend-markers-alist
+                          (mapconcat (fn! (format "-g!%s" (shell-quote-argument (cdr %))))
+                                     project-vc-backend-markers-alist
+                                     " "))
                         (if doom--system-windows-p " --path-separator=/")))
              " "))
            ((not doom--system-windows-p) "find . -type f | cut -c3- | tr '\\n' '\\0'")
