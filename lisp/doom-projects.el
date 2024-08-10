@@ -99,19 +99,15 @@ Is nil if no executable is found in your PATH during startup.")
   ;;
   ;; In the interest of performance, we reduce the number of project root marker
   ;; files/directories projectile searches for when resolving the project root.
-  (setq projectile-project-root-files-bottom-up
-        (append '(".projectile"  ; projectile's root marker
-                  ".project"     ; doom project marker
-                  ".git")        ; Git VCS root dir
-                (when (executable-find "hg")
-                  '(".hg"))      ; Mercurial VCS root dir
-                (when (executable-find "bzr")
-                  '(".bzr")))    ; Bazaar VCS root dir
-        ;; This will be filled by other modules. We build this list manually so
-        ;; projectile doesn't perform so many file checks every time it resolves
-        ;; a project's root -- particularly when a file has no project.
-        projectile-project-root-files '()
+  ;;
+  ;; These will be filled by other modules. We build this list manually so
+  ;; projectile doesn't perform so many file checks every time it resolves a
+  ;; project's root -- particularly when a file has no project.
+  (setq projectile-project-root-files '()
         projectile-project-root-files-top-down-recurring '("Makefile"))
+
+  ;; Adds a more editor/plugin-agnostic project marker.
+  (add-to-list 'projectile-project-root-files-bottom-up ".project")
 
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
@@ -122,8 +118,9 @@ Is nil if no executable is found in your PATH during startup.")
   ;; Support the more generic .project files as an alternative to .projectile
   (defadvice! doom--projectile-dirconfig-file-a ()
     :override #'projectile-dirconfig-file
-    (cond ((file-exists-p! (or ".projectile" ".project") (projectile-project-root)))
-          ((expand-file-name ".project" (projectile-project-root)))))
+    (let ((proot (projectile-project-root)))
+      (cond ((file-exists-p! (or projectile-dirconfig-file ".project") proot))
+            ((expand-file-name ".project" proot)))))
 
   ;; Disable commands that won't work, as is, and that Doom already provides a
   ;; better alternative for.
@@ -168,14 +165,15 @@ c) are not valid projectile projects."
                  and do (remhash proot projectile-project-type-cache))
         (projectile-serialize-cache))))
 
-  ;; Some MSYS utilities auto expanded the `/' path separator, so we need to prevent it.
+  ;; HACK: Some MSYS utilities auto expanded the `/' path separator, so we need
+  ;;   to prevent it.
   (when doom--system-windows-p
     (setenv "MSYS_NO_PATHCONV" "1") ; Fix path in Git Bash
     (setenv "MSYS2_ARG_CONV_EXCL" "--path-separator")) ; Fix path in MSYS2
 
-  ;; HACK Don't rely on VCS-specific commands to generate our file lists. That's
-  ;;      7 commands to maintain, versus the more generic, reliable and
-  ;;      performant `fd' or `ripgrep'.
+  ;; HACK: Don't rely on VCS-specific commands to generate our file lists.
+  ;;   That's 7 commands to maintain, versus the more generic, reliable, and
+  ;;   performant `fd' or `ripgrep'.
   (defadvice! doom--only-use-generic-command-a (fn vcs)
     "Only use `projectile-generic-command' for indexing project files.
 And if it's a function, evaluate it."
@@ -184,7 +182,8 @@ And if it's a function, evaluate it."
              (not (file-remote-p default-directory)))
         (funcall projectile-generic-command vcs)
       (let ((projectile-git-submodule-command
-             (get 'projectile-git-submodule-command 'initial-value)))
+             (or projectile-git-submodule-command
+                 (get 'projectile-git-submodule-command 'initial-value))))
         (funcall fn vcs))))
 
   ;; HACK: `projectile-generic-command' doesn't typically support a function,
