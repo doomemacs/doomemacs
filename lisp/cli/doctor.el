@@ -219,7 +219,7 @@ in."
                        file (/ size 1024 1024.0))
                 (explain! "Consider deleting it from your system (manually)"))))
 
-          (unless (ignore-errors (executable-find doom-projectile-fd-binary))
+          (unless (ignore-errors (executable-find doom-fd-executable))
             (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
 
           (require 'projectile)

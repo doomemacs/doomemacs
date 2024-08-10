@@ -12,12 +12,17 @@ Emacs.")
 (defvar doom-projectile-cache-purge-non-projects nil
   "If non-nil, non-projects are purged from the cache on `kill-emacs-hook'.")
 
-(defvar doom-projectile-fd-binary
-  (cl-find-if #'executable-find (list "fdfind" "fd"))
-  "The filename of the `fd' executable. On some distros it's 'fdfind' (ubuntu,
-debian, and derivatives). On most it's 'fd'.")
+(define-obsolete-variable-alias 'doom-projectile-fd-binary 'doom-fd-executable "v3.0.0")
+(defvar doom-fd-executable (cl-find-if #'executable-find (list "fdfind" "fd"))
+  "The filename of the fd executable.
 
-(defvar doom-projects--fd-version nil)
+On some distros it's fdfind (ubuntu, debian, and derivatives). On most it's fd.
+Is nil if no executable is found in your PATH during startup.")
+
+(defvar doom-ripgrep-executable (executable-find "rg")
+  "The filename of the Ripgrep executable.
+
+Is nil if no executable is found in your PATH during startup.")
 
 
 ;;
@@ -52,7 +57,8 @@ debian, and derivatives). On most it's 'fd'.")
         projectile-kill-buffers-filter 'kill-only-files
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-ignored-projects '("~/")
-        projectile-ignored-project-function #'doom-project-ignored-p)
+        projectile-ignored-project-function #'doom-project-ignored-p
+        projectile-fd-executable doom-fd-executable)
 
   (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
   (global-set-key [remap find-tag]         #'projectile-find-tag)
@@ -177,38 +183,47 @@ And if it's a function, evaluate it."
              (get 'projectile-git-submodule-command 'initial-value)))
         (funcall fn vcs))))
 
-  ;; `projectile-generic-command' doesn't typically support a function, but my
-  ;; `doom--only-use-generic-command-a' advice allows this. I do it this way so
-  ;; that projectile can adapt to remote systems (over TRAMP), rather then look
-  ;; for fd/ripgrep on the remote system simply because it exists on the host.
-  ;; It's faster too.
+  ;; HACK: `projectile-generic-command' doesn't typically support a function,
+  ;;   but my `doom--only-use-generic-command-a' advice allows this. I do it
+  ;;   this way to make it easier for folks to undo the change (if not set to a
+  ;;   function, projectile will revert to default behavior).
   (put 'projectile-git-submodule-command 'initial-value projectile-git-submodule-command)
   (setq projectile-git-submodule-command nil
+        ;; Include and follow symlinks in file listings.
+        projectile-git-fd-args (concat "-L -tl " projectile-git-fd-args " --ignore-file .project")
         projectile-indexing-method 'hybrid
         projectile-generic-command
         (lambda (_)
-          ;; If fd exists, use it for git and generic projects. fd is a rust
-          ;; program that is significantly faster than git ls-files or find, and
-          ;; it respects .gitignore. This is recommended in the projectile docs.
+          ;; If fd or ripgrep exists, use it to produce file listings for
+          ;; projectile commands. fd is a rust program that is significantly
+          ;; faster than git ls-files, find, or the various VCS commands
+          ;; projectile is configured to use. Plus, it respects .gitignore.
           (cond
            ((when-let*
-                ((bin (if (ignore-errors (file-remote-p default-directory nil t))
-                          (cl-find-if (doom-rpartial #'executable-find t)
-                                      (list "fdfind" "fd"))
-                        doom-projectile-fd-binary))
+                ((doom-fd-executable)
+                 (projectile-git-use-fd)
                  ;; REVIEW Temporary fix for #6618. Improve me later.
-                 (version (with-memoization doom-projects--fd-version
-                            (cadr (split-string (cdr (doom-call-process bin "--version"))
+                 (version (with-memoization (get 'doom-fd-executable 'version)
+                            (cadr (split-string (cdr (doom-call-process doom-fd-executable "--version"))
                                                 " " t))))
                  ((ignore-errors (version-to-list version))))
-                (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git %s"
-                                bin (if (version< version "8.3.0")
-                                        "" "--strip-cwd-prefix"))
-                        (if doom--system-windows-p " --path-separator=/"))))
+              (string-join
+               (delq
+                nil (list doom-fd-executable "."
+                          (if (version< version "8.3.0")
+                              (replace-regexp-in-string "--strip-cwd-prefix" "" projectile-git-fd-args t t)
+                            projectile-git-fd-args)
+                          (if doom--system-windows-p " --path-separator=/" "")))
+               " ")))
            ;; Otherwise, resort to ripgrep, which is also faster than find
-           ((executable-find "rg" t)
-            (concat "rg -0 --files --follow --color=never --hidden -g!.git"
-                    (if doom--system-windows-p " --path-separator=/")))
+           (doom-ripgrep-executable
+            (string-join
+             (delq
+              nil (list doom-ripgrep-executable
+                        "-0 --files --follow --color=never --hidden"
+                        (if doom--system-windows-p " --path-separator=/")))
+             " "))
+           ((not doom--system-windows-p) "find . -type f | cut -c3- | tr '\\n' '\\0'")
            ("find . -type f -print0"))))
 
   (defadvice! doom--projectile-default-generic-command-a (fn &rest args)

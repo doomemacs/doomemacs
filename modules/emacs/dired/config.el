@@ -211,7 +211,7 @@ we have to clean it up ourselves."
 
 
 (use-package! fd-dired
-  :when doom-projectile-fd-binary
+  :when doom-fd-executable
   :defer t
   :init
   (global-set-key [remap find-dired] #'fd-dired)

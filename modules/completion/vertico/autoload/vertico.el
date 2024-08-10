@@ -211,15 +211,15 @@ targets."
 ;;;###autoload
 (defun +vertico/consult-fd-or-find (&optional dir initial)
   "Runs consult-fd if fd version > 8.6.0 exists, consult-find otherwise.
-See URL `https://github.com/minad/consult/issues/770'."
+See minad/consult#770."
   (interactive "P")
   ;; TODO this condition was adapted from a similar one in lisp/doom-projects.el, to be replaced with a more robust check post v3
   (if (when-let*
           ((bin (if (ignore-errors (file-remote-p default-directory nil t))
                     (cl-find-if (doom-rpartial #'executable-find t)
                                 (list "fdfind" "fd"))
-                  doom-projectile-fd-binary))
-           (version (with-memoization doom-projects--fd-version
+                  doom-fd-executable))
+           (version (with-memoization (get 'doom-fd-executable 'version)
                       (cadr (split-string (cdr (doom-call-process bin "--version"))
                                           " " t))))
            ((ignore-errors (version-to-list version))))
