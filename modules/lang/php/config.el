@@ -12,6 +12,7 @@
 (defvar +php-run-tests-in-docker nil
   "Whether or not to run tests in a docker environment")
 
+;; DEPRECATED: Remove when projectile is replaced with project.el
 (after! projectile
   (add-to-list 'projectile-project-root-files "composer.json"))
 

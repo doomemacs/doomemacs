@@ -209,7 +209,7 @@ orderless."
          "C-x C-d" #'consult-dir
          "C-x C-j" #'consult-dir-jump-file))
   :config
-  ;; DEPRECATED: Remove when Doom core replaces projectile with project.el
+  ;; DEPRECATED: Remove when projectile is replaced with project.el
   (setq consult-dir-project-list-function #'consult-dir-projectile-dirs)
 
   (when (modulep! :tools docker)
