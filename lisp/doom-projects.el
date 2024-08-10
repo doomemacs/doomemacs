@@ -23,8 +23,16 @@ debian, and derivatives). On most it's 'fd'.")
 ;;
 ;;; Packages
 
-(after! project
-  (setq project-list-file (file-name-concat doom-data-dir "projects")))
+(use-package! project
+  :defer t
+  :init
+  (setq project-list-file (file-name-concat doom-profile-state-dir "projects"))
+  :config
+  (add-to-list 'project-vc-extra-root-markers ".jj")
+
+  ;; TODO: Advice or add command for project-wide `find-sibling-file'.
+  )
+
 
 ;; DEPRECATED: Will be replaced with project.el
 (use-package! projectile

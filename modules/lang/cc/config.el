@@ -303,6 +303,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   :defer t
   :init
   (defvar ccls-sem-highlight-method 'font-lock)
+  (after! project
+    (add-to-list 'project-vc-ignores "^\\.ccls-cache$"))
   ;; DEPRECATED: Remove when projectile is replaced with project.el
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories "^.ccls-cache$")
