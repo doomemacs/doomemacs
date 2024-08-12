@@ -193,7 +193,7 @@ And if it's a function, evaluate it."
   (put 'projectile-git-submodule-command 'initial-value projectile-git-submodule-command)
   (setq projectile-git-submodule-command nil
         ;; Include and follow symlinks in file listings.
-        projectile-git-fd-args (concat "-L -tl " projectile-git-fd-args " --ignore-file .project")
+        projectile-git-fd-args (concat "-L -tl " projectile-git-fd-args)
         projectile-indexing-method 'hybrid
         projectile-generic-command
         (lambda (_)
