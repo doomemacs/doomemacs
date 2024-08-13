@@ -282,6 +282,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
           :desc "References (Write)"    "w" #'+cc/ccls-show-references-write)))
 
   (when (modulep! :tools lsp +eglot)
+    (set-eglot-client! 'cuda-mode '("clangd"))
+
     ;; Map eglot specific helper
     (map! :localleader
           :after cc-mode
