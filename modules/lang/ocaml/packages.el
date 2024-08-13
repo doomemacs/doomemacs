@@ -18,11 +18,6 @@
 (when (modulep! :tools eval)
   (package! utop :pin "384b3098c8c4a2e26b87167053952b753aa8a63a"))
 
-(when (modulep! :editor format)
-  (package! ocamlformat
-    :recipe (:host github :repo "ocaml-ppx/ocamlformat" :files ("emacs/*.el"))
-    :pin "c43f89bc0ebd536009151814214320bdf3988c50"))
-
 (package! dune
   :recipe (:host github :repo "ocaml/dune" :files ("editor-integration/emacs/*.el"))
   :pin "aac3d84f1d5abdf276d72be3dccac23bf99b3c7c")

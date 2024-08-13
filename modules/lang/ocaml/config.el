@@ -13,6 +13,13 @@
 
 
 (after! tuareg
+  (set-formatter! 'ocamlformat
+    '("ocamlformat" "-" "--name" filepath "--enable-outside-detected-project"
+      (if (locate-dominating-file default-directory ".ocamlformat")
+          (pcase (apheleia-formatters-extension-p "eliom" "eliomi")
+            ("eliom"  '("--impl"))
+            ("eliomi" '("--intf")))
+        '("--profile=ocamlformat"))))
   ;; tuareg-mode has the prettify symbols itself
   (set-ligatures! 'tuareg-mode :alist
     (append tuareg-prettify-symbols-basic-alist
@@ -101,23 +108,6 @@
       (ocp-setup-indent))))
 
 
-(use-package! ocamlformat
-  :when (modulep! :editor format)
-  :commands ocamlformat
-  :hook (tuareg-mode-local-vars . +ocaml-init-ocamlformat-h)
-  :config
-  ;; TODO Fix region-based formatting support
-  (defun +ocaml-init-ocamlformat-h ()
-    (setq-local +format-with 'ocp-indent)
-    (when (and (executable-find "ocamlformat")
-               (locate-dominating-file default-directory ".ocamlformat"))
-      (when buffer-file-name
-        (let ((ext (file-name-extension buffer-file-name t)))
-          (cond ((equal ext ".eliom")
-                 (setq-local ocamlformat-file-kind 'implementation))
-                ((equal ext ".eliomi")
-                 (setq-local ocamlformat-file-kind 'interface)))))
-      (setq-local +format-with 'ocamlformat))))
 
 (use-package! opam-switch-mode
   :hook (tuareg-mode-local-vars . +ocaml-init-opam-switch-h)
