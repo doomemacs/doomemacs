@@ -255,11 +255,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook
                cmake-mode-local-vars-hook
-               ;; HACK Can't use cude-mode-local-vars-hook because cuda-mode
-               ;;   isn't a proper major mode (just a plain function
-               ;;   masquarading as one, so your standard mode hooks won't fire
-               ;;   from switching to cuda-mode).
-               cuda-mode-hook)
+               cuda-mode-local-vars-hook)
              :append #'lsp!)
 
   (map! :after ccls
