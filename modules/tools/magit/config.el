@@ -227,7 +227,10 @@ Only has an effect in GUI Emacs.")
         (:map magit-status-mode-map
          :nv "gz" #'magit-refresh)
         (:map magit-diff-mode-map
-         :nv "gd" #'magit-jump-to-diffstat-or-diff))
+         :nv "gd" #'magit-jump-to-diffstat-or-diff)
+        ;; Don't open recursive process buffers
+        (:map magit-process-mode-map
+         :nv "`" #'ignore))
 
   ;; A more intuitive behavior for TAB in magit buffers:
   (define-key! 'normal
