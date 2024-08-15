@@ -537,7 +537,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                    (nreverse new-specs)))
                 (put face 'face-modified nil))
             ('error
-             (ignore-errors (doom--reset-inhibited-vars-h))
              (if (string-prefix-p "Font not available" (error-message-string e))
                  (signal 'doom-font-error (list (font-get (cdr map) :family)))
                (signal (car e) (cdr e))))))
