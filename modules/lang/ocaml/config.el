@@ -132,5 +132,5 @@
   (opam-switch-set-switch (tuareg-opam-current-compiler)))
 
 
-(eval-when! (modulep! +tree-sitter)
+(when (modulep! +tree-sitter)
   (add-hook 'tuareg-mode-local-vars-hook #'tree-sitter!))

@@ -70,7 +70,7 @@
 ;; default 0.1 should make childframes and packages that manipulate them (like
 ;; `lsp-ui', `company-box', and `posframe') feel much snappier. See
 ;; emacs-lsp/lsp-ui#613.
-(eval-when! (boundp 'pgtk-wait-for-event-timeout)
+(when (boundp 'pgtk-wait-for-event-timeout)
   (setq pgtk-wait-for-event-timeout 0.001))
 
 ;; Increase how much is read from processes in a single chunk (default is 4kb).
@@ -83,7 +83,7 @@
 
 ;; Performance on Windows is considerably worse than elsewhere. We'll need
 ;; everything we can get.
-(eval-when! (boundp 'w32-get-true-file-attributes)
+(when (boundp 'w32-get-true-file-attributes)
   (setq w32-get-true-file-attributes nil    ; decrease file IO workload
         w32-pipe-read-delay 0               ; faster IPC
         w32-pipe-buffer-size (* 64 1024)))  ; read more at a time (was 4K)
