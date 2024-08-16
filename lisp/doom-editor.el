@@ -577,8 +577,8 @@ files, so this replace calls to `pp' with the much faster `prin1'."
        (lambda (button)
          (helpful-variable (button-get button 'apropos-symbol))))))
 
-  (when (> emacs-major-version 28)
-    ;; REVIEW This should be reported upstream to Emacs.
+  ;; DEPRECATED: Remove when support for 29 is dropped.
+  (when (= emacs-major-version 29)
     (defadvice! doom--find-function-search-for-symbol-save-excursion-a (fn &rest args)
       "Suppress cursor movement by `find-function-search-for-symbol'.
 
