@@ -194,7 +194,7 @@
 ;;; Core globals
 
 (defgroup doom nil
-  "An Emacs framework for the stubborn martian hacker."
+  "A development framework for Emacs configurations and Emacs Lisp projects."
   :link '(url-link "https://doomemacs.org")
   :group 'emacs)
 
@@ -206,7 +206,7 @@
   "Current version of Doom Emacs.")
 
 (defvar doom-init-time nil
-  "The time it took, in seconds, for Doom Emacs to initialize.")
+  "The time it took, in seconds (as a float), for Doom Emacs to start up.")
 
 (defconst doom-profile
   (if-let (profile (getenv-internal "DOOMPROFILE"))
@@ -307,11 +307,11 @@ For profile-local cache files, use `doom-profile-cache-dir' instead.")
     (file-name-concat doom-local-dir "state/"))
   "Where Doom stores its global state files.
 
-State files contain unessential, unportable, but persistent data which, if lost
-won't cause breakage, but may be inconvenient as they cannot be automatically
-regenerated or restored. For example, a recently-opened file list is not
-essential, but losing it means losing this record, and restoring it requires
-revisiting all those files.
+State files contain unessential, non-portable, but persistent data which, if
+lost won't cause breakage, but may be inconvenient as they cannot be
+automatically regenerated or restored. For example, a recently-opened file list
+is not essential, but losing it means losing this record, and restoring it
+requires revisiting all those files.
 
 Use this for: history, logs, user-saved data, autosaves/backup files, known
 projects, recent files, bookmarks.
@@ -333,7 +333,7 @@ For profile-local state files, use `doom-profile-state-dir' instead.")
 
 (defconst doom-profile-dir
   (file-name-concat doom-profile-data-dir "@" (cdr doom-profile))
-  "Where generated files for the active profile are kept.")
+  "Where generated files for the active profile (for Doom's core) are kept.")
 
 ;; DEPRECATED: Will be moved to cli/env
 (defconst doom-env-file
@@ -536,14 +536,14 @@ empty. Each context describes what phase Doom is in, and may respond to.
 
 All valid contexts:
   cli        -- while executing a Doom CLI
-  compile    -- while byte-compilation is in progress
-  eval       -- during inline evaluation of elisp
+  compile    -- while byte-compiling packages
+  eval       -- during interactive evaluation of elisp
   init       -- while doom is formally starting up for the first time, after its
-                core libraries are loaded, but before user config is.
-  modules    -- while loading modules and their files
-  sandbox    -- This session was launched from Doom's sandbox.
-  packages   -- when packagedefs are being read
-  reload     -- while reloading doom")
+                core libraries are loaded, but before $DOOMDIR is
+  modules    -- while loading modules configuration files (but not packages)
+  sandbox    -- This session was launched from Doom's sandbox
+  packages   -- while a module's packages.el's file is being evaluated
+  reload     -- while reloading doom with `doom/reload'")
 (put 'doom-context 'valid-values '(cli compile eval init modules packages reload doctor sandbox))
 (put 'doom-context 'risky-local-variable t)
 
@@ -554,7 +554,9 @@ All valid contexts:
               (list context "Unrecognized context" valid)))))
 
 (defun doom-context-p (context)
-  "Return t if CONTEXT is active (i.e. in `doom-context')."
+  "Return t if CONTEXT is active, nil otherwise.
+
+See `doom-context' for possible values for CONTEXT."
   (if (memq context doom-context) t))
 
 (defun doom-context-push (context)

@@ -165,10 +165,10 @@ EXIT CODES:
   3        Unrecognized user input error
   4        Command not found, or is incorrect/deprecated
   5        Invalid, missing, or extra options/arguments
-  6-49     Reserved for Doom
-  50-200   Reserved for custom user codes
+  6-15     Reserved for Doom
+  16-192   Reserved for the user's extensions
   254      Successful run (but then execute `doom-cli-restart-script')
-  255      Uncaught internal errors
+  255      Uncaught critical errors
 
 SEE ALSO:
   https://doomemacs.org               Homepage

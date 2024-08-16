@@ -36,14 +36,14 @@ This is the equivalent of running autoremove, install, autoloads, then
 recompile. Run this whenever you:
 
   1. Modify your `doom!' block,
-  2. Add or remove `package!' blocks to your config,
-  3. Add or remove autoloaded functions in module autoloaded files,
-  4. Update Doom outside of Doom (e.g. with git),
+  2. Add, remove, or modify `package!' blocks to your config,
+  3. Add, remove, or modify autoloaded functions in module autoloaded files,
+  4. Update Doom manually (e.g. with git),
   5. Move your Doom config (either $EMACSDIR or $DOOMDIR) to a new location.
-  6. When you up (or down) grade Emacs itself.
+  6. Up or downgrade Emacs itself (e.g. 29.1 -> 29.4).
 
-It will ensure that unneeded packages are removed, all needed packages are
-installed, autoloads files are up-to-date and no byte-compiled files have gone
+Sync'ing ensures that unneeded packages are removed, needed packages are
+installed, autoloads files are up-to-date, and no byte-compiled files have gone
 stale.
 
 OPTIONS:
