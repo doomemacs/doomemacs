@@ -28,8 +28,10 @@ TAB/S-TAB.")
   "If non-nil, prefer navigating org tables over cycling candidates with
 TAB/S-TAB.")
 
+
 ;;
 ;;; Packages
+
 (use-package! corfu
   :hook (doom-first-input . global-corfu-mode)
   :init

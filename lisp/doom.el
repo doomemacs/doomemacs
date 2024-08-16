@@ -148,8 +148,9 @@
     (push 'harfbuzz features))
 
 ;; The `native-compile' feature exists whether or not it is functional (e.g.
-;; libgcc is available or not). This seems silly, so pretend it doesn't exist if
-;; it isn't functional.
+;; libgcc is available or not). This seems silly, as some packages will blindly
+;; use the native-comp API if it's present, whether or not it's functional. so
+;; pretend it doesn't exist if that's the case.
 (if (featurep 'native-compile)
     (if (not (native-comp-available-p))
         (delq 'native-compile features)))
@@ -393,10 +394,10 @@ users).")
 
   (unless noninteractive
     ;; PERF: Resizing the Emacs frame (to accommodate fonts that are smaller or
-    ;;   larger than the system font) appears to impact startup time
+    ;;   larger than the default system font) can impact startup time
     ;;   dramatically. The larger the delta, the greater the delay. Even trivial
-    ;;   deltas can yield up to a ~1000ms loss, depending on font size and
-    ;;   `window-system'. PGTK seems least affected and NS/MAC the most.
+    ;;   deltas can yield up to a ~1000ms loss, depending also on
+    ;;   `window-system' (PGTK builds seem least affected and NS/MAC the most).
     (setq frame-inhibit-implied-resize t)
 
     ;; PERF: A fair bit of startup time goes into initializing the splash and
@@ -432,14 +433,14 @@ users).")
                                 (selected-frame) nil t))))
 
     ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on each
-    ;;   `require' and `load'. Doom won't load any modules this early, so omit
-    ;;   .so for a tiny startup boost. Is later restored in doom-start.
+    ;;   `require' and `load'. Doom won't load any modules this early, so I omit
+    ;;   *.so for a tiny startup boost. Is later restored in `doom-start'.
     (put 'load-suffixes 'initial-value (default-toplevel-value 'load-suffixes))
     (put 'load-file-rep-suffixes 'initial-value (default-toplevel-value 'load-file-rep-suffixes))
     (set-default-toplevel-value 'load-suffixes '(".elc" ".el"))
     (set-default-toplevel-value 'load-file-rep-suffixes '(""))
-    ;; COMPAT: Undo any problematic startup optimizations; from this point, I
-    ;;   make no assumptions about what might be loaded in userland.
+    ;; COMPAT: Undo any problematic startup optimizations eventually, to prevent
+    ;;   incompatibilities with anything loaded in userland.
     (add-hook! 'doom-before-init-hook
       (defun doom--reset-load-suffixes-h ()
         (setq load-suffixes (get 'load-suffixes 'initial-value)
@@ -458,10 +459,10 @@ users).")
         (setq custom-dont-initialize nil)))
 
     ;; PERF: The mode-line procs a couple dozen times during startup, before the
-    ;;   user can even see the first mode-line. This is normally fast, but we
-    ;;   can't predict what the user (or packages) will put into the mode-line.
-    ;;   Also, mode-line packages have a bad habit of throwing performance to
-    ;;   the wind, so best we just disable the mode-line until we can see one.
+    ;;   user even sees the first mode-line. This is normally fast, but we can't
+    ;;   predict what the user (or packages) will put into the mode-line. Also,
+    ;;   mode-line packages have a bad habit of throwing performance to the
+    ;;   wind, so best we just disable the mode-line until we can see one.
     (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
     (setq-default mode-line-format nil)
     (dolist (buf (buffer-list))

@@ -6,7 +6,7 @@
 
 
 ;;
-;;; Common packages
+;;; Packages
 
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc

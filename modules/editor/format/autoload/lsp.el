@@ -2,7 +2,6 @@
 ;;;###if (modulep! :tools lsp)
 
 (defvar +format-lsp--last nil)
-
 ;;;###autoload
 (define-minor-mode +format-with-lsp-mode
   "Toggles `lsp-mode'/`eglot' integration with `apheleia-mode' in this buffer.

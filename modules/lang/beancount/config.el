@@ -18,7 +18,7 @@
   ;; HACK: The intro message changed in newer versions of Fava, plus, the output
   ;;   could contain ANSI codes, causing the `beancount-fava' command to not
   ;;   open the server in the browser after the server has started.
-  ;; REVIEW: PR this uptsream!
+  ;; REVIEW: PR this upstream!
   (defadvice! +beancount--open-in-browser-after-starting-fix-a (_process output)
     :override #'beancount--fava-filter
     (save-match-data

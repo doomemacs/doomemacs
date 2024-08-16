@@ -1,7 +1,11 @@
-;;; tools/dired/config.el -*- lexical-binding: t; -*-
+;;; emacs/dired/config.el -*- lexical-binding: t; -*-
 
 (defvar +dired-dirvish-icon-provider 'nerd-icons
   "Icon provider to use for dirvish when the module is enabled.")
+
+
+;;
+;;; Packages
 
 (use-package! dired
   :commands dired-jump

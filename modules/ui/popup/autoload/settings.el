@@ -163,6 +163,7 @@ used.
 \(fn PREDICATE &key IGNORE ACTIONS SIDE SIZE WIDTH HEIGHT SLOT VSLOT TTL QUIT SELECT MODELINE AUTOSAVE PARAMETERS)"
   (declare (indent defun))
   (push (+popup-make-rule predicate plist) +popup--display-buffer-alist)
+  ;; TODO: Don't overwrite user entries in `display-buffer-alist'
   (when (bound-and-true-p +popup-mode)
     (setq display-buffer-alist +popup--display-buffer-alist))
   +popup--display-buffer-alist)

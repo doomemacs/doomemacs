@@ -10,6 +10,7 @@
 (defvar +clojure-load-clj-refactor-with-lsp nil
   "Whether or not to include clj-refactor along with clojure-lsp.")
 
+
 ;;
 ;;; Packages
 

@@ -64,11 +64,12 @@
 ;; usage, however!
 (setq inhibit-compacting-font-caches t)
 
-;; PGTK builds only: this timeout adds latency to frame operations, like
-;; `make-frame-invisible', which are frequently called without a guard because
-;; it's inexpensive in non-PGTK builds. Lowering the timeout from the default
-;; 0.1 should make childframes and packages that manipulate them (like `lsp-ui',
-;; `company-box', and `posframe') feel much snappier. See emacs-lsp/lsp-ui#613.
+;; PGTK builds only: there's a timeout that adds latency to frame operations,
+;; like `make-frame-invisible', which Emacs frequently calls without a guard
+;; because it's inexpensive in non-PGTK builds. Lowering the timeout from the
+;; default 0.1 should make childframes and packages that manipulate them (like
+;; `lsp-ui', `company-box', and `posframe') feel much snappier. See
+;; emacs-lsp/lsp-ui#613.
 (eval-when! (boundp 'pgtk-wait-for-event-timeout)
   (setq pgtk-wait-for-event-timeout 0.001))
 
@@ -90,8 +91,8 @@
 ;; The GC introduces annoying pauses and stuttering into our Emacs experience,
 ;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
 ;; when it's idle. However, if the idle delay is too long, we run the risk of
-;; runaway memory usage in busy sessions. If it's too low, then we may as well
-;; not be using gcmh at all.
+;; runaway memory usage in busy sessions. And if it's too low, then we may as
+;; well not be using gcmh at all.
 (setq gcmh-idle-delay 'auto  ; default is 15s
       gcmh-auto-idle-delay-factor 10
       gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
@@ -124,11 +125,10 @@
 ;;   disabling Emacs' menu-bar also makes MacOS treat Emacs GUI frames like
 ;;   non-application windows (e.g. it won't capture focus on activation, among
 ;;   other things), so the menu-bar should be preserved there.
-;;
 (when doom--system-macos-p
-  ;; NOTE: The correct way to disable this hack is to toggle `menu-bar-mode' (or
-  ;;   put it on a hook). Don't try to undo the hack below, as it may change
-  ;;   without warning, but will always respect `menu-bar-mode'.
+  ;; NOTE: Don't try to undo the hack below, as it may change without warning.
+  ;;   Instead, toggle `menu-bar-mode' (or put it on a hook) as normal. This
+  ;;   hack will always try to respect the state of `menu-bar-mode'.
   (setcdr (assq 'menu-bar-lines default-frame-alist) 'tty)
   (add-hook! 'after-make-frame-functions
     (defun doom--init-menu-bar-on-macos-h (&optional frame)
@@ -357,8 +357,8 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;      and ~/_emacs) -- and spare us the IO of searching for them, and allows
 ;;      savvy hackers to use $EMACSDIR as their $DOOMDIR, if they wanted.
 ;;   3. Cut down on unnecessary logic in Emacs' bootstrapper.
-;;   4. Offer a more user-friendly error state/screen, especially for errors
-;;      emitted from Doom's core or the user's config.
+;;   4. TODO Offer a more user-friendly error state/screen, especially for
+;;      errors emitted from Doom's core or the user's config.
 (define-advice startup--load-user-init-file (:override (&rest _) init-doom 100)
   (let ((debug-on-error-from-init-file nil)
         (debug-on-error-should-be-set nil)
