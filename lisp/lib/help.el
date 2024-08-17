@@ -469,7 +469,8 @@ will open with point on that line."
   (let ((default-directory doom-emacs-dir))
     (split-string
      (cdr (doom-call-process
-           "rg" "--no-heading" "--line-number" "--iglob" "!*.org"
+           doom-ripgrep-executable
+           "--no-heading" "--line-number" "--iglob" "!*.org"
            (format "%s %s($| )"
                    "(^;;;###package|\\(after!|\\(use-package!)"
                    package)))
@@ -694,7 +695,7 @@ config blocks in your private config."
 (defvar counsel-rg-base-command)
 (defun doom--help-search (dirs query prompt)
   ;; REVIEW Replace with deadgrep
-  (unless (executable-find "rg")
+  (unless doom-ripgrep-executable
     (user-error "Can't find ripgrep on your system"))
   (cond ((fboundp 'consult--grep)
          (consult--grep prompt #'consult--ripgrep-make-builder (cons data-directory dirs) query))
@@ -708,7 +709,8 @@ config blocks in your private config."
         ;; () TODO Helm support?
         ((grep-find
           (string-join
-           (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never"
+           (append (list doom-ripgrep-executable
+                         "-L" "--search-zip" "--no-heading" "--color=never"
                          (shell-quote-argument query))
                    (mapcar #'shell-quote-argument dirs))
            " ")))))
