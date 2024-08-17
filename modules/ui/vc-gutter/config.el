@@ -69,7 +69,8 @@
     (defun +vc-gutter-enable-maybe-h ()
       "Conditionally enable `diff-hl-dired-mode' in dired buffers.
 Respects `diff-hl-disable-on-remote'."
-      (unless (and (bound-and-true-p diff-hl-disable-on-remote)
+      (unless (and (bound-and-true-p dirvish-override-dired-mode)
+                   (bound-and-true-p diff-hl-disable-on-remote)
                    (file-remote-p default-directory))
         (diff-hl-dired-mode +1))))
 
