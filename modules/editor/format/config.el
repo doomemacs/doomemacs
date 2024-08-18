@@ -76,4 +76,30 @@ This is controlled by `+format-on-save-disabled-modes'."
   ;; `lsp-mode' or `eglot') that is capable of formatting. Without +lsp, users
   ;; must manually set `+format-with' to `lsp' to use it, or activate
   ;; `+format-with-lsp-mode' in the appropriate modes.
-  (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer)))
+  (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
+
+  ;; Apheleia's default config for prettier passes an explicit --tab-width N to
+  ;; all prettier formatters, respecting your indent settings in Emacs, but
+  ;; overriding any indent settings in your prettier config files. This changes
+  ;; it to omit indent switches if any configuration for prettier is present in
+  ;; the current project.
+  (dolist (formatter '(prettier prettier-css prettier-html prettier-javascript
+                       prettier-json prettier-scss prettier-svelte
+                       prettier-typescript prettier-yaml))
+    (setf (alist-get formatter apheleia-formatters)
+          (append (delete '(apheleia-formatters-js-indent "--use-tabs" "--tab-width")
+                          (alist-get formatter apheleia-formatters))
+                  '(unless (or (cl-loop for file
+                                        in '(".prettierrc"
+                                             ".prettierrc.json"
+                                             ".prettierrc.yml"
+                                             ".prettierrc.yaml"
+                                             ".prettierrc.json5"
+                                             ".prettierrc.js" "prettier.config.js"
+                                             ".prettierrc.mjs" "prettier.config.mjs"
+                                             ".prettierrc.cjs" "prettier.config.cjs"
+                                             ".prettierrc.toml")
+                                        if (locate-dominating-file default-directory file)
+                                        return t)
+                               (assq 'prettier (+javascript-npm-conf)))
+                     (apheleia-formatters-indent "--use-tabs" "--tab-width"))))))
