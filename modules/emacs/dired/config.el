@@ -87,7 +87,7 @@ Fixes #3939: unsortable dired entries on Windows."
             '(:left (sort file-time symlink) :right (omit yank index)))
     (setq dirvish-attributes nil
           dirvish-use-header-line nil
-          dirvish-mode-line-format nil))
+          dirvish-use-mode-line nil))
 
   ;; Match the height of `doom-modeline', if it's being used.
   ;; TODO: Make this respect user changes to these variables.
@@ -155,6 +155,20 @@ Fixes #3939: unsortable dired entries on Windows."
          :n "s"   #'dirvish-symlink
          :n "S"   #'dirvish-relative-symlink
          :n "h"   #'dirvish-hardlink))
+
+  ;; HACK: Modifies Dirvish to fall back to default `mode-line-format' if
+  ;;   `dirvish-use-mode-line' is nil, instead of when
+  ;;   `dirvish-mode-line-format' is nil (since the latter *still* prepends to
+  ;;   the default `mode-line-format'), and is overall less intuitive.
+  ;; REVIEW: Upstream this behavior later.
+  (defadvice! +dired--dirvish-use-modeline-a (fn &rest args)
+    "Change how `dirvish-use-mode-line' and `dirvish-mode-line-format' operate."
+    :around #'dirvish--setup-mode-line
+    (when dirvish-use-mode-line
+      (let ((dirvish--mode-line-fmt
+             (if dirvish-mode-line-format
+                 dirvish--mode-line-fmt)))
+        (apply fn args))))
 
   ;; HACK: Kill Dirvish session before switching projects/workspaces, otherwise
   ;;   it errors out on trying to delete/change dedicated windows.
