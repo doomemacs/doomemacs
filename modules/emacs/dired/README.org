@@ -4,28 +4,28 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module provides reasonable defaults and augmentations for dired.
+This module provides reasonable defaults and augmentations for [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired]] (the
+built-in file manager for Emacs), powered by [[doom-package:dirvish][Dirvish]].
 
 ** Maintainers
-/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-- +icons ::
-  Enables the display of fancy icons depending on file types in dired buffers.
-- +ranger ::
-  Enables dired to be more like [[https://github.com/ranger/ranger][ranger]]. Incompatible with =+dirvish=.
 - +dirvish ::
-  Enables [[https://github.com/alexluigit/dirvish][dirvish]] integration. Incompatible with =+ranger=.
+  Enables full [[https://github.com/alexluigit/dirvish][dirvish]] integration, providing a more modern interface for Dired
+  that is reminiscent of [[https://github.com/ranger/ranger][Ranger]].
+
+  Without this flag, Dirvish is still installed and used, but only for its minor
+  augmentations to Dired.
+- +icons ::
+  Enables the display of fancy icons depending on file types in dired buffers,
+  as well as arrows for expanded/collapsed directories.
 
 ** Packages
-- [[doom-package:nerd-icons-dired]] if [[doom-module:+icons]]
-- [[doom-package:dired-git-info]]
-- [[doom-package:diff-hl]]
+- [[doom-package:dirvish]]
 - [[doom-package:diredfl]]
-- [[doom-package:dired-rsync]]
-- [[doom-package:dirvish]] if [[doom-module:+dirvish]]
-- [[doom-package:fd-dired]]
-- [[doom-package:ranger]] if [[doom-module:+ranger]]
 
 ** TODO Hacks
 #+begin_quote
@@ -42,35 +42,133 @@ This module provides reasonable defaults and augmentations for dired.
 This module has no requirements *except on BSDs* like MacOS or FreeBSD, where
 =GNU ls= (aka ~gls~) is required.
 
-* TODO Usage
-#+begin_quote
- 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
-#+end_quote
+Optionally, install these dependencies to improve the preview experience:
+- =imagemagick= for image previews
+- =poppler= (or [[doom-module::tools pdf-tools]]) for pdf previews,
+- =ffmpegthumbnailer= for video previews,
+- =mediainfo= for audio/video metadata generation,
+- =tar= and =unzip= for archive files previews.
 
-| Keybind           | Description                                 |
-|-------------------+---------------------------------------------|
-| [[kbd:][SPC f d]] | Find directory with dired                   |
-| [[kbd:][q]]       | Exit dired buffer                           |
-| [[kbd:][C-c C-r]] | Run [[doom-package:dired-rsync]]            |
-| [[kbd:][C-c C-e]] | Rename entries with [[doom-package:wdired]] |
+** macOS
+#+begin_src bash :eval no
+$ brew install coreutils fd poppler ffmpegthumbnailer mediainfo imagemagick
+#+end_src
 
-Other keybindings can be found on the official [[https://www.gnu.org/software/emacs/refcards/pdf/dired-ref.pdf][Dired reference card]].
+** Debian-based
+#+begin_src bash :eval no
+$ apt install fd-find poppler-utils ffmpegthumbnailer mediainfo imagemagick tar unzip
+#+end_src
 
-** Ranger
-If [[doom-module:+ranger]] is enabled often a buffer will be opened in minimal ranger mode
-(~deer-mode~). In this case [[kbd:][z P]] can be used to toggle between full ranger and
-~deer-mode~.
+** Arch-based
+#+begin_src bash :eval no
+$ pacman -S fd poppler ffmpegthumbnailer mediainfo imagemagick tar unzip
+#+end_src
 
-* TODO Configuration
-#+begin_quote
- 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
-#+end_quote
+** FreeBSD
+#+begin_src bash :eval no
+$ pkg install gnuls fd-find poppler ffmpegthumbnailer ImageMagick7 gtar
+#+end_src
+
+** Windows (not tested)
+Via [[https://scoop.sh/][Scoop]]:
+#+begin_src bash :eval no
+$ scoop install coreutils fd poppler imagemagick unzip
+#+end_src
+
+* Usage
+** Global bindings
+You can access Dired/Dirvish by opening a directory entry in commands like
+~find-file (SPC f f)~. Or you can create a Dired buffer directly with these
+keybindings.
+
+| Keybind                      | Description                        |
+|------------------------------+------------------------------------|
+| [[kbd:][SPC f d]]                      | Find directory with dired          |
+| [[kbd:][SPC o -]]                      | Jump to current directory in dired |
+
+These commands are available but not bound to any keys.
+
+| Command          | Description                    |
+|------------------+--------------------------------|
+| [[kbd:][M-x dirvish]]      | Open dired with preview        |
+| [[kbd:][M-x dirvish-dwim]] | Dirvish with smart layout      |
+| [[kbd:][M-x dirvish-fd]]   | Search files in dired using fd |
+| [[kbd:][M-x dirvish-side]] | Open project sidebar           |
+
+** Dired bindings
+*** Basics
+| Keybind  | Description                               |
+|----------+-------------------------------------------|
+| [[kbd:][n]]        | Move down a line                          |
+| [[kbd:][p]]        | Move up a line                            |
+| [[kbd:][e]] or [[kbd][RET]] | Visit the file or directory on this line  |
+| [[kbd:][(]]        | Toggle visibility of detailed information |
+| [[kbd:][q]]        | Exit dired buffer                         |
+| [[kbd:][^]]        | Go Up a directory                         |
+| [[kbd:][m]]        | Mark a file                               |
+| [[kbd:][u]]        | Unmark a file                             |
+| [[kbd:][D]]        | Delete a file                             |
+| [[kbd:][+]]        | Create a directory                        |
+| ...      | ...                                       |
+
+This is only a very small sample of dired keybindings, just for you to get a
+sense of Dired. Other basic keybindings can be found on the official [[https://www.gnu.org/software/emacs/refcards/pdf/dired-ref.pdf][Dired
+reference card]]. If you have enabled ~(evil +everywhere)~, you would get a
+different set of bindings ([[kbd][j/k]] for move down/up a line), consult
+=evil-collection= for the actual bindings.
+
+*** Extras
+You don't have to memorize all of Dired bindings because this module provided a
+lot of easy-to-read menus such as ~dirvish-mark-menu~ (powered by
+=transient.el=) for you to find the suitable command in a specific context. All
+of these (sub-)menus are included in ~dirvish-dispatch (?)~, the main help menu.
+Some extremely useful ones are bound to a separate keys as well.
+
+| Keybind | Description                              |
+|---------+------------------------------------------|
+| [[kbd:][?]]       | Ask for help                             |
+| [[kbd:][a]]       | Quick access frequently used directories |
+| [[kbd:][f]]       | Get file information under the cursor    |
+| [[kbd:][y]] ...   | For copying marked files or their paths  |
+| [[kbd:][s]] ...   | For creating symlinks                    |
+| [[kbd:][S]]       | Sort buffer with different criteria      |
+| [[kbd:][M-m]]     | Commands relate to marking and actions   |
+| [[kbd:][M-s]]     | Setup user interface for dirvish         |
+| [[kbd:][M-e]]     | "Emerge" important files at the top      |
+
+Other bindings in this module:
+| [[kbd:][TAB]]     | Expand or contract directory under the cursor |
+| [[kbd:][M-f]]     | Jump to next dired history entry              |
+| [[kbd:][M-b]]     | Jump to previous dired history entry          |
+| [[kbd:][M-n]]     | Narrow the buffer with user input             |
+| [[kbd:][M-t]]     | Toggle fullscreen (preview)                   |
+| [[kbd:][C-c C-e]] | Rename entries with [[doom-package:wdired]]              |
+
+* Configuration
+** Quick access entries
+Use the following syntax to configure the entries displayed in
+~dirvish-quick-access~ command.
+
+#+begin_src emacs-lisp
+;;; add to $DOOMDIR/config.el
+(after! dirvish
+  (setq! dirvish-quick-access-entries
+         `(("h" "~/"                          "Home")
+           ("e" ,user-emacs-directory         "Emacs user directory")
+           ("c" "~/Code/"                     "Code")
+           ("d" "~/Downloads/"                "Downloads")
+           ("m" "/mnt/"                       "Mounted drives")
+           ("t" "~/.local/share/Trash/files/" "Trash"))))
+#+end_src
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+** How to kill all session buffers on quit?
+Set ~dirvish-reuse-session~ to nil.
 
 * TODO Appendix
 #+begin_quote
