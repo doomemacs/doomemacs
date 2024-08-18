@@ -382,6 +382,13 @@ users).")
     (set-default-toplevel-value 'file-name-handler-alist file-name-handler-alist)
     ;; Remember it so it can be reset where needed.
     (put 'file-name-handler-alist 'initial-value old-value)
+    ;; COMPAT: Eventually, Emacs will process any files passed to it via the
+    ;;   command line, and will do so *really* early in the startup process.
+    ;;   These might contain special file paths like TRAMP paths, so restore
+    ;;   `file-name-handler-alist' just for this portion of startup.
+    (define-advice command-line-1 (:around (fn args-left) respect-file-handlers)
+      (let ((file-name-handler-alist (if args-left old-value file-name-handler-alist)))
+        (funcall fn args-left)))
     ;; COMPAT: ...but restore `file-name-handler-alist' later, because it is
     ;;   needed for handling encrypted or compressed files, among other things.
     (add-hook! 'emacs-startup-hook :depth 101
