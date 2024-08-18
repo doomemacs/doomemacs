@@ -81,15 +81,6 @@ Fixes #3939: unsortable dired entries on Windows."
   ;; buffers. Starting from scratch isn't even that expensive, anyway.
   (setq dirvish-reuse-session nil)
 
-  ;; A more reserved mode-line height that should match doom-modeline's (or the
-  ;; vanilla mode-line's) height.
-  (add-hook! 'after-setting-font-hook
-    (defun +dired-update-mode-line-heigth-h ()
-      ;; REVIEW: Too hardcoded.
-      (setq dirvish-mode-line-height (+ (frame-char-height) 4)
-            dirvish-header-line-height (+ (frame-char-height) 8))))
-  (+dired-update-mode-line-heigth-h)
-
   (if (modulep! +dirvish)
       (setq dirvish-attributes '(file-size)
             dirvish-mode-line-format
@@ -98,8 +89,18 @@ Fixes #3939: unsortable dired entries on Windows."
           dirvish-use-header-line nil
           dirvish-mode-line-format nil))
 
+  ;; Match the height of `doom-modeline', if it's being used.
+  ;; TODO: Make this respect user changes to these variables.
+  (when (modulep! :ui modeline)
+    (add-hook! 'dired-mode-hook
+      (defun +dired-update-mode-line-height-h ()
+        (when-let (height (bound-and-true-p doom-modeline-height))
+          (setq dirvish-mode-line-height height
+                dirvish-header-line-height height)))))
+
   (when (modulep! :ui vc-gutter)
     (push 'vc-state dirvish-attributes))
+
   (when (modulep! +icons)
     (setq dirvish-subtree-always-show-state t)
     (appendq! dirvish-attributes '(nerd-icons subtree-state)))
@@ -164,7 +165,6 @@ Fixes #3939: unsortable dired entries on Windows."
                            (dirvish-side--session-visible-p))
                       (and dirvish--this (selected-window)))))
         (delete-window win))))
-
 
   ;; HACK: If a directory has a .dir-locals.el, its settings could
   ;;   interfere/crash Dirvish trying to preview it.
