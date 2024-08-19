@@ -183,13 +183,6 @@ Only has an effect in GUI Emacs.")
       '("c r" "Review pull request" +magit/start-code-review))))
 
 
-(use-package! magit-todos
-  :after magit
-  :config
-  (setq magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?") ; make colon optional
-  (define-key magit-todos-section-map "j" nil))
-
-
 (use-package! evil-collection-magit
   :when (modulep! :editor evil +everywhere)
   :defer t
