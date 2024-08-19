@@ -44,28 +44,33 @@ This should not contain any symbols from the Unicode Private Area! There is no
 universal way of getting the correct symbol as that area varies from font to
 font.")
 
+(defvar +ligatures-alist
+  '((prog-mode "|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+               ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+               "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+               "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+               "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+               "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+               "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+               "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+               ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+               "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+               "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+               "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+               "\\\\" "://")
+    (t))
+  "A alist of ligatures to enable in specific modes.")
+
+(defvar +ligatures-prog-mode-list nil
+  "A list of ligatures to enable in all `prog-mode' buffers.")
+(make-obsolete-variable '+ligatures-prog-mode-list "Use `+ligatures-alist' instead" "v3.0.0")
+
+(defvar +ligatures-all-modes-list nil
+  "A list of ligatures to enable in all buffers.")
+(make-obsolete-variable '+ligatures-all-modes-list "Use `+ligatures-alist' instead" "v3.0.0")
+
 (defvar +ligatures-extra-alist '((t))
   "A map of major modes to symbol lists (for `prettify-symbols-alist').")
-
-(defvar +ligatures-prog-mode-list
-  '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-    ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-    "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-    "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-    "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-    "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-    "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-    "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-    ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-    "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-    "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-    "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-    "\\\\" "://")
-  "A list of ligatures to enable in all `prog-mode' buffers.")
-
-(defvar +ligatures-all-modes-list
-  '()
-  "A list of ligatures to enable in all buffers.")
 
 (defvar +ligatures-in-modes
   '(not special-mode comint-mode eshell-mode term-mode vterm-mode Info-mode
@@ -169,14 +174,14 @@ and cannot run in."
            (featurep 'harfbuzz))
        (featurep 'composite))   ; Emacs loads `composite' at startup
 
-  (use-package! ligature
-    :config
-    ;; Enable all `+ligatures-prog-mode-list' ligatures in programming modes
-    (ligature-set-ligatures 'prog-mode +ligatures-prog-mode-list)
-    (ligature-set-ligatures 't +ligatures-all-modes-list))
+  (after! ligature
+    ;; DEPRECATED: For backwards compatibility. Remove later.
+    (with-no-warnings
+      (when +ligatures-prog-mode-list
+        (setf (alist-get 'prog-mode +ligatures-alist) +ligatures-prog-mode-list))
+      (when +ligatures-all-modes-list
+        (setf (alist-get t +ligatures-alist) +ligatures-all-modes-list)))
+    (dolist (lig +ligatures-alist)
+      (ligature-set-ligatures (car lig) (cdr lig))))
 
-  (add-hook! 'doom-init-ui-hook :append
-    (defun +ligature-enable-globally-h ()
-      "Enables ligature checks globally in all buffers.
-You can also do it per mode with `ligature-mode'."
-      (global-ligature-mode t)))))
+  (add-hook 'doom-init-ui-hook #'global-ligature-mode 'append)))

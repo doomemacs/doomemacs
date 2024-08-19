@@ -67,15 +67,15 @@ Font ligatures can be unset for emacs-lisp-mode with:
 Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
 `emacs-lisp-mode' is derived from `prog-mode'."
   (declare (indent defun))
-  ;; NOTE: Doom enforces `ligature-composition-table' to have a single mode per key in the alist.
-  ;; This is less efficient than what ligature.el can do (i.e. use a list of modes, or `t' as a key),
-  ;; but holding this invariant allows resetting with `(set-font-ligatures! 'mode nil)` to work reliably.
+  ;; NOTE: Doom enforces `ligature-composition-table' to have a single mode per
+  ;;   key in the alist. This is less efficient than what ligature.el can do
+  ;;   (i.e. use a list of modes, or `t' as a key), but holding this invariant
+  ;;   allows resetting with `(set-font-ligatures! 'mode nil)` to work reliably.
   (if (or (null ligatures) (equal ligatures '(nil)))
       (dolist (mode (ensure-list modes))
         (delq! mode ligature-composition-table 'assq))
-    (after! ligature
-       (dolist (mode (ensure-list modes))
-         (setq ligature-ignored-major-modes (delq mode ligature-ignored-major-modes))
-         (ligature-set-ligatures mode ligatures)))))
-
-
+    (let ((package? (featurep 'ligature)))
+      (dolist (mode (ensure-list modes))
+        (if package?
+            (ligature-set-ligatures mode ligatures)
+          (setf (alist-get mode +ligatures-alist) ligatures))))))
