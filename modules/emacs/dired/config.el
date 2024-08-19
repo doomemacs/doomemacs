@@ -105,17 +105,27 @@ Fixes #3939: unsortable dired entries on Windows."
     (setq dirvish-subtree-always-show-state t)
     (appendq! dirvish-attributes '(nerd-icons subtree-state)))
 
-  ;; HACK: Doom will treat an integer value for `dirvish-hide-details' to mean
-  ;;   hide file/dir details if window is less than N characters wide (e.g. for
-  ;;   side windows or small full-window layouts).
-  (setq dirvish-hide-details 50)
-  ;; TODO: Proc this hook sooner. The delay on `dirvish-setup-hook' is jarring.
-  (add-hook! 'dirvish-setup-hook
-    (defun +dired-hide-details-in-side-mode-h ()
-      (when (integerp dirvish-hide-details)
-        (dired-hide-details-mode
-         (if (< (window-width dirvish--selected-window) dirvish-hide-details)
-             +1 -1)))))
+  ;; HACK: Makes `dirvish-hide-details' accept a list of symbols to instruct
+  ;;   Dirvish in what contexts `dirvish-hide-details' should be enabled. The
+  ;;   accepted values are:
+  ;;   - `dired': when opening a directory directly or w/o Dirvish's full UI.
+  ;;   - `dirvish': when opening full-frame Dirvish.
+  ;;   - `dirvish-side': when opening Dirvish in the sidebar.
+  ;; REVIEW: Upstream this behavior later. (Maybe with similar treatment for
+  ;;   `dirvish-hide-cursor'?)
+  (setq dirvish-hide-details '(dirvish dirvish-side))
+  (defadvice! +dired--hide-details-maybe-a (fn &rest args)
+    :around #'dirvish-init-dired-buffer
+    (let ((dirvish-hide-details
+           (if (listp dirvish-hide-details)
+               (cond ((if dirvish--this (memq 'side (dv-type dirvish--this)))
+                      (memq 'dirvish-side dirvish-hide-details))
+                     ((or (null dirvish--this)
+                          (null (car (dv-layout dirvish--this))))
+                      (memq 'dired dirvish-hide-details))
+                     ((memq 'dirvish dirvish-hide-details)))
+               dirvish-hide-details)))
+      (apply fn args)))
 
   (when (modulep! :ui tabs)
     (after! centaur-tabs
