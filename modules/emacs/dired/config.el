@@ -203,6 +203,14 @@ Fixes #3939: unsortable dired entries on Windows."
                               (car (last (cdr result))))))
         result)))
 
+  ;; HACK: Suppress mode hooks when previewing files, as they may contain
+  ;;   expensive or disruptive functionality that isn't needed just for
+  ;;   previewing them.
+  ;; REVIEW: Upstream this later?
+  (defadvice! +dired--suppress-hooks-in-previews-a (fn &rest args)
+    :around #'dirvish--find-file-temporarily
+    (delay-mode-hooks (apply fn args)))
+
   ;; HACK: Dirvish will complain that pdf-tools is required to preview PDFs,
   ;;   even if the package is installed, so I advise it to try autoloading it
   ;;   before complaining, otherwise complain if epdfinfo hasn't been built yet.
