@@ -89,17 +89,18 @@ This is controlled by `+format-on-save-disabled-modes'."
     (setf (alist-get formatter apheleia-formatters)
           (append (delete '(apheleia-formatters-js-indent "--use-tabs" "--tab-width")
                           (alist-get formatter apheleia-formatters))
-                  '(unless (or (cl-loop for file
-                                        in '(".prettierrc"
-                                             ".prettierrc.json"
-                                             ".prettierrc.yml"
-                                             ".prettierrc.yaml"
-                                             ".prettierrc.json5"
-                                             ".prettierrc.js" "prettier.config.js"
-                                             ".prettierrc.mjs" "prettier.config.mjs"
-                                             ".prettierrc.cjs" "prettier.config.cjs"
-                                             ".prettierrc.toml")
-                                        if (locate-dominating-file default-directory file)
-                                        return t)
-                               (assq 'prettier (+javascript-npm-conf)))
-                     (apheleia-formatters-indent "--use-tabs" "--tab-width"))))))
+                  '((when apheleia-formatters-respect-indent-level
+                      (unless (or (cl-loop for file
+                                           in '(".prettierrc"
+                                                ".prettierrc.json"
+                                                ".prettierrc.yml"
+                                                ".prettierrc.yaml"
+                                                ".prettierrc.json5"
+                                                ".prettierrc.js" "prettier.config.js"
+                                                ".prettierrc.mjs" "prettier.config.mjs"
+                                                ".prettierrc.cjs" "prettier.config.cjs"
+                                                ".prettierrc.toml")
+                                           if (locate-dominating-file default-directory file)
+                                           return t)
+                                  (assq 'prettier (+javascript-npm-conf)))
+                        (apheleia-formatters-indent "--use-tabs" "--tab-width"))))))))
