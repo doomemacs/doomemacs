@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "30ebe6df27c36fdf2ea3c82a916edec31acc2647")
+(package! evil :pin "5db0bdc7dcd9300b983526d37cbe480f35e36211")
 (package! evil-args :pin "a8151556f63c9d45d0c44c8a7ef9e5a542f3cdc7")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "3081d37811b6a3dfaaf01d578c7ab7a746c6064d")
@@ -35,4 +35,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "e49d8e96ccc83d2bf7583c124582fc1ef076b15c"))
+  (package! evil-collection :pin "772571fc6762b6cd1d35cc869e266de9a5c6022b"))

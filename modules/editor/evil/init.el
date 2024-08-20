@@ -116,6 +116,7 @@ variable for an explanation of the defaults (in comments). See
       (csv "csv-mode")
       (custom cus-edit)
       cus-theme
+      dape
       dashboard
       daemons
       deadgrep
@@ -175,6 +176,7 @@ variable for an explanation of the defaults (in comments). See
       helpful
       hg-histedit
       hungry-delete
+      hyrolo
       ibuffer
       (image image-mode)
       image-dired
