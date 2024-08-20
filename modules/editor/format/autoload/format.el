@@ -68,14 +68,21 @@
 (defalias '+format/buffer #'apheleia-format-buffer)
 
 ;;;###autoload
-(defun +format/region (beg end &optional _arg)
+(defun +format/region (beg end &optional _arg interactive)
   "Format the selected region.
 
 WARNING: if the formatter doesn't support partial formatting, this command tries
 to pretend the active selection is the contents of a standalone file, but this
 may not always work. Keep your undo keybind handy!"
-  (interactive "rP")
-  (+format-region beg end))
+  (interactive (list (doom-region-beginning)
+                     (doom-region-end)
+                     current-prefix-arg
+                     'interactive))
+  (+format-region
+   beg end
+   (lambda ()
+     (when interactive
+       (message "Region reformatted!")))))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()
