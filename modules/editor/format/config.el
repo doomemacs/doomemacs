@@ -102,5 +102,9 @@ This is controlled by `+format-on-save-disabled-modes'."
                                                 ".prettierrc.toml")
                                            if (locate-dominating-file default-directory file)
                                            return t)
-                                  (assq 'prettier (+javascript-npm-conf)))
+                                  (when-let ((pkg (locate-dominating-file default-directory "package.json")))
+                                    (require 'json)
+                                    (let ((json-key-type 'alist))
+                                      (assq 'prettier
+                                            (json-read-file (expand-file-name "package.json" pkg))))))
                         (apheleia-formatters-indent "--use-tabs" "--tab-width"))))))))
