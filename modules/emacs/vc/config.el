@@ -92,6 +92,10 @@ info in the `header-line-format' is a more visible indicator."
                     (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                     date-full date-relative))))
 
+  ;; HACK: `delay-mode-hooks' suppresses font-lock-mode in later versions of
+  ;;   Emacs, so git-timemachine buffers end up unfontified.
+  (add-hook 'git-timemachine-mode-hook #'font-lock-mode)
+
   (after! evil
     ;; Rehash evil keybindings so they are recognized
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
