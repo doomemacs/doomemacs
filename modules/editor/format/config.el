@@ -102,5 +102,6 @@ This is controlled by `+format-on-save-disabled-modes'."
                                                 ".prettierrc.toml")
                                            if (locate-dominating-file default-directory file)
                                            return t)
-                                  (assq 'prettier (+javascript-npm-conf)))
+                                  (and (modulep! :lang javascript)
+                                       (assq 'prettier (+javascript-npm-conf))))
                         (apheleia-formatters-indent "--use-tabs" "--tab-width"))))))))
