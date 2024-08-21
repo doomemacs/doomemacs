@@ -213,8 +213,8 @@ Fixes #3939: unsortable dired entries on Windows."
   (defadvice! +dired--autoload-pdf-tools-a (fn &rest args)
     :around #'dirvish-pdf-dp
     (when (equal (nth 1 args) "pdf")
-      (require 'pdf-tools nil t)
-      (if (file-exists-p pdf-info-epdfinfo-program)
+      (if (and (require 'pdf-tools nil t)
+               (file-exists-p pdf-info-epdfinfo-program))
           (apply fn args)
         '(info . "`epdfinfo' program required to preview pdfs; run `M-x pdf-tools-install'")))))
 
