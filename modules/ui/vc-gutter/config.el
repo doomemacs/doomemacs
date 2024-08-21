@@ -83,7 +83,6 @@ Respects `diff-hl-disable-on-remote'."
   (setq diff-hl-flydiff-delay 0.5)  ; default: 0.3
   ;; PERF: don't block Emacs when updating vc gutter
   (setq diff-hl-update-async t)
-
   ;; UX: get realtime feedback in diffs after staging/unstaging hunks.
   (setq diff-hl-show-staged-changes nil)
 
@@ -140,4 +139,56 @@ Respects `diff-hl-disable-on-remote'."
     :around #'diff-hl-revert-hunk
     (let ((pt (point)))
       (prog1 (apply fn args)
-        (goto-char pt)))))
+        (goto-char pt))))
+
+  ;; FIX: `global-diff-hl-mode' enables `diff-hl-mode' *everywhere*, which calls
+  ;;   `diff-hl-update'. If `diff-hl-update-async' is non-nil, this means a new
+  ;;   thread is spawned for *every* buffer, whether they're visible or not. Not
+  ;;   only can this slow a lot down, but `kill-buffer' will silently refuse to
+  ;;   kill buffers with a thread associated with it. Chaos ensues (see #7991
+  ;;   and #7954).
+  ;; REVIEW: Report this upstream.
+  (defun +vc-gutter--kill-thread (&optional block?)
+    (when-let ((th +vc-gutter--diff-hl-thread))
+      (when (thread-live-p th)
+        (thread-signal th 'quit nil)
+        (when block?
+          (condition-case _
+              (thread-join th)
+            ((quit error) nil))))))
+
+  (defvar-local +vc-gutter--diff-hl-thread nil)
+  (defadvice! +vc-gutter--debounce-threads-a (&rest _)
+    :override #'diff-hl-update
+    (unless (or inhibit-redisplay
+                non-essential
+                delay-mode-hooks
+                (null (buffer-file-name (buffer-base-buffer)))
+                (null (get-buffer-window (current-buffer))))
+      (if (and diff-hl-update-async
+               (not
+                (run-hook-with-args-until-success 'diff-hl-async-inhibit-functions
+                                                  default-directory)))
+          (progn
+            (+vc-gutter--kill-thread)
+            (setq +vc-gutter--diff-hl-thread
+                  (make-thread (lambda ()
+                                 (unwind-protect
+                                     (diff-hl--update-safe)
+                                   (setq +vc-gutter--diff-hl-thread nil)))
+                               "diff-hl--update-safe")))
+        (diff-hl--update))
+      t))
+
+  (defadvice! +vc-gutter--only-tick-on-success-a (&rest _)
+    :override #'diff-hl-update-once
+    (unless (equal diff-hl--modified-tick (buffer-chars-modified-tick))
+      (when (diff-hl-update)
+        (setq diff-hl--modified-tick (buffer-chars-modified-tick)))))
+
+  ;; HACK: This advice won't work in *all* cases (it's a C function, and any
+  ;;   calls to it from C won't trigger advice), but the thread issues above are
+  ;;   triggered from Elisp's buffer API (from what I can tell).
+  (defadvice! +vc-gutter--kill-diff-hl-thread-a (buf)
+    :before #'kill-buffer
+    (with-current-buffer buf (+vc-gutter--kill-thread t))))
