@@ -100,7 +100,8 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
   ;; Hook LSP, if enabled.
   (when (modulep! +lsp)
     (add-hook! '(tex-mode-local-vars-hook
-                 latex-mode-local-vars-hook)
+                 latex-mode-local-vars-hook
+                 LaTeX-mode-local-vars-hook)
                :append #'lsp!))
   ;; Define a function to compile the project.
   (defun +latex/compile ()
