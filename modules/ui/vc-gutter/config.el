@@ -190,6 +190,7 @@ Respects `diff-hl-disable-on-remote'."
   ;; HACK: This advice won't work in *all* cases (it's a C function, and any
   ;;   calls to it from C won't trigger advice), but the thread issues above are
   ;;   triggered from Elisp's buffer API (from what I can tell).
-  (defadvice! +vc-gutter--kill-diff-hl-thread-a (buf)
+  (defadvice! +vc-gutter--kill-diff-hl-thread-a (&optional buf)
     :before #'kill-buffer
-    (with-current-buffer buf (+vc-gutter--kill-thread t))))
+    (with-current-buffer (or buf (current-buffer))
+      (+vc-gutter--kill-thread t))))
