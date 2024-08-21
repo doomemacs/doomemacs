@@ -13,7 +13,6 @@ This module adds [[https://golang.org][Go]] support, with optional (but recommen
 - REPL (~gore~)
 - Syntax-checking (~flycheck~)
 - Auto-formatting on save (~gofmt~) (requires [[doom-module::editor format +onsave]])
-- Code navigation & refactoring (~go-guru~)
 - [[../../editor/file-templates/templates/go-mode][File templates]]
 - [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
 - Generate testing code (~go-gen-test~)
@@ -36,7 +35,6 @@ This module adds [[https://golang.org][Go]] support, with optional (but recommen
 - [[doom-package:flycheck-golangci-lint]] if [[doom-module::checkers syntax]]
 - [[doom-package:go-eldoc]]
 - [[doom-package:go-gen-test]]
-- [[doom-package:go-guru]]
 - [[doom-package:go-mode]]
 - [[doom-package:gorepl-mode]]
 - [[doom-package:go-tag]]
@@ -64,7 +62,6 @@ below.
 - ~godoc~ (for documentation lookup)
 - ~gorename~ (for extra refactoring commands)
 - ~gore~ (for the REPL)
-- ~guru~ (for code navigation & refactoring commands)
 - ~goimports~ (/optional/: for auto-formatting code on save & fixing imports)
 - ~gotests~ (for generate test code)
 - ~gomodifytags~ (for manipulating tags)
@@ -77,7 +74,6 @@ go install github.com/stamblerre/gocode@latest
 go install golang.org/x/tools/cmd/godoc@latest
 go install golang.org/x/tools/cmd/goimports@latest
 go install golang.org/x/tools/cmd/gorename@latest
-go install golang.org/x/tools/cmd/guru@latest
 go install github.com/cweill/gotests/gotests@latest
 go install github.com/fatih/gomodifytags@latest
 #+end_src
@@ -102,16 +98,6 @@ go install github.com/fatih/gomodifytags@latest
 | [[kbd:][<localleader> b b]]   | run ~$ go build~                                      |
 | [[kbd:][<localleader> b r]]   | run ~$ go run .~                                      |
 | [[kbd:][<localleader> h .]]   | lookup symbol at point in godoc                       |
-| [[kbd:][<localleader> h d]]   | describe symbol at point                              |
-| [[kbd:][<localleader> h v]]   | list free variables                                   |
-| [[kbd:][<localleader> h i]]   | list implements relations for package types           |
-| [[kbd:][<localleader> h p]]   | list peers for channel                                |
-| [[kbd:][<localleader> h P]]   | "what does this point to"                             |
-| [[kbd:][<localleader> h r]]   | list references to object                             |
-| [[kbd:][<localleader> h e]]   | which errors                                          |
-| [[kbd:][<localleader> h w]]   | what query                                            |
-| [[kbd:][<localleader> h c]]   | show callers of function at point                     |
-| [[kbd:][<localleader> h C]]   | show callees of function at point                     |
 | [[kbd:][<localleader> t t]]   | rerun last test                                       |
 | [[kbd:][<localleader> t a]]   | run all tests in project                              |
 | [[kbd:][<localleader> t f]]   | run all tests in current file                         |
