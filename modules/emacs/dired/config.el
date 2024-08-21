@@ -199,17 +199,12 @@ Fixes #3939: unsortable dired entries on Windows."
       (if (and (file-directory-p (car args))
                (eq (car-safe result) 'dired))
           `(dired . (,@(butlast (cdr result))
-                     ,(format "(let ((enable-local-variables nil)) %s)"
+                     ,(format "(let %s %s)"
+                              (prin1-to-string
+                               (mapcar (lambda (env) `(,(car env) ,(cdr env)))
+                                       (remove '(inhibit-message . t) dirvish-preview-environment)))
                               (car (last (cdr result))))))
         result)))
-
-  ;; HACK: Suppress mode hooks when previewing files, as they may contain
-  ;;   expensive or disruptive functionality that isn't needed just for
-  ;;   previewing them.
-  ;; REVIEW: Upstream this later?
-  (defadvice! +dired--suppress-hooks-in-previews-a (fn &rest args)
-    :around #'dirvish--find-file-temporarily
-    (delay-mode-hooks (apply fn args)))
 
   ;; HACK: Dirvish will complain that pdf-tools is required to preview PDFs,
   ;;   even if the package is installed, so I advise it to try autoloading it
