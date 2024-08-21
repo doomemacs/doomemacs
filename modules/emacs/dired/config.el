@@ -143,7 +143,6 @@ Fixes #3939: unsortable dired entries on Windows."
         :n  "F"   #'dirvish-layout-toggle
         :n  "z"   #'dirvish-history-jump
         :n  "gh"  #'dirvish-subtree-up
-        :n  "gl"  #'dirvish-subtree-down
         :m  "[h"  #'dirvish-history-go-backward
         :m  "]h"  #'dirvish-history-go-forward
         :m  "[e"  #'dirvish-emerge-next-group
