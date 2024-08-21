@@ -77,6 +77,7 @@ Respects `diff-hl-disable-on-remote'."
   :config
   (set-popup-rule! "^\\*diff-hl" :select nil :size '+popup-shrink-to-fit)
 
+  (setq diff-hl-global-modes '(not image-mode pdf-view-mode))
   ;; PERF: A slightly faster algorithm for diffing.
   (setq vc-git-diff-switches '("--histogram"))
   ;; PERF: Slightly more conservative delay before updating the diff
