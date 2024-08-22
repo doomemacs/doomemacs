@@ -4,6 +4,7 @@
   '(sql-mode           ; sqlformat is currently broken
     tex-mode           ; latexindent is broken
     latex-mode
+    LaTeX-mode
     org-msg-edit-mode) ; doesn't need a formatter
   "A list of major modes in which to not reformat the buffer upon saving.
 
