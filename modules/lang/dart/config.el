@@ -37,7 +37,10 @@
           "f" #'flutter-run
           "q" #'flutter-quit
           "r" #'flutter-hot-reload
-          "R" #'flutter-hot-restart)))
+          "R" #'flutter-hot-restart))
+  :config
+  (set-popup-rule! (concat "^" (regexp-quote flutter-buffer-name))
+    :ttl 0 :quit t))
 
 
 (use-package! lsp-dart
