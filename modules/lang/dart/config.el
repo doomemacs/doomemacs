@@ -37,7 +37,9 @@
           "f" #'flutter-run
           "q" #'flutter-quit
           "r" #'flutter-hot-reload
-          "R" #'flutter-hot-restart)))
+          "R" #'flutter-hot-restart))
+  :config
+  (set-popup-rule! "\\*Flutter\\*"))
 
 
 (use-package! lsp-dart
