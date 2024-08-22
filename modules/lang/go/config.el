@@ -25,8 +25,7 @@
         (:prefix ("h" . "help")
           "." #'godoc-at-point)    ; Lookup in godoc
         (:prefix ("ri" . "imports")
-          "a" #'go-import-add
-          "r" #'go-remove-unused-imports)
+          "a" #'go-import-add)
         (:prefix ("b" . "build")
           :desc "go run ." "r" (cmd! (compile "go run ."))
           :desc "go build" "b" (cmd! (compile "go build"))
