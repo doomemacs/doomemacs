@@ -118,7 +118,7 @@ Returns t on success, nil otherwise."
   (unless (+workspace-exists-p name)
     (error "'%s' is an invalid workspace" name))
   (let ((fname (expand-file-name +workspaces-data-file persp-save-dir)))
-    (persp-save-to-file-by-names fname *persp-hash* (list name))
+    (persp-save-to-file-by-names fname *persp-hash* (list name) t)
     (and (member name (persp-list-persp-names-in-file fname))
          t)))
 
