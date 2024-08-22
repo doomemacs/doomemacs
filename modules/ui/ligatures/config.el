@@ -138,7 +138,10 @@ and cannot run in."
           (setq +ligatures--init-font-hook nil)))
       (when in-mode-extras-p
         (prependq! prettify-symbols-alist
-                   (alist-get major-mode +ligatures-extra-alist)))
+                   (or (alist-get major-mode +ligatures-extra-alist)
+                       (cl-loop for (mode . symbols) in +ligatures-extra-alist
+                                if (derived-mode-p mode)
+                                return symbols))))
       (when (and (or in-mode-p in-mode-extras-p)
                  prettify-symbols-alist)
         (when prettify-symbols-mode
