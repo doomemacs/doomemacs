@@ -192,8 +192,9 @@ Respects `diff-hl-disable-on-remote'."
   ;;   triggered from Elisp's buffer API (from what I can tell).
   (defadvice! +vc-gutter--kill-diff-hl-thread-a (&optional buf)
     :before #'kill-buffer
-    (with-current-buffer (or buf (current-buffer))
-      (+vc-gutter--kill-thread t)))
+    (when-let ((buf (ignore-errors (window-normalize-buffer buf))))
+      (with-current-buffer buf
+        (+vc-gutter--kill-thread t))))
 
   ;; HACK: diff-hl won't be visible in TTY frames, but there's no simple way to
   ;;   use the fringe in GUI Emacs and use the margin in the terminal *AND*
