@@ -43,10 +43,6 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   (when (modulep! :config default +bindings)
     (setq lsp-keymap-prefix nil))
 
-  ;; HACK: See emacs-lsp/lsp-mode#3577
-  (unless (modulep! :lang terraform)
-    (setq lsp-client-packages (delete 'lsp-terraform lsp-client-packages)))
-
   (unless (featurep :system 'windows)
     ;; HACK: Frustratingly enough, the value of `lsp-zig-download-url-format' is
     ;;   used immediately while the lsp-zig package is loading, so changing it
@@ -88,6 +84,9 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     :implementations '(lsp-find-implementation :async t)
     :type-definition #'lsp-find-type-definition)
 
+  ;; HACK: See emacs-lsp/lsp-mode#3577
+  (unless (modulep! :lang terraform)
+    (setq lsp-client-packages (delete 'lsp-terraform lsp-client-packages)))
 
   (defadvice! +lsp--respect-user-defined-checkers-a (fn &rest args)
     "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."
