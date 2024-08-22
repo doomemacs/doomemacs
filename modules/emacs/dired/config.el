@@ -105,27 +105,29 @@ Fixes #3939: unsortable dired entries on Windows."
     (setq dirvish-subtree-always-show-state t)
     (appendq! dirvish-attributes '(nerd-icons subtree-state)))
 
-  ;; HACK: Makes `dirvish-hide-details' accept a list of symbols to instruct
-  ;;   Dirvish in what contexts `dirvish-hide-details' should be enabled. The
-  ;;   accepted values are:
+  ;; HACK: Makes `dirvish-hide-details' and `dirvish-hide-cursor' accept a list
+  ;;   of symbols to instruct Dirvish in what contexts they should be enabled.
+  ;;   The accepted values are:
   ;;   - `dired': when opening a directory directly or w/o Dirvish's full UI.
   ;;   - `dirvish': when opening full-frame Dirvish.
   ;;   - `dirvish-side': when opening Dirvish in the sidebar.
-  ;; REVIEW: Upstream this behavior later. (Maybe with similar treatment for
-  ;;   `dirvish-hide-cursor'?)
-  (setq dirvish-hide-details '(dirvish dirvish-side))
+  ;; REVIEW: Upstream this behavior later.
+  (setq dirvish-hide-details '(dirvish dirvish-side)
+        dirvish-hide-cursor '(dirvish dirvish-side))
   (defadvice! +dired--hide-details-maybe-a (fn &rest args)
     :around #'dirvish-init-dired-buffer
-    (let ((dirvish-hide-details
-           (if (listp dirvish-hide-details)
-               (cond ((if dirvish--this (memq 'side (dv-type dirvish--this)))
-                      (memq 'dirvish-side dirvish-hide-details))
-                     ((or (null dirvish--this)
-                          (null (car (dv-layout dirvish--this))))
-                      (memq 'dired dirvish-hide-details))
-                     ((memq 'dirvish dirvish-hide-details)))
-               dirvish-hide-details)))
-      (apply fn args)))
+    (letf! (defun enabled? (val)
+             (if (listp val)
+                 (cond ((if dirvish--this (memq 'side (dv-type dirvish--this)))
+                        (memq 'dirvish-side val))
+                       ((or (null dirvish--this)
+                            (null (car (dv-layout dirvish--this))))
+                        (memq 'dired val))
+                       ((memq 'dirvish val)))
+               val))
+      (let ((dirvish-hide-details (enabled? dirvish-hide-details)))
+        (setq-local dirvish-hide-cursor (and (enabled? dirvish-hide-cursor) t))
+        (apply fn args))))
 
   (when (modulep! :ui tabs)
     (after! centaur-tabs
