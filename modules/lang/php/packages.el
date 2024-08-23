@@ -15,10 +15,5 @@
     :recipe (:host github :repo "hhvm/hack-mode")
     :pin "ccf20511f0f2ed45d00d423c703bb91ab6a8b80c"))
 
-(unless (modulep! +lsp)
-  (package! phpactor :pin "6b5269ff82785a9bd1e648b2f91e5128353d5a67")
-  (when (modulep! :completion company)
-    (package! company-phpactor :pin "6b5269ff82785a9bd1e648b2f91e5128353d5a67")))
-
 ;; For building php-extras
 (package! async :pin "cff2bd0be3c78a2eb76717eed60302972fe9b8c5")

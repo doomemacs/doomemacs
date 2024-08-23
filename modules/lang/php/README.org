@@ -12,6 +12,7 @@ This module adds support for PHP 5.3+ (including PHP8) to Doom Emacs.
 - Code refactoring commands (~php-refactor-mode~)
 - Unit-test commands (~phpunit~)
 - Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
+- LSP support (via the [[doom-module:+lsp]] flag)
 - [[../../editor/file-templates/templates/php-mode][File templates]]
 - [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
 
@@ -31,8 +32,8 @@ This module adds support for PHP 5.3+ (including PHP8) to Doom Emacs.
 - +hack ::
   Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
 - +lsp ::
-  Enable LSP support for ~php-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor]] and intelephense).
+  Enable LSP support for ~php-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (supports [[https://emacs-lsp.github.io/lsp-mode/page/lsp-phpactor/][phpactor]], [[https://emacs-lsp.github.io/lsp-mode/page/lsp-intelephense/][intelephense]], [[https://emacs-lsp.github.io/lsp-mode/page/lsp-serenata/][serenata]], [[https://emacs-lsp.github.io/lsp-mode/page/lsp-php/][php-language-server]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
@@ -45,9 +46,6 @@ This module adds support for PHP 5.3+ (including PHP8) to Doom Emacs.
 - [[doom-package:php-mode]]
 - [[doom-package:php-refactor-mode]]
 - [[doom-package:phpunit]]
-- if [[doom-module:+lsp]]
-  - [[doom-package:phpactor]]
-  - [[doom-package:company-phpactor]]
 
 ** Hacks
 /No hacks documented for this module./
