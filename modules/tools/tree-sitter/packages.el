@@ -7,4 +7,4 @@
 
 (when (modulep! :editor evil +everywhere)
   (package! evil-textobj-tree-sitter
-    :pin "a19ab9d89a00f4a04420f9b5d61b66f04fea5261"))
+    :pin "041fcb9fbb00deac92a4e58b5fca03f7dc0a32e8"))
