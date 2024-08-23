@@ -21,7 +21,7 @@
     "^HOME$" "^\\(OLD\\)?PWD$" "^SHLVL$" "^PS1$" "^R?PROMPT$" "^TERM\\(CAP\\)?$"
     "^USER$" "^GIT_CONFIG" "^INSIDE_EMACS$"
     ;; X server, Wayland, or services' env  that shouldn't be persisted
-    "^DISPLAY$" "^WAYLAND_DISPLAY" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$"
+    "^\\(WAYLAND_\\)?DISPLAY$" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$"
     ;; Windows+WSL envvars that shouldn't be persisted
     "^WSL_INTEROP$"
     ;; XDG variables that are best not persisted.
