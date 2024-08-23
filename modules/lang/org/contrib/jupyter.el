@@ -34,7 +34,4 @@
     (unless (bound-and-true-p jupyter-org-interaction-mode)
       (jupyter-org-interaction-mode)))
 
-  ;; Remove text/html since it's not human readable
-  (delq! :text/html jupyter-org-mime-types)
-
   (require 'tramp))
