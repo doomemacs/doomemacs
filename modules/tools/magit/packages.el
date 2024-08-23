@@ -11,4 +11,4 @@
     :recipe (:host github
              :repo "doomelpa/code-review"
              :files ("graphql" "code-review*.el"))
-    :pin "e4c34fa284da25d8e0bafbae4300f1db5bdcda44"))
+    :pin "eeffdd9e20ad133e5981f216965445bfae20292a"))
