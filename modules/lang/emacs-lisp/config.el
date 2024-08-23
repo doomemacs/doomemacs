@@ -234,6 +234,7 @@ See `+emacs-lisp-non-package-mode' for details.")
     :around #'elisp-demos--symbols
     :around #'elisp-demos--syntax-highlight
     (let ((org-inhibit-startup t)
+          (doom-inhibit-local-var-hooks t)
           enable-dir-local-variables
           org-mode-hook)
       (apply fn args))))
