@@ -111,10 +111,7 @@ uses a straight or package.el command directly).")
   ;;   changed afterwards.
   (setq straight--native-comp-available nil)
   ;; `let-alist' is built into Emacs 26 and onwards
-  (add-to-list 'straight-built-in-pseudo-packages 'let-alist)
-  ;; `seq' is built into all Emacs versions Doom supports, so avoid installing
-  ;; newer (and possibly incompatible) versions of seq.
-  (add-to-list 'straight-built-in-pseudo-packages 'seq))
+  (add-to-list 'straight-built-in-pseudo-packages 'let-alist))
 
 (defadvice! doom--read-pinned-packages-a (fn &rest args)
   "Read `:pin's in `doom-packages' on top of straight's lockfiles."
@@ -143,7 +140,8 @@ uses a straight or package.el command directly).")
   (after! comp
     ;; HACK Disable native-compilation for some troublesome packages
     (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
-          (list "/emacs-jupyter.*\\.el\\'"
+          (list "/seq-tests\\.el\\'"
+                "/emacs-jupyter.*\\.el\\'"
                 "/evil-collection-vterm\\.el\\'"
                 "/vterm\\.el\\'"
                 "/with-editor\\.el\\'"))))
