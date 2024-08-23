@@ -189,6 +189,8 @@ pacman -S texlive-core texlive-bin texlive-science texlive-latexextra
 pacman -S gnuplot
 #+end_src
 
+For [[doom-module:+jupyter]], install =jupyterlab= or =jupyter-notebook= ([[https://wiki.archlinux.org/title/Jupyter][source]]).
+
 ** Debian & Ubuntu
 #+begin_src sh
 apt-get install texlive dvipng
