@@ -1208,18 +1208,31 @@ between the two."
             :ni [C-return]   #'+org/insert-item-below
             :ni [C-S-return] #'+org/insert-item-above
             ;; navigate table cells (from insert-mode)
-            :i Cright (cmds! (org-at-table-p) #'org-table-next-field
-                             #'org-end-of-line)
-            :i Cleft  (cmds! (org-at-table-p) #'org-table-previous-field
-                             #'org-beginning-of-line)
-            :i Cup    (cmds! (org-at-table-p) #'+org/table-previous-row
-                             #'org-up-element)
-            :i Cdown  (cmds! (org-at-table-p) #'org-table-next-row
-                             #'org-down-element)
-            :ni CSright   #'org-shiftright
-            :ni CSleft    #'org-shiftleft
-            :ni CSup      #'org-shiftup
-            :ni CSdown    #'org-shiftdown
+            (:unless (modulep! :editor evil +hybrid)
+              :i Cright (cmds! (org-at-table-p) #'org-table-next-field #'org-end-of-line))
+            (:unless (modulep! :editor evil +hybrid)
+              :i Cleft  (cmds! (org-at-table-p) #'org-table-previous-field #'org-beginning-of-line))
+            (:unless (modulep! :editor evil +hybrid)
+              :i Cup    (cmds! (org-at-table-p) #'+org/table-previous-row #'org-up-element))
+            (:unless (modulep! :editor evil +hybrid)
+              :i Cdown  (cmds! (org-at-table-p) #'org-table-next-row #'org-down-element))
+            (:unless (modulep! :editor evil +hybrid)
+              :ni CSright   #'org-shiftright)
+            (:when (modulep! :editor evil +hybrid)
+              :n CSright   #'org-shiftright)
+            (:unless (modulep! :editor evil +hybrid)
+              :ni CSleft   #'org-shiftleft)
+            (:when (modulep! :editor evil +hybrid)
+              :n CSleft   #'org-shiftleft)
+            (:unless (modulep! :editor evil +hybrid)
+              :ni CSup   #'org-shiftup)
+            (:when (modulep! :editor evil +hybrid)
+              :n CSup   #'org-shiftup)
+            (:unless (modulep! :editor evil +hybrid)
+              :ni CSdown   #'org-shiftdown)
+            (:when (modulep! :editor evil +hybrid)
+              :n CSdown   #'org-shiftdown)
+
             ;; more intuitive RET keybinds
             :n [return]   #'+org/dwim-at-point
             :n "RET"      #'+org/dwim-at-point
