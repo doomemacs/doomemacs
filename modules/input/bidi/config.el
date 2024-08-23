@@ -96,17 +96,23 @@ easier."
 (define-globalized-minor-mode +bidi-global-mode +bidi-mode +bidi-mode)
 
 
+(defun +bidi--set-font (name)
+  (when-let* ((font-name (format "+bidi-%s-font" name))
+              (font-var (or (intern-soft font-name) (error "Invalid font: %s" name)))
+              (font (symbol-value font-var)))
+    (condition-case e
+        (let ((scale (symbol-value (intern (format "+bidi-%s-font-scale" name)))))
+          (set-fontset-font t 'hebrew font)
+          (set-face-font (intern (format "+bidi-%s-face" name)) font)
+          (when (/= scale 1.0)
+            (setf (alist-get (font-get font :family) face-font-rescale-alist nil nil #'equal)
+                  scale)))
+      ('error
+       (if (string-prefix-p "Font not available" (error-message-string e))
+           (warn "Missing font for `%s': %s" font-name (font-get font :family))
+         (signal (car e) (cdr e)))))))
+
 (add-hook! 'after-setting-font-hook
   (defun +bidi-init-fonts-h ()
-    (when +bidi-hebrew-font
-      (set-fontset-font t 'hebrew +bidi-hebrew-font)
-      (set-face-font '+bidi-hebrew-face +bidi-hebrew-font)
-      (when (/= +bidi-hebrew-font-scale 1.0)
-        (setf (alist-get (font-get +bidi-hebrew-font :family) face-font-rescale-alist nil nil #'equal)
-              +bidi-hebrew-font-scale)))
-    (when +bidi-arabic-font
-      (set-fontset-font t 'arabic +bidi-arabic-font)
-      (set-face-font '+bidi-arabic-face +bidi-arabic-font)
-      (when (/= +bidi-arabic-font-scale 1.0)
-        (setf (alist-get (font-get +bidi-arabic-font :family) face-font-rescale-alist nil nil #'equal)
-              +bidi-arabic-font-scale)))))
+    (+bidi--set-font 'hebrew)
+    (+bidi--set-font 'arabic)))
