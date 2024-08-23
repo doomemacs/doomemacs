@@ -132,5 +132,9 @@
   (opam-switch-set-switch (tuareg-opam-current-compiler)))
 
 
+(use-package! dune
+  (set-formatter! 'format-dune-file '("dune" "format-dune-file") :modes '(dune-mode)))
+
+
 (when (modulep! +tree-sitter)
   (add-hook 'tuareg-mode-local-vars-hook #'tree-sitter!))
