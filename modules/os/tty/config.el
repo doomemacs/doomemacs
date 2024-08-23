@@ -41,7 +41,8 @@
 ;; http://www.culater.net/software/SIMBL/SIMBL.php and
 ;; https://github.com/saitoha/mouseterm-plus/releases. That makes to support
 ;; VT's DECSCUSR sequence.
-(add-hook 'tty-setup-hook #'evil-terminal-cursor-changer-activate)
+(use-package! evil-terminal-cursor-changer
+  :hook (tty-setup . evil-terminal-cursor-changer-activate))
 
 ;; Add support for the Kitty keyboard protocol.
 (use-package! kkp
