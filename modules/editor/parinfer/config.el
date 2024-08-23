@@ -8,7 +8,8 @@
           lisp-mode
           racket-mode
           fennel-mode
-          hy-mode) . parinfer-rust-mode)
+          hy-mode
+          dune-mode) . parinfer-rust-mode)
   :init
   (setq parinfer-rust-library
         (file-name-concat
