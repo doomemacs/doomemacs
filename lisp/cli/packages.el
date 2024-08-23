@@ -704,6 +704,31 @@ original state.")
 ;;      noninteractive sessions.
 (advice-add #'straight-vc-git--popup-raw :override #'straight--popup-raw)
 
+;; HACK: `native-comp' only respects `native-comp-jit-compilation-deny-list'
+;;   when native-compiling packages in interactive sessions. It ignores the
+;;   variable when, say, straight is building packages. This advice forces it to
+;;   obey it, even when used by straight (but only in the CLI).
+(defadvice! doom-cli--native--compile-async-skip-p (fn files &optional recursively load selector)
+  :around #'native-compile-async
+  (let (file-list)
+    (dolist (file-or-dir (ensure-list files))
+      (cond ((file-directory-p file-or-dir)
+             (dolist (file (if recursively
+                               (directory-files-recursively
+                                file-or-dir comp-valid-source-re)
+                             (directory-files file-or-dir
+                                              t comp-valid-source-re)))
+               (push file file-list)))
+            ((file-exists-p file-or-dir)
+             (push file-or-dir file-list))
+            ((signal 'native-compiler-error
+                     (list "Not a file nor directory" file-or-dir)))))
+    (funcall fn (seq-remove (lambda (file)
+                              (seq-some (lambda (re) (string-match-p re file))
+                                        native-comp-deferred-compilation-deny-list))
+                            file-list)
+             recursively load selector)))
+
 ;; HACK Replace GUI popup prompts (which hang indefinitely in tty Emacs) with
 ;;      simple prompts.
 (defadvice! doom-cli--straight-fallback-to-y-or-n-prompt-a (fn &optional prompt noprompt?)
