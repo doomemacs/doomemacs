@@ -11,3 +11,5 @@
 ;; NOTE Despite the evil-* prefix, evil-terminal-cursor-changer does not depend
 ;;      on evil (anymore).
 (package! evil-terminal-cursor-changer :pin "2358f3e27d89128361cf80fcfa092fdfe5b52fd8")
+
+(package! kkp :pin "ed9214329f11b095fc7bad06feb329b9f232258d")
