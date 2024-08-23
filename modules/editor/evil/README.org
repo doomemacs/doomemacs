@@ -15,6 +15,8 @@ This holy module brings the Vim editing model to Emacs.
 - +everywhere ::
   Enable evilified keybinds everywhere possible. Uses the [[https://github.com/emacs-evil/evil-collection][evil-collection]] plugin
   as a foundation.
+- +hybrid ::
+  Enable nearly full use of vanilla emacs bindings in ~evil-insert-state~.
 
 ** Packages
 - [[doom-package:evil]]
