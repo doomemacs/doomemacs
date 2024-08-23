@@ -1,14 +1,16 @@
 ;;; input/bidi/config.el -*- lexical-binding: t; -*-
 
-(defvar +bidi-mode-map (make-sparse-keymap)
-  "Keymap for `+bidi-mode'.")
-
 (defvar +bidi-hebrew-font (font-spec :family "DejaVu Sans")
   "Overriding font for hebrew script.
 Must be a `font-spec', see `doom-font' for examples.
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
-font to that size. It's rarely a good idea to do so!")
+font to that size. It's rarely a good idea to do so! Set
+`+bidi-hebrew-font-scale' to scale the font up or down.")
+
+(defcustom +bidi-hebrew-font-scale 1.0
+  "What scale to display `+bidi-hebrew-font' at."
+  :type 'float)
 
 (defface +bidi-hebrew-face `((t :font ,+bidi-hebrew-font)) "")
 
@@ -17,7 +19,12 @@ font to that size. It's rarely a good idea to do so!")
 Must be a `font-spec', see `doom-font' for examples.
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
-font to that size. It's rarely a good idea to do so!")
+font to that size. It's rarely a good idea to do so! Set
+`+bidi-arabic-font-scale' to scale the font up or down.")
+
+(defcustom +bidi-arabic-font-scale 1.0
+  "What scale to display `+bidi-arabic-font' at."
+  :type 'float)
 
 (defface +bidi-arabic-face `((t :font ,+bidi-arabic-font)) "")
 
@@ -51,7 +58,10 @@ Warning: do not change this if you are using `+bidi-global-mode'.'"
           (const :tag "Right to Left" right-to-left)
           (const :tag "Dynamic, according to paragraph text" nil)))
 
-;;;###autoload
+
+(defvar +bidi-mode-map (make-sparse-keymap)
+  "Keymap for `+bidi-mode'.")
+
 (define-minor-mode +bidi-mode
   "Minor mode for using bidirectional text in a buffer.
 
@@ -85,9 +95,18 @@ easier."
 
 (define-globalized-minor-mode +bidi-global-mode +bidi-mode +bidi-mode)
 
+
 (add-hook! 'after-setting-font-hook
-  (defun +bidi-set-fonts-h ()
-    (set-fontset-font t 'hebrew +bidi-hebrew-font)
-    (set-fontset-font t 'arabic +bidi-arabic-font)
-    (set-face-font '+bidi-arabic-face +bidi-arabic-font)
-    (set-face-font '+bidi-hebrew-face +bidi-hebrew-font)))
+  (defun +bidi-init-fonts-h ()
+    (when +bidi-hebrew-font
+      (set-fontset-font t 'hebrew +bidi-hebrew-font)
+      (set-face-font '+bidi-hebrew-face +bidi-hebrew-font)
+      (when (/= +bidi-hebrew-font-scale 1.0)
+        (setf (alist-get (font-get +bidi-hebrew-font :family) face-font-rescale-alist nil nil #'equal)
+              +bidi-hebrew-font-scale)))
+    (when +bidi-arabic-font
+      (set-fontset-font t 'arabic +bidi-arabic-font)
+      (set-face-font '+bidi-arabic-face +bidi-arabic-font)
+      (when (/= +bidi-arabic-font-scale 1.0)
+        (setf (alist-get (font-get +bidi-arabic-font :family) face-font-rescale-alist nil nil #'equal)
+              +bidi-arabic-font-scale)))))
