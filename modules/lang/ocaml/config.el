@@ -134,3 +134,10 @@
 
 (when (modulep! +tree-sitter)
   (add-hook 'tuareg-mode-local-vars-hook #'tree-sitter!))
+
+
+(use-package! dune
+  :defer t
+  :config
+  (set-formatter! 'format-dune-file '("dune" "format-dune-file")
+    :modes '(dune-mode)))
