@@ -286,7 +286,7 @@ lines in the buffer without modifying the buffer content.
 ** [[doom-module::emacs][:emacs]] (6) :unfold:
 Modules in this category augment and extend the built-in features of Emacs.
 
-*** [[doom-module::emacs dired][dired]]:                                                [[doom-module::emacs dired +icons][+icons]] [[doom-module::emacs dired +ranger][+ranger]]
+*** [[doom-module::emacs dired][dired]]:                                                [[doom-module::emacs dired +icons][+icons]] [[doom-module::emacs dired +dirvish][+dirvish]]
 : Making dired pretty [functional]
 
 This module provides reasonable defaults and augmentations for dired.
