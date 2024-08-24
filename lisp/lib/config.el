@@ -55,7 +55,8 @@ And jumps to your `doom!' block."
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  `(let ((default-directory doom-emacs-dir))
+  `(let ((default-directory doom-emacs-dir)
+         (exec-path (cons doom-bin-dir exec-path)))
      (with-current-buffer (compile ,command t)
        (let ((w (get-buffer-window (current-buffer))))
          (select-window w)
@@ -69,6 +70,8 @@ And jumps to your `doom!' block."
               ,on-failure))
           nil 'local)))))
 
+(defvar doom-reload-command "doom sync -B -e"
+  "Command that `doom/reload' runs.")
 ;;;###autoload
 (defun doom/reload ()
   "Reloads your private config.
@@ -83,7 +86,7 @@ package list, and lastly, reloads your private config.el.
 Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
-  (doom--if-compile (format "%S sync -e" doom-bin)
+  (doom--if-compile doom-reload-command
       (doom-context-with '(reload modules)
         (doom-run-hooks 'doom-before-reload-hook)
         (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
@@ -131,10 +134,12 @@ imported into Emacs."
         (doom-load-envvars-file doom-env-file)
         (message "Reloaded %S" (abbreviate-file-name doom-env-file))))))
 
+(defvar doom-upgrade-command "doom upgrade -B --force"
+  "Command that `doom/upgrade' runs.")
 ;;;###autoload
 (defun doom/upgrade ()
   "Run 'doom upgrade' then prompt to restart Emacs."
   (interactive)
-  (doom--if-compile (format "%S upgrade --force" doom-bin)
+  (doom--if-compile doom-upgrade-command
       (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
         (doom/restart-and-restore))))

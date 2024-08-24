@@ -247,6 +247,12 @@
 Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
 whichever is found first. Must end in a slash.")
 
+(defvar doom-bin-dir (expand-file-name "bin/" doom-emacs-dir)
+  "Where Doom's executables are stored.
+
+Defaults to $EMACSDIR/bin, where $EMACSDIR is `doom-emacs-dir'. Must end in a
+slash.")
+
 ;; DEPRECATED: .local will be removed entirely in 3.0
 (defvar doom-local-dir
   (if-let (localdir (getenv-internal "DOOMLOCALDIR"))
