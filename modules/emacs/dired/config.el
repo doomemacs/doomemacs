@@ -188,13 +188,18 @@ Fixes #3939: unsortable dired entries on Windows."
 
   ;; HACK: Kill Dirvish session before switching projects/workspaces, otherwise
   ;;   it errors out on trying to delete/change dedicated windows.
-  (add-hook! '(persp-before-kill-functions projectile-before-switch-project-hook)
+  (add-hook! '(persp-before-kill-functions
+               persp-before-switch-functions
+               projectile-before-switch-project-hook)
     (defun +dired--cleanup-dirvish-h (&rest _)
-      (when-let ((win
-                  (or (and (featurep 'dirvish-side)
-                           (dirvish-side--session-visible-p))
-                      (and dirvish--this (selected-window)))))
-        (delete-window win))))
+      (when-let ((dv (cl-loop for w in (window-list)
+                              if (or (window-parameter w 'window-side)
+                                     (window-dedicated-p w))
+                              if (with-current-buffer (window-buffer w) (dirvish-curr))
+                              return it)))
+        (let (dirvish-reuse-session)
+          (with-selected-window (dv-root-window dv)
+            (dirvish-quit))))))
 
   ;; HACK: If a directory has a .dir-locals.el, its settings could
   ;;   interfere/crash Dirvish trying to preview it.
