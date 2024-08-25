@@ -486,7 +486,8 @@ files, so this replace calls to `pp' with the much faster `prin1'."
 
   (defun doom-set-jump-h ()
     "Run `better-jumper-set-jump' but return nil, for short-circuiting hooks."
-    (better-jumper-set-jump)
+    (when (get-buffer-window)
+      (better-jumper-set-jump))
     nil)
 
   ;; Creates a jump point before killing a buffer. This allows you to undo
@@ -495,7 +496,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   ;;
   ;; I'm not advising `kill-buffer' because I only want this to affect
   ;; interactively killed buffers.
-  (advice-add #'kill-current-buffer :around #'doom-set-jump-a)
+  (add-hook 'kill-buffer-hook #'doom-set-jump-h)
 
   ;; Create a jump point before jumping with imenu.
   (advice-add #'imenu :around #'doom-set-jump-a))
