@@ -568,7 +568,7 @@ elsewhere."
                            nil))))
      ;; Merge given plist with pre-existing one
      (cl-loop for (key value) on (list ,@plist) by 'cddr
-              when value
+              when (or (eq key :pin) value)
               do (cl-callf plist-put plist key value))
      ;; Some basic key validation; throws an error on invalid properties
      (condition-case e
