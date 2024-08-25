@@ -13,11 +13,15 @@ Read RSS feeds in the comfort of Emacs.
 - +org ::
   Enable [[doom-package:elfeed-org]], so you can configure your feeds with an org file
   (={org-directory}/elfeed.org=) rather than Elisp.
+- +youtube ::
+  Enable [[doom-package:elfeed-tube]], for tighter integration between elfeed and
+  your Youtube subscriptions.
 
 ** Packages
 - [[doom-package:elfeed]]
 - [[doom-package:elfeed-goodies]]
 - [[doom-package:elfeed-org]] if [[doom-module:+org]]
+- [[doom-package:elfeed-tube]] if [[doom-module:+youtube]]
 
 ** Hacks
 - By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last
