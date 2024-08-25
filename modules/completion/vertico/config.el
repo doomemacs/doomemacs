@@ -75,13 +75,13 @@ orderless."
       (apply fn args)))
 
   (setq orderless-affix-dispatch-alist
-        `((?! . ,#'orderless-without-literal)
-          (?& . ,#'orderless-annotation)
-          (?% . ,#'char-fold-to-regexp)
-          (?` . ,#'orderless-initialism)
-          (?= . ,#'orderless-literal)
-          (?^ . ,#'orderless-literal-prefix)
-          (?~ . ,#'orderless-flex)))
+        '((?! . orderless-without-literal)
+          (?& . orderless-annotation)
+          (?% . char-fold-to-regexp)
+          (?` . orderless-initialism)
+          (?= . orderless-literal)
+          (?^ . orderless-literal-prefix)
+          (?~ . orderless-flex)))
 
   (defun +vertico-orderless-dispatch (pattern _index _total)
     (cond
