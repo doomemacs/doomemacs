@@ -9,7 +9,7 @@
 ;;; Packages
 
 (use-package! rustic
-  :mode ("\\.rs$" . rustic-mode)
+  :mode ("\\.rs\\'" . rustic-mode)
   :preface
   ;; HACK `rustic' sets up some things too early. I'd rather disable it and let
   ;;   our respective modules standardize how they're initialized.

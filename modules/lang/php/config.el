@@ -118,7 +118,7 @@
 
 (use-package! hack-mode
   :when (modulep! +hack)
-  :mode "\\.hh$")
+  :mode "\\.hh\\'")
 
 
 (use-package! composer
