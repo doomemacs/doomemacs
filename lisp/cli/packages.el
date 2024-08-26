@@ -13,9 +13,9 @@
 ;;
 ;;; Commands
 
-(defcli-obsolete! ((build b)) (sync "--rebuild") "v3.0.0")
+(defcli-obsolete! ((build b)) (sync "--rebuild") "3.0.0")
 
-(defcli-obsolete! ((purge p)) (gc) "v3.0.0")
+(defcli-obsolete! ((purge p)) (gc) "3.0.0")
 
 ;; TODO Rename to "doom gc" and move to its own file
 (defcli! (gc)

@@ -89,7 +89,7 @@ list is returned as-is."
 ;;
 ;;; Public library
 
-(define-obsolete-function-alias 'doom-enlist 'ensure-list "v3.0.0")
+(define-obsolete-function-alias 'doom-enlist 'ensure-list "3.0.0")
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."

@@ -12,7 +12,7 @@ Emacs.")
 (defvar doom-projectile-cache-purge-non-projects nil
   "If non-nil, non-projects are purged from the cache on `kill-emacs-hook'.")
 
-(define-obsolete-variable-alias 'doom-projectile-fd-binary 'doom-fd-executable "v3.0.0")
+(define-obsolete-variable-alias 'doom-projectile-fd-binary 'doom-fd-executable "3.0.0")
 (defvar doom-fd-executable (cl-find-if #'executable-find (list "fdfind" "fd"))
   "The filename of the fd executable.
 
