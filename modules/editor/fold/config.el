@@ -8,6 +8,11 @@ this."
   :type 'string
   :group '+fold)
 
+(defface +fold-hideshow-folded-face
+  `((t (:inherit font-lock-comment-face :weight light)))
+  "Face to hightlight `hideshow' overlays."
+  :group 'doom-themes)
+
 
 ;;
 ;;; Global config
@@ -109,11 +114,5 @@ this."
   :when (modulep! :tools tree-sitter)
   :after tree-sitter
   :config
-  ;; we want to use our own face so we nullify this one to have no effect and
-  ;; make it more similar to hideshows
-  (custom-set-faces! '(ts-fold-replacement-face :foreground unspecified
-                                                :box nil
-                                                :inherit font-lock-comment-face
-                                                :weight light))
   (setq ts-fold-replacement +fold-ellipsis)
   (global-ts-fold-mode +1))
