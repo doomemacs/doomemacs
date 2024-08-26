@@ -30,7 +30,8 @@
                          'empty-line
                          'vimish-fold-fringe))))
     (overlay-put
-     ov 'display (propertize "  [...]  " 'face '+fold-hideshow-folded-face))))
+     ov 'display (propertize +fold-ellipsis
+                             'face '+fold-hideshow-folded-face))))
 
 
 ;;
