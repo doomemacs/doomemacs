@@ -56,7 +56,7 @@ And jumps to your `doom!' block."
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
   `(let ((default-directory doom-emacs-dir)
-         (exec-path (cons doom-bin-dir exec-path)))
+         (doom-bin (expand-file-name "doom" doom-bin-dir)))
      ;; Ensure the bin/doom operates with the same environment as this
      ;; running session.
      (letenv! (("EMACS" (doom-path invocation-directory invocation-name))
@@ -64,7 +64,7 @@ And jumps to your `doom!' block."
                ("DOOMDIR" doom-user-dir)
                ("DOOMLOCALDIR" doom-local-dir)
                ("DEBUG" (and doom-debug-mode "1")))
-       (with-current-buffer (compile ,command t)
+       (with-current-buffer (compile (format ,command doom-bin) t)
          (let ((w (get-buffer-window (current-buffer))))
            (select-window w)
            (add-hook
@@ -77,7 +77,7 @@ And jumps to your `doom!' block."
                 ,on-failure))
             nil 'local))))))
 
-(defvar doom-reload-command "doom sync -B -e"
+(defvar doom-reload-command "%s sync -B -e"
   "Command that `doom/reload' runs.")
 ;;;###autoload
 (defun doom/reload ()
@@ -141,7 +141,7 @@ imported into Emacs."
         (doom-load-envvars-file doom-env-file)
         (message "Reloaded %S" (abbreviate-file-name doom-env-file))))))
 
-(defvar doom-upgrade-command "doom upgrade -B --force"
+(defvar doom-upgrade-command "%s upgrade -B --force"
   "Command that `doom/upgrade' runs.")
 ;;;###autoload
 (defun doom/upgrade ()
