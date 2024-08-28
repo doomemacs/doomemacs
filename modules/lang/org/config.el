@@ -869,9 +869,6 @@ between the two."
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
 
-        (:when (modulep! :completion vertico)
-          [remap imenu] #'consult-imenu)
-
         :localleader
         "#" #'org-update-statistics-cookies
         "'" #'org-edit-special
