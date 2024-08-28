@@ -1,8 +1,5 @@
 ;;; lisp/lib/config.el -*- lexical-binding: t; -*-
 
-(defvar doom-bin-dir (expand-file-name "bin/" doom-emacs-dir))
-(defvar doom-bin (expand-file-name "doom" doom-bin-dir))
-
 ;;;###autoload
 (defvar doom-after-reload-hook nil
   "A list of hooks to run after `doom/reload' has reloaded Doom.")
