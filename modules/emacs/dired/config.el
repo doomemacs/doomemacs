@@ -99,6 +99,14 @@ Fixes #3939: unsortable dired entries on Windows."
                 dirvish-header-line-height height)))))
 
   (when (modulep! :ui vc-gutter)
+    ;; HACK: Dirvish sets up the fringes for vc-state late in the startup
+    ;;   process, causing this jarring pop-in effect. This advice sets them up
+    ;;   sooner to avoid this.
+    ;; REVIEW: Upstream this later.
+    (defadvice! +dired--init-fringes-a (_dir _buffer setup)
+      :before #'dirvish-data-for-dir
+      (when (and setup (memq 'vc-state dirvish-attributes))
+        (set-window-fringes nil 5 1)))
     (push 'vc-state dirvish-attributes))
 
   (when (modulep! +icons)
