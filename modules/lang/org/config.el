@@ -870,7 +870,7 @@ between the two."
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
 
         (:when (modulep! :completion vertico)
-          [remap imenu] #'consult-outline)
+          [remap imenu] #'consult-imenu)
 
         :localleader
         "#" #'org-update-statistics-cookies
