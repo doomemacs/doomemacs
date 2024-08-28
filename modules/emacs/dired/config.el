@@ -107,7 +107,11 @@ Fixes #3939: unsortable dired entries on Windows."
       :before #'dirvish-data-for-dir
       (when (and setup (memq 'vc-state dirvish-attributes))
         (set-window-fringes nil 5 1)))
-    (push 'vc-state dirvish-attributes))
+    ;; The vc-gutter module uses `diff-hl-dired-mode' + `diff-hl-margin-mode'
+    ;; for diffs in dirvish buffers. `vc-state' uses overlays, so they won't be
+    ;; visible in the terminal.
+    (when (or (daemonp) (display-graphic-p))
+      (push 'vc-state dirvish-attributes)))
 
   (when (modulep! +icons)
     (setq dirvish-subtree-always-show-state t)

@@ -74,6 +74,23 @@ Respects `diff-hl-disable-on-remote'."
                    (file-remote-p default-directory))
         (diff-hl-dired-mode +1))))
 
+  ;; HACK: diff-hl won't be visible in TTY frames, but there's no simple way to
+  ;;   use the fringe in GUI Emacs *and* use the margin in the terminal *AND*
+  ;;   support daemon users, so we need more than a static `display-graphic-p'
+  ;;   check at startup.
+  (if (not (daemonp))
+      (unless (display-graphic-p)
+        (add-hook 'global-diff-hl-mode-hook #'diff-hl-margin-mode))
+    (when (modulep! :os tty)
+      (put 'diff-hl-mode 'last t)
+      (add-hook! 'doom-switch-window-hook
+        (defun +vc-gutter-use-margins-in-tty-h ()
+          (when (bound-and-true-p global-diff-hl-mode)
+            (let ((graphic? (display-graphic-p)))
+              (unless (eq (get 'diff-hl-mode 'last) graphic?)
+                (diff-hl-margin-mode (if graphic? -1 +1))
+                (put 'diff-hl-mode 'last graphic?))))))))
+
   :config
   (set-popup-rule! "^\\*diff-hl" :select nil :size '+popup-shrink-to-fit)
 
@@ -194,19 +211,4 @@ Respects `diff-hl-disable-on-remote'."
     :before #'kill-buffer
     (when-let ((buf (ignore-errors (window-normalize-buffer buf))))
       (with-current-buffer buf
-        (+vc-gutter--kill-thread t))))
-
-  ;; HACK: diff-hl won't be visible in TTY frames, but there's no simple way to
-  ;;   use the fringe in GUI Emacs and use the margin in the terminal *AND*
-  ;;   support daemon users, so we need more than a static `display-graphic-p'
-  ;;   check at startup.
-  (when (modulep! :os tty)
-    (put 'diff-hl-mode 'last (display-graphic-p))
-    (add-hook! 'doom-switch-window-hook
-      (defun +vc-gutter-use-margins-in-tty-h ()
-        (let ((graphic? (display-graphic-p)))
-          (unless (and global-diff-hl-mode (eq (get 'diff-hl-mode 'last) graphic?))
-            (global-diff-hl-mode -1)
-            (diff-hl-margin-mode (if graphic? -1 +1))
-            (global-diff-hl-mode +1)
-            (put 'diff-hl-mode 'last graphic?)))))))
+        (+vc-gutter--kill-thread t)))))
