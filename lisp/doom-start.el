@@ -322,6 +322,15 @@ If RETURN-P, return the message as a string instead of displaying it."
 (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
 (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
 (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
+
+;; If the user's already opened something (e.g. with command-line arguments),
+;; then we should assume nothing about the user's intentions and simply treat
+;; this session as fully initialized.
+(add-hook! 'doom-after-init-hook :depth 100
+  (defun doom-run-first-hooks-if-files-open-h ()
+    (when file-name-history
+      (doom-run-hooks 'doom-first-file-hook 'doom-first-buffer-hook))))
+
 ;; PERF: Activate these later, otherwise they'll fire for every buffer created
 ;;   between now and the end of startup.
 (add-hook! 'after-init-hook
