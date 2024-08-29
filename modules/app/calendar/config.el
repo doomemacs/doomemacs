@@ -27,7 +27,7 @@
   (define-key cfw:calendar-mode-map "q" #'+calendar/quit)
   (when (modulep! :editor evil +everywhere)
     (set-evil-initial-state! '(cfw:calendar-mode cfw:details-mode) 'motion)
-    (add-hook! (cfw:calendar-mode cfw:details-mode) #'evil-normalize-keymaps)
+    (add-hook! '(cfw:calendar-mode-hook cfw:details-mode-hook) #'evil-normalize-keymaps)
     (map! (:map cfw:calendar-mode-map
            :m "q"   #'+calendar/quit
            :m "SPC" #'cfw:show-details-command

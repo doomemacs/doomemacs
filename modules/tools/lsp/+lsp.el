@@ -97,7 +97,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
           (setq-local flycheck-checker old-checker))
       (apply fn args)))
 
-  (add-hook! 'lsp-mode-hook #'+lsp-optimization-mode)
+  (add-hook 'lsp-mode-hook #'+lsp-optimization-mode)
 
   (when (modulep! :completion company)
     (add-hook! 'lsp-completion-mode-hook
