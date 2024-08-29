@@ -79,7 +79,7 @@ OPTIONS:
           (when (and old-version (not (equal old-version emacs-version)))
             (print! (warn "Emacs version has changed since last sync (from %s to %s)") old-version emacs-version)
             (setq to-rebuild t))
-          (when (and (integerp hash)
+          (when (and (stringp hash)
                      (not (equal hash (doom-sync--system-hash))))
             (print! (warn "Your system has changed since last sync"))
             (setq to-rebuild t))
@@ -113,7 +113,8 @@ OPTIONS:
 ;;; Helpers
 
 (defun doom-sync--system-hash ()
-  (sxhash (list doom-local-dir system-type system-configuration-features)))
+  (secure-hash
+   'md5 (mapconcat #'identity (list doom-local-dir system-configuration))))
 
 (defun doom-sync--abort-warning-h ()
   (print! (warn "Script was abruptly aborted, leaving Doom in an incomplete state!"))
