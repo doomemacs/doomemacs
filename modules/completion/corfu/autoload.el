@@ -46,4 +46,18 @@
   (let ((cape-dabbrev-check-other-buffers nil))
     (cape-dabbrev t)))
 
+;;;###autoload
+(defun +corfu/toggle-auto-complete (&optional interactive)
+  "Toggle as-you-type completion in Corfu."
+  (interactive (list 'interactive))
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when corfu-mode
+        (if corfu-auto
+            (remove-hook 'post-command-hook #'corfu--auto-post-command 'local)
+          (add-hook 'post-command-hook #'corfu--auto-post-command nil 'local)))))
+  (when interactive
+    (message "Corfu auto-complete %s" (if corfu-auto "disabled" "enabled")))
+  (setq corfu-auto (not corfu-auto)))
+
 ;;; end of autoload.el
