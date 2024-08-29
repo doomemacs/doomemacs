@@ -60,4 +60,32 @@
     (message "Corfu auto-complete %s" (if corfu-auto "disabled" "enabled")))
   (setq corfu-auto (not corfu-auto)))
 
+;;;###autoload
+(defun +corfu/dabbrev-or-next (&optional arg)
+  "Trigger corfu popup and select the first candidate.
+
+Intended to mimic `evil-complete-next', unless the popup is already open."
+  (interactive "p")
+  (if corfu--candidates
+      (corfu-next arg)
+    (require 'cape)
+    (let ((cape-dabbrev-check-other-buffers (not evil-complete-all-buffers)))
+      (cape-dabbrev t)
+      (when (> corfu--total 0)
+        (corfu--goto (or arg 0))))))
+
+;;;###autoload
+(defun +corfu/dabbrev-or-last (&optional arg)
+  "Trigger corfu popup and select the first candidate.
+
+Intended to mimic `evil-complete-previous', unless the popup is already open."
+  (interactive "p")
+  (if corfu--candidates
+      (corfu-previous arg)
+    (require 'cape)
+    (let ((cape-dabbrev-check-other-buffers (not evil-complete-all-buffers)))
+      (cape-dabbrev t)
+      (when (> corfu--total 0)
+        (corfu--goto (- corfu--total (or arg 1)))))))
+
 ;;; end of autoload.el

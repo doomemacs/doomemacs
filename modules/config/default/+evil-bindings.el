@@ -192,6 +192,8 @@
        (:after corfu
         (:map corfu-mode-map
          :i "C-SPC" #'completion-at-point
+         :i "C-n" #'+corfu/dabbrev-or-next
+         :i "C-p" #'+corfu/dabbrev-or-last
          :n "C-SPC" (cmd! (call-interactively #'evil-insert-state)
                           (call-interactively #'completion-at-point))
          :v "C-SPC" (cmd! (call-interactively #'evil-change)
