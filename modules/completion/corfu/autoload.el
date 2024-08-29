@@ -69,7 +69,8 @@ Intended to mimic `evil-complete-next', unless the popup is already open."
   (if corfu--candidates
       (corfu-next arg)
     (require 'cape)
-    (let ((cape-dabbrev-check-other-buffers (not evil-complete-all-buffers)))
+    (let ((cape-dabbrev-check-other-buffers
+           (bound-and-true-p evil-complete-all-buffers)))
       (cape-dabbrev t)
       (when (> corfu--total 0)
         (corfu--goto (or arg 0))))))
@@ -83,7 +84,8 @@ Intended to mimic `evil-complete-previous', unless the popup is already open."
   (if corfu--candidates
       (corfu-previous arg)
     (require 'cape)
-    (let ((cape-dabbrev-check-other-buffers (not evil-complete-all-buffers)))
+    (let ((cape-dabbrev-check-other-buffers
+           (bound-and-true-p evil-complete-all-buffers)))
       (cape-dabbrev t)
       (when (> corfu--total 0)
         (corfu--goto (- corfu--total (or arg 1)))))))
