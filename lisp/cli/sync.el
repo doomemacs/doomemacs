@@ -113,7 +113,11 @@ OPTIONS:
 ;;; Helpers
 
 (defun doom-sync--system-hash ()
-  (sxhash (list doom-local-dir system-type system-configuration-features)))
+  (secure-hash 'md5 (concat doom-local-dir
+                            (symbol-name system-type)
+                            (mapconcat 'identity (split-string
+                                                  system-configuration-features
+                                                  "")))))
 
 (defun doom-sync--abort-warning-h ()
   (print! (warn "Script was abruptly aborted, leaving Doom in an incomplete state!"))
