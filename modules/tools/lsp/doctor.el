@@ -4,7 +4,6 @@
                    (modulep! +peek)))
          "+eglot and +peek flags are not compatible. Peek uses lsp-mode, while Eglot is another package altogether for LSP.")
 
-(when (modulep! +eglot)
+(unless (modulep! +eglot)
   (unless (executable-find "npm")
-    (warn! "Couldn't find npm, most server installers won't work and will have to be installed manually.
-For more information, see https://emacs-lsp.github.io/lsp-mode/page/languages/.")))
+    (warn! "Couldn't find npm. `lsp-mode' needs npm to auto-install some LSP servers. For more information, see https://emacs-lsp.github.io/lsp-mode/page/languages/.")))
