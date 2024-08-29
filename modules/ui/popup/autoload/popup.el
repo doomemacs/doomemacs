@@ -297,7 +297,8 @@ Any non-nil value besides the above will be used as the raw value for
 (defun +popup-unset-modeline-on-disable-h ()
   "Restore the modeline when `+popup-buffer-mode' is deactivated."
   (when (and (not (bound-and-true-p +popup-buffer-mode))
-             (bound-and-true-p hide-mode-line-mode))
+             (bound-and-true-p hide-mode-line-mode)
+             (not (bound-and-true-p global-hide-mode-line-mode)))
     (hide-mode-line-mode -1)))
 
 ;;;###autoload
