@@ -394,7 +394,15 @@ If RETURN-P, return the message as a string instead of displaying it."
               ;; the next file it loads into `user-init-file'.
               (setq user-init-file t)
               (when init-file-name
-                (load init-file-name 'noerror 'nomessage 'nosuffix))
+                (load init-file-name 'noerror 'nomessage 'nosuffix)
+                ;; HACK: if `init-file-name' happens to be higher in
+                ;;   `load-history' than a symbol's actual definition,
+                ;;   `symbol-file' (and help/helpful buffers) will report the
+                ;;   source of a symbol as `init-file-name', rather than it's
+                ;;   true source. By removing this file from `load-history', no
+                ;;   one will make that mistake.
+                (setq load-history (delete (assoc init-file-name load-history)
+                                           load-history)))
               ;; If it's still `t', then it failed to load the profile initfile.
               ;; This likely means the user has forgotten to run `doom sync'!
               (when (eq user-init-file t)
