@@ -128,6 +128,9 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
   :hook (TeX-mode . +latex-TeX-fold-buffer-h)
   :hook (TeX-mode . TeX-fold-mode)
   :config
+  ;; Reveal folds when moving cursor into them. This saves us the trouble of
+  ;; having to whitelist all motion commands in `TeX-fold-auto-reveal-commands'.
+  (setq TeX-fold-auto-reveal t)
   (defun +latex-TeX-fold-buffer-h ()
     (run-with-idle-timer 0 nil 'TeX-fold-buffer))
   ;; Fold after all AUCTeX macro insertions.
