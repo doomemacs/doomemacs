@@ -540,9 +540,9 @@ relative to `org-directory', unless it is an absolute path."
   ;; documentation -- especially Doom's!
   (letf! ((defun -call-interactively (fn)
             (lambda (path _prefixarg)
-              (funcall
-               fn (or (intern-soft path)
-                      (user-error "Can't find documentation for %S" path))))))
+              (funcall (or (command-remapping fn) fn)
+                       (or (intern-soft path)
+                           (user-error "Can't find documentation for %S" path))))))
     (org-link-set-parameters
      "kbd"
      :follow (lambda (ev)
@@ -553,12 +553,12 @@ relative to `org-directory', unless it is an absolute path."
      :face 'help-key-binding)
     (org-link-set-parameters
      "var"
-     :follow (-call-interactively #'helpful-variable)
+     :follow (-call-interactively #'describe-variable)
      :activate-func #'+org-link--var-link-activate-fn
      :face '(font-lock-variable-name-face underline))
     (org-link-set-parameters
      "fn"
-     :follow (-call-interactively #'helpful-callable)
+     :follow (-call-interactively #'describe-function)
      :activate-func #'+org-link--fn-link-activate-fn
      :face '(font-lock-function-name-face underline))
     (org-link-set-parameters
@@ -738,9 +738,6 @@ mutating hooks on exported output, like formatters."
   ;; Open directory links in dired
   (add-to-list 'org-file-apps '(directory . emacs))
   (add-to-list 'org-file-apps '(remote . emacs))
-
-  ;; Open help:* links with helpful-* instead of describe-*
-  (advice-add #'org-link--open-help :around #'doom-use-helpful-a)
 
   ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
   ;; `org-auto-align-tags', such as in `org-self-insert-command' and

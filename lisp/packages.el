@@ -30,7 +30,6 @@
 ;; doom-editor.el
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
 (package! dtrt-indent :pin "a8aa356684804c52f26602d4e315f1306c6f3e59")
-(package! helpful :pin "4ba24cac9fb14d5fdc32582cd947572040e82b2c")
 (package! smartparens :pin "c7519a1b69f196050a13e2230b7532893b077086")
 (package! ws-butler :pin "e3a38d93e01014cd47bf5af4924459bd145fd7c4")
 

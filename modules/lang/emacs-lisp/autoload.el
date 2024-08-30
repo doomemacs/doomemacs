@@ -116,8 +116,14 @@ if it's callable, `apropos' otherwise."
                            '(outline org-fold-outline))
                  (org-show-hidden-entry))))
            'deferred))
-        (thing (helpful-symbol (intern thing)))
-        ((call-interactively #'helpful-at-point))))
+        (thing
+         (funcall (or (command-remapping #'describe-symbol)
+                      #'describe-symbol)
+                  (intern thing)))
+        ((call-interactively
+          (if (fboundp #'helpful-at-point)
+              #'helpful-at-point
+            #'describe-symbol)))))
 
 ;; DEPRECATED Remove when 28 support is dropped.
 (unless (fboundp 'lisp--local-defform-body-p)

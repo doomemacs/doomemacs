@@ -553,9 +553,6 @@
         "<" #'help-go-back
         "n" #'forward-button
         "p" #'backward-button)
-      (:after helpful
-        :map helpful-mode-map
-        "o" #'link-hint-open-link)
       (:after apropos
         :map apropos-mode-map
         "o" #'link-hint-open-link

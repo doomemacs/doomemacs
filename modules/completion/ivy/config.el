@@ -226,11 +226,6 @@ workable results ripgrep produces, despite the error."
                (if (= code 2) 0 code)))
       (apply fn args)))
 
-  ;; Integrate with `helpful'
-  (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable
-        counsel-descbinds-function #'helpful-callable)
-
   ;; Decorate `doom/help-custom-variable' results the same way as
   ;; `counsel-describe-variable' (adds value and docstring columns).
   (ivy-configure 'doom/help-custom-variable :parent 'counsel-describe-variable)

@@ -261,6 +261,77 @@ See `+emacs-lisp-non-package-mode' for details.")
         "s" #'buttercup-run-at-point))
 
 
+(use-package! helpful
+  ;; a better *help* buffer
+  :commands helpful--read-symbol
+  :hook (helpful-mode . visual-line-mode)
+  :init
+  ;; Make `apropos' et co search more extensively. They're more useful this way.
+  (setq apropos-do-all t)
+
+  (global-set-key [remap describe-function] #'helpful-callable)
+  (global-set-key [remap describe-command]  #'helpful-command)
+  (global-set-key [remap describe-variable] #'helpful-variable)
+  (global-set-key [remap describe-key]      #'helpful-key)
+  (global-set-key [remap describe-symbol]   #'helpful-symbol)
+
+  (defun doom-use-helpful-a (fn &rest args)
+    "Force FN to use helpful instead of the old describe-* commands."
+    (letf! ((#'describe-function #'helpful-function)
+            (#'describe-variable #'helpful-variable))
+      (apply fn args)))
+
+  (after! apropos
+    ;; patch apropos buttons to call helpful instead of help
+    (dolist (fun-bt '(apropos-function apropos-macro apropos-command))
+      (button-type-put
+       fun-bt 'action
+       (lambda (button)
+         (helpful-callable (button-get button 'apropos-symbol)))))
+    (dolist (var-bt '(apropos-variable apropos-user-option))
+      (button-type-put
+       var-bt 'action
+       (lambda (button)
+         (helpful-variable (button-get button 'apropos-symbol))))))
+
+  ;; DEPRECATED: Remove when support for 29 is dropped.
+  (when (= emacs-major-version 29)
+    (defadvice! doom--find-function-search-for-symbol-save-excursion-a (fn &rest args)
+      "Suppress cursor movement by `find-function-search-for-symbol'.
+
+Addresses an unwanted side-effect in `find-function-search-for-symbol' on Emacs
+29 where the cursor is moved to a variable's definition if it's defined in the
+current buffer."
+      :around #'find-function-search-for-symbol
+      (let (buf pos)
+        (letf! (defun find-library-name (library)
+                 (let ((filename (funcall find-library-name library)))
+                   (with-current-buffer (find-file-noselect filename)
+                     (setq buf (current-buffer)
+                           pos (point)))
+                   filename))
+          (prog1 (apply fn args)
+            (when (buffer-live-p buf)
+              (with-current-buffer buf (goto-char pos))))))))
+  :config
+  (setq helpful-set-variable-function #'setq!)
+
+  (cond ((modulep! :completion ivy)
+         (setq counsel-describe-function-function #'helpful-callable
+               counsel-describe-variable-function #'helpful-variable
+               counsel-descbinds-function #'helpful-callable))
+        ((modulep! :completion helm)
+         (dolist (fn '(helm-describe-variable helm-describe-function))
+           (advice-add fn :around #'doom-use-helpful-a))))
+
+  ;; Open help:* links with helpful-* instead of describe-*
+  (advice-add #'org-link--open-help :around #'doom-use-helpful-a)
+
+  (map! :map helpful-mode-map
+        :ng "o"  #'link-hint-open-link
+        :n  "gr" #'helpful-update))
+
+
 ;;
 ;;; Project modes
 

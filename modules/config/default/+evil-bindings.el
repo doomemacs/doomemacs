@@ -102,8 +102,6 @@
 
       (:after help :map help-mode-map
        :n "o"       #'link-hint-open-link)
-      (:after helpful :map helpful-mode-map
-       :n "o"       #'link-hint-open-link)
       (:after info :map Info-mode-map
        :n "o"       #'link-hint-open-link)
       (:after apropos :map apropos-mode-map

@@ -102,11 +102,7 @@ Can be negative.")
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 
   ;; Hide minibuffer if `helm-echo-input-in-header-line'
-  (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe)
-
-  ;; Use helpful instead of describe-* to display documentation
-  (dolist (fn '(helm-describe-variable helm-describe-function))
-    (advice-add fn :around #'doom-use-helpful-a)))
+  (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe))
 
 
 (use-package! helm-posframe

@@ -165,8 +165,7 @@ buffers."
   "Look up documentation for QUERY.
 
 If QUERY is in the format of an ex command, it will map it to the underlying
-function and open its documentation with `helpful-function'. Otherwise, it will
-search for it with `apropos'.
+function and open its documentation.
 
 If QUERY is empty, this runs the equivalent of 'M-x apropos'. If BANG is
 non-nil, a search is preformed against Doom's manual (with
@@ -180,8 +179,9 @@ non-nil, a search is preformed against Doom's manual (with
               (or (command-remapping #'apropos)
                   #'apropos)))
             ((string-match "^ *:\\([^ ]+\\)$" query)
-             (helpful-function
-              (evil-ex-completed-binding (match-string 1 query))))
+             (funcall (or (command-remapping #'describe-function)
+                          #'describe-function)
+                      (evil-ex-completed-binding (match-string 1 query))))
             ((message "Searching for %S, this may take a while..." query)
              (apropos query t))))))
 
