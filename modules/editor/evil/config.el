@@ -559,24 +559,25 @@ directives. By default, this only recognizes C directives.")
       :v "gL" #'evil-lion-right
 
       ;; Emulation of Vim's omni-completion keybinds
-      (:prefix "C-x"
-        (:when (modulep! :completion company)
-         :i "C-l"  #'+company/whole-lines
-         :i "C-k"  #'+company/dict-or-keywords
-         :i "C-f"  #'company-files
-         :i "C-]"  #'company-etags
-         :i "s"    #'company-ispell
-         :i "C-s"  #'company-yasnippet
-         :i "C-o"  #'company-capf
-         :i "C-n"  #'+company/dabbrev
-         :i "C-p"  #'+company/dabbrev-code-previous)
-        (:when (modulep! :completion corfu)
-         :i "C-l"  #'cape-line
-         :i "C-k"  #'cape-keyword
-         :i "C-f"  #'cape-file
-         :i "C-]"  #'complete-tag
-         :i "s"    #'cape-dict
-         :i "C-s"  #'yasnippet-capf
-         :i "C-o"  #'completion-at-point
-         :i "C-n"  #'cape-dabbrev
-         :i "C-p"  #'+corfu/dabbrev-this-buffer)))
+      (:unless evil-disable-insert-state-bindings
+        (:prefix "C-x"
+          (:when (modulep! :completion company)
+           :i "C-l"  #'+company/whole-lines
+           :i "C-k"  #'+company/dict-or-keywords
+           :i "C-f"  #'company-files
+           :i "C-]"  #'company-etags
+           :i "s"    #'company-ispell
+           :i "C-s"  #'company-yasnippet
+           :i "C-o"  #'company-capf
+           :i "C-n"  #'+company/dabbrev
+           :i "C-p"  #'+company/dabbrev-code-previous)
+          (:when (modulep! :completion corfu)
+           :i "C-l"  #'cape-line
+           :i "C-k"  #'cape-keyword
+           :i "C-f"  #'cape-file
+           :i "C-]"  #'complete-tag
+           :i "s"    #'cape-dict
+           :i "C-s"  #'yasnippet-capf
+           :i "C-o"  #'completion-at-point
+           :i "C-n"  #'cape-dabbrev
+           :i "C-p"  #'+corfu/dabbrev-this-buffer))))
