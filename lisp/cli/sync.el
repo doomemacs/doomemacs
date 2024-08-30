@@ -114,7 +114,18 @@ OPTIONS:
 
 (defun doom-sync--system-hash ()
   (secure-hash
-   'md5 (mapconcat #'identity (list doom-local-dir system-configuration))))
+   'md5 (mapconcat
+         #'identity
+         (list
+          ;; Changes to this path could indicate a change to the username and/or
+          ;; the location of Straight's build artifacts; both warrant a rebuild
+          ;; of your packages.
+          doom-local-dir
+          ;; Changes to this indicate the user's system/OS has changed (e.g. if
+          ;; the user copied their config to another system, on another OS) or
+          ;; Emacs' compiled features have (even if the major version hasn't).
+          system-configuration)
+         "")))
 
 (defun doom-sync--abort-warning-h ()
   (print! (warn "Script was abruptly aborted, leaving Doom in an incomplete state!"))
