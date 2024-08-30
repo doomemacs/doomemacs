@@ -121,9 +121,6 @@ Is nil if no executable is found in your PATH during startup.")
   (put 'projectile-ripgrep 'disabled "Use +default/search-project instead")
   (put 'projectile-grep 'disabled "Use +default/search-project instead")
 
-  ;; Treat current directory in dired as a "file in a project" and track it
-  (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
-
   ;; Accidentally indexing big directories like $HOME or / will massively bloat
   ;; projectile's cache (into the hundreds of MBs). This purges those entries
   ;; when exiting Emacs to prevent slowdowns/freezing when cache files are
