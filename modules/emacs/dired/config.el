@@ -59,7 +59,14 @@ Fixes #3939: unsortable dired entries on Windows."
     (not (eq revert-buffer-function #'dired-virtual-revert)))
 
   ;; To be consistent with vertico/ivy/helm+wgrep integration
-  (define-key dired-mode-map (kbd "C-c C-e") #'wdired-change-to-wdired-mode))
+  (define-key dired-mode-map (kbd "C-c C-e") #'wdired-change-to-wdired-mode)
+
+  ;; On ESC, abort `wdired-mode' (will prompt)
+  (add-hook! 'doom-escape-hook
+    (defun +dired-wdired-exit-h ()
+      (when (eq major-mode 'wdired-mode)
+        (wdired-exit)
+        t))))
 
 
 (use-package! dirvish
