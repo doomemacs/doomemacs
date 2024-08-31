@@ -63,11 +63,11 @@ font.")
 
 (defvar +ligatures-prog-mode-list nil
   "A list of ligatures to enable in all `prog-mode' buffers.")
-(make-obsolete-variable '+ligatures-prog-mode-list "Use `+ligatures-alist' instead" "3.0.0")
+(make-obsolete-variable '+ligatures-prog-mode-list "Use `+ligatures-alist' instead" "24.09.0")
 
 (defvar +ligatures-all-modes-list nil
   "A list of ligatures to enable in all buffers.")
-(make-obsolete-variable '+ligatures-all-modes-list "Use `+ligatures-alist' instead" "3.0.0")
+(make-obsolete-variable '+ligatures-all-modes-list "Use `+ligatures-alist' instead" "24.09.0")
 
 (defvar +ligatures-extra-alist '((t))
   "A map of major modes to symbol lists (for `prettify-symbols-alist').")
