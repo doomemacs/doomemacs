@@ -46,4 +46,15 @@
 
 ;; Add support for the Kitty keyboard protocol.
 (use-package! kkp
-  :hook (after-init . global-kkp-mode))
+  :hook (after-init . global-kkp-mode)
+  :config
+  ;; HACK: Emacs falls back to RET, TAB, and/or DEL if [return], [tab], and/or
+  ;;   [backspace] are unbound, but this isn't the case for all input events,
+  ;;   like these, which don't fall back to M-RET, M-TAB, etc. Therefore making
+  ;;   these keybinds inaccessible in KKP supported terminals.
+  ;; REVIEW: See benjaminor/kkp#13.
+  (define-key! local-function-key-map
+    [M-return] (kbd "M-RET")
+    [M-tab] (kbd "M-TAB")
+    [M-backspace] (kbd "M-DEL")
+    [M-delete] (kbd "M-DEL")))
