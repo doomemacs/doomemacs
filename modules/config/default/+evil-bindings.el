@@ -159,8 +159,9 @@
 
 ;;; :completion (in-buffer)
 (map! (:when (modulep! :completion company)
-       :i "C-@"    (cmds! (not (minibufferp)) #'company-complete-common)
-       :i "C-SPC"  (cmds! (not (minibufferp)) #'company-complete-common)
+       (:unless (bound-and-true-p evil-disable-insert-state-bindings)
+        :i "C-@"    (cmds! (not (minibufferp)) #'company-complete-common)
+        :i "C-SPC"  (cmds! (not (minibufferp)) #'company-complete-common))
        (:after company
         (:map company-active-map
          "C-w"     nil  ; don't interfere with `evil-delete-backward-word'
@@ -189,15 +190,18 @@
       (:when (modulep! :completion corfu)
        (:after corfu
         (:map corfu-mode-map
-         :i "C-SPC" #'completion-at-point
-         :i "C-n" #'+corfu/dabbrev-or-next
-         :i "C-p" #'+corfu/dabbrev-or-last
+         (:unless (bound-and-true-p evil-disable-insert-state-bindings)
+          :i "C-@"   #'completion-at-point
+          :i "C-SPC" #'completion-at-point
+          :i "C-n"   #'+corfu/dabbrev-or-next
+          :i "C-p"   #'+corfu/dabbrev-or-last)
          :n "C-SPC" (cmd! (call-interactively #'evil-insert-state)
                           (call-interactively #'completion-at-point))
          :v "C-SPC" (cmd! (call-interactively #'evil-change)
                           (call-interactively #'completion-at-point)))
         (:map corfu-map
-         :i "C-SPC" #'corfu-insert-separator
+         (:unless (bound-and-true-p evil-disable-insert-state-bindings)
+          :i "C-SPC" #'corfu-insert-separator)
          "C-k" #'corfu-previous
          "C-j" #'corfu-next
          "C-u" (cmd! (let (corfu-cycle)
