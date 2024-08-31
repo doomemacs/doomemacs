@@ -8,4 +8,5 @@
     (package! flycheck-posframe :pin "19896b922c76a0f460bf3fe8d8ebc2f9ac9028d8")))
 
 (when (modulep! +flymake)
-  (package! flymake-popon :recipe (:repo "https://codeberg.org/akib/emacs-flymake-popon")))
+  (package! popon :recipe (:host codeberg :repo "akib/emacs-popon"))
+  (package! flymake-popon :recipe (:host codeberg :repo "akib/emacs-flymake-popon")))
