@@ -34,26 +34,6 @@ TAB/S-TAB.")
 
 (use-package! corfu
   :hook (doom-first-input . global-corfu-mode)
-  :init
-  (add-hook! 'minibuffer-setup-hook
-    (defun +corfu-enable-in-minibuffer ()
-      "Enable Corfu in the minibuffer."
-      (when (pcase +corfu-want-minibuffer-completion
-              ('aggressive
-               (not (or (bound-and-true-p mct--active)
-                        (bound-and-true-p vertico--input)
-                        (and (featurep 'auth-source)
-                             (eq (current-local-map) read-passwd-map))
-                        (and (featurep 'helm-core) (helm--alive-p))
-                        (and (featurep 'ido) (ido-active))
-                        (where-is-internal 'minibuffer-complete
-                                           (list (current-local-map)))
-                        (memq #'ivy--queue-exhibit post-command-hook))))
-              ('nil nil)
-              (_ (where-is-internal #'completion-at-point
-                                    (list (current-local-map)))))
-        (setq-local corfu-echo-delay nil)
-        (corfu-mode +1))))
   :config
   (setq corfu-auto t
         corfu-auto-delay 0.24
@@ -79,6 +59,25 @@ TAB/S-TAB.")
   (add-to-list 'corfu-continue-commands #'+corfu/move-to-minibuffer)
   (add-to-list 'corfu-continue-commands #'+corfu/smart-sep-toggle-escape)
   (add-hook 'evil-insert-state-exit-hook #'corfu-quit)
+
+  (defun +corfu-enable-in-minibuffer-p ()
+    "Return non-nil if Corfu should be enabled in the minibuffer.
+See `+corfu-want-minibuffer-completion'."
+    (pcase +corfu-want-minibuffer-completion
+      ('nil nil)
+      ('aggressive
+       (not (or (bound-and-true-p mct--active)
+                (bound-and-true-p vertico--input)
+                (and (featurep 'auth-source)
+                     (eq (current-local-map) read-passwd-map))
+                (and (featurep 'helm-core) (helm--alive-p))
+                (and (featurep 'ido) (ido-active))
+                (where-is-internal 'minibuffer-complete
+                                   (list (current-local-map)))
+                (memq #'ivy--queue-exhibit post-command-hook))))
+      (_ (where-is-internal #'completion-at-point
+                            (list (current-local-map))))))
+  (setq global-corfu-minibuffer #'+corfu-enable-in-minibuffer-p)
 
   ;; HACK: If you want to update the visual hints after completing minibuffer
   ;;   commands with Corfu and exiting, you have to do it manually.
