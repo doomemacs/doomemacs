@@ -384,8 +384,6 @@ users).")
            (locate-file-internal "calc-loaddefs.el" load-path))
          nil
        (list (rassq 'jka-compr-handler old-value))))
-    ;; Make sure the new value survives any current let-binding.
-    (set-default-toplevel-value 'file-name-handler-alist file-name-handler-alist)
     ;; Remember it so it can be reset where needed.
     (put 'file-name-handler-alist 'initial-value old-value)
     ;; COMPAT: Eventually, Emacs will process any files passed to it via the
