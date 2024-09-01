@@ -30,20 +30,9 @@
   ;;   information to the user, like deprecation notices, file-loaded messages,
   ;;   and linter warnings. With this, that output is suppressed.
   (quiet!
-   (require 'cl nil t)
-   (unless site-run-file
-     (let ((site-run-file "site-start")
-           (tail load-path)
-           (lispdir (expand-file-name "../lisp" data-directory))
-           dir)
-       (while tail
-         (setq dir (car tail))
-         (let ((default-directory dir))
-           (load (expand-file-name "subdirs.el") t inhibit-message t))
-         (unless (string-prefix-p lispdir dir)
-           (let ((default-directory dir))
-             (load (expand-file-name "leim-list.el") t inhibit-message t)))
-         (setq tail (cdr tail)))
+   (require 'cl nil t)    ; "Package cl is deprecated"
+   (unless site-run-file  ; unset in doom.el
+     (when-let ((site-run-file (get 'site-run-file 'initial-value)))
        (load site-run-file t inhibit-message))))
 
   (setq-default
