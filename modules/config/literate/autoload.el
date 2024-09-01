@@ -176,7 +176,7 @@ We assume any org file in `doom-user-dir' is connected to your literate
 config, and should trigger a recompile if changed."
   (and (file-in-directory-p
         (buffer-file-name (buffer-base-buffer))
-        (file-name-directory +literate-config-file))
+        (file-name-directory (file-truename +literate-config-file)))
        (+literate-tangle-h)))
 
 ;;; autoload.el ends here
