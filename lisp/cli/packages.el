@@ -677,7 +677,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
 
 (defvar doom-cli--straight-auto-options
   '(("has diverged from"
-     . "^Reset [^ ]+ to branch")
+     . "^Reset [^ ]+ to ")
     ("but recipe specifies a URL of"
      . "Delete remote \"[^\"]+\", re-create it with correct URL")
     ("has a merge conflict:"
