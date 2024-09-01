@@ -92,6 +92,10 @@ See `+corfu-want-minibuffer-completion'."
                (not (run-hook-with-args-until-success '+corfu-inhibit-auto-functions)))))
       (apply fn args)))
 
+  (when (modulep! :editor evil)
+    ;; Modifying the buffer while in replace mode can be janky.
+    (add-to-list '+corfu-inhibit-auto-functions #'evil-replace-state-p))
+
   ;; HACK: If you want to update the visual hints after completing minibuffer
   ;;   commands with Corfu and exiting, you have to do it manually.
   (defadvice! +corfu--insert-before-exit-minibuffer-a ()
