@@ -4,9 +4,9 @@
   "Configure how the user expects RET to behave.
 Possible values are:
 - t (default): Insert candidate if one is selected, pass-through otherwise;
-- `minibuffer': Insert candidate if one is selected, pass-through otherwise,
-              and immediatelly exit if in the minibuffer;
-- nil: Pass-through without inserting.")
+- nil: Pass-through without inserting;
+- `both': Insert candidate if one is selected, then pass-through;
+- `minibuffer': Behaves like `both` in the minibuffer and `t` otherwise.")
 
 (defvar +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
   "Size limit for a buffer to be scanned by `cape-dabbrev'.")

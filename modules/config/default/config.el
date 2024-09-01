@@ -466,28 +466,21 @@ Continues comments if executed from a commented line."
   (let ((cmds-del
          `(menu-item "Reset completion" corfu-reset
            :filter ,(lambda (cmd)
-                      (cond
-                       ((and (>= corfu--index 0)
-                             (eq corfu-preview-current 'insert))
-                        cmd)))))
+                      (when (and (>= corfu--index 0)
+                                 (eq corfu-preview-current 'insert))
+                        cmd))))
         (cmds-ret
          `(menu-item "Insert completion DWIM" corfu-insert
            :filter ,(lambda (cmd)
-                      (cond
-                       ((null +corfu-want-ret-to-confirm)
-                        (corfu-quit)
-                        nil)
-                       ((eq +corfu-want-ret-to-confirm 'minibuffer)
-                        (funcall-interactively cmd)
-                        nil)
-                       ((and (or (not (minibufferp nil t))
-                                 (eq +corfu-want-ret-to-confirm t))
-                             (>= corfu--index 0))
-                        cmd)
-                       ((or (not (minibufferp nil t))
-                            (eq +corfu-want-ret-to-confirm t))
-                        nil)
-                       (t cmd)))))
+                      (pcase +corfu-want-ret-to-confirm
+                        ('nil (corfu-quit) nil)
+                        ('t (if (>= corfu--index 0) cmd))
+                        ('both (funcall-interactively cmd) nil)
+                        ('minibuffer
+                         (if (minibufferp nil t)
+                             (ignore (funcall-interactively cmd))  ; 'both' behavior
+                           (if (>= corfu--index 0) cmd)))  ; 't' behavior
+                        (_ cmd)))))
         (cmds-tab
          `(menu-item "Select next candidate or expand/traverse snippet" corfu-next
            :filter (lambda (cmd)
@@ -505,7 +498,7 @@ Continues comments if executed from a commented line."
                                   (featurep 'org)
                                   (org-at-table-p))
                              #'org-table-next-field)))
-                      (t cmd)))) )
+                      (t cmd)))))
         (cmds-s-tab
          `(menu-item "Select previous candidate or expand/traverse snippet"
            corfu-previous
