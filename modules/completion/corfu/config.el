@@ -28,6 +28,11 @@ TAB/S-TAB.")
   "If non-nil, prefer navigating org tables over cycling candidates with
 TAB/S-TAB.")
 
+(defvar +corfu-inhibit-auto-functions ()
+  "A list of predicate functions that take no arguments.
+
+If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
+
 
 ;;
 ;;; Packages
@@ -78,6 +83,14 @@ See `+corfu-want-minibuffer-completion'."
       (_ (where-is-internal #'completion-at-point
                             (list (current-local-map))))))
   (setq global-corfu-minibuffer #'+corfu-enable-in-minibuffer-p)
+
+  ;; HACK: Augments Corfu to respect `+corfu-inhibit-auto-functions'.
+  (defadvice! +corfu--post-command-a (fn &rest args)
+    "Refresh Corfu after last command."
+    (let ((corfu-auto
+           (if corfu-auto
+               (not (run-hook-with-args-until-success '+corfu-inhibit-auto-functions)))))
+      (apply fn args)))
 
   ;; HACK: If you want to update the visual hints after completing minibuffer
   ;;   commands with Corfu and exiting, you have to do it manually.
