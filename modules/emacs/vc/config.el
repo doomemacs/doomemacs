@@ -56,7 +56,25 @@
           (when (re-search-forward "^<<<<<<< " nil t)
             (smerge-mode 1))))))
   :config
-  (define-key smerge-mode-map (kbd doom-localleader-key) smerge-basic-map))
+  (map! :map smerge-mode-map
+        :localleader
+        "n" #'smerge-next
+        "p" #'smerge-prev
+        "r" #'smerge-resolve
+        "a" #'smerge-keep-all
+        "b" #'smerge-keep-base
+        "o" #'smerge-keep-lower
+        "l" #'smerge-keep-lower
+        "m" #'smerge-keep-upper
+        "u" #'smerge-keep-upper
+        "E" #'smerge-ediff
+        "C" #'smerge-combine-with-next
+        "R" #'smerge-refine
+        "C-m" #'smerge-keep-current
+        (:prefix "="
+         "<" #'smerge-diff-base-upper
+         ">" #'smerge-diff-base-lower
+         "=" #'smerge-diff-upper-lower)))
 
 
 (after! git-timemachine
