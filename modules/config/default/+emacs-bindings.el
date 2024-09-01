@@ -440,10 +440,10 @@
       (:when (modulep! :editor multiple-cursors)
        (:prefix-map ("m" . "multiple-cursors")
         :desc "Edit lines"         "l"         #'mc/edit-lines
-        :desc "Mark next"          "n"         #'mc/mark-next-like-this
-        :desc "Unmark next"        "N"         #'mc/unmark-next-like-this
-        :desc "Mark previous"      "p"         #'mc/mark-previous-like-this
-        :desc "Unmark previous"    "P"         #'mc/unmark-previous-like-this
+        :desc "Mark next"          "n"         #'+mc/transient-mark-next-like-this
+        :desc "Unmark next"        "N"         #'+mc/transient-unmark-next-like-this
+        :desc "Mark previous"      "p"         #'+mc/transient-mark-previous-like-this
+        :desc "Unmark previous"    "P"         #'+mc/transient-unmark-previous-like-this
         :desc "Mark all"           "t"         #'mc/mark-all-like-this
         :desc "Mark all DWIM"      "m"         #'mc/mark-all-like-this-dwim
         :desc "Edit line endings"  "e"         #'mc/edit-ends-of-lines
@@ -536,7 +536,11 @@
         "C-c h" #'+ein/hydra/body)
 
       ;;; expand-region
-      "C-="  #'er/expand-region
+      "C-="  (cmd! (call-interactively #'er/expand-region)
+                   (set-transient-map +er-transient-map t))
+
+      ;; multiple-cursors
+      "C-+"  #'mc/mark-next-like-this
 
       ;;; flycheck
       (:after flycheck
