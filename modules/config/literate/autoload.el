@@ -41,10 +41,19 @@
                 (org-confirm-babel-evaluate nil)
                 ;; Say a little more
                 (doom-print-message-level 'info))
-            (if-let (files (org-babel-tangle-file target dest))
-                (always (print! (success "Done tangling %d file(s)!" (length files))))
-              (print! (error "Failed to tangle any blocks from your config."))
-              nil))))))
+            (cond ((not (file-exists-p target))
+                   (print! (warn "No org file at %s. Skipping...") (path target))
+                   nil)
+                  ((with-temp-buffer
+                     (insert-file-contents target)
+                     (let ((case-fold-search t))
+                       (not (re-search-forward "^ *#\\+begin_src e\\(?:macs-\\)?lisp" nil t))))
+                   (print! (warn "No src blocks to tangle in %s. Skipping...") (path target))
+                   nil)
+                  ((if-let (files (org-babel-tangle-file target dest))
+                       (always (print! (success "Done tangling %d file(s)!" (length files))))
+                     (print! (error "Failed to tangle any blocks from your config."))
+                     nil))))))))
 
 (defun +literate-tangle--sync ()
   "Tangles `+literate-config-file' if it has changed."
