@@ -510,8 +510,6 @@
        :desc "Copy link to remote"         "y"   #'+vc/browse-at-remote-kill
        :desc "Copy link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
        :desc "Git time machine"            "t"   #'git-timemachine-toggle
-       (:when (modulep! :ui hydra)
-        :desc "SMerge"                    "m"   #'+vc/smerge-hydra/body)
        (:when (modulep! :ui vc-gutter)
         :desc "Revert hunk at point"      "r"   #'+vc-gutter/revert-hunk
         :desc "stage hunk at point"       "s"   #'+vc-gutter/stage-hunk
