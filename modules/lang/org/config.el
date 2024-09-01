@@ -787,30 +787,26 @@ via an indirect buffer."
 
   (defvar recentf-exclude)
   (defadvice! +org--optimize-backgrounded-agenda-buffers-a (fn file)
-    "Disable a lot of org-mode's startup processes for temporary agenda buffers.
+    "Disable `org-mode's startup processes for temporary agenda buffers.
 
-    This includes preventing them from polluting recentf.
-
-    However, if the user tries to visit one of these buffers they'll see a
-    gimped, half-broken org buffer. To avoid that, install a hook to restart
-    `org-mode' when they're switched to so they can grow up to be fully-fledged
-    org-mode buffers."
+Prevents recentf pollution as well. However, if the user tries to visit one of
+these buffers they'll see a gimped, half-broken org buffer, so to avoid that,
+install a hook to restart `org-mode' when they're switched to so they can grow
+up to be fully-fledged org-mode buffers."
     :around #'org-get-agenda-file-buffer
     (if-let (buf (org-find-base-buffer-visiting file))
         buf
-      (let ((recentf-exclude (list (lambda (_file) t)))
+      (let ((recentf-exclude '(always))
             (doom-inhibit-large-file-detection t)
-            org-startup-indented
-            org-startup-folded
+            (doom-inhibit-local-var-hooks t)
+            (org-inhibit-startup t)
             vc-handled-backends
-            org-mode-hook
             enable-local-variables
             find-file-hook)
-        (let ((buf (funcall fn file)))
-          (when buf
-            (with-current-buffer buf
-              (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
-                        nil 'local)))
+        (when-let ((buf (delay-mode-hooks (funcall fn file))))
+          (with-current-buffer buf
+            (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
+                      nil 'local))
           buf))))
 
   (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)
