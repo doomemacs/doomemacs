@@ -263,7 +263,7 @@
   ;; HACK: `conda-anaconda-home's initialization can throw an error if none of
   ;;   `conda-home-candidates' exist, so unset it early.
   ;; REVIEW: Fix this upstream.
-  (setq conda-anaconda-home nil
+  (setq conda-anaconda-home (getenv "ANACONDA_HOME")
         conda-home-candidates
         (list "~/.anaconda"
               "~/.anaconda3"
