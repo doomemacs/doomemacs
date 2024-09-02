@@ -259,6 +259,26 @@
 (use-package! conda
   :when (modulep! +conda)
   :after python
+  :preface
+  ;; HACK: `conda-anaconda-home's initialization can throw an error if none of
+  ;;   `conda-home-candidates' exist, so unset it early.
+  ;; REVIEW: Fix this upstream.
+  (setq conda-anaconda-home nil
+        conda-home-candidates
+        (list "~/.anaconda"
+              "~/.anaconda3"
+              "~/.miniconda"
+              "~/.miniconda3"
+              "~/.miniforge3"
+              "~/anaconda3"
+              "~/miniconda3"
+              "~/miniforge3"
+              "~/opt/miniconda3"
+              "/usr/bin/anaconda3"
+              "/usr/local/anaconda3"
+              "/usr/local/miniconda3"
+              "/usr/local/Caskroom/miniconda/base"
+              "~/.conda"))
   :config
   ;; The location of your anaconda home will be guessed from a list of common
   ;; possibilities, starting with `conda-anaconda-home''s default value (which
@@ -267,20 +287,7 @@
   ;; If none of these work for you, `conda-anaconda-home' must be set
   ;; explicitly. Afterwards, run M-x `conda-env-activate' to switch between
   ;; environments
-  (or (cl-loop for dir in (list conda-anaconda-home
-                                "~/.anaconda"
-                                "~/.miniconda"
-                                "~/.miniconda3"
-                                "~/.miniforge3"
-                                "~/anaconda3"
-                                "~/miniconda3"
-                                "~/miniforge3"
-                                "~/opt/miniconda3"
-                                "/usr/bin/anaconda3"
-                                "/usr/local/anaconda3"
-                                "/usr/local/miniconda3"
-                                "/usr/local/Caskroom/miniconda/base"
-                                "~/.conda")
+  (or (cl-loop for dir in (cons conda-anaconda-home conda-home-candidates)
                if (file-directory-p dir)
                return (setq conda-anaconda-home (expand-file-name dir)
                             conda-env-home-directory (expand-file-name dir)))
