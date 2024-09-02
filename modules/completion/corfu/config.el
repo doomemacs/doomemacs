@@ -43,12 +43,17 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
   (setq corfu-auto t
         corfu-auto-delay 0.24
         corfu-auto-prefix 2
-        global-corfu-modes '((not erc-mode
-                                  circe-mode
-                                  help-mode
-                                  gud-mode
-                                  vterm-mode)
-                             t)
+        global-corfu-modes
+        '((not erc-mode
+               circe-mode
+               help-mode
+               gud-mode
+               vterm-mode
+               ;; Needed for `+corfu-want-minibuffer-completion' to be
+               ;; respected. See #7977.
+               minibuffer-mode
+               minibuffer-inactive-mode)
+          t)
         corfu-cycle t
         corfu-preselect 'prompt
         corfu-count 16
