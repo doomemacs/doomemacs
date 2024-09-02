@@ -584,6 +584,14 @@ Continues comments if executed from a commented line."
   (add-hook 'doom-first-buffer-hook #'delete-selection-mode)
   (setq shift-select-mode t)
 
+  (use-package! drag-stuff
+    :defer t
+    :init
+    (map! "<M-up>"    #'drag-stuff-up
+          "<M-down>"  #'drag-stuff-down
+          "<M-left>"  #'drag-stuff-left
+          "<M-right>" #'drag-stuff-right))
+
   (use-package! expand-region
     :commands (er/contract-region er/mark-symbol er/mark-word)
     :config
