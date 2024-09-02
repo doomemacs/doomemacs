@@ -148,10 +148,13 @@ See `+corfu-want-minibuffer-completion'."
                  text-mode-hook
                  conf-mode-hook
                  comint-mode-hook
-                 minibuffer-setup-hook
                  eshell-mode-hook)
       (defun +corfu-add-cape-dabbrev-h ()
         (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t)))
+    (add-hook! 'minibuffer-setup-hook
+               (defun +corfu-add-cape-dabbrev-in-minibuffer-h ()
+                 (when (+corfu-enable-in-minibuffer-p)
+                   (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t))))
     (after! dabbrev
       (setq dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p
             dabbrev-ignored-buffer-regexps
