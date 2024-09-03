@@ -352,7 +352,8 @@ list remains lean."
                      (error
                       (signal 'doom-package-error (list package e)))))))
           (progn
-            (when (featurep 'native-compile)
+            (when (and (featurep 'native-compile)
+                       straight--native-comp-available)
               (doom-packages--compile-site-files)
               (doom-packages--wait-for-native-compile-jobs)
               (doom-packages--write-missing-eln-errors))
