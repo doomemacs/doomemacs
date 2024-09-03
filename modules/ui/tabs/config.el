@@ -1,11 +1,5 @@
 ;;; ui/tabs/config.el -*- lexical-binding: t; -*-
 
-(defcustom +tabs-buffer-update-groups-delay 0.1
-  "Minimum wait time (in seconds) before tab groups are recalculated."
-  :type 'float
-  :group 'doom)
-
-
 ;;
 ;;; Packages
 
