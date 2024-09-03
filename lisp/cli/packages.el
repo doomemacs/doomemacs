@@ -23,16 +23,15 @@
      (noelpa-p    ("-p" "--no-elpa")    "Don't purge ELPA packages")
      (norepos-p   ("-r" "--no-repos")   "Don't purge unused straight repos")
      (noeln-p     ("-e" "--no-eln")     "Don't purge old ELN bytecode")
-     (noregraft-p ("-g" "--no-regraft") "Regraft git repos (ie. compact them)"))
+     (noregraft-p ("-g" "--no-regraft") "Don't regraft git repos (ie. compact them)"))
   "Deletes orphaned packages & repos, and compacts them.
 
 Purges all installed ELPA packages (as they are considered temporary). Purges
-all orphaned package repos and builds. If -g/--regraft is supplied, the git
-repos among them will be regrafted and compacted to ensure they are as small as
-possible.
+all orphaned package repos and builds. Also regrafts and compacts package repos
+to ensure they are as small as possible.
 
-It is a good idea to occasionally run this doom purge -g to ensure your package
-list remains lean."
+It is a good idea to occasionally run this command to ensure your package list
+remains lean."
   :benchmark t
   (require 'comp nil t)
   (doom-initialize-core-packages)
