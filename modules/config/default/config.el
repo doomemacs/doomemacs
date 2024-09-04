@@ -71,15 +71,6 @@
       (setq woman-manpath manpath))))
 
 
-(use-package! drag-stuff
-  :defer t
-  :init
-  (map! "<M-up>"    #'drag-stuff-up
-        "<M-down>"  #'drag-stuff-down
-        "<M-left>"  #'drag-stuff-left
-        "<M-right>" #'drag-stuff-right))
-
-
 ;;;###package tramp
 (unless (featurep :system 'windows)
   (setq tramp-default-method "ssh")) ; faster than the default scp
