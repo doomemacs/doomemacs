@@ -48,11 +48,7 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
                circe-mode
                help-mode
                gud-mode
-               vterm-mode
-               ;; Needed for `+corfu-want-minibuffer-completion' to be
-               ;; respected. See #7977.
-               minibuffer-mode
-               minibuffer-inactive-mode)
+               vterm-mode)
           t)
         corfu-cycle t
         corfu-preselect 'prompt
@@ -70,6 +66,7 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
   (add-to-list 'corfu-continue-commands #'+corfu/smart-sep-toggle-escape)
   (add-hook 'evil-insert-state-exit-hook #'corfu-quit)
 
+  ;; Respect `+corfu-want-minibuffer-completion'
   (defun +corfu-enable-in-minibuffer-p ()
     "Return non-nil if Corfu should be enabled in the minibuffer.
 See `+corfu-want-minibuffer-completion'."
