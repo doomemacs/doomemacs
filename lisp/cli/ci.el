@@ -270,19 +270,18 @@ Note: warnings are not considered failures.")
                    hooks-path))
           (user-error "Aborted")))
     (make-directory hooks-path 'parents)
-    (print-group!
-     (dolist (hook '("commit-msg" "pre-push"))
-       (let* ((hook (doom-path hooks-path hook))
-              (overwrite-p (file-exists-p hook)))
-         (with-temp-file hook
-           (insert "#!/usr/bin/env sh\n"
-                   (doom-path doom-emacs-dir "bin/doom")
-                   " --no-color ci hook " (file-name-base hook)
-                   " \"$@\""))
-         (set-file-modes hook #o700)
-         (print! (success "%s %s")
-                 (if overwrite-p "Overwrote" "Created")
-                 (path hook)))))))
+    (dolist (hook '("commit-msg" "pre-push"))
+      (let* ((hook (doom-path hooks-path hook))
+             (overwrite-p (file-exists-p hook)))
+        (with-temp-file hook
+          (insert "#!/usr/bin/env sh\n"
+                  (doom-path doom-emacs-dir "bin/doom")
+                  " --no-color ci hook " (file-name-base hook)
+                  " \"$@\""))
+        (set-file-modes hook #o700)
+        (print! (success "%s %s")
+                (if overwrite-p "Overwrote" "Created")
+                (path hook))))))
 
 ;; TODO Move to 'doom lint commits'
 (defcli! (ci lint-commits) (from &optional to)
