@@ -81,8 +81,9 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
                    . ,(file-name-with-extension (doom-path template-dir doom-module-packages-file)
                                                 ".example.el")))))))
 
-    ;; In case no init.el was present the first time it was loaded.
+    ;; In case no init.el (or cli.el) was present before the config was deployed
     (doom-load (doom-path doom-user-dir doom-module-init-file) t)
+    (doom-load (doom-path doom-user-dir "cli.el") t)
 
     ;; Ask if user would like an envvar file generated
     (if (eq envfile? :no)
