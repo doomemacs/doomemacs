@@ -20,10 +20,10 @@
             (version< mu4e-mu-version "1.4"))
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
-  (setq mu4e-attachment-dir
-        (lambda (&rest _)
-          (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
+  ;; mu4e now uses `display-buffer-alist' so we need to add some rules of our own
+  (set-popup-rule! "^\\*mu4e-\\(main\\|headers\\)\\*" :ignore t)
+
   ;; Ensures backward/forward compatibility for mu4e, which is prone to breaking
   ;; updates, and also cannot be pinned, because it's bundled with mu (which you
   ;; must install via your OS package manager).
@@ -233,50 +233,46 @@ is non-nil."
   ;; Wrap text in messages
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
-  ;; mu4e now uses `display-buffer-alist' so we need to add some rules of our own
-  (set-popup-rule! "^\\*mu4e-\\(main\\|headers\\)\\*" :ignore t)
-
   ;; Html mails might be better rendered in a browser
   (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
   (when (fboundp 'make-xwidget)
     (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-in-xwidget)))
 
   ;; Detect empty subjects, and give users an opotunity to fill something in
-  (defun +mu4e-check-for-subject ()
-    "Check that a subject is present, and prompt for a subject if not."
-    (save-excursion
-      (goto-char (point-min))
-      (search-forward "--text follows this line--")
-      (re-search-backward "^Subject:") ; this should be present no matter what
-      (let ((subject (string-trim (substring (thing-at-point 'line) 8))))
-        (when (string-empty-p subject)
-          (end-of-line)
-          (insert (read-string "Subject (optional): "))
-          (message "Sending...")))))
+  (add-hook! 'message-send-hook
+    (defun +mu4e-check-for-subject ()
+      "Check that a subject is present, and prompt for a subject if not."
+      (save-excursion
+        (goto-char (point-min))
+        (search-forward "--text follows this line--")
+        (re-search-backward "^Subject:") ; this should be present no matter what
+        (let ((subject (string-trim (substring (thing-at-point 'line) 8))))
+          (when (string-empty-p subject)
+            (end-of-line)
+            (insert (read-string "Subject (optional): "))
+            (message "Sending..."))))))
 
-  (add-hook 'message-send-hook #'+mu4e-check-for-subject)
-
-  ;; The header view needs a certain amount of horizontal space to
-  ;; actually show you all the information you want to see
-  ;; so if the header view is entered from a narrow frame,
-  ;; it's probably worth trying to expand it
-  (defun +mu4e-widen-frame-maybe ()
-    "Expand the mu4e-headers containing frame's width to `+mu4e-min-header-frame-width'."
-    (dolist (frame (frame-list))
-      (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
-                          mu4e-headers-buffer-name)
-                 (< (frame-width) +mu4e-min-header-frame-width))
-        (set-frame-width frame +mu4e-min-header-frame-width))))
-  (add-hook 'mu4e-headers-mode-hook #'+mu4e-widen-frame-maybe)
+  ;; The header view needs a certain amount of horizontal space to actually show
+  ;; you all the information you want to see so if the header view is entered
+  ;; from a narrow frame, it's probably worth trying to expand it
+  (defvar +mu4e-min-header-frame-width 120
+    "Minimum reasonable with for the header view.")
+  (add-hook! 'mu4e-headers-mode-hook
+    (defun +mu4e-widen-frame-maybe ()
+      "Expand the mu4e-headers containing frame's width to `+mu4e-min-header-frame-width'."
+      (dolist (frame (frame-list))
+        (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
+                            mu4e-headers-buffer-name)
+                   (< (frame-width) +mu4e-min-header-frame-width))
+          (set-frame-width frame +mu4e-min-header-frame-width)))))
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  (when (modulep! :ui workspaces)
-    (map! :map mu4e-main-mode-map
-          :ne "h" #'+workspace/other))
-
-  (map! :map mu4e-headers-mode-map
+  (map! (:when (modulep! :ui workspaces)
+         :map mu4e-main-mode-map
+         :ne "h" #'+workspace/other)
+        :map mu4e-headers-mode-map
         :vne "l" #'+mu4e/capture-msg-to-agenda)
 
   ;; Functionality otherwise obscured in mu4e 1.6
@@ -354,18 +350,19 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
         :desc "save draft"    "S" #'message-dont-send
         :desc "attach"        "a" #'+mu4e/attach-files)
 
-  ;; Due to evil, none of the marking commands work when making a visual selection in
-  ;; the headers view of mu4e. Without overriding any evil commands we may actually
-  ;; want to use in and evil selection, this can be easily fixed.
-  (when (modulep! :editor evil)
-    (map! :map mu4e-headers-mode-map
-          :v "*" #'mu4e-headers-mark-for-something
-          :v "!" #'mu4e-headers-mark-for-read
-          :v "?" #'mu4e-headers-mark-for-unread
-          :v "u" #'mu4e-headers-mark-for-unmark))
+  ;; Due to evil, none of the marking commands work when making a visual
+  ;; selection in the headers view of mu4e. Without overriding any evil commands
+  ;; we may actually want to use in and evil selection, this can be easily
+  ;; fixed.
+  (map! :map mu4e-headers-mode-map
+        :v "*" #'mu4e-headers-mark-for-something
+        :v "!" #'mu4e-headers-mark-for-read
+        :v "?" #'mu4e-headers-mark-for-unread
+        :v "u" #'mu4e-headers-mark-for-unmark)
 
-  (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address-h)
+  (add-hook 'mu4e-compose-pre-hook #'+mu4e-set-from-address-h)
 
+  ;; HACK
   (defadvice! +mu4e-ensure-compose-writeable-a (&rest _)
     "Ensure that compose buffers are writable.
 This should already be the case yet it does not always seem to be."
@@ -375,15 +372,14 @@ This should already be the case yet it does not always seem to be."
     :before #'mu4e-compose-resend
     (read-only-mode -1))
 
-  ;; process lock control
+  ;; HACK: process lock control
   (when (featurep :system 'windows)
-    (setq
-     +mu4e-lock-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock")
-     +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
+    (setq +mu4e-lock-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock")
+          +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
 
   (add-hook 'kill-emacs-hook #'+mu4e-lock-file-delete-maybe)
-  (advice-add 'mu4e--start :around #'+mu4e-lock-start)
-  (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
+  (advice-add #'mu4e--start :around #'+mu4e-lock-start)
+  (advice-add #'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
 
 (use-package! org-msg
