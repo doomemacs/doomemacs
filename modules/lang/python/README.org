@@ -10,7 +10,7 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
 - Snippets
 - Run tests ([[doom-package:nose]], [[doom-package:pytest]])
 - Auto-format (with ~black~, requires [[doom-module::editor format]])
-- LSP integration (=pyls=, =jedi=, =ruff=, or =pyright=)
+- LSP integration (=pyls=, =jedi=, =ruff=, =pyright=, or =basedpyright=)
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -86,9 +86,10 @@ For LSP support the [[doom-module::tools lsp]] module must be enabled, along wit
 
 An alternative LSP server can be used by installing them through the
 [[cmd:][lsp-install-server]] command, or an external package manager. For example:
+- To install *basedpyright*: ~$ pip install basedpyright~
+- To install *pyright*: ~$ pip install pyright~ or ~$ npm i -g pyright~.
 - To install [[https://pypi.org/project/python-language-server/][*pyls*]]: ~$ pip install python-language-server[all]~.
 - To install *mspyls*: ~M-x lsp-install-server RET mspyls~.
-- To install *pyright*: ~$ pip install pyright~ or ~$ npm i -g pyright~.
 
 ** Formatter
 
