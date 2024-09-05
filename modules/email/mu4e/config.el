@@ -240,9 +240,9 @@ is non-nil."
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
   ;; Html mails might be better rendered in a browser
-  (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
-  (when (fboundp 'make-xwidget)
-    (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-in-xwidget)))
+  (add-to-list 'mu4e-view-actions '("view in browser" . mu4e-action-view-in-browser))
+  (when (fboundp 'xwidget-webkit-browse-url)
+    (add-to-list 'mu4e-view-actions '("xview in xwidget" . mu4e-action-view-in-xwidget)))
 
   ;; Detect empty subjects, and give users an opotunity to fill something in
   (add-hook! 'message-send-hook
