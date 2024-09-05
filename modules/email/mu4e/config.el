@@ -24,6 +24,14 @@
         (lambda (&rest _)
           (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
+  ;; Ensures backward/forward compatibility for mu4e, which is prone to breaking
+  ;; updates, and also cannot be pinned, because it's bundled with mu (which you
+  ;; must install via your OS package manager).
+  (with-demoted-errors "%s" (require 'mu4e-compat nil t))
+  ;; For users on older mu4e.
+  (unless (boundp 'mu4e-headers-buffer-name)
+    (defvar mu4e-headers-buffer-name "*mu4e-headers*"))
+
   (cond ((or (modulep! +mbsync)
              (eq +mu4e-backend 'mbsync))
          (setq mu4e-get-mail-command "mbsync -a"

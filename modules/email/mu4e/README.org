@@ -46,7 +46,7 @@ This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/cod
   export) and HTML message.
 
 ** Packages
-- [[doom-package:mu4e-alert]]
+- [[doom-package:mu4e-compat]]
 - [[doom-package:org-msg]] if [[doom-module:+org]]
 
 ** TODO Hacks
