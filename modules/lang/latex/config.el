@@ -42,7 +42,15 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
 ;;
 ;; Packages
 
-(add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
+;; HACK: Doom sets `custom-dont-initialize' during the early parts of its
+;;   startup process. This stops tex-site's setter on `TeX-modes' from
+;;   activating in `tex-site', which auctex loads *very early* from its
+;;   autoloads file. `tex-site's existence is hacky (more a historical artifact
+;;   and necessary evil, given its conflicts with the built in latex modes), so
+;;   I fix it as a one-off problem rather than a systemic one.
+(after! tex-site
+  (TeX-modes-set 'TeX-modes TeX-modes))
+
 
 (setq TeX-parse-self t ; parse on load
       TeX-auto-save t  ; parse on save
