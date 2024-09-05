@@ -375,19 +375,14 @@ This should already be the case yet it does not always seem to be."
   (advice-add 'mu4e--start :around #'+mu4e-lock-start)
   (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
-(unless (modulep! +org)
-  (after! mu4e
-    (defun org-msg-mode (&optional _)
-      "Dummy function."
-      (message "Enable the +org mu4e flag to use org-msg-mode."))
-    (defun +mu4e-compose-org-msg-handle-toggle (&rest _)
-      "Placeholder to allow for the assumtion that this function is defined.
-Ignores all arguments and returns nil."
-      nil)))
 
 (use-package! org-msg
-  :after mu4e
   :when (modulep! +org)
+  :defer t
+  :init
+  ;; Avoid using `:after' because it ties the :config below to when `mu4e'
+  ;; loads, rather than when `org-msg' loads.
+  (after! mu4e (require 'org-msg))
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"
@@ -403,26 +398,25 @@ Ignores all arguments and returns nil."
 (\\(?:attached\\|enclosed\\))\\|\
 \\(?:attached\\|enclosed\\)[ \t\n]\\(?:for\\|is\\)[ \t\n]")
 
-  (defvar +org-msg-currently-exporting nil
-    "Helper variable to indicate whether org-msg is currently exporting the org buffer to HTML.
-Usefull for affecting HTML export config.")
-  (defadvice! +org-msg--now-exporting-a (&rest _)
-    :before #'org-msg-org-to-xml
-    (setq +org-msg-currently-exporting t))
-  (defadvice! +org-msg--not-exporting-a (&rest _)
-    :after #'org-msg-org-to-xml
-    (setq +org-msg-currently-exporting nil))
-
-  (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled-a)
-  (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled-a)
-
   (map! :map org-msg-edit-mode-map
+        "TAB" #'org-msg-tab   ; To mirror the binding on <tab>
         :desc "attach" "C-c C-a" #'+mu4e/attach-files
         :localleader
         :desc "attach" "a" #'+mu4e/attach-files)
 
-  ;; I feel like it's reasonable to expect files to be attached
-  ;; in the order you attach them, not the reverse.
+  ;; HACK: ...
+  (defvar +org-msg-currently-exporting nil
+    "Non-nil if org-msg is currently exporting the org buffer to HTML.")
+  (defadvice! +org-msg--now-exporting-a (fn &rest args)
+    :around #'org-msg-org-to-xml
+    (let ((+org-msg-currently-exporting t))
+      (apply fn args)))
+
+  ;; HACK: ...
+  (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled-a)
+  (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled-a)
+
+  ;; HACK: Ensure files are attached in the order they were attached.
   (defadvice! +org-msg-attach-attach-in-order-a (file &rest _args)
     "Link FILE into the list of attachment."
     :override #'org-msg-attach-attach
@@ -431,30 +425,27 @@ Usefull for affecting HTML export config.")
       (org-msg-set-prop "attachment" (nconc files (list file)))))
 
   (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
-    "Whether to toggle ")
+    "Whether to toggle `org-msg-toggle' on ")
   (defun +mu4e-compose-org-msg-handle-toggle (toggle-p)
     (when (xor toggle-p +mu4e-compose-org-msg-toggle-next)
       (org-msg-mode (if org-msg-mode -1 1))
       (setq +mu4e-compose-org-msg-toggle-next
             (not +mu4e-compose-org-msg-toggle-next))))
 
-  (defadvice! +mu4e-maybe-toggle-org-msg-a (fn &optional toggle-p)
-    :around #'mu4e-compose-new
-    :around #'mu4e-compose-reply
-    :around #'mu4e-compose-forward
-    :around #'mu4e-compose-resend
-    (interactive "p")
-    (+mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
-    (funcall fn))
+  ;; HACK: ...
+  (defadvice! +mu4e-maybe-toggle-org-msg-a (&rest _)
+    :before #'mu4e-compose-new
+    :before #'mu4e-compose-reply
+    :before #'mu4e-compose-forward
+    :before #'mu4e-compose-resend
+    (+mu4e-compose-org-msg-handle-toggle (/= 1 (or current-prefix-arg 0))))
 
+  ;; HACK: ...
   (defadvice! +mu4e-draft-open-signature-a (fn &rest args)
     "Prevent `mu4e-compose-signature' from being used with `org-msg-mode'."
     :around #'mu4e-draft-open
     (let ((mu4e-compose-signature (unless org-msg-mode mu4e-compose-signature)))
       (apply fn args)))
-
-  (map! :map org-msg-edit-mode-map
-        "TAB" #'org-msg-tab) ; only <tab> bound by default
 
   (defvar +org-msg-accent-color "#c01c28"
     "Accent color to use in org-msg's generated CSS.
@@ -472,12 +463,11 @@ Must be set before org-msg is loaded to take effect.")
                (table `((margin-top . "6px") (margin-bottom . "6px")
                         (border-left . "none") (border-right . "none")
                         (border-top . "2px solid #222222")
-                        (border-bottom . "2px solid #222222")
-                        ))
+                        (border-bottom . "2px solid #222222")))
                (ftl-number `(,color ,bold (text-align . "left")))
                (inline-modes '(asl c c++ conf cpp csv diff ditaa emacs-lisp
-                                   fundamental ini json makefile man org plantuml
-                                   python sh xml))
+                               fundamental ini json makefile man org plantuml
+                               python sh xml))
                (inline-src `((background-color . "rgba(27,31,35,.05)")
                              (border-radius . "3px")
                              (padding . ".2em .4em")
