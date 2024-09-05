@@ -40,7 +40,7 @@ This module requires Erlang be installed (which includes ~erlang-mode~). Check
 your distribution's package manager or a version management tool such as [[https://github.com/kerl/kerl][kerl]].
 
 - [[https://github.com/erlang/sourcer][sourcer]] when [[doom-module::tools lsp]] & [[doom-module:+lsp]]
-- [[https://github.com/sile/efmt][efmt]] when [[doom-module::editor format]]
+- [[https://github.com/erlang/rebar3][rebar3]] with [[https://github.com/WhatsApp/erlfmt][erlfmt]] when [[doom-module::editor format]]
 
 * TODO Usage
 #+begin_quote
