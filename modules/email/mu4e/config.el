@@ -21,6 +21,7 @@
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
   :config
+  (add-to-list 'doom-debug-variables 'mu4e-debug)
   ;; mu4e now uses `display-buffer-alist' so we need to add some rules of our own
   (set-popup-rule! "^\\*mu4e-\\(main\\|headers\\)\\*" :ignore t)
 
