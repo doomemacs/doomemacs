@@ -2,6 +2,7 @@
 
 (defvar +mu4e-backend 'mbsync
   "Which backend to use. Can either be offlineimap, mbsync or nil (manual).")
+(make-obsolete-variable '+mu4e-backend "Use the :email mu4e module's +mbsync or +offlineimap flags instead" "3.0.0")
 
 (defvar +mu4e-personal-addresses 'nil
   "Alternative to mu4e-personal-addresses that can be set for each account (mu4e context).")
@@ -23,6 +24,14 @@
         (lambda (&rest _)
           (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
+  (cond ((or (modulep! +mbsync)
+             (eq +mu4e-backend 'mbsync))
+         (setq mu4e-get-mail-command "mbsync -a"
+               mu4e-change-filenames-when-moving t))
+        ((or (modulep! +offlineimap)
+             (eq +mu4e-backend 'offlineimap))
+         (setq mu4e-get-mail-command "offlineimap -o -q")))
+
   (when (version< mu4e-mu-version "1.8")
     ;; Define aliases to maintain backwards compatibility. The list of suffixes
     ;; were obtained by comparing mu4e~ and mu4e-- functions in `obarray'.
@@ -66,13 +75,6 @@ is non-nil."
           mu4e-view-show-images t
           mu4e-view-image-max-width 800
           mu4e-view-use-gnus t))
-
-  (pcase +mu4e-backend
-    (`mbsync
-     (setq mu4e-get-mail-command "mbsync -a"
-           mu4e-change-filenames-when-moving t))
-    (`offlineimap
-     (setq mu4e-get-mail-command "offlineimap -o -q")))
 
   (setq mu4e-update-interval nil
         mu4e-notification-support t
