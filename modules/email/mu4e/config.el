@@ -35,7 +35,12 @@
 
   (cond ((or (modulep! +mbsync)
              (eq +mu4e-backend 'mbsync))
-         (setq mu4e-get-mail-command "mbsync -a"
+         (setq mu4e-get-mail-command
+               (format "mbsync --all --config %S"
+                       ;; XDG support was added to isync 1.5, but this lets
+                       ;; users on older benefit from it sooner.
+                       (or (file-exists-p! "isyncrc" (or (getenv "XDG_CONFIG_HOME") "~/.config"))
+                           "~/.mbsyncrc"))
                mu4e-change-filenames-when-moving t))
         ((or (modulep! +offlineimap)
              (eq +mu4e-backend 'offlineimap))
