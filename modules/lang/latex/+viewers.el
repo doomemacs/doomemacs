@@ -12,6 +12,7 @@
           (and (featurep :system 'macos)
                (file-exists-p! (or "/Applications/Skim.app"
                                    "~/Applications/Skim.app"))))
+       (delete '(output-pdf "Skim") TeX-view-program-selection)
        (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))
        (add-to-list 'TeX-view-program-list
                     (list "Skim" (format "%s/Contents/SharedSupport/displayline -r -b %%n %%o %%b"
@@ -20,6 +21,7 @@
     (`sumatrapdf
      (when (and (featurep :system 'windows)
                 (executable-find "SumatraPDF"))
+       (delete '(output-pdf "SumatraPDF") TeX-view-program-selection)
        (add-to-list 'TeX-view-program-selection '(output-pdf "SumatraPDF"))))
 
     (`okular
@@ -27,18 +29,22 @@
        ;; Configure Okular as viewer. Including a bug fix
        ;; (https://bugs.kde.org/show_bug.cgi?id=373855).
        (add-to-list 'TeX-view-program-list '("Okular" ("okular --noraise --unique file:%o" (mode-io-correlate "#src:%n%a"))))
+       (delete '(output-pdf "Okular") TeX-view-program-selection)
        (add-to-list 'TeX-view-program-selection '(output-pdf "Okular"))))
 
     (`zathura
      (when (executable-find "zathura")
+       (delete '(output-pdf "Zathura") TeX-view-program-selection)
        (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))))
 
     (`evince
      (when (executable-find "evince")
+       (delete '(output-pdf "Evince") TeX-view-program-selection)
        (add-to-list 'TeX-view-program-selection '(output-pdf "Evince"))))
 
     (`pdf-tools
      (when (modulep! :tools pdf)
+       (delete '(output-pdf "PDF Tools") TeX-view-program-selection)
        (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
        (when (featurep :system 'macos)
          ;; PDF Tools isn't in `TeX-view-program-list-builtin' on macs.
