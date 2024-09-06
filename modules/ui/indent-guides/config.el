@@ -16,7 +16,7 @@ non-nil, the mode will not be activated."
 (use-package! highlight-indent-guides
   :hook ((prog-mode text-mode conf-mode) . +indent-guides-init-maybe-h)
   :init
-  (setq highlight-indent-guides-method (if (display-graphic-p) 'bitmap 'character)
+  (setq highlight-indent-guides-method 'character
         highlight-indent-guides-bitmap-function #'highlight-indent-guides--bitmap-line)
 
   (defun +indent-guides-init-maybe-h ()
