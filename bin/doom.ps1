@@ -1,7 +1,7 @@
 # bin/doom.ps1
 
 if (!(Get-Command -Erroraction silentlycontinue emacs.exe)) {
-    echo "Couldn't find emacs.exe in your $PATH."
+    echo "Couldn't find emacs.exe in your PATH."
     exit 1
 }
 
