@@ -78,8 +78,8 @@ And jumps to your `doom!' block."
   (format "%s sync -B -e"
           ;; /usr/bin/env doesn't exist on Android
           (if (featurep :system 'android)
-              "sh %%s"
-            "%%s"))
+              "sh %s"
+            "%s"))
   "Command that `doom/reload' runs.")
 ;;;###autoload
 (defun doom/reload ()
@@ -147,8 +147,8 @@ imported into Emacs."
   (format "%s upgrade -B --force"
           ;; /usr/bin/env doesn't exist on Android
           (if (featurep :system 'android)
-              "sh %%s"
-            "%%s"))
+              "sh %s"
+            "%s"))
   "Command that `doom/upgrade' runs.")
 ;;;###autoload
 (defun doom/upgrade ()
