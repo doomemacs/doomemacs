@@ -21,7 +21,6 @@ This module provides Magit, an interface to the Git version control system.
 - [[doom-package:forge]] if [[doom-module:+forge]]
 - [[doom-package:code-review]] if [[doom-module:+forge]]
 - [[doom-package:magit]]
-- [[doom-package:magit-todos]]
 
 ** Hacks
 - [[doom-package:magit]] has been modified to recognize =$XDG_CACHE_HOME/git/credential/socket=.
