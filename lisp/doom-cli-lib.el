@@ -180,6 +180,14 @@ If set to nil, only display benchmark if a CLI explicitly requested with a
 non-nil :benchmark property.
 If set to `always', show the benchmark no matter what.")
 
+(defvar doom-cli-shell
+  (pcase (getenv "__DOOMSH")
+    ("ps1" 'pwsh)
+    (_ 'sh))
+  "What shell environment Doom has been started with.
+
+Can be `pwsh' if invoked via bin/doom.ps1, or `sh' in unix environments.")
+
 ;;; Internal variables
 (defvar doom-cli--context nil)
 (defvar doom-cli--exit-code 255)
@@ -1121,9 +1129,9 @@ Emacs' batch library lacks an implementation of the exec system call."
     (error "__DOOMSTEP envvar missing; extended `exit!' functionality will not work"))
   (let* ((pid  (doom-cli-context-pid context))
          (step (doom-cli-context-step context))
-         (shtype (or (getenv "__DOOMSH") "sh"))
+         (shext (if (eq doom-cli-shell 'pwsh) "ps1" "sh"))
          (context-file (format (doom-path temporary-file-directory "doom.%s.%s.context") pid step))
-         (script-file  (format (doom-path temporary-file-directory "doom.%s.%s.%s") pid step shtype))
+         (script-file  (format (doom-path temporary-file-directory "doom.%s.%s.%s") pid step shext))
          (command (if (listp args) (combine-and-quote-strings (remq nil args)) args))
          (persistent-files
           (combine-and-quote-strings (delq nil (list script-file context-file))))
@@ -1163,20 +1171,20 @@ Emacs' batch library lacks an implementation of the exec system call."
       (doom-log "restart: writing post-script to %s" script-file)
       (doom-file-write
        script-file
-       (pcase-exhaustive shtype
-         ("sh" `(,(if (featurep :system 'android)
-                      "#!/bin/sh\n"
-                    "#!/usr/bin/env sh\n")
-                 "trap _doomcleanup EXIT\n"
-                 "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
-                 "_doomrun() {\n  " ,command "\n}\n"
-                 ,(cl-loop for (var . val) in persisted-env
-                           concat (format "%s=%s \\\n" var (shell-quote-argument val)))
-                 ,(format "PATH=\"%s%s$PATH\" \\\n"
-                          (doom-path doom-emacs-dir "bin")
-                          path-separator)
-                 "_doomrun \"$@\"\n"))
-         ("ps1" `("try {\n"
+       (pcase-exhaustive doom-cli-shell
+         (`sh `(,(if (featurep :system 'android)
+                     "#!/bin/sh\n"
+                   "#!/usr/bin/env sh\n")
+                "trap _doomcleanup EXIT\n"
+                "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
+                "_doomrun() {\n  " ,command "\n}\n"
+                ,(cl-loop for (var . val) in persisted-env
+                          concat (format "%s=%s \\\n" var (shell-quote-argument val)))
+                ,(format "PATH=\"%s%s$PATH\" \\\n"
+                         (doom-path doom-emacs-dir "bin")
+                         path-separator)
+                "_doomrun \"$@\"\n"))
+         (`pwsh `("try {\n"
                   ,(cl-loop for (var . val) in persisted-env
                             concat (format "  $__%s = $env:%s; $env:%s = %S\n  "
                                            var var var val))
@@ -1286,7 +1294,7 @@ Arguments don't have to be switches either."
 
 ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
   (let ((pager (or doom-cli-pager (getenv "DOOMPAGER"))))
-    (cond ((equal (getenv "__DOOMSH") "ps1")
+    (cond ((eq doom-cli-shell 'pwsh)
            ;; Pager isn't supported in powershell
            (doom-cli--exit 0 context))
 
@@ -1322,7 +1330,7 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
 
 ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
   (doom-cli--exit
-   (if (equal (getenv "__DOOMSH") "ps1")
+   (if (eq doom-cli-shell 'pwsh)
        0
      (let ((threshold (ceiling (* (doom-cli-context-height context)
                                   doom-cli-pager-ratio))))
