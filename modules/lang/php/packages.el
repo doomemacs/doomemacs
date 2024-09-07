@@ -13,7 +13,7 @@
 (when (modulep! +hack)
   (package! hack-mode
     :recipe (:host github :repo "hhvm/hack-mode")
-    :pin "ccf20511f0f2ed45d00d423c703bb91ab6a8b80c"))
+    :pin "343e45f2a616c726f20ba099f3f98a1a01cec405"))
 
 ;; For building php-extras
-(package! async :pin "f317b0c9c3e60a959f45d035ed5e31a78f1263ac")
+(package! async :pin "43f97d7e689eea65043ded1464747a2f3ce7661c")

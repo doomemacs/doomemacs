@@ -8,4 +8,4 @@
   (package! fish-mode :pin "2526b1803b58cf145bc70ff6ce2adb3f6c246f89"))
 
 (when (modulep! +powershell)
-  (package! powershell :pin "f2da15857e430206e215a3c65289b4058ae3c976"))
+  (package! powershell :pin "38727f1cdaf0c937a62b68ee52ec7196b8149f93"))

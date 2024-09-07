@@ -31,7 +31,7 @@
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                          "(provide 'org-version)\n")))))
-  :pin "f398724bd53eb6af3cf4187c864ec6f89a22ef59")
+  :pin "6a5d0ed342efeb3a4c402672fbe9bfebd80af8b6")  ; release_9.7.11
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
@@ -46,7 +46,7 @@
 ;; TODO Adjust when this is added to GNU ELPA
 (when (modulep! +contacts)
   (package! org-contacts
-    :pin "d0cb221502c9e104b6e3c358128b28761ffddb55"
+    :pin "f0a430442b2ae60035dcd74fc6a76299875694f3"
     :recipe (:host nil
              :type git
              :repo "https://repo.or.cz/org-contacts.git")))
@@ -76,14 +76,14 @@
 (when (modulep! +dragndrop)
   (package! org-download :pin "19e166f0a8c539b4144cfbc614309d47a9b2a9b7"))
 (when (modulep! +gnuplot)
-  (package! gnuplot :pin "7138b139d2dca9683f1a81325c643b2744aa1ea3")
+  (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
   (package! jupyter :pin "f97f4b5d8c83e0b901020f835183dde8a2bf649e"))
 (when (modulep! +journal)
   (package! org-journal :pin "17b34ce8df9649a73b715c13698220bde1628668"))
 (when (modulep! +noter)
-  (package! org-noter :pin "68646b685a0d8c02419234922a9e2d885d6419df"))
+  (package! org-noter :pin "6f292d7f1efb11222c09f3a91c902ea6e4dbfa33"))
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
@@ -95,7 +95,7 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
-  (package! org-re-reveal :pin "dbd8ffb3e57719324491ae47b05fa22ff725744e")
+  (package! org-re-reveal :pin "91610ba9b010b05c52ae7ab77a7890851222db06")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
@@ -110,7 +110,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "8667e441876cd2583fbf7282a65796ea149f0e5f")))
+    :pin "0b9fcbc97b65b349826e63bad89ca121a08fd2be")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")

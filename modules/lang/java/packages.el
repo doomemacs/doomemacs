@@ -19,5 +19,5 @@
     ;;   enabled (i.e. lsp-treemacs isn't installed). This needs to be tackled
     ;;   upstream, but for now:
     (unless (alist-get 'lsp-treemacs doom-packages)
-      (package! lsp-treemacs :pin "1d43e9e0307f84496a4a7ddf9dba481000391dbd"))
-    (package! lsp-java :pin "4909c14b9012eed669a9c3f11a8df055d5bb8a0e")))
+      (package! lsp-treemacs :pin "fb1a07ae0a3d781dea8ac78da2933e0173eb48a4"))
+    (package! lsp-java :pin "868600bf7f47faefe0e5971060dc6e73026cda38")))

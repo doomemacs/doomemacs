@@ -18,4 +18,4 @@
   (package! flycheck-cask :pin "0eeec5197e9d31bfcfc39380b262d65259a87d91"))
 
 ;; Libraries
-(package! buttercup :pin "a1a86b027ffe030e1c78a9f43c50cd20a6fed19a")
+(package! buttercup :pin "bf01a33f8bc2d3664121d3b20f7496e67ce55e6a")
