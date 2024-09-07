@@ -13,7 +13,7 @@
 /This module has no flags./
 
 ** Packages
-- [[doom-package:highlight-indent-guides]]
+- [[doom-package:indent-bars]]
 
 ** Hacks
 /No hacks documented for this module./
