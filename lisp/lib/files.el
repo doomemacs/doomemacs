@@ -45,6 +45,7 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
 Ignores `nil' elements in SEGMENTS, and is intended as a fast compromise between
 `expand-file-name' (slow, but accurate), `file-name-concat' (fast, but
 inaccurate)."
+  (declare (side-effect-free t))
   ;; PERF: An empty `file-name-handler-alist' = faster `expand-file-name'.
   (let (file-name-handler-alist)
     (expand-file-name
@@ -69,7 +70,9 @@ If the glob ends in a slash, only returns matching directories."
          file-name-handler-alist
          (path (apply #'file-name-concat segments)))
     (if (string-suffix-p "/" path)
-        (cl-delete-if-not #'file-directory-p (file-expand-wildcards (substring path 0 -1)))
+        (cl-loop for file in (file-expand-wildcards (substring path 0 -1))
+                 if (file-directory-p file)
+                 collect file)
       (file-expand-wildcards path))))
 
 ;;;###autoload
