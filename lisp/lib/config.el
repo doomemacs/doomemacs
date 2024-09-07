@@ -74,7 +74,12 @@ And jumps to your `doom!' block."
                 ,on-failure))
             nil 'local))))))
 
-(defvar doom-reload-command "%s sync -B -e"
+(defvar doom-reload-command
+  (format "%s sync -B -e"
+          ;; /usr/bin/env doesn't exist on Android
+          (if (featurep :system 'android)
+              "sh %%s"
+            "%%s"))
   "Command that `doom/reload' runs.")
 ;;;###autoload
 (defun doom/reload ()
@@ -138,7 +143,12 @@ imported into Emacs."
         (doom-load-envvars-file doom-env-file)
         (message "Reloaded %S" (abbreviate-file-name doom-env-file))))))
 
-(defvar doom-upgrade-command "%s upgrade -B --force"
+(defvar doom-upgrade-command
+  (format "%s upgrade -B --force"
+          ;; /usr/bin/env doesn't exist on Android
+          (if (featurep :system 'android)
+              "sh %%s"
+            "%%s"))
   "Command that `doom/upgrade' runs.")
 ;;;###autoload
 (defun doom/upgrade ()

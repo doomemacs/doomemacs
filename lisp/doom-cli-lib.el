@@ -1165,7 +1165,9 @@ Emacs' batch library lacks an implementation of the exec system call."
                         ("__DOOMGEOM" . ,(number-to-string (doom-cli-context-step context)))
                         ("__DOOMCONTEXT" . ,context-file))))
          (pcase-exhaustive shtype
-           ("sh" `("#!/usr/bin/env sh\n"
+           ("sh" `(,(if (featurep :system 'android)
+                        "#!/bin/sh\n"
+                      "#!/usr/bin/env sh\n")
                    "trap _doomcleanup EXIT\n"
                    "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
                    "_doomrun() {\n  " ,command "\n}\n"

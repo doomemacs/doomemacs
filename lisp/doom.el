@@ -121,7 +121,8 @@
     ('darwin                           '(macos bsd))
     ((or 'cygwin 'windows-nt 'ms-dos)  '(windows))
     ((or 'gnu 'gnu/linux)              '(linux))
-    ((or 'gnu/kfreebsd 'berkeley-unix) '(linux bsd)))
+    ((or 'gnu/kfreebsd 'berkeley-unix) '(linux bsd))
+    ('android                          '(android)))
   "A list of symbols denoting available features in the active Doom profile.")
 
 ;; Convenience aliases for internal use only (may be removed later).
