@@ -68,6 +68,17 @@ and Emacs states, and for non-evil users.")
                            (key-binding (vconcat (cl-subseq keys 0 -1) [C-i]) nil t)))
                     [C-i] [?\C-i])))
 
+;; HACK: Same as C-i, but C-m is a little harder. There is no workaround for
+;;   this for the terminal.
+(define-key input-decode-map
+  [?\C-m] (cmd! (if (when-let ((keys (this-single-command-raw-keys)))
+                      (and (display-graphic-p)
+                           (not (cl-position 'return    keys))
+                           (not (cl-position 'kp-return keys))
+                           ;; Fall back if no <C-m> keybind can be found.
+                           (key-binding (vconcat (cl-subseq keys 0 -1) [C-m]) nil t)))
+                    [C-m] [?\C-m])))
+
 
 ;;
 ;;; Universal, non-nuclear escape
