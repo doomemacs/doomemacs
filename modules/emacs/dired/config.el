@@ -124,6 +124,16 @@ Fixes #3939: unsortable dired entries on Windows."
     (setq dirvish-subtree-always-show-state t)
     (appendq! dirvish-attributes '(nerd-icons subtree-state)))
 
+  ;; HACK: Fixes #8038. Because `dirvish-reuse-session' is unset above, when
+  ;;   walking a directory tree, previous dired buffers are killed along the
+  ;;   way, which is jarring for folks who expect to be able to switch back to
+  ;;   those buffers before their dired session ends. As long as we retain
+  ;;   those, Dirvish will still clean them up on `dirvish-quit'.
+  (defadvice! +dired--retain-buffers-on-dirvish-find-entry-a (fn &rest args)
+    :around #'dirvish-find-entry-a
+    (let ((dirvish-reuse-session t))
+      (apply fn args)))
+
   ;; HACK: Makes `dirvish-hide-details' and `dirvish-hide-cursor' accept a list
   ;;   of symbols to instruct Dirvish in what contexts they should be enabled.
   ;;   The accepted values are:
