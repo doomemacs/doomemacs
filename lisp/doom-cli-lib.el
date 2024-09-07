@@ -1322,16 +1322,18 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
 
 ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
   (doom-cli--exit
-   (let ((threshold (ceiling (* (doom-cli-context-height context)
-                                doom-cli-pager-ratio))))
-     (if (>= (let ((stdout (doom-cli-context-stdout context)))
-               (if (fboundp 'buffer-line-statistics)
-                   (car (buffer-line-statistics stdout))
-                 (with-current-buffer stdout
-                   (count-lines (point-min) (point-max)))))
-             threshold)
-         (cons :pager args)
-       0))
+   (if (equal (getenv "__DOOMSH") "ps1")
+       0
+     (let ((threshold (ceiling (* (doom-cli-context-height context)
+                                  doom-cli-pager-ratio))))
+       (if (>= (let ((stdout (doom-cli-context-stdout context)))
+                 (if (fboundp 'buffer-line-statistics)
+                     (car (buffer-line-statistics stdout))
+                   (with-current-buffer stdout
+                     (count-lines (point-min) (point-max)))))
+               threshold)
+           (cons :pager args)
+         0)))
    context))
 
 ;; (defun doom-cli--exit-editor (args context))  ; TODO Launch $EDITOR
