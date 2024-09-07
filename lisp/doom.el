@@ -270,7 +270,7 @@ These files should not be shared across systems. By default, it is used by
 (defvar doom-data-dir
   (if doom-profile
       (if doom--system-windows-p
-          (expand-file-name "doomemacs/data/" (getenv-internal "APPDATA"))
+          (expand-file-name "doomemacs/data/" (getenv-internal "LOCALAPPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_DATA_HOME") "~/.local/share")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
     (file-name-concat doom-local-dir "etc/"))
@@ -289,7 +289,7 @@ For profile-local data files, use `doom-profile-data-dir' instead.")
 (defvar doom-cache-dir
   (if doom-profile
       (if doom--system-windows-p
-          (expand-file-name "doomemacs/cache/" (getenv-internal "APPDATA"))
+          (expand-file-name "doomemacs/cache/" (getenv-internal "LOCALAPPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_CACHE_HOME") "~/.cache")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
     (file-name-concat doom-local-dir "cache/"))
@@ -308,7 +308,7 @@ For profile-local cache files, use `doom-profile-cache-dir' instead.")
 (defvar doom-state-dir
   (if doom-profile
       (if doom--system-windows-p
-          (expand-file-name "doomemacs/state/" (getenv-internal "APPDATA"))
+          (expand-file-name "doomemacs/state/" (getenv-internal "LOCALAPPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_STATE_HOME") "~/.local/state")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
     (file-name-concat doom-local-dir "state/"))
