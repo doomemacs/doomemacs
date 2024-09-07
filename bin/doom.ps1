@@ -32,7 +32,7 @@ try {
 }
 
 if ($exit -eq 254) {
-    & pwsh "$env:TMPDIR\doom.$($env:__DOOMPID).$($env:__DOOMSTEP).ps1" $PSCommandPath $args
+    & pwsh "$($env:temp)\doom.$($env:__DOOMPID).$($env:__DOOMSTEP).ps1" $PSCommandPath $args
     $exit = $LASTEXITCODE
 }
 exit $exit
