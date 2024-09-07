@@ -1128,13 +1128,20 @@ Emacs' batch library lacks an implementation of the exec system call."
          (persistent-files
           (combine-and-quote-strings (delq nil (list script-file context-file))))
          (persisted-env
-          (save-match-data
-            (cl-loop with initial-env = (get 'process-environment 'initial-value)
-                     for env in (seq-difference process-environment initial-env)
-                     if (string-match "^\\([a-zA-Z0-9_][^=]+\\)=\\(.+\\)$" env)
-                     collect (format "%s=%s"
-                                     (match-string 1 env)
-                                     (shell-quote-argument (match-string 2 env)))))))
+          (cl-remove-if-not
+           #'cdr (append
+                  `(("DOOMPROFILE" . ,(ignore-errors (doom-profile->id doom-profile)))
+                    ("EMACSDIR" . ,doom-emacs-dir)
+                    ("DOOMDIR" . ,doom-user-dir)
+                    ("DEBUG" . ,(if init-file-debug "1"))
+                    ("__DOOMPID" . ,(number-to-string (doom-cli-context-pid context)))
+                    ("__DOOMSTEP" . ,(number-to-string (doom-cli-context-step context)))
+                    ("__DOOMCONTEXT" . ,context-file))
+                  (save-match-data
+                    (cl-loop with initial-env = (get 'process-environment 'initial-value)
+                             for env in (seq-difference process-environment initial-env)
+                             if (string-match "^\\([a-zA-Z0-9_][^=]+\\)=\\(.+\\)$" env)
+                             collect (cons (match-string 1 env) (match-string 2 env))))))))
     (cl-incf (doom-cli-context-step context))
     (with-file-modes #o600
       (doom-log "restart: writing context to %s" context-file)
@@ -1156,42 +1163,34 @@ Emacs' batch library lacks an implementation of the exec system call."
       (doom-log "restart: writing post-script to %s" script-file)
       (doom-file-write
        script-file
-       (let ((envvars `(("DOOMPROFILE" . ,(ignore-errors (doom-profile->id doom-profile)))
-                        ("EMACSDIR" . ,doom-emacs-dir)
-                        ("DOOMDIR" . ,doom-user-dir)
-                        ("DEBUG" . ,(if init-file-debug "1"))
-                        ("__DOOMPID" . ,(number-to-string (doom-cli-context-pid context)))
-                        ("__DOOMSTEP" . ,(number-to-string (doom-cli-context-step context)))
-                        ("__DOOMGEOM" . ,(number-to-string (doom-cli-context-step context)))
-                        ("__DOOMCONTEXT" . ,context-file))))
-         (pcase-exhaustive shtype
-           ("sh" `(,(if (featurep :system 'android)
-                        "#!/bin/sh\n"
-                      "#!/usr/bin/env sh\n")
-                   "trap _doomcleanup EXIT\n"
-                   "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
-                   "_doomrun() {\n  " ,command "\n}\n"
-                   ,(string-join persisted-env " \\\n")
-                   ,(cl-loop for (envvar . val) in envvars
-                             if val
-                             concat (format "%s=%s \\\n" envvar (shell-quote-argument val)))
-                   ,(format "PATH=\"%s%s$PATH\" \\\n"
-                            (doom-path doom-emacs-dir "bin")
-                            path-separator)
-                   "_doomrun \"$@\"\n"))
-           ("ps1" `("try {\n"
-                    ,(cl-loop for (envvar . val) in envvars
-                              if val
-                              concat (format "  $__%s = $env:%s; $env:%s = %s\\\n  " envvar envvar envvar (shell-quote-argument val)))
-                    ,command
-                    "\n} finally {\n"
-                    ,(cl-loop for file in persistent-files
-                              concat (format "  Remote-Item -Path %S\n  " file))
-                    ,(cl-loop for (envvar . val) in envvars
-                              if val
-                              concat (format "  $env:%s = $__%s\\\n  " envvar envvar))
-                    "\n}"))))))
-    (doom-log "_doomrun: %s %s" (string-join persisted-env " ") command)
+       (pcase-exhaustive shtype
+         ("sh" `(,(if (featurep :system 'android)
+                      "#!/bin/sh\n"
+                    "#!/usr/bin/env sh\n")
+                 "trap _doomcleanup EXIT\n"
+                 "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
+                 "_doomrun() {\n  " ,command "\n}\n"
+                 ,(cl-loop for (var . val) in persisted-env
+                           concat (format "%s=%s \\\n" var (shell-quote-argument val)))
+                 ,(format "PATH=\"%s%s$PATH\" \\\n"
+                          (doom-path doom-emacs-dir "bin")
+                          path-separator)
+                 "_doomrun \"$@\"\n"))
+         ("ps1" `("try {\n"
+                  ,(cl-loop for (var . val) in persisted-env
+                            concat (format "  $__%s = $env:%s; $env:%s = %S\n  "
+                                           var var var val))
+                  ,command
+                  "\n} finally {\n"
+                  ,(cl-loop for file in persistent-files
+                            concat (format "  Remove-Item -Path %S\n  " file))
+                  ,(cl-loop for (var . val) in envvars
+                            concat (format "  $env:%s = $__%s\n  " var var))
+                  "\n}")))))
+    (doom-log "_doomrun: %s %s"
+              (cl-loop for (var . val) in persisted-env
+                       concat (format "%s=%s \\\n" var (shell-quote-argument val)))
+              command)
     (doom-log "_doomcleanup: %s" persistent-files)
     ;; Error code 254 is special: it indicates to the caller that the
     ;; post-script should be executed after this session ends. It's up to
