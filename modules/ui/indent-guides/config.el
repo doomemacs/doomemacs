@@ -60,4 +60,27 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     ;; completion or eldoc popups).
     ;; REVIEW: Swap with `frame-parent' when 27 support is dropped
     (defun +indent-guides-in-childframe-p ()
-      (frame-parameter nil 'parent-frame))))
+      (frame-parameter nil 'parent-frame)))
+
+  (when (modulep! :tools lsp)
+    ;; HACK: lsp-ui-peek uses overlays, and indent-bars doesn't know how to deal
+    ;;   with all the whitespace it uses to format its popups, spamming it with
+    ;;   indent guides. Making the two work together is a project for another
+    ;;   day, so disable `indent-bars-mode' while its active instead. Doesn't
+    ;;   affect character bars though.
+    ;; REVIEW: Report this upstream to `indent-bars'?
+    (defadvice! +indent-guides--remove-after-lsp-ui-peek-a (&rest _)
+      :after #'lsp-ui-peek--peek-new
+      (when (and indent-bars-mode
+                 (not indent-bars-prefer-character)
+                 (overlayp lsp-ui-peek--overlay))
+        (save-excursion
+          (let ((indent-bars--display-function #'ignore)
+                (indent-bars--display-blank-lines-function #'ignore))
+            (indent-bars--fontify (overlay-start lsp-ui-peek--overlay)
+                                  (1+ (overlay-end lsp-ui-peek--overlay))
+                                  nil)))))
+    (defadvice! +indent-guides--restore-after-lsp-ui-peek-a (&rest _)
+      :after #'lsp-ui-peek--peek-hide
+      (unless indent-bars-prefer-character
+        (indent-bars-setup)))))
