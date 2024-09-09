@@ -249,6 +249,9 @@
        (:when (modulep! :ui treemacs)
         :desc "Project sidebar"               "p" #'+treemacs/toggle
         :desc "Find file in project rsidebar" "P" #'treemacs-find-file)
+       (:when (modulep! :emacs dired +dirvish)
+        :desc "Project sidebar"               "p" #'dirvish-side
+        :desc "Find file in project sidebar"  "P" #'+dired/dirvish-side-and-follow)
        (:when (modulep! :term shell)
         :desc "Toggle shell popup"            "t" #'+shell/toggle
         :desc "Open shell here"               "T" #'+shell/here)
