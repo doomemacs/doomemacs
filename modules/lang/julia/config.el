@@ -76,8 +76,10 @@
 (use-package! lsp-julia
   :when (modulep! +lsp)
   :unless (modulep! :tools lsp +eglot)
-  :after lsp-mode
-  :preface (setq lsp-julia-default-environment nil)
+  :defer t
+  :preface
+  (after! lsp-mode (add-to-list 'lsp-client-packages 'lsp-julia))
+  (setq lsp-julia-default-environment nil)
   :init
   ;; If no environment is set, then auto-detect one in ~/.julia/environments/,
   ;; falling back to `lsp-julia-default-environment's default.

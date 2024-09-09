@@ -191,9 +191,6 @@ This is ignored by ccls.")
     (add-to-list 'projectile-globally-ignored-directories "^.ccls-cache$")
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root")
     (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json"))
-  ;; Avoid using `:after' because it ties the :config below to when `lsp-mode'
-  ;; loads, rather than `ccls' loads.
-  (after! lsp-mode (require 'ccls))
   :config
   (set-evil-initial-state! 'ccls-tree-mode 'emacs)
   (set-lsp-priority! 'ccls -2) ; Prioritize clangd over ccls

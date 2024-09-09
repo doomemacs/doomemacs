@@ -26,8 +26,9 @@
 
 
 (use-package! lsp-sourcekit
-  :when (and (modulep! +lsp) (not (modulep! :tools lsp +eglot)))
-  :after swift-mode
+  :when (modulep! +lsp)
+  :when (not (modulep! :tools lsp +eglot))
+  :defer t
   :init (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
   :config
   (set-formatter! 'swiftformat '("swiftformat" "--output" "stdout"))

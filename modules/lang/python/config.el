@@ -353,7 +353,7 @@
   :when (modulep! +lsp)
   :when (modulep! +pyright)
   :when (not (modulep! :tools lsp +eglot))
-  :after lsp-mode
+  :defer t
   :init
   (when-let ((exe (executable-find "basedpyright")))
     (setq lsp-pyright-langserver-command exe)))

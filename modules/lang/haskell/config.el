@@ -53,7 +53,6 @@
   :init
   (add-hook 'haskell-mode-local-vars-hook #'lsp! 'append)
   (add-hook 'haskell-literate-mode-local-vars-hook #'lsp! 'append)
-  (after! lsp-mode (require 'lsp-haskell))
   :config
   ;; Does some strange indentation if it pastes in the snippet
   (setq-hook! 'haskell-mode-hook yas-indent-line 'fixed))
