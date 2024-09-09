@@ -160,25 +160,6 @@ This is ignored by ccls.")
                cuda-mode-local-vars-hook)
              :append #'lsp!)
 
-  (map! :after ccls
-        :map (c-mode-map c++-mode-map)
-        :n "C-h" (cmd! (ccls-navigate "U"))
-        :n "C-j" (cmd! (ccls-navigate "R"))
-        :n "C-k" (cmd! (ccls-navigate "L"))
-        :n "C-l" (cmd! (ccls-navigate "D"))
-        (:localleader
-         :desc "Preprocess file"        "lp" #'ccls-preprocess-file
-         :desc "Reload cache & CCLS"    "lf" #'ccls-reload)
-        (:after lsp-ui-peek
-         (:localleader
-          :desc "Callers list"          "c" #'+cc/ccls-show-caller
-          :desc "Callees list"          "C" #'+cc/ccls-show-callee
-          :desc "References (address)"  "a" #'+cc/ccls-show-references-address
-          :desc "References (not call)" "f" #'+cc/ccls-show-references-not-call
-          :desc "References (Macro)"    "m" #'+cc/ccls-show-references-macro
-          :desc "References (Read)"     "r" #'+cc/ccls-show-references-read
-          :desc "References (Write)"    "w" #'+cc/ccls-show-references-write)))
-
   (when (modulep! :tools lsp +eglot)
     (set-eglot-client! 'cuda-mode '("clangd"))
 
@@ -232,4 +213,22 @@ This is ignored by ccls.")
                   `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
                                               "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                               "-isystem/usr/local/include"]
-                                  :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))
+                                  :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir")))))))
+  (map! :after cc-mode
+        :map (c-mode-map c++-mode-map)
+        :n "C-h" (cmd! (ccls-navigate "U"))
+        :n "C-j" (cmd! (ccls-navigate "R"))
+        :n "C-k" (cmd! (ccls-navigate "L"))
+        :n "C-l" (cmd! (ccls-navigate "D"))
+        (:localleader
+         :desc "Preprocess file"        "lp" #'ccls-preprocess-file
+         :desc "Reload cache & CCLS"    "lf" #'ccls-reload)
+        (:when (modulep! :tools lsp +peek)
+         (:localleader
+          :desc "Callers list"          "c" #'+cc/ccls-show-caller
+          :desc "Callees list"          "C" #'+cc/ccls-show-callee
+          :desc "References (address)"  "a" #'+cc/ccls-show-references-address
+          :desc "References (not call)" "f" #'+cc/ccls-show-references-not-call
+          :desc "References (Macro)"    "m" #'+cc/ccls-show-references-macro
+          :desc "References (Read)"     "r" #'+cc/ccls-show-references-read
+          :desc "References (Write)"    "w" #'+cc/ccls-show-references-write))))
