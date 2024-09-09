@@ -62,6 +62,12 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     (defun +indent-guides-in-childframe-p ()
       (frame-parameter nil 'parent-frame)))
 
+  ;; HACK: `indent-bars-mode' interactions with some packages poorly. This
+  ;;   section is dedicated to package interop fixes.
+  (when (modulep! :tools magit)
+    (after! magit-blame
+      (add-to-list 'magit-blame-disable-modes 'indent-bars-mode)))
+
   (when (modulep! :tools lsp)
     ;; HACK: lsp-ui-peek uses overlays, and indent-bars doesn't know how to deal
     ;;   with all the whitespace it uses to format its popups, spamming it with
