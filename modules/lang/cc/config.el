@@ -215,6 +215,7 @@ This is ignored by ccls.")
   (after! lsp-mode (require 'ccls))
   :config
   (set-evil-initial-state! 'ccls-tree-mode 'emacs)
+  (set-lsp-priority! 'ccls -2) ; Prioritize clangd over ccls
   ;; Disable `ccls-sem-highlight-method' if `lsp-enable-semantic-highlighting'
   ;; is nil. Otherwise, it appears ccls bypasses it.
   (setq-hook! 'lsp-configure-hook
