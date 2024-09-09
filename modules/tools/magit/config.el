@@ -255,3 +255,24 @@ Only has an effect in GUI Emacs.")
     (undefine-key! magit-section-mode-map "M-1" "M-2" "M-3" "M-4" "1" "2" "3" "4" "0")
     ;; `evil-collection-magit-section' binds these redundant keys.
     (map! :map magit-section-mode-map :n "1" nil :n "2" nil :n "3" nil :n "4" nil)))
+
+
+(use-package! git-commit
+  :hook (doom-first-file . global-git-commit-mode)
+  :config
+  (set-yas-minor-mode! 'git-commit-mode)
+
+  ;; Enforce git commit conventions.
+  ;; See https://chris.beams.io/posts/git-commit/
+  (setq git-commit-summary-max-length 50
+        git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))
+  (setq-hook! 'git-commit-mode-hook fill-column 72)
+
+  (add-hook! 'git-commit-setup-hook
+    (defun +vc-start-in-insert-state-maybe-h ()
+      "Start git-commit-mode in insert state if in a blank commit message,
+otherwise in default state."
+      (when (and (bound-and-true-p evil-local-mode)
+                 (not (evil-emacs-state-p))
+                 (bobp) (eolp))
+        (evil-insert-state)))))
