@@ -1,6 +1,7 @@
 ;;; lang/idris/config.el -*- lexical-binding: t; -*-
 
 (after! idris-mode
+  (add-to-list 'completion-ignored-extensions ".ibc")
   (add-hook 'idris-mode-hook #'turn-on-idris-simple-indent)
   (when (modulep! +lsp)
     (add-hook 'idris-mode-hook #'lsp! 'append))
