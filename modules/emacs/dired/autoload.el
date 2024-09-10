@@ -15,7 +15,7 @@
        (dired-git-info-mode 1)))
 
 ;;;###autoload
-(defun +dired/dirvish-side-or-follow (&optional arg)
+(defun +dired/dirvish-side-and-follow (&optional arg)
   "Open `dirvish-side' then find the currently focused file.
 
 If dirvish is already open, remotely jump to the file in Dirvish.
