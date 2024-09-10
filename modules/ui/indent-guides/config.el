@@ -13,6 +13,7 @@ be enabled. If any function returns non-nil, the mode will not be activated."
 ;;; Packages
 
 (use-package! indent-bars
+  :unless noninteractive
   :hook ((prog-mode text-mode conf-mode) . +indent-guides-init-maybe-h)
   :init
   (defun +indent-guides-init-maybe-h ()
