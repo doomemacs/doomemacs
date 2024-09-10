@@ -46,10 +46,8 @@
 ;; TODO Adjust when this is added to GNU ELPA
 (when (modulep! +contacts)
   (package! org-contacts
-    :pin "f0a430442b2ae60035dcd74fc6a76299875694f3"
-    :recipe (:host nil
-             :type git
-             :repo "https://repo.or.cz/org-contacts.git")))
+    :recipe (:host github :repo "doomelpa/org-contacts")
+    :pin "f0a430442b2ae60035dcd74fc6a76299875694f3"))
 
 (when (and (featurep :system 'macos)
            (modulep! :os macos))
@@ -135,9 +133,7 @@
   (package! ob-nim :pin "6fd060a3ecd38be37e4ec2261cd65760a3c35a91"))
 (when (modulep! :lang php)
   (package! ob-php
-    :recipe (:type git
-             :host nil
-             :repo "https://repo.or.cz/ob-php.git")
+    :recipe (:host github :repo "doomelpa/ob-php")
     :pin "6ebf7799e9ded1d5114094f46785960a50000614"))
 (when (modulep! :lang racket)
   (package! ob-racket
