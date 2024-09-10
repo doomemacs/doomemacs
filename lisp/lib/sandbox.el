@@ -64,10 +64,9 @@
                 doom-emacs-dir ,doom-emacs-dir
                 doom-cache-dir ,(expand-file-name "cache/" doom-sandbox-dir)
                 doom-data-dir  ,(expand-file-name "data/" doom-sandbox-dir))
-          (defun doom--write-to-etc-dir-a (fn &rest args)
+          (define-advice locate-user-emacs-file (:around (fn &rest args) restrict-to-data-dir)
             (let ((user-emacs-directory doom-data-dir))
               (apply fn args)))
-          (advice-add #'locate-user-emacs-file :around #'doom--write-to-etc-dir-a)
           ;; emacs essential variables
           (setq before-init-time (current-time)
                 after-init-time nil
@@ -81,11 +80,8 @@
           (setq package--init-file-ensured t
                 package-user-dir ,package-user-dir
                 package-archives ',package-archives)
-          ;; (add-hook 'kill-emacs-hook
-          ;;           (lambda ()
-          ;;             (delete-file user-init-file)
-          ;;             (when (file-equal-p user-emacs-directory ,doom-sandbox-dir)
-          ;;               (delete-directory user-emacs-directory 'recursive))))
+          (with-eval-after-load 'doom
+            (run-hooks 'doom-before-init-hook))
           (with-eval-after-load 'undo-tree
             ;; HACK `undo-tree' sometimes throws errors because
             ;;      `buffer-undo-tree' isn't correctly initialized.
@@ -93,15 +89,13 @@
           ;; Then launch as much about Emacs as we can
           (defun --run-- () ,forms)
           ,(pcase mode
-             (`doom
-              '(--run--))
              (`vanilla-doom+ ; Doom core + modules - private config
+              (user-error "Not supported yet!")
               `(progn
-                 (load-file ,(expand-file-name "doom.el" doom-core-dir))
-                 (setq doom-modules-dirs (list doom-modules-dir))
-                 (let ((doom-init-modules-p t))
-                   (doom-initialize)
-                   (doom-initialize-core-modules))
+                 (require 'doom ,(expand-file-name "doom.el" doom-core-dir))
+                 (let ((doom-module-init-file "__does-not-exist__"))
+                   (require 'doom-start))
+                 (setq doom-module-load-path (list doom-modules-dir))
                  (setq doom-modules ',doom-modules)
                  (maphash (lambda (key plist)
                             (doom-module-put
@@ -116,32 +110,29 @@
                  (maphash (doom-module-loader doom-module-config-file) doom-modules)
                  (doom-run-hooks 'doom-after-modules-config-hook)))
              (`vanilla-doom  ; only Doom core
-              `(progn
-                 (load-file ,(expand-file-name "doom.el" doom-core-dir))
-                 (let ((doom-init-modules-p t))
-                   (doom-initialize)
-                   (doom-initialize-core-modules))
+              `(let ((doom-user-dir "/tmp/does/not/exist"))
+                 (require 'doom ,(expand-file-name "doom.el" doom-core-dir))
+                 (let ((doom-module-init-file "__does-not-exist__"))
+                   (require 'doom-start))
+                 (setq doom-modules (make-hash-table :test 'equal))
                  (--run--)))
              (`vanilla       ; nothing loaded
               `(progn
-                 (if (boundp 'comp-deferred-compilation)
-                     ;; REVIEW Remove me after a month
-                     (setq comp-deferred-compilation nil
-                           comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-async-env-modifier-form)
-                           comp-async-env-modifier-form ',(bound-and-true-p native-comp-async-env-modifier-form)
-                           comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path))
-                   (setq native-comp-deferred-compilation nil
-                         native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-async-env-modifier-form)
-                         native-comp-async-env-modifier-form ',(bound-and-true-p native-comp-async-env-modifier-form)
-                         native-comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path)))
+                 (setq native-comp-deferred-compilation nil
+                       native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-async-env-modifier-form)
+                       native-comp-async-env-modifier-form ',(bound-and-true-p native-comp-async-env-modifier-form)
+                       native-comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path))
                  (package-initialize t)
                  (--run--))))
-          ;; Then rerun Emacs' startup hooks to simulate a fresh Emacs session,
-          ;; because they've already fired.
-          (fset 'doom-run-hook  #',(symbol-function #'doom-run-hook))
-          (fset 'doom-run-hooks #',(symbol-function #'doom-run-hooks))
-          (fset 'doom-run-all-startup-hooks-h #',(symbol-function #'doom-run-all-startup-hooks-h))
-          (doom-run-all-startup-hooks-h))))))
+          (with-eval-after-load 'doom
+            ;; Then rerun Emacs' startup hooks to simulate a fresh Emacs session,
+            ;; because they've already fired.
+            (fset 'doom-run-hook  #',(symbol-function #'doom-run-hook))
+            (fset 'doom-run-hooks #',(symbol-function #'doom-run-hooks))
+            (fset 'doom-run-all-startup-hooks-h #',(symbol-function #'doom-run-all-startup-hooks-h))
+            ;; (doom-run-all-startup-hooks-h)
+            (unless (default-toplevel-value 'mode-line-format)
+              (setq-default mode-line-format (get 'mode-line-format 'initial-value)))))))))
 
 (fset 'doom--run-vanilla-emacs (cmd! (doom--sandbox-run 'vanilla)))
 (fset 'doom--run-vanilla-doom  (cmd! (doom--sandbox-run 'vanilla-doom)))
