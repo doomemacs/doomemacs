@@ -669,7 +669,6 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
 ;;   performance sensitive, so we compile this file on-demand, at least, until
 ;;   Doom adds a formal compile step to 'doom sync'.
 (doom-compile-functions #'+emacs-lisp-highlight-vars-and-faces
-                        #'+emacs-lisp-truncate-pin
                         #'+emacs-lisp--calculate-lisp-indent-a)
 
 ;;; autoload.el ends here
