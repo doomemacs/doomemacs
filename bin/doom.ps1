@@ -7,32 +7,34 @@ if (!(Get-Command -Erroraction silentlycontinue emacs.exe)) {
 
 $doom = "$PSScriptRoot/doom"
 $emacs = if ($env:EMACS) { $env:EMACS } else { (Get-Command emacs.exe).Path }
-$emacsargs = "-q", "--no-site-file", "--batch"
 $oldemacsdir = $env:EMACSDIR
 
 try {
-    $env:EMACSDIR = if (-not $env:EMACSDIR) { (get-item $PSScriptRoot).parent.FullName } else { $env:EMACSDIR }
-    $env:__DOOMSH = if (-not $env:__DOOMSH) { "ps1" } else { $env:__DOOMSH }
-    $env:__DOOMPID = if (-not $env:__DOOMPID) { $PID } else { $env:__DOOMPID }
-    $env:__DOOMSTEP = if (-not $env:__DOOMSTEP) { 0 } else { $env:__DOOMSTEP }
-    $cols = (Get-Host).UI.RawUI.WindowSize.Width
-    $lines = (Get-Host).UI.RawUI.WindowSize.Height
-    $env:__DOOMGEOM = if (-not $env:__DOOMGEOM) { "$cols`x$lines" } else { $env:__DOOMGEOM }
+    if (-not $env:EMACSDIR)   { $env:EMACSDIR = (get-item $PSScriptRoot).parent.FullName; }
+    if (-not $env:__DOOMSH)   { $env:__DOOMSH = "ps1"; }
+    if (-not $env:__DOOMPID)  { $env:__DOOMPID = $PID; }
+    if (-not $env:__DOOMSTEP) { $env:__DOOMSTEP = 0; }
+    if (-not $env:__DOOMGEOM) {
+        $cols = (Get-Host).UI.RawUI.WindowSize.Width
+        $lines = (Get-Host).UI.RawUI.WindowSize.Height
+        $env:__DOOMGEOM = "$cols`x$lines"
+    }
     # $env:__DOOMGPIPE = if (-not $env:__DOOMGPIPE) { $env:__DOOMPIPE } else { $env:__DOOMGPIPE }
     # $env:__DOOMPIPE = ""
 
-    & $emacs $emacsargs --load "$doom" -- --no-color $args
-    $exit = $LASTEXITCODE
+    & $emacs -q --no-site-file --batch --load "$doom" -- --no-color $args
+    if ($LASTEXITCODE -eq 254) {
+        & pwsh "$($env:temp)\doom.$($env:__DOOMPID).$($env:__DOOMSTEP).ps1" $PSCommandPath $args
+        $exit = $LASTEXITCODE
+    }
+    exit $exit
 } finally {
-    $env:EMACSDIR = $oldemacsdir
-    Remove-Item Env:\__DOOMSH
-    Remove-Item Env:\__DOOMPID
-    Remove-Item Env:\__DOOMSTEP
-    Remove-Item Env:\__DOOMGEOM
+    # Only clear the env at top-level
+    if ($env:__DOOMSTEP -eq 0) {
+        $env:EMACSDIR = $oldemacsdir
+        Remove-Item Env:\__DOOMSH
+        Remove-Item Env:\__DOOMPID
+        Remove-Item Env:\__DOOMSTEP
+        Remove-Item Env:\__DOOMGEOM
+    }
 }
-
-if ($exit -eq 254) {
-    & pwsh "$($env:temp)\doom.$($env:__DOOMPID).$($env:__DOOMSTEP).ps1" $PSCommandPath $args
-    $exit = $LASTEXITCODE
-}
-exit $exit
