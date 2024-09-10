@@ -19,3 +19,9 @@
         "m" #'idris-add-missing
         "p" #'idris-proof-search
         "h" #'idris-docs-at-point))
+
+
+(use-package! flycheck-idris
+  :when (modulep! :checkers syntax)
+  :when (not (modulep! :checkers syntax +flymake))
+  :after idris-mode)
