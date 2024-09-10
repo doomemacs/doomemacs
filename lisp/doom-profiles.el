@@ -405,7 +405,16 @@ Defaults to the profile at `doom-profile-default'."
     (letf! ((defun module-loader (group name file &optional noerror)
               (doom-module-context-with (cons group name)
                 `(let ((doom-module-context ,doom-module-context))
-                   (doom-load ,(abbreviate-file-name (file-name-sans-extension file))))))
+                   (doom-load
+                    ,(pcase (cons group name)
+                       ('(:core . nil)
+                        `(file-name-concat
+                          doom-core-dir ,(file-name-nondirectory (file-name-sans-extension file))))
+                       ('(:user . nil)
+                        `(file-name-concat
+                          doom-user-dir ,(file-name-nondirectory (file-name-sans-extension file))))
+                       (_ (abbreviate-file-name (file-name-sans-extension file))))
+                    t))))
             (defun module-list-loader (modules file &optional noerror)
               (cl-loop for (cat . mod) in modules
                        if (doom-module-locate-path cat mod file)

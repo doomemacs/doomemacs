@@ -49,90 +49,74 @@
 
 (defun doom--sandbox-run (&optional mode)
   "TODO"
-  (doom--sandbox-launch
-   (unless (eq mode 'doom) '("-Q"))
-   (let ((forms
-          (read (format "(progn\n%s\n)"
-                        (buffer-substring-no-properties
-                         (point-min)
-                         (point-max))))))
-     (if (eq mode 'doom)
-         forms
-       `(progn
-          ;; doom variables
-          (setq init-file-debug t
-                doom-emacs-dir ,doom-emacs-dir
-                doom-cache-dir ,(expand-file-name "cache/" doom-sandbox-dir)
-                doom-data-dir  ,(expand-file-name "data/" doom-sandbox-dir))
-          (define-advice locate-user-emacs-file (:around (fn &rest args) restrict-to-data-dir)
-            (let ((user-emacs-directory doom-data-dir))
-              (apply fn args)))
-          ;; emacs essential variables
-          (setq before-init-time (current-time)
-                after-init-time nil
-                init-file-debug init-file-debug
-                noninteractive nil
-                process-environment (get 'process-environment 'initial-value)
-                exec-path (get 'exec-path 'initial-value)
-                load-path ',load-path
-                user-init-file load-file-name)
-          ;; package.el
-          (setq package--init-file-ensured t
-                package-user-dir ,package-user-dir
-                package-archives ',package-archives)
-          (with-eval-after-load 'doom
-            (run-hooks 'doom-before-init-hook))
-          (with-eval-after-load 'undo-tree
-            ;; HACK `undo-tree' sometimes throws errors because
-            ;;      `buffer-undo-tree' isn't correctly initialized.
-            (setq-default buffer-undo-tree (make-undo-tree)))
-          ;; Then launch as much about Emacs as we can
-          (defun --run-- () ,forms)
-          ,(pcase mode
-             (`vanilla-doom+ ; Doom core + modules - private config
-              (user-error "Not supported yet!")
-              `(progn
-                 (require 'doom ,(expand-file-name "doom.el" doom-core-dir))
-                 (let ((doom-module-init-file "__does-not-exist__"))
-                   (require 'doom-start))
-                 (setq doom-module-load-path (list doom-modules-dir))
-                 (setq doom-modules ',doom-modules)
-                 (maphash (lambda (key plist)
-                            (doom-module-put
-                             (car key) (cdr key)
-                             :path (doom-module-locate-path (car key) (cdr key))))
-                          doom-modules)
-                 (--run--)
-                 (doom-run-hooks 'doom-before-modules-init-hook)
-                 (maphash (doom-module-loader doom-module-init-file) doom-modules)
-                 (doom-run-hooks 'doom-after-modules-init-hook)
-                 (doom-run-hooks 'doom-before-modules-config-hook)
-                 (maphash (doom-module-loader doom-module-config-file) doom-modules)
-                 (doom-run-hooks 'doom-after-modules-config-hook)))
-             (`vanilla-doom  ; only Doom core
-              `(let ((doom-user-dir "/tmp/does/not/exist"))
-                 (require 'doom ,(expand-file-name "doom.el" doom-core-dir))
-                 (let ((doom-module-init-file "__does-not-exist__"))
-                   (require 'doom-start))
-                 (setq doom-modules (make-hash-table :test 'equal))
-                 (--run--)))
-             (`vanilla       ; nothing loaded
-              `(progn
-                 (setq native-comp-deferred-compilation nil
-                       native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-async-env-modifier-form)
-                       native-comp-async-env-modifier-form ',(bound-and-true-p native-comp-async-env-modifier-form)
-                       native-comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path))
-                 (package-initialize t)
-                 (--run--))))
-          (with-eval-after-load 'doom
-            ;; Then rerun Emacs' startup hooks to simulate a fresh Emacs session,
-            ;; because they've already fired.
-            (fset 'doom-run-hook  #',(symbol-function #'doom-run-hook))
-            (fset 'doom-run-hooks #',(symbol-function #'doom-run-hooks))
-            (fset 'doom-run-all-startup-hooks-h #',(symbol-function #'doom-run-all-startup-hooks-h))
-            ;; (doom-run-all-startup-hooks-h)
-            (unless (default-toplevel-value 'mode-line-format)
-              (setq-default mode-line-format (get 'mode-line-format 'initial-value)))))))))
+  (letenv! (("DOOMDIR" (if (eq mode 'vanilla-doom+)
+                           (expand-file-name "___does_not_exist___" temporary-file-directory)
+                         doom-user-dir)))
+    (doom--sandbox-launch
+     (unless (memq mode '(doom vanilla-doom+)) '("-Q"))
+     (let ((forms
+            (read (format "(progn\n%s\n)"
+                          (buffer-substring-no-properties
+                           (point-min)
+                           (point-max))))))
+       (if (memq mode '(doom vanilla-doom+))
+           forms
+         `(progn
+            ;; doom variables
+            (setq init-file-debug t
+                  doom-log-level 2
+                  doom-emacs-dir ,doom-emacs-dir
+                  doom-cache-dir ,(expand-file-name "cache/" doom-sandbox-dir)
+                  doom-data-dir  ,(expand-file-name "data/" doom-sandbox-dir))
+            (define-advice locate-user-emacs-file (:around (fn &rest args) restrict-to-data-dir)
+              (let ((user-emacs-directory doom-data-dir))
+                (apply fn args)))
+            ;; emacs essential variables
+            (setq before-init-time (current-time)
+                  after-init-time nil
+                  init-file-debug init-file-debug
+                  noninteractive nil
+                  process-environment (get 'process-environment 'initial-value)
+                  exec-path (get 'exec-path 'initial-value)
+                  load-path ',load-path
+                  user-init-file load-file-name)
+            ;; package.el
+            (setq package--init-file-ensured t
+                  package-user-dir ,package-user-dir
+                  package-archives ',package-archives)
+            (with-eval-after-load 'doom
+              (run-hooks 'doom-before-init-hook))
+            (with-eval-after-load 'undo-tree
+              ;; HACK `undo-tree' sometimes throws errors because
+              ;;      `buffer-undo-tree' isn't correctly initialized.
+              (setq-default buffer-undo-tree (make-undo-tree)))
+            ;; Then launch as much about Emacs as we can
+            (defun --run-- () ,forms)
+            ,(pcase mode
+               (`vanilla-doom  ; only Doom core
+                `(let ((doom-user-dir "/tmp/does/not/exist"))
+                   (require 'doom ,(expand-file-name "doom.el" doom-core-dir))
+                   (let ((doom-module-init-file "__does-not-exist__"))
+                     (require 'doom-start))
+                   (setq doom-modules (make-hash-table :test 'equal))
+                   (--run--)))
+               (`vanilla       ; nothing loaded
+                `(progn
+                   (setq native-comp-deferred-compilation nil
+                         native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-async-env-modifier-form)
+                         native-comp-async-env-modifier-form ',(bound-and-true-p native-comp-async-env-modifier-form)
+                         native-comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path))
+                   (package-initialize t)
+                   (--run--))))
+            (with-eval-after-load 'doom
+              ;; Then rerun Emacs' startup hooks to simulate a fresh Emacs session,
+              ;; because they've already fired.
+              (fset 'doom-run-hook  #',(symbol-function #'doom-run-hook))
+              (fset 'doom-run-hooks #',(symbol-function #'doom-run-hooks))
+              (fset 'doom-run-all-startup-hooks-h #',(symbol-function #'doom-run-all-startup-hooks-h))
+              ;; (doom-run-all-startup-hooks-h)
+              (unless (default-toplevel-value 'mode-line-format)
+                (setq-default mode-line-format (get 'mode-line-format 'initial-value))))))))))
 
 (fset 'doom--run-vanilla-emacs (cmd! (doom--sandbox-run 'vanilla)))
 (fset 'doom--run-vanilla-doom  (cmd! (doom--sandbox-run 'vanilla-doom)))
