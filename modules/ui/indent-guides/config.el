@@ -63,6 +63,23 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     (defun +indent-guides-in-childframe-p ()
       (frame-parameter nil 'parent-frame)))
 
+  ;; HACK: The way `indent-bars-display-on-blank-lines' functions, it places
+  ;;   text properties with a display property containing a newline, which
+  ;;   confuses `move-to-column'. This breaks `next-line' and `evil-next-line'
+  ;;   without this advice (See jdtsmith/indent-bars#22). Advising
+  ;;   `line-move-to-column' isn't enough for `move-to-column' calls in various
+  ;;   Evil operators (`evil-delete', `evil-change', etc).
+  (defadvice! +indent-guides--prevent-passing-newline-a (fn col &rest args)
+    :around #'move-to-column
+    (if-let* ((indent-bars-mode)
+              (indent-bars-display-on-blank-lines)
+              (nlp (line-end-position))
+              (dprop (get-text-property nlp 'display))
+              ((seq-contains-p dprop ?\n))
+              ((> col (- nlp (point)))))
+        (goto-char nlp)
+      (apply fn col args)))
+
   ;; HACK: `indent-bars-mode' interactions with some packages poorly, often
   ;;   flooding whole sections of the buffer with indent guides. This section is
   ;;   dedicated to fixing interop with those packages.
