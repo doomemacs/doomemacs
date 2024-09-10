@@ -590,8 +590,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
           (put 'doom-theme 'previous-themes (or last-themes 'none))
           ;; DEPRECATED Hook into `enable-theme-functions' when we target 29
           (doom-run-hooks 'doom-load-theme-hook)
-          (setf (alist-get 'foreground-color default-frame-alist) (face-foreground 'default nil t)
-                (alist-get 'background-color default-frame-alist) (face-background 'default nil t)))))))
+          (when-let* ((fg (face-foreground 'default nil t))
+                      (bg (face-background 'default nil t)))
+            (setf (alist-get 'foreground-color default-frame-alist) fg
+                  (alist-get 'background-color default-frame-alist) bg)))))))
 
 
 ;;
