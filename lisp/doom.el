@@ -470,6 +470,9 @@ users).")
     (add-hook! 'doom-before-init-hook
       (defun doom--reset-custom-dont-initialize-h ()
         (setq custom-dont-initialize nil)))
+    (define-advice command-line-1 (:around (fn args-left) respect-defcustom-setters)
+      (let ((custom-dont-initialize nil))
+        (funcall fn args-left)))
 
     ;; These optimizations are brittle, difficult to debug, and obscure other
     ;; issues, so bow out when debug mode is on.
