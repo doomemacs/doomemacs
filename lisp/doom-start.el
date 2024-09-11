@@ -143,11 +143,6 @@
   (setq selection-coding-system 'utf-8))
 
 
-;;; Support for Doom-specific file extensions
-(add-to-list 'auto-mode-alist '("/\\.doom\\(?:project\\|module\\|profile\\)\\'" . lisp-data-mode))
-(add-to-list 'auto-mode-alist '("/\\.doomrc\\'" . emacs-lisp-mode))
-
-
 ;;
 ;;; MODE-local-vars-hook
 
