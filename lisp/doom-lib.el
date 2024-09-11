@@ -332,24 +332,26 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   "Temporarily rebind function, macros, and advice in BODY.
 
 Intended as syntax sugar for `cl-letf', `cl-labels', `cl-macrolet', and
-temporary advice.
+temporary advice (`define-advice').
 
 BINDINGS is either:
 
-  A list of, or a single, `defun', `defun*', `defmacro', or `defadvice' forms.
   A list of (PLACE VALUE) bindings as `cl-letf*' would accept.
+  A list of, or a single, `defun', `defun*', `defmacro', or `defadvice' forms.
 
-TYPE is one of:
+The def* forms accepted are:
 
-  `defun' (uses `cl-letf')
-  `defun*' (uses `cl-labels'; allows recursive references),
-  `defmacro' (uses `cl-macrolet')
-  `defadvice' (uses `defadvice!' before BODY, then `undefadvice!' after)
-
-NAME, ARGLIST, and BODY are the same as `defun', `defun*', `defmacro', and
-`defadvice!', respectively.
-
-\(fn ((TYPE NAME ARGLIST &rest BODY) ...) BODY...)"
+  (defun NAME (ARGS...) &rest BODY)
+    Defines a temporary function with `cl-letf'
+  (defun* NAME (ARGS...) &rest BODY)
+    Defines a temporary function with `cl-labels' (allows recursive
+    definitions).
+  (defmacro NAME (ARGS...) &rest BODY)
+    Uses `cl-macrolet'.
+  (defadvice FUNCTION WHERE ADVICE)
+    Uses `advice-add' (then `advice-remove' afterwards).
+  (defadvice FUNCTION (HOW LAMBDA-LIST &optional NAME DEPTH) &rest BODY)
+    Defines temporary advice with `define-advice'."
   (declare (indent defun))
   (setq body (macroexp-progn body))
   (when (memq (car bindings) '(defun defun* defmacro defadvice))

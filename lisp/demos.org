@@ -361,6 +361,71 @@ Or to create aliases for functions that behave differently:
           (:baz hello :boop nil)
           (:bar 42)))
 #+end_src
+* letf!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval yes
+(letf! (defun greet (name)
+         (message "Hello %s" name))
+  (greet "Doom"))   ; #=> Hello Doom
+#+end_src
+
+#+RESULTS:
+: Hello Doom
+
+Multiple definitions:
+#+begin_src emacs-lisp :eval yes :results output
+(letf! ((defun greet (name)
+          (princ (format "Hello %s" name))
+          (terpri))
+        (defun destroy (name)
+          (princ (format "Blood for the %s god!" name))
+          (terpri)))
+  (greet "Doom")
+  (destroy "Doom"))
+#+end_src
+
+#+RESULTS:
+: Hello Doom
+: Blood for the Doom god!
+
+If defining an already-existing function, the old definition will be bound to a
+variable by the same name:
+#+begin_src emacs-lisp :eval yes :results output
+(letf! (defun princ (str)
+         (funcall princ (format "[overwritten] %s" str)))
+  (princ "Doom Emacs"))
+#+end_src
+
+#+RESULTS:
+: [overwritten] Doom Emacs
+
+Defining temporary advice:
+#+begin_src emacs-lisp :eval yes
+(letf! ((defun advised-message (fn message &rest args)
+          (apply fn (concat "[advised (1)] " message) args))
+        (defadvice #'message :around #'advised-message)
+        (defadvice message (:around (fn message &rest args))
+          (apply fn (concat "[advised (2)] " message) args)))
+  (message "Hello world"))
+#+end_src
+
+#+RESULTS:
+: [advised (1)] [advised (2)] Hello world
+
+Calling "lexical" functions recursively:
+#+begin_src emacs-lisp :eval yes
+(letf! (defun* triangle (number)
+         (cond ((<= number 0) 0)
+               ((= number 1) 1)
+               ((> number 1)
+                (+ number (triangle (1- number))))))
+  (triangle 5))
+#+end_src
+
+#+RESULTS:
+: 15
 
 * load!
 :PROPERTIES:
