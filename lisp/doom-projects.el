@@ -247,7 +247,12 @@ the command instead."
     (projectile-mode +1)
     ;; HACK: See bbatsov/projectile@3c92d28c056c
     (remove-hook 'buffer-list-update-hook #'projectile-track-known-projects-find-file-hook)
-    (add-hook 'doom-switch-buffer-hook #'projectile-track-known-projects-find-file-hook t)))
+    (add-hook 'doom-switch-buffer-hook #'projectile-track-known-projects-find-file-hook t)
+    (add-hook! 'dired-after-readin-hook
+      (defun doom-project-track-known-project-h ()
+        (when projectile-mode
+          (setq projectile-project-root-cache (make-hash-table :test 'equal))
+          (projectile-track-known-projects-find-file-hook))))))
 
 
 ;;
