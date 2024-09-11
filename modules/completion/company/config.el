@@ -61,8 +61,7 @@
       :before #'company-begin-backend
       (company-abort)))
 
-  (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
-
+  (add-hook 'company-mode-hook #'+company-init-backends-h 'append)
 
   ;; NOTE Fix #1335: ensure `company-emulation-alist' is the first item of
   ;;      `emulation-mode-map-alists', thus higher priority than keymaps of
