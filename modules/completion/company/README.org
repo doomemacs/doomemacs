@@ -22,7 +22,7 @@ https://assets.doomemacs.org/completion/company/overlay.png
 
 ** Module flags
 - +childframe ::
-  Display completion candidates in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than an overlay or
+  Display completion candidates in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][childframe]] rather than an overlay or
   tooltip. *Requires GUI Emacs.*
 - +tng ::
   Invoke completion on [[kbd:][TAB]] instad of [[kbd:][C-SPC]]. When company is active, [[kbd:][TAB]] and

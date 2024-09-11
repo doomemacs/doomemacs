@@ -50,7 +50,7 @@ NOT IMPLEMENTED YET. This file contains a module's metadata: their version,
 maintainers, checks, features, submodules, debug information, etc. And are used
 to locate modules in the user's file tree.")
 
-;; DEPRECATED: Module warnings will be rewritten in v3, and this variable will no longer be needed.
+;; DEPRECATED: Remove in v3, as it will be handled in the CLI
 (make-obsolete-variable 'doom-obsolete-modules nil "3.0.0")
 (defconst doom-obsolete-modules
   '((:feature (version-control  (:emacs vc) (:ui vc-gutter))

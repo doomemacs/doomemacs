@@ -339,9 +339,8 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;; TODO: Catch errors
 (load! (string-remove-suffix ".el" doom-module-init-file) doom-user-dir t)
 
-;;; Load the rest of $DOOMDIR + modules if noninteractive
 ;; If the user is loading this file from a batch script, let's assume they want
-;; to load their userland config as well.
+;; to load their userland config immediately.
 (when noninteractive
   (doom-require 'doom-profiles)
   (let ((init-file (doom-profile-init-file)))
@@ -352,6 +351,7 @@ If RETURN-P, return the message as a string instead of displaying it."
       ;; Loads modules, then $DOOMDIR/config.el
       (doom-load init-file 'noerror)
       (doom-initialize-packages))))
+
 
 ;;; Entry point
 ;; HACK: This advice hijacks Emacs' initfile loader to accomplish the following:

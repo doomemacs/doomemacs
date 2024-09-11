@@ -45,6 +45,8 @@ be enabled. If any function returns non-nil, the mode will not be activated."
   ;; TODO: Uncomment once we support treesit
   ;; (setq indent-bars-treesit-support (modulep! :tools tree-sitter))
 
+  ;; indent-bars adds this to `enable-theme-functions', which was introduced in
+  ;; 29.1, which will be redundant with `doom-load-theme-hook'.
   (unless (boundp 'enable-theme-functions)
     (add-hook 'doom-load-theme-hook #'indent-bars-reset-styles))
 

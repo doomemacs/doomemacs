@@ -2,7 +2,7 @@
 
 (defvar +mu4e-backend 'mbsync
   "Which backend to use. Can either be offlineimap, mbsync or nil (manual).")
-(make-obsolete-variable '+mu4e-backend "Use the :email mu4e module's +mbsync or +offlineimap flags instead" "3.0.0")
+(make-obsolete-variable '+mu4e-backend "Use the :email mu4e module's +mbsync or +offlineimap flags instead" "24.09")
 
 (defvar +mu4e-personal-addresses 'nil
   "Alternative to mu4e-personal-addresses that can be set for each account (mu4e context).")

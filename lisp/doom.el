@@ -54,7 +54,8 @@
 ;;   - hook: `window-setup-hook'
 ;;   - hook: `doom-init-ui-hook'
 ;;   - hook: `doom-after-init-hook'
-;;   > After startup is complete:
+;;   > After startup is complete (if file(s) have been opened from the command
+;;     line, these will trigger much earlier):
 ;;     - On first input:              `doom-first-input-hook'
 ;;     - On first switched-to buffer: `doom-first-buffer-hook'
 ;;     - On first opened file:        `doom-first-file-hook'
@@ -374,13 +375,13 @@ users).")
   (let ((old-value (default-toplevel-value 'file-name-handler-alist)))
     (set-default-toplevel-value
      'file-name-handler-alist
-     ;; HACK: The libraries bundled with Emacs can either be compiled,
-     ;;   compressed, or neither. We use calc-loaddefs.el as a heuristic to
-     ;;   guess what state all these libraries are in. If they're compressed, we
-     ;;   need to leave the gzip file handler in `file-name-handler-alist' so
-     ;;   Emacs knows how to load them. If they're compiled or neither, we can
-     ;;   omit the gzip handler altogether (at least during startup) for a boost
-     ;;   in startup and package load time.
+     ;; HACK: The elisp libraries bundled with Emacs are either compressed or
+     ;;   not, never both. So if calc-loaddefs.el.gz exists, calc-loaddefs.el
+     ;;   won't, and vice versa. This heuristic is used to guess the state of
+     ;;   all other built-in (or site); if they're compressed, we must leave the
+     ;;   gzip file handler in `file-name-handler-alist' so Emacs knows how to
+     ;;   load them. Otherwise, we can omit it (at least during startup) for a
+     ;;   boost in package load time.
      (if (eval-when-compile
            (locate-file-internal "calc-loaddefs.el" load-path))
          nil
@@ -767,7 +768,7 @@ appropriately against `noninteractive' or the `cli' context."
 ;;; Last minute initialization
 
 (when (daemonp)
-  (message "Starting Doom Emacs in daemon mode!")
+  (message "Starting Doom Emacs in daemon mode...")
   (unless doom-inhibit-log
     (add-hook! 'doom-after-init-hook :depth 106
       (unless doom-inhibit-log
@@ -788,8 +789,8 @@ appropriately against `noninteractive' or the `cli' context."
     (when (doom-context-push 'init)
       ;; HACK: Ensure OS checks are as fast as possible (given their ubiquity).
       (setq features (cons :system (delq :system features)))
-      ;; Remember these variables' initial values, so we can safely reset them at
-      ;; a later time, or consult them without fear of contamination.
+      ;; Remember these variables' initial values, so we can safely reset them
+      ;; at a later time, or consult them without fear of contamination.
       (dolist (var '(exec-path load-path process-environment))
         (put var 'initial-value (default-toplevel-value var))))))
 

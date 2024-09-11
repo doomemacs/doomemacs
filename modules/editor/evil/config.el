@@ -369,8 +369,7 @@ directives. By default, this only recognizes C directives.")
 ;;
 ;;; Keybinds
 
-;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
-;;   zu{q,w} - undo last marking
+;; TODO: zu{q,w} - undo last marking
 
 (map! :v  "@"     #'+evil:apply-macro
       :m  [C-i]   #'evil-jump-forward
@@ -530,6 +529,7 @@ directives. By default, this only recognizes C directives.")
       ;; evil-easymotion
       (:after evil-easymotion
        :m "gs" evilem-map
+       ;; TODO: Use named functions
        (:map evilem-map
         "a" (evilem-create #'evil-forward-arg)
         "A" (evilem-create #'evil-backward-arg)

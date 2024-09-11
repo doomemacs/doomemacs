@@ -164,7 +164,7 @@ EXIT CODES:
   5        Invalid, missing, or extra options/arguments
   6-15     Reserved for Doom
   16-192   Reserved for the user's extensions
-  254      Successful run (but then execute `doom-cli-restart-script')
+  254      Successful run (then execute the dynamically generated after-script)
   255      Uncaught critical errors
 
 SEE ALSO:

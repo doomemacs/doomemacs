@@ -1,6 +1,6 @@
 ;;; doom-ui.el --- defaults for Doom's aesthetics -*- lexical-binding: t; -*-
 ;;; Commentary:
-;;; Code;
+;;; Code:
 
 ;;
 ;;; Variables
