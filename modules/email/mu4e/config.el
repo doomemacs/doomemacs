@@ -24,6 +24,11 @@
   (add-to-list 'doom-debug-variables 'mu4e-debug)
   ;; mu4e now uses `display-buffer-alist' so we need to add some rules of our own
   (set-popup-rule! "^\\*mu4e-\\(main\\|headers\\)\\*" :ignore t)
+  (set-popup-rule! "^\\*mu4e-log\\*" :select nil)
+
+  ;; Treat mu4e main menu buffer as real, so it can be switched to or fallen
+  ;; back to when killing other buffers.
+  (add-hook 'mu4e-main-mode-hook #'doom-mark-buffer-as-real-h)
 
   ;; Ensures backward/forward compatibility for mu4e, which is prone to breaking
   ;; updates, and also cannot be pinned, because it's bundled with mu (which you
