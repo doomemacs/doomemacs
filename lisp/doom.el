@@ -470,27 +470,31 @@ users).")
       (defun doom--reset-custom-dont-initialize-h ()
         (setq custom-dont-initialize nil)))
 
-    ;; PERF: The mode-line procs a couple dozen times during startup, before the
-    ;;   user even sees the first mode-line. This is normally fast, but we can't
-    ;;   predict what the user (or packages) will put into the mode-line. Also,
-    ;;   mode-line packages have a bad habit of throwing performance to the
-    ;;   wind, so best we just disable the mode-line until we can see one.
-    (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
-    (setq-default mode-line-format nil)
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf (setq mode-line-format nil)))
-    ;; PERF,UX: Premature redisplays/redraws can substantially affect startup
-    ;;   times and/or flash a white/unstyled Emacs frame during startup, so I
-    ;;   try real hard to suppress them until we're sure the session is ready.
-    (setq-default inhibit-redisplay t
-                  inhibit-message t)
-    ;; COMPAT: If the above vars aren't reset, Emacs could appear frozen or
-    ;;   garbled after startup (or in case of an startup error).
-    (defun doom--reset-inhibited-vars-h ()
-      (setq-default inhibit-redisplay nil
-                    inhibit-message nil)
-      (remove-hook 'post-command-hook #'doom--reset-inhibited-vars-h))
-    (add-hook 'post-command-hook #'doom--reset-inhibited-vars-h -100)
+    ;; These optimizations are brittle, difficult to debug, and obscure other
+    ;; issues, so bow out when debug mode is on.
+    (unless init-file-debug
+      ;; PERF: The mode-line procs a couple dozen times during startup, before
+      ;;   the user even sees the first mode-line. This is normally fast, but we
+      ;;   can't predict what the user (or packages) will put into the
+      ;;   mode-line. Also, mode-line packages have a bad habit of throwing
+      ;;   performance to the wind, so best we just disable the mode-line until
+      ;;   we can see one.
+      (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
+      (setq-default mode-line-format nil)
+      (dolist (buf (buffer-list))
+        (with-current-buffer buf (setq mode-line-format nil)))
+      ;; PERF,UX: Premature redisplays/redraws can substantially affect startup
+      ;;   times and/or flash a white/unstyled Emacs frame during startup, so I
+      ;;   try real hard to suppress them until we're sure the session is ready.
+      (setq-default inhibit-redisplay t
+                    inhibit-message t)
+      ;; COMPAT: If the above vars aren't reset, Emacs could appear frozen or
+      ;;   garbled after startup (or in case of an startup error).
+      (defun doom--reset-inhibited-vars-h ()
+        (setq-default inhibit-redisplay nil
+                      inhibit-message nil)
+        (remove-hook 'post-command-hook #'doom--reset-inhibited-vars-h))
+      (add-hook 'post-command-hook #'doom--reset-inhibited-vars-h -100))
 
     ;; PERF: Doom disables the UI elements by default, so that there's less for
     ;;   the frame to initialize. However, `tool-bar-setup' is still called and
