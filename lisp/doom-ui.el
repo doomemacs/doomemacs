@@ -661,11 +661,11 @@ triggering hooks during startup."
   (fset 'set-fontset-font #'ignore))
 
 (after! whitespace
-  (defun doom-is-childframes-p ()
+  (defun doom--in-parent-frame-p ()
     "`whitespace-mode' inundates child frames with whitespace markers, so
 disable it to fix all that visual noise."
     (null (frame-parameter nil 'parent-frame)))
-  (add-function :before-while whitespace-enable-predicate #'doom-is-childframes-p))
+  (add-function :before-while whitespace-enable-predicate #'doom--in-parent-frame-p))
 
 (provide 'doom-ui)
 ;;; doom-ui.el ends here
