@@ -124,6 +124,11 @@ and cannot run in."
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 
 (when (modulep! +extra)
+  ;; Lisp modes offer their own defaults for `prettify-symbols-mode' (just a
+  ;; lambda symbol substitution), but this might be unexpected if the user
+  ;; enables +extra but has unset `+ligatures-extra-symbols'.
+  (setq lisp-prettify-symbols-alist nil)
+
   (add-hook 'after-change-major-mode-hook #'+ligatures-init-extra-symbols-h))
 
 (cond
