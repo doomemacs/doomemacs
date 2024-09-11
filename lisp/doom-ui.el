@@ -284,6 +284,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq split-width-threshold 160
       split-height-threshold nil)
 
+;; Fix incorrect fg/bg in new frames created after the initial frame
+;; (which are reroneously displayed as black).
+(setq frame-inherited-parameters '(background-color
+                                   foreground-color
+                                   cursor-color
+                                   border-color
+                                   mouse-color))
+
 
 ;;
 ;;; Minibuffer
@@ -589,11 +597,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
           (setq doom-theme theme)
           (put 'doom-theme 'previous-themes (or last-themes 'none))
           ;; DEPRECATED Hook into `enable-theme-functions' when we target 29
-          (doom-run-hooks 'doom-load-theme-hook)
-          (when-let* ((fg (face-foreground 'default nil t))
-                      (bg (face-background 'default nil t)))
-            (setf (alist-get 'foreground-color default-frame-alist) fg
-                  (alist-get 'background-color default-frame-alist) bg)))))))
+          (doom-run-hooks 'doom-load-theme-hook))))))
 
 
 ;;
