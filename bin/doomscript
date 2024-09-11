@@ -22,7 +22,16 @@ fi
 
 case "$EMACS" in
     *term*) EMACS=emacs ;;   # in {ansi-,v}term
-    *) EMACS="${EMACS:-emacs}" ;;
+    *\ *) ;;
+    *) EMACS="${EMACS:-emacs}"
+       # Only sanity-check $EMACS if it's a path or executable
+       if ! type "$EMACS" >/dev/null 2>&1; then
+           echo "Error: failed to run Emacs with command '$EMACS'"
+           echo
+           echo "Are you sure Emacs is installed and in your \$PATH?"
+           exit 1
+       fi >&2
+       ;;
 esac
 
 # Careful not to use -Q! It implies --no-site-lisp, which omits the site-lisp
@@ -30,17 +39,6 @@ esac
 # site files later. These are important on some systems or deployment methods
 # (like Snap or NixOS).
 emacs="$EMACS -q --no-site-file --batch"
-
-# $TMPDIR (or $TEMP and $TMP on Windows) aren't guaranteed to have values, and
-# mktemp isn't available on all systems, but you know what is? Emacs! So I rely
-# on it to provide TMPDIR. And can second as a quick existence check for Emacs.
-TMPDIR="${TMPDIR:-$($emacs --eval '(princ (temporary-file-directory))' 2>/dev/null)}"
-if [ -z "$TMPDIR" ]; then
-    echo "Error: failed to run Emacs with command '$EMACS'"
-    echo
-    echo "Are you sure Emacs is installed and in your \$PATH?"
-    exit 1
-fi >&2
 
 # Doom respects $EMACSDIR to tell it where Doom lives. If it fails, then this is
 # either isn't bash, or it's a posix shell being directly sourced with sh, which
@@ -79,6 +77,11 @@ exit=$?
 # To simulate execve syscalls (which replaces the running process), Doom
 # generates a temporary exit-script if a Doomscript returns a 254 exit code.
 if [ "${exit:-0}" -eq 254 ]; then
+    # $TMPDIR (or $TEMP and $TMP on Windows) aren't guaranteed to have values,
+    # and mktemp isn't available on all systems, but you know what is? Emacs! So
+    # I rely on it to provide TMPDIR.
+    export TMPDIR="${TMPDIR:-${TMP:-${TEMP:-$($emacs -Q --eval '(princ (temporary-file-directory))' 2>/dev/null)}}}"
+
     # The user may have a noexec flag set on /tmp, so the exit-script should be
     # passed to /bin/sh rather than executed directly.
     sh "${TMPDIR}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@"
