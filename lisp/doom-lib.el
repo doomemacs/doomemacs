@@ -7,6 +7,7 @@
 (define-error 'doom-font-error "Could not find a font on your system" 'doom-error)
 (define-error 'doom-nosync-error "Doom hasn't been initialized yet; did you remember to run 'doom sync' in the shell?" 'doom-error)
 (define-error 'doom-core-error "Unexpected error in Doom's core" 'doom-error)
+(define-error 'doom-context-error "Incorrect context error" 'doom-error)
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
 (define-error 'doom-autoload-error "Error in Doom's autoloads file" 'doom-error)
 (define-error 'doom-user-error "Error caused by user's config or system" 'doom-error)
