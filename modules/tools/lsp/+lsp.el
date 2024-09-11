@@ -85,7 +85,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     :type-definition #'lsp-find-type-definition)
 
   ;; HACK: See emacs-lsp/lsp-mode#3577
-  (unless (modulep! :lang terraform)
+  (unless (modulep! :tools terraform)
     (setq lsp-client-packages (delete 'lsp-terraform lsp-client-packages)))
 
   (defadvice! +lsp--respect-user-defined-checkers-a (fn &rest args)
