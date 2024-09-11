@@ -14,8 +14,12 @@ This module adds support for the [[https://www.racket-lang.org/][Racket programm
   Enable support for ~racket-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/jeapostrophe/racket-langserver][racket-langserver]]).
 - +xp ::
-  Enable the explore mode (~racket-xp-mode~), which "analyzes expanded code to
-  explain and explore."
+  Enable the explore minor mode (~racket-xp-mode~), which "analyzes expanded
+  code to explain and explore."
+- +hash-lang ::
+  Enable the hash-lang major mode (~racket-hash-lang-mode~), which "uses
+  color-lexer, indent, and navigation supplied by a #lang." This flag can be
+  used along with the ~+xp~ flag.
 
 ** Packages
 - [[doom-package:racket-mode]]
