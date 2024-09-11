@@ -1,0 +1,64 @@
+:PROPERTIES:
+:ID:       3efe8402-e4a1-41c3-ad1a-9aaa3783f68f
+:END:
+#+title:    :lang graphviz
+#+subtitle: Diagrams to confuse yourself even more
+#+created:  Nov 14, 2023
+#+since:    23.09.0-pre
+
+* Description :unfold:
+This module adds graphviz support to Emacs, allowing you to generate diagrams
+from plain text. Flycheck is supported.
+
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:graphviz-dot-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires that the =graphviz= package be installed on your system to
+build diagrams with. You can install it using:
+#+begin_src shell
+sudo dnf install graphviz # For fedora
+sudo apt install graphviz # For debian/ubuntu
+#+end_src
+
+* Usage
+This module should configure "out-of-the-box" if you have installed graphviz on
+your system.
+
+With org-babel LaTeX/PDF-export, use a file naming ending with ".pdf", otherwise
+LaTeX might complain about a non-existant ~\\includesvg~ command.
+#+begin_src dot :file graph-1.pdf
+digraph {
+        A -> B;
+        B -> D;
+}
+#+end_src
+
+* Configuration
+There is nothing to configure. Just install dot and it should work.
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
