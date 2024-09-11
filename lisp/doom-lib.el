@@ -360,16 +360,33 @@ NAME, ARGLIST, and BODY are the same as `defun', `defun*', `defmacro', and
       (setq
        body (pcase type
               (`defmacro `(cl-macrolet ((,@rest)) ,body))
-              (`defadvice `(progn (defadvice! ,@rest)
-                                  (unwind-protect ,body (undefadvice! ,@rest))))
-              ((or `defun `defun*)
+              (`defadvice
+               (if (keywordp (cadr rest))
+                   (cl-destructuring-bind (target where fn) rest
+                     `(when-let (fn ,fn)
+                        (advice-add ,target ,where fn)
+                        (unwind-protect ,body (advice-remove ,target fn))))
+                 (let* ((fn (pop rest))
+                        (argspec (pop rest)))
+                   (when (< (length argspec) 3)
+                     (setq argspec
+                           (list (nth 0 argspec)
+                                 (nth 1 argspec)
+                                 (or (nth 2 argspec) (gensym (format "%s-a" (symbol-name fn)))))))
+                   (let ((name (nth 2 argspec)))
+                     `(progn
+                        (define-advice ,fn ,argspec ,@rest)
+                        (unwind-protect ,body
+                          (advice-remove #',fn #',name)
+                          ,(if name `(fmakunbound ',name))))))))
+              (`defun
                `(cl-letf ((,(car rest) (symbol-function #',(car rest))))
                   (ignore ,(car rest))
-                  ,(if (eq type 'defun*)
-                       `(cl-labels ((,@rest)) ,body)
-                     `(cl-letf (((symbol-function #',(car rest))
-                                 (lambda! ,(cadr rest) ,@(cddr rest))))
-                        ,body))))
+                  (cl-letf (((symbol-function #',(car rest))
+                             (lambda! ,(cadr rest) ,@(cddr rest))))
+                    ,body)))
+              (`defun*
+               `(cl-labels ((,@rest)) ,body))
               (_
                (when (eq (car-safe type) 'function)
                  (setq type (list 'symbol-function type)))
