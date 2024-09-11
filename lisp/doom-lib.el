@@ -19,10 +19,27 @@
 ;;; Logging
 
 (defvar doom-inhibit-log (not (or noninteractive init-file-debug))
-  "If non-nil, suppress `doom-log' output.")
+  "If non-nil, suppress `doom-log' output completely.")
 
-(defun doom--log (text &rest args)
-  (let ((inhibit-message (not init-file-debug))
+(defvar doom-log-level
+  (if init-file-debug
+      (if-let ((level (getenv-internal "DEBUG"))
+               (level (string-to-number level))
+               ((not (zerop level))))
+          level
+        2)
+    0)
+  "How verbosely to log from `doom-log' calls.
+
+0 -- No logging at all.
+1 -- Only warnings.
+2 -- Warnings and notices.
+3 -- Debug info, warnings, and notices.")
+
+(defun doom--log (level text &rest args)
+  (let ((inhibit-message (if noninteractive
+                             (not init-file-debug)
+                           (> level doom-log-level)))
         (absolute? (string-prefix-p ":" text)))
     (apply #'message
            (propertize (concat "* %.06f:%s" (if (not absolute?) ":") text)
@@ -38,14 +55,19 @@
             ":")
            args)))
 
+;; This is a macro instead of a function to prevent the potentially expensive
+;; evaluation of its arguments when debug mode is off. Return non-nil.
 (defmacro doom-log (message &rest args)
-  "Log a message in *Messages*.
-
-Does not emit the message in the echo area. This is a macro instead of a
-function to prevent the potentially expensive evaluation of its arguments when
-debug mode is off. Return non-nil."
+  "Log a message to stderr or *Messages* (without displaying in the echo area)."
   (declare (debug t))
-  `(unless doom-inhibit-log (doom--log ,message ,@args)))
+  (let ((level (if (integerp message)
+                   (prog1 message
+                     (setq message (pop args)))
+                 2)))
+    `(when (and (not doom-inhibit-log)
+                (or (not noninteractive)
+                    (<= ,level doom-log-level)))
+       (doom--log ,level ,message ,@args))))
 
 
 ;;
