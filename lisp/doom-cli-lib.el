@@ -1179,7 +1179,9 @@ Emacs' batch library lacks an implementation of the exec system call."
                 "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
                 "_doomrun() {\n  " ,command "\n}\n"
                 ,(cl-loop for (var . val) in persisted-env
-                          concat (format "%s=%s \\\n" var (shell-quote-argument val)))
+                          if (<= (length val) 2048)  ; Prevent "Argument list too long" errors
+                          concat (format "%s=%s \\\n" var (shell-quote-argument val))
+                          else do (doom-log 1 "restart: wiscarding envvar %S for being too long (%d)" var (length val)))
                 ,(format "PATH=\"%s%s$PATH\" \\\n"
                          (doom-path doom-emacs-dir "bin")
                          path-separator)
