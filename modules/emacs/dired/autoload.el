@@ -22,6 +22,7 @@ If dirvish is already open, remotely jump to the file in Dirvish.
 If given the prefix ARG, then prompt for a directory (replaces existing Dirvish
 sidebars)."
   (interactive "P")
+  (require 'dirvish-side)
   (save-selected-window
     (let ((win (dirvish-side--session-visible-p)))
       (when (and win arg)
