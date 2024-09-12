@@ -4,8 +4,7 @@
   :mode "\\.\\(?:nw\\|rack\\)diag\\'"
   :init
   (after! org-src
-    (add-to-list '+org-babel-mode-alist '(dot . graphviz-dot-mode))
-    (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot-mode)))
+    (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)))
   :config
   (set-company-backend! 'graphviz-dot-mode 'company-graphviz-dot-backend)
   (set-formatter! 'graphviz-dot #'+graphviz-formatter :modes '(graphviz-dot-mode))
