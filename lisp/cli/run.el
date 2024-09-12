@@ -43,7 +43,7 @@ performance, it is best to run Doom out of ~/.config/emacs or ~/.emacs.d."
           ;; Evaluate piped-in text directly, if given.
           (eval (read input) t)
         (doom-run-repl context))
-    (let* ((tempdir      (doom-path (temporary-file-directory) "doom.run"))
+    (let* ((tempdir  (doom-path (temporary-file-directory) "doom.run"))
            (tempemacsdir (doom-path tempdir ".emacs.d")))
       (delete-directory tempdir t) ; start from scratch
       (make-directory tempemacsdir t)
@@ -51,18 +51,20 @@ performance, it is best to run Doom out of ~/.config/emacs or ~/.emacs.d."
       ;;   configs, or binscripts, we symlink these to the sandbox.
       ;; REVIEW: Use `--init-directory' when we drop 29 support OR when Doom is
       ;;   in bootloader mode.
-      (dolist (dir (list (or (getenv "XDG_DATA_HOME") "~/.local/share")
-                         (or (getenv "XDG_BIN_HOME") "~/.local/bin")
-                         (or (getenv "XDG_CONFIG_HOME") "~/.config")
-                         (or (getenv "XDG_CACHE_HOME") "~/.cache")))
-        (let* ((xdg-dir (doom-path dir))
-               (target  (doom-path tempdir (file-relative-name xdg-dir "~"))))
-          (when (file-directory-p xdg-dir)
+      (dolist (dir (list (cons "XDG_DATA_HOME"   ".local/share")
+                         (cons "XDG_STATE_HOME"  ".local/state")
+                         (cons "XDG_BIN_HOME"    ".local/bin")
+                         (cons "XDG_CONFIG_HOME" ".config")
+                         (cons "XDG_CACHE_HOME"  ".cache")))
+        (let* ((source (expand-file-name (or (getenv (car dir)) (expand-file-name (cdr dir) "~"))))
+               (target (expand-file-name (cdr dir) tempdir)))
+          (when (file-directory-p source)
             (unless (file-symlink-p target)
               (make-directory (file-name-directory target) t)
-              (make-symbolic-link xdg-dir target)))))
+              (make-symbolic-link source target)))))
       (with-temp-file (doom-path tempemacsdir "early-init.el")
         (prin1 `(progn
+                  ;; Restore sane values for these envvars
                   (setenv "HOME" ,(getenv "HOME"))
                   (setenv "EMACSDIR" ,doom-emacs-dir)
                   (setenv "DOOMDIR"  ,doom-user-dir)
