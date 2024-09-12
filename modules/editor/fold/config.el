@@ -38,9 +38,6 @@ this."
 (after! org
   (setq org-ellipsis +fold-ellipsis))
 
-(after! mule-util
-  (setq truncate-string-ellipsis +fold-ellipsis))
-
 
 ;;
 ;;; Packages
