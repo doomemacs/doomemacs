@@ -19,14 +19,14 @@
   (when (and (modulep! :checker syntax)
              (not (modulep! :checker syntax +flymake)))
     (after! flycheck
-      (flycheck-define-checker graphviz-dot
-        "A checker using graphviz dot."
-        :command ("dot")
-        :standard-input t
-        :error-patterns ((error line-start "Error: <stdin>: " (message "syntax error in line " line (* nonl)))
-                         ;; I have no idea if this can actually be printed
-                         (error line-start "Error: <stdin>: " (message)))
-        :modes graphviz-dot-mode)
+      (eval '(flycheck-define-checker graphviz-dot
+               "A checker using graphviz dot."
+               :command ("dot")
+               :standard-input t
+               :error-patterns ((error line-start "Error: <stdin>: " (message "syntax error in line " line (* nonl)))
+                                ;; I have no idea if this can actually be printed
+                                (error line-start "Error: <stdin>: " (message)))
+               :modes graphviz-dot-mode))
       (add-to-list 'flycheck-checkers 'graphviz-dot)))
 
   (map! :map graphviz-dot-mode-map
