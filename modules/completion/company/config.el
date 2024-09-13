@@ -11,6 +11,7 @@
         company-tooltip-limit 14
         company-tooltip-align-annotations t
         company-require-match 'never
+        company-idle-delay 0.26
         company-global-modes
         '(not erc-mode
               circe-mode
