@@ -59,7 +59,9 @@ font.")
                "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
                "\\\\" "://")
     (t))
-  "A alist of ligatures to enable in specific modes.")
+  "A alist of ligatures to enable in specific modes.
+
+To configure this variable, use `set-ligatures!'.")
 
 (defvar +ligatures-in-modes nil
   "List of major modes where ligatures should be enabled.")
@@ -74,7 +76,9 @@ font.")
 (make-obsolete-variable '+ligatures-all-modes-list "Use `+ligatures-alist' instead" "24.09.0")
 
 (defvar +ligatures-extra-alist '((t))
-  "A map of major modes to symbol lists (for `prettify-symbols-alist').")
+  "A map of major modes to symbol lists (for `prettify-symbols-alist').
+
+To configure this variable, use `set-ligatures!'.")
 
 (defvar +ligatures-extras-in-modes t
   "List of major modes where extra ligatures should be enabled.

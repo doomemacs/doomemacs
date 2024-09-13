@@ -18,15 +18,17 @@ pretty symbols and ligatures previously defined for MODES.
 
 For example, the rule for emacs-lisp-mode is very simple:
 
-  (set-ligatures! \\='emacs-lisp-mode
-    :lambda \"lambda\")
+  (after! elisp-mode
+    (set-ligatures! \\='emacs-lisp-mode
+      :lambda \"lambda\"))
 
 This will replace any instances of \"lambda\" in emacs-lisp-mode with the symbol
 associated with :lambda in `+ligatures-extra-symbols'.
 
-Pretty symbols can be unset for emacs-lisp-mode with:
+Pretty symbols can be unset by passing `nil':
 
-  (set-ligatures! \\='emacs-lisp-mode nil)
+  (after! rustic
+    (set-ligatures! \\='rustic-mode nil))
 
 Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
 `emacs-lisp-mode' is derived from `prog-mode'."
