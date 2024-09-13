@@ -81,15 +81,10 @@ orderless."
           (?` . orderless-initialism)
           (?= . orderless-literal)
           (?^ . orderless-literal-prefix)
-          (?~ . orderless-flex)))
-
-  (defun +vertico-orderless-dispatch (pattern _index _total)
-    (cond
-     ;; Ensure $ works with Consult commands, which add disambiguation suffixes
-     ((string-suffix-p "$" pattern)
-      `(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x200000-\x300000]*$")))))
-
-  (add-to-list 'orderless-style-dispatchers '+vertico-orderless-dispatch)
+          (?~ . orderless-flex))
+        orderless-style-dispatchers
+        '(+vertico-orderless-dispatch
+          +vertico-orderless-disambiguation-dispatch))
 
   (add-to-list
    'completion-styles-alist
