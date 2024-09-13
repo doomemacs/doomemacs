@@ -9,8 +9,16 @@
 ;;; Helpers
 
 (defun +fold--ensure-hideshow-mode ()
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode +1)))
+  "Enable `hs-minor-mode' if not already enabled.
+
+Return non-nil if successful in doing so."
+  (if (not (bound-and-true-p hs-minor-mode))
+      ;; `hs-grok-mode-type' applies this test; if it fails, it produces an
+      ;; error indicating that `hs-minor-mode' is not supported here.
+      (when (and (bound-and-true-p comment-start)
+                 (bound-and-true-p comment-end))
+        (hs-minor-mode +1))
+    t))
 
 (defun +fold--vimish-fold-p ()
   (and (featurep 'vimish-fold)
@@ -23,14 +31,14 @@
        (outline-on-heading-p)))
 
 (defun +fold--hideshow-fold-p ()
-  (+fold--ensure-hideshow-mode)
-  (save-excursion
-    (ignore-errors
-      (or (hs-looking-at-block-start-p)
-          (hs-find-block-beginning)
-          (unless (eolp)
-            (end-of-line)
-            (+fold--hideshow-fold-p))))))
+  (when (+fold--ensure-hideshow-mode)
+    (save-excursion
+      (ignore-errors
+        (or (hs-looking-at-block-start-p)
+            (hs-find-block-beginning)
+            (unless (eolp)
+              (end-of-line)
+              (+fold--hideshow-fold-p)))))))
 
 ;; NOTE: does this need more?
 (defun +fold--ts-fold-p ()
@@ -186,13 +194,13 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
         ((and (featurep 'vimish-fold) (+fold--vimish-fold-p))
          (vimish-fold-unfold-all))
         ((save-excursion
-           (+fold--ensure-hideshow-mode)
+           (when (+fold--ensure-hideshow-mode)
+             (hs-life-goes-on
+              (if (integerp level)
+                  (hs-hide-level-recursive level (point-min) (point-max))
+                (hs-show-all))))
            (if (integerp level)
-               (progn
-                 (outline-hide-sublevels (max 1 level))
-                 (hs-life-goes-on
-                  (hs-hide-level-recursive level (point-min) (point-max))))
-             (hs-show-all)
+               (outline-hide-sublevels (max 1 level))
              (when (fboundp 'outline-show-all)
                (outline-show-all)))))))
 
@@ -207,15 +215,15 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
       (progn
         (when (featurep 'vimish-fold)
           (vimish-fold-refold-all))
-        (+fold--ensure-hideshow-mode)
-        (hs-life-goes-on
-         (if (integerp level)
-             (progn
-               (outline--show-headings-up-to-level level)
-               (hs-hide-level-recursive level (point-min) (point-max)))
-           (hs-hide-all)
-           (when (fboundp 'outline-hide-sublevels)
-             (outline-show-only-headings))))))))
+        (when (+fold--ensure-hideshow-mode)
+          (hs-life-goes-on
+           (if (integerp level)
+               (hs-hide-level-recursive level (point-min) (point-max))
+             (hs-hide-all))))
+        (if (integerp level)
+            (outline--show-headings-up-to-level level)
+          (when (fboundp 'outline-hide-sublevels)
+            (outline-show-only-headings)))))))
 
 ;;;###autoload
 (defun +fold/next (count)
