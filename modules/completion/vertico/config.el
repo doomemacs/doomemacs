@@ -129,6 +129,15 @@ orderless."
     :before (list #'consult-recent-file #'consult-buffer)
     (recentf-mode +1))
 
+  (defadvice! +vertico--use-evil-registers-a (fn &rest args)
+    "Use `evil-register-list' if `evil-mode' is active."
+    :around #'consult-register--alist
+    (let ((register-alist
+           (if (bound-and-true-p evil-local-mode)
+               (evil-register-list)
+             register-alist)))
+      (apply fn args)))
+
   (setq consult-project-function #'doom-project-root
         consult-narrow-key "<"
         consult-line-numbers-widen t
