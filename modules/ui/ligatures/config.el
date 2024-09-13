@@ -99,19 +99,24 @@ efficient to remove the `+extra' flag from the :ui ligatures module instead).")
 (defun +ligatures-init-extra-symbols-h ()
   "Set up `prettify-symbols-mode' for the current buffer.
 
-Extra ligatures are mode-specific substituions, defined in
-`+ligatures-extra-symbols', assigned with `set-ligatures!', and made possible
-with `prettify-symbols-mode'. This variable controls where these are enabled.
-See `+ligatures-extras-in-modes' to control what major modes this function can
-and cannot run in."
-  (when (and after-init-time (+ligatures--enable-p +ligatures-extras-in-modes))
-    (prependq! prettify-symbols-alist
-               (or (alist-get major-mode +ligatures-extra-alist)
-                   (cl-loop for (mode . symbols) in +ligatures-extra-alist
-                            if (derived-mode-p mode)
-                            return symbols)))
-    (when prettify-symbols-alist
-      (when prettify-symbols-mode
+Overwrites `prettify-symbols-alist' and activates `prettify-symbols-mode' if
+(and only if) there is an associated entry for the current major mode (or a
+parent mode) in `+ligatures-extra-alist' AND the current mode (or a parent mode)
+isn't disabled in `+ligatures-extras-in-modes'."
+  (when after-init-time
+    (when-let*
+        (((+ligatures--enable-p +ligatures-extras-in-modes))
+         (symbols
+          (if-let ((symbols (assq major-mode +ligatures-extra-alist)))
+              symbols
+            (cl-loop for (mode . symbols) in +ligatures-extra-alist
+                     if (derived-mode-p mode)
+                     return symbols))))
+      (setq prettify-symbols-alist
+            (append symbols
+                    ;; Don't overwrite global defaults
+                    (default-value 'prettify-symbols-alist)))
+      (when (bound-and-true-p prettify-symbols-mode)
         (prettify-symbols-mode -1))
       (prettify-symbols-mode +1))))
 
@@ -124,11 +129,6 @@ and cannot run in."
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 
 (when (modulep! +extra)
-  ;; Lisp modes offer their own defaults for `prettify-symbols-mode' (just a
-  ;; lambda symbol substitution), but this might be unexpected if the user
-  ;; enables +extra but has unset `+ligatures-extra-symbols'.
-  (setq lisp-prettify-symbols-alist nil)
-
   (add-hook 'after-change-major-mode-hook #'+ligatures-init-extra-symbols-h))
 
 (cond
