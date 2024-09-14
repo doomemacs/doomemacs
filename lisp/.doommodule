@@ -1,0 +1,10 @@
+(3 0 0)
+((name . :doom)
+ (depth . -110)
+ ;; (packages
+ ;;  (elpaca :host github
+ ;;          :repo "progfolio/elpaca"
+ ;;          :pin "213a72646e024af007c610ea7574dc82e992637f")
+ ;;  (compat :host github :repo "emacs-compat/compat"
+ ;;          :pin "e9203e164903a6bb7de3e58aa0d653bbcff9d3d1"))
+ )
