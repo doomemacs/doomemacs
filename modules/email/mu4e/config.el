@@ -441,21 +441,18 @@ This should already be the case yet it does not always seem to be."
     (let ((files (org-msg-get-prop "attachment")))
       (org-msg-set-prop "attachment" (nconc files (list file)))))
 
-  (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
-    "Whether to toggle `org-msg-toggle' on ")
-  (defun +mu4e-compose-org-msg-handle-toggle (toggle-p)
-    (when (xor toggle-p +mu4e-compose-org-msg-toggle-next)
-      (org-msg-mode (if org-msg-mode -1 1))
-      (setq +mu4e-compose-org-msg-toggle-next
-            (not +mu4e-compose-org-msg-toggle-next))))
-
-  ;; HACK: ...
+  ;; HACK: Toggle `org-msg' where sensible.
+  (defvar +mu4e--compose-org-msg-toggle-next t)
   (defadvice! +mu4e-maybe-toggle-org-msg-a (&rest _)
+    :before #'+mu4e/attach-files
     :before #'mu4e-compose-new
     :before #'mu4e-compose-reply
     :before #'mu4e-compose-forward
     :before #'mu4e-compose-resend
-    (+mu4e-compose-org-msg-handle-toggle (/= 1 (or current-prefix-arg 0))))
+    (when (xor (/= 1 (if (integerp current-prefix-arg) current-prefix-arg 0))
+               +mu4e-compose-org-msg-toggle-next)
+      (org-msg-mode (if org-msg-mode -1 1))
+      (cl-callf not +mu4e-compose-org-msg-toggle-next)))
 
   ;; HACK: ...
   (defadvice! +mu4e-draft-open-signature-a (fn &rest args)

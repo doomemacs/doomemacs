@@ -281,8 +281,6 @@ attach a file, or select a folder to open dired in and select file attachments
 When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-ctrl-c'."
   ;; TODO add ability to attach files (+dirs) as a single (named) archive
   (interactive "p")
-  (when (fboundp '+mu4e-compose-org-msg-handle-toggle)
-    (+mu4e-compose-org-msg-handle-toggle (/= 1 files-to-attach)))
   (pcase major-mode
     ((or 'mu4e-compose-mode 'org-msg-edit-mode)
      (let ((mail-buffer (current-buffer))
