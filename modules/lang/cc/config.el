@@ -160,7 +160,12 @@ This is ignored by ccls.")
                cuda-mode-local-vars-hook)
              :append #'lsp!)
 
-  (when (modulep! :tools lsp +eglot)
+  (if (not (modulep! :tools lsp +eglot))
+      (after! lsp-clangd
+        ;; Prevent clangd from consuming all your cores indexing larger projects
+        ;; and grinding your system to a halt.
+        (cl-pushnew (format "-j=%d" (max 1 (/ (doom-system-cpus) 2)))
+                    lsp-clients-clangd-args))
     (set-eglot-client! 'cuda-mode '("clangd"))
 
     ;; Map eglot specific helper
@@ -203,6 +208,8 @@ This is ignored by ccls.")
             (featurep :system 'linux))
     (setq ccls-initialization-options
           `(:index (:trackDependency 1
+                    ;; Prevent ccls from consuming all your cores indexing
+                    ;; larger projects and grinding your system to a halt.
                     :threads ,(max 1 (/ (doom-system-cpus) 2))))))
   (when (featurep :system 'macos)
     (setq ccls-initialization-options
