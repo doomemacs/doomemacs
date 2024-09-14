@@ -79,6 +79,18 @@ This is controlled by `+format-on-save-disabled-modes'."
   ;; `+format-with-lsp-mode' in the appropriate modes.
   (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
 
+  ;; Apheleia's default clang-format config doesn't respect `c-basic-offset', so
+  ;; force it to in the absence of a .clang-format file.
+  (setf (alist-get 'clang-format apheleia-formatters)
+        `("clang-format"
+          "-assume-filename"
+          (or (apheleia-formatters-local-buffer-file-name)
+              (apheleia-formatters-mode-extension)
+              ".c")
+          (when apheleia-formatters-respect-indent-level
+            (unless (locate-dominating-file default-directory ".clang-format")
+              (format "--style={IndentWidth: %d}" c-basic-offset)))))
+
   ;; Apheleia's default config for prettier passes an explicit --tab-width N to
   ;; all prettier formatters, respecting your indent settings in Emacs, but
   ;; overriding any indent settings in your prettier config files. This changes
