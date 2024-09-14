@@ -273,7 +273,7 @@ See `+emacs-lisp-non-package-mode' for details.")
   (global-set-key [remap describe-command]  #'helpful-command)
   (global-set-key [remap describe-variable] #'helpful-variable)
   (global-set-key [remap describe-key]      #'helpful-key)
-  (global-set-key [remap describe-symbol]   #'helpful-symbol)
+  ;; (global-set-key [remap describe-symbol]   #'helpful-symbol)
 
   (defun doom-use-helpful-a (fn &rest args)
     "Force FN to use helpful instead of the old describe-* commands."
