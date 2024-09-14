@@ -1,5 +1,6 @@
 ;;; tools/editorconfig/config.el -*- lexical-binding: t; -*-
 
+;; TODO: Adapt to built-in `editorconfig' in Emacs 30+
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (use-package! editorconfig
