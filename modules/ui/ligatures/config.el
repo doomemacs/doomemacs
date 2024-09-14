@@ -112,7 +112,7 @@ isn't disabled in `+ligatures-extras-in-modes'."
         (((+ligatures--enable-p +ligatures-extras-in-modes))
          (symbols
           (if-let ((symbols (assq major-mode +ligatures-extra-alist)))
-              symbols
+              (cdr symbols)
             (cl-loop for (mode . symbols) in +ligatures-extra-alist
                      if (derived-mode-p mode)
                      return symbols))))
