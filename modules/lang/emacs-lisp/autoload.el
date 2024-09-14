@@ -117,8 +117,9 @@ if it's callable, `apropos' otherwise."
                  (org-show-hidden-entry))))
            'deferred))
         (thing
-         (funcall (or (command-remapping #'describe-symbol)
-                      #'describe-symbol)
+         (funcall (if (fboundp #'helpful-symbol)
+                      #'helpful-symbol
+                    #'describe-symbol)
                   (intern thing)))
         ((call-interactively
           (if (fboundp #'helpful-at-point)
