@@ -32,24 +32,25 @@ See `+emacs-lisp-non-package-mode' for details.")
   :mode ("\\.Cask\\'" . emacs-lisp-mode)
   :interpreter ("doomscript" . emacs-lisp-mode)
   :config
-  (set-repl-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp/open-repl)
-  (set-eval-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp-eval)
-  (set-lookup-handlers! '(emacs-lisp-mode lisp-interaction-mode helpful-mode)
-    :definition    #'+emacs-lisp-lookup-definition
-    :documentation #'+emacs-lisp-lookup-documentation)
-  (set-docsets! '(emacs-lisp-mode lisp-interaction-mode) "Emacs Lisp")
-  (set-ligatures! 'emacs-lisp-mode :lambda "lambda")
-  (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes '(emacs-lisp-mode))
-  (set-rotate-patterns! 'emacs-lisp-mode
-    :symbols '(("t" "nil")
-               ("let" "let*")
-               ("when" "unless")
-               ("advice-add" "advice-remove")
-               ("defadvice!" "undefadvice!")
-               ("add-hook" "remove-hook")
-               ("add-hook!" "remove-hook!")
-               ("it" "xit")
-               ("describe" "xdescribe")))
+  (let ((modes '(emacs-lisp-mode lisp-interaction-mode lisp-data-mode)))
+    (set-repl-handler! modes #'+emacs-lisp/open-repl)
+    (set-eval-handler! modes #'+emacs-lisp-eval)
+    (set-lookup-handlers! `(,@modes helpful-mode)
+      :definition    #'+emacs-lisp-lookup-definition
+      :documentation #'+emacs-lisp-lookup-documentation)
+    (set-docsets! modes "Emacs Lisp")
+    (set-ligatures! modes :lambda "lambda")
+    (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes modes)
+    (set-rotate-patterns! modes
+      :symbols '(("t" "nil")
+                 ("let" "let*")
+                 ("when" "unless")
+                 ("advice-add" "advice-remove")
+                 ("defadvice!" "undefadvice!")
+                 ("add-hook" "remove-hook")
+                 ("add-hook!" "remove-hook!")
+                 ("it" "xit")
+                 ("describe" "xdescribe"))))
 
   (setq-hook! 'emacs-lisp-mode-hook
     ;; Emacs' built-in elisp files use a hybrid tab->space indentation scheme
@@ -83,7 +84,7 @@ See `+emacs-lisp-non-package-mode' for details.")
   ;; and `editorconfig' would force fixed indentation on elisp.
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode)
 
-  (add-hook! 'emacs-lisp-mode-hook
+  (add-hook! '(emacs-lisp-mode-hook lisp-data-mode-local-vars-hook)
              ;; Allow folding of outlines in comments
              #'outline-minor-mode
              ;; Make parenthesis depth easier to distinguish at a glance
