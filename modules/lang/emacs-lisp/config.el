@@ -112,13 +112,13 @@ See `+emacs-lisp-non-package-mode' for details.")
 
   ;; Enhance elisp syntax highlighting, by highlighting Doom-specific
   ;; constructs, defined symbols, and truncating :pin's in `package!' calls.
-  (font-lock-add-keywords
-   'emacs-lisp-mode
-   (append `(;; custom Doom cookies
-             ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
-           ;; highlight defined, special variables & functions
-           (when +emacs-lisp-enable-extra-fontification
-             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
+  (dolist (mode '(emacs-lisp-mode lisp-data-mode lisp-interaction-mode))
+    (font-lock-add-keywords
+     mode (append `(;; custom Doom cookies
+                    ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
+                  ;; highlight defined, special variables & functions
+                  (when +emacs-lisp-enable-extra-fontification
+                    `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face))))))
  
   (defadvice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
     "Display variable value next to documentation in eldoc."
