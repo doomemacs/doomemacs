@@ -442,14 +442,14 @@ This should already be the case yet it does not always seem to be."
       (org-msg-set-prop "attachment" (nconc files (list file)))))
 
   ;; HACK: Toggle `org-msg' where sensible.
-  (defvar +mu4e--compose-org-msg-toggle-next t)
+  (defvar +mu4e-compose-org-msg-toggle-next t)
   (defadvice! +mu4e-maybe-toggle-org-msg-a (&rest _)
     :before #'+mu4e/attach-files
     :before #'mu4e-compose-new
     :before #'mu4e-compose-reply
     :before #'mu4e-compose-forward
     :before #'mu4e-compose-resend
-    (when (xor (/= 1 (if (integerp current-prefix-arg) current-prefix-arg 0))
+    (when (xor (/= 1 (prefix-numeric-value current-prefix-arg))
                +mu4e-compose-org-msg-toggle-next)
       (org-msg-mode (if org-msg-mode -1 1))
       (cl-callf not +mu4e-compose-org-msg-toggle-next)))
