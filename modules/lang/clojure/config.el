@@ -131,9 +131,10 @@
              (let* ((from (car replacement))
                     (to (cadr replacement))
                     (item (assoc from cider-debug-prompt-commands)))
-               ;; Position matters, hence the update-in-place
-               (setf (car item) (car to))
-               (setf (cdr item) (cdr to))))
+               (when item
+                 ;; Position matters, hence the update-in-place
+                 (setf (car item) (car to))
+                 (setf (cdr item) (cdr to)))))
            '((?h (?H "here" "Here"))
              (?i (?I "in" "In"))
              (?j (?J "inject" "inJect"))
