@@ -196,8 +196,8 @@
         "a" #'python-pytest
         "f" #'python-pytest-file-dwim
         "F" #'python-pytest-file
-        "t" #'python-pytest-function-dwim
-        "T" #'python-pytest-function
+        "t" #'python-pytest-run-def-or-class-at-point-dwim
+        "T" #'python-pytest-run-def-or-class-at-point
         "r" #'python-pytest-repeat
         "p" #'python-pytest-dispatch))
 
