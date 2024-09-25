@@ -11,7 +11,7 @@
     (compile cmd)))
 
 (defun +go--run-tests (args)
-  (let ((cmd (concat "go test -test.v " args)))
+  (let ((cmd (concat "go test -test.v " args " " (getenv "GOFLAGS"))))
     (setq +go-test-last (concat "cd " default-directory ";" cmd))
     (+go--spawn cmd)))
 
