@@ -8,7 +8,7 @@
 (package! flim :recipe (:branch "flim-1_14-wl") :pin "23bb29d70a13cada2eaab425ef80071564586a6d")
 (package! semi :recipe (:branch "semi-1_14-wl") :pin "85a52b899ac89be504d9e38d8d406bba98f4b0b3")
 
-(package! wanderlust :pin "8a0ea2146ee919a5344bb25f198d45016bc716d9")
+(package! wanderlust :pin "8b413b33cdb5a1b715f99a3919573fde2cfb3053")
 
 (when (modulep! +xface)
   (package! x-face-e21
