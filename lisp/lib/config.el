@@ -52,16 +52,24 @@ And jumps to your `doom!' block."
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  `(let ((default-directory doom-emacs-dir)
-         (doom-bin (expand-file-name "doom" doom-bin-dir)))
+  `(let ((doom-bin "doom")
+         (default-directory doom-emacs-dir)
+         (exec-path (cons doom-bin-dir exec-path)))
+     (when (and (featurep :system 'windows)
+                (string-match-p "cmdproxy.exe$" shell-file-name))
+       (unless (executable-find "pwsh")
+         (user-error "Powershell 3.0+ is required, but pwsh.exe was not found in your $PATH"))
+       (setq doom-bin "doom.ps1"))
      ;; Ensure the bin/doom operates with the same environment as this
      ;; running session.
-     (letenv! (("EMACS" (doom-path invocation-directory invocation-name))
+     (letenv! (("PATH" (string-join exec-path path-separator))
+               ("EMACS" (doom-path invocation-directory invocation-name))
                ("EMACSDIR" doom-emacs-dir)
                ("DOOMDIR" doom-user-dir)
                ("DOOMLOCALDIR" doom-local-dir)
-               ("DEBUG" (and doom-debug-mode "1")))
-       (with-current-buffer (compile (format ,command doom-bin) t)
+               ("DEBUG" (if doom-debug-mode (number-to-string doom-log-level) "")))
+       (with-current-buffer
+           (compile (format ,command (expand-file-name doom-bin doom-bin-dir)) t)
          (let ((w (get-buffer-window (current-buffer))))
            (select-window w)
            (add-hook
