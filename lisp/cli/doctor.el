@@ -76,7 +76,13 @@ in."
            (warn! "Emacs 27 is supported, but not for long!")
            (explain! "Doom will drop 27.x support sometime late-2024. It's recommended that you upgrade "
                      "to the latest stable release (currently 29.4). It is better supported, faster, and "
-                     "more stable."))))
+                     "more stable.")))
+
+    (when (and (version= emacs-version "29.4") (featurep 'pgtk))
+      (warn! "Detected emacs-pgtk 29.4!")
+      (explain! "If you are experiencing segfaults (crashes), consider downgrading to 29.3 or "
+                "upgrading to 30+. A known bug in 29.4 causes intermittent crashes. "
+                "See doomemacs#7915 for details.")))
 
   (print! (start "Checking for Doom's prerequisites..."))
   (print-group!
