@@ -259,22 +259,23 @@ in."
                          (`darwin "~/Library/Fonts/"))
                        (require 'nerd-icons nil t))
               (with-temp-buffer
-                (let ((errors 0))
-                  (cl-destructuring-bind (status . output)
-                      (doom-call-process "fc-list" "" "file")
-                    (if (not (zerop status))
-                        (print! (error "There was an error running `fc-list'. Is fontconfig installed correctly?"))
-                      (insert (cdr (doom-call-process "fc-list" "" "file")))
-                      (dolist (font nerd-icons-font-names)
-                        (if (save-excursion (re-search-backward font nil t))
-                            (success! "Found font %s" font)
-                          (print! (warn "%S font is not installed on your system") font)
-                          (cl-incf errors)))
-                      (when (> errors 0)
-                        (explain! "Some needed fonts are not properly installed on your system. To download and "
-                                  "install them, run `M-x nerd-icons-install-fonts' from within Doom Emacs. "
-                                  "However, on Windows this command will only download them; the fonts must "
-                                  "be installed manually afterwards.")))))))))
+                (cl-destructuring-bind (status . output)
+                    (doom-call-process "fc-list" "" "family")
+                  (if (not (zerop status))
+                      (print! (error "There was an error running `fc-list'. Is fontconfig installed correctly?"))
+                    (insert output)
+                    (if (re-search-backward nerd-icons-font-family nil t)
+                        (success! "Found %s" nerd-icons-font-family)
+                      (print! (warn "Failed to locate '%s' font on your system") nerd-icons-font-family)
+                      (explain! "This font is required for icons in Doom Emacs. To download and install "
+                                "them, do one of the following:\n\n"
+                                "  - Execute `M-x nerd-icons-install-fonts' from within Doom Emacs (NOTE: "
+                                "    on Windows this command will only download them; the fonts must then "
+                                "    be installed manually afterwards).\n"
+                                "  - Download and install 'Symbols Nerd Font' from https://nerdfonts.com "
+                                "    or via your OS package manager. (You'll need to change the "
+                                "    `nerd-icons-font-names' and/or `nerd-icons-font-family' variables to "
+                                "    reflect a non-standard file or font family name).\n"))))))))
 
         (print! (start "Checking for stale elc files in your DOOMDIR..."))
         (when (file-directory-p doom-user-dir)
