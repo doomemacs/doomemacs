@@ -21,9 +21,9 @@ Through LSP, this module offers:
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-- +lsp ::
-  Enable LSP support for ~c-mode~, ~c++-mode~, and ~objc-mode~. Requires [[doom-module::tools
-  lsp]] and a langserver (supports ccls, clangd, and cquery).
+- lsp ::
+  Enable LSP support for ~c-mode~, ~c++-mode~, and ~objc-mode~. Requires [[doom-module::tools lsp]]
+  and a langserver (supports clangd, ccls, and cquery).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
@@ -59,8 +59,7 @@ This module's requirements change depending on how you use it.
 - You will need a C/C++ compiler, like =gcc= or =clang=.
 
 ** LSP servers
-=lsp-mode= and =eglot= support a few LSP servers, but =clangd= and =ccls= are
-recommended.
+=lsp-mode= and =eglot= support a few LSP servers, but =clangd= is recommend:
 
 + clangd (must be v9 or newer) :: clangd is included with =llvm= which should be
   available through your OS' package manager.
@@ -78,7 +77,8 @@ recommended.
 + cmake-language-server :: available through ~pip~ on most distributions
 
 ** =:editor format=
-The formatter used is [[doom-executable:clang-format]] which should be installed alongside =clang=.
+The formatter used is [[doom-executable:clang-format]] which should be installed alongside
+=clang=.
 
 For more info, see [[doom-module::editor format]].
 
@@ -185,33 +185,33 @@ server everywhere clangd can be used.
 ;;; add to $DOOMDIR/config.el
 (after! ccls
   (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
-  (set-lsp-priority! 'ccls 2)) ; optional as ccls is the default in Doom
+  (set-lsp-priority! 'ccls 1))
 #+end_src
 
-This will both set your ccls flags and choose ccls as the default server. [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS
-documentation]] lists available options, use =t= for ~true~, =:json-false= for
-~false~, and =:json-null= for ~null~.
+This will prioritize =ccls= over =clangd=, if both are present on your system. Also
+feel free to tweak [[var:ccls-initialization-options]] to reconfigure it ([[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS
+documentation]] lists available options; use =t= for ~true~, =:json-false= for ~false~,
+and =:json-null= for ~null~).
 
 *** Eglot with clangd
+=clangd= will work with Eglot out of the box, but to customize its startup
+command, use [[fn:set-eglot-client!]]:
 #+begin_src emacs-lisp
 ;;; add to $DOOMDIR/config.el
 (after! cc-mode
   (set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy")))
 #+end_src
 
-This will both set your clangd flags and choose clangd as the default server (if
-it is the last =set-eglot-client! 'cc-mode= in your config).
-
 *** Eglot with ccls
+=ccls= will work with Eglot out of the box, but to customize its startup command,
+use [[fn:set-eglot-client!]]:
 #+begin_src emacs-lisp
 ;;; add to $DOOMDIR/config.el
 (after! cc-mode
   (set-eglot-client! 'cc-mode '("ccls" "--init={\"index\": {\"threads\": 3}}")))
 #+end_src
 
-This will both set your ccls flags and choose ccls as the default server (if it
-is the last =set-eglot-client! 'cc-mode= in your config). [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS documentation]]
-lists available options
+[[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS documentation]] lists available options
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
