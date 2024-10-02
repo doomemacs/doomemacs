@@ -197,3 +197,6 @@ If prefix ARG, delete all persistent scratches."
           (message "%S does not exist" (abbreviate-file-name file))
         (delete-file file)
         (message "Successfully deleted %S" (abbreviate-file-name file))))))
+
+(provide 'doom-lib '(scratch))
+;;; scratch.el ends here

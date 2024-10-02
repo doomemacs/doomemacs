@@ -559,4 +559,5 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
 
 (add-hook 'doom-docs-org-mode-hook #'doom-docs-read-only-h)
 
+(provide 'doom-lib '(docs))
 ;;; docs.el ends here

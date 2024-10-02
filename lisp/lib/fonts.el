@@ -180,3 +180,6 @@ Also resizees `doom-variable-pitch-font' and `doom-serif-font'."
     (doom-adjust-font-size nil)
     (when doom-big-font-mode
       (doom-adjust-font-size doom-big-font-increment))))
+
+(provide 'doom-lib '(fonts))
+;;; fonts.el ends here

@@ -165,3 +165,6 @@ imported into Emacs."
   (doom--if-compile doom-upgrade-command
       (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
         (doom/restart-and-restore))))
+
+(provide 'doom-lib '(config))
+;;; config.el ends here

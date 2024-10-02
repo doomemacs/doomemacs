@@ -413,3 +413,6 @@ i.e. disables `ws-butler-mode' in the current buffer."
 (defun doom-disable-show-trailing-whitespace-h ()
   "Disable `show-trailing-whitespace' in the current buffer."
   (setq-local show-trailing-whitespace nil))
+
+(provide 'doom-lib '(text))
+;;; text.el ends here

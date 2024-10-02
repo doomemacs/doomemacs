@@ -12,4 +12,5 @@
           str)
     (concat (nreverse quoted))))
 
-;;; end of strings.el
+(provide 'doom-lib '(strings))
+;;; strings.el ends here

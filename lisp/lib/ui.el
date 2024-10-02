@@ -245,3 +245,6 @@ If the current buffer is not an indirect buffer, it is `widen'ed."
   (if (buffer-narrowed-p)
       (widen)
     (narrow-to-region beg end)))
+
+(provide 'doom-lib '(ui))
+;;; ui.el ends here

@@ -115,3 +115,6 @@ non-interactive or frame-less sessions."
                (doom-theme-face-attribute theme face attribute inherit))
         (setq value (face-attribute-merged-with attribute value inherit))))
     value))
+
+(provide 'doom-lib '(themes))
+;;; themes.el ends here

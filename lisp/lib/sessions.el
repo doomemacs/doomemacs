@@ -155,3 +155,6 @@ switch."
              (when (boundp 'chemacs-current-emacs-profile)
                (list "--with-profile" chemacs-current-emacs-profile))
              (list "-l" tmpfile)))))
+
+(provide 'doom-lib '(sessions))
+;;; sessions.el ends here

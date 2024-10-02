@@ -153,3 +153,6 @@ LOCATION defaults to `doom-store-location'."
     (when (file-exists-p path)
       (delete-file path)
       t)))
+
+(provide 'doom-lib '(store))
+;;; store.el ends here

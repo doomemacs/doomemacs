@@ -159,3 +159,6 @@ to reproduce bugs and determine if Doom is to blame."
           (insert (substitute-command-keys doom-sandbox-preamble)))
      (goto-char (point-max))
      (current-buffer))))
+
+(provide 'doom-lib '(sandbox))
+;;; sandbox.el ends here

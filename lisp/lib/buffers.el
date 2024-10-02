@@ -398,3 +398,6 @@ current project."
        interactive "Killed %d project buffers"
        (- (length buffer-list)
           (length (cl-remove-if-not #'buffer-live-p buffer-list)))))))
+
+(provide 'doom-lib '(buffers))
+;;; buffers.el ends here

@@ -187,3 +187,6 @@ If DIR is not a project, it will be indexed (but not cached)."
   (unless (file-remote-p project-root)
     (or (file-in-directory-p project-root temporary-file-directory)
         (file-in-directory-p project-root doom-local-dir))))
+
+(provide 'doom-lib '(projects))
+;;; projects.el ends here

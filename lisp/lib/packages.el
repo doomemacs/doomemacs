@@ -317,3 +317,6 @@ Must be run from a magit diff buffer."
                        (user-error "%S isn't installed through any known source (%s)"
                                    package archive)))))
                  ((user-error "Can't get homepage for %S package" package))))))
+
+(provide 'doom-lib '(packages))
+;;; packages.el ends here
