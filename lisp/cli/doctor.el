@@ -58,23 +58,25 @@ in."
                (string-match-p ".\\([56]0\\|9[0-9]\\)$" emacs-version))
            (warn! "Detected a development version of Emacs (%s)" emacs-version)
            (if (> emacs-major-version 29)
-               (explain! "This is the bleeding edge of Emacs. As it is constantly changed, Doom will not "
-                         "(officially) support it. If you've found a stable commit, great! But be "
-                         "cautious about updating Emacs too eagerly!\n")
-             (explain! "A .50, .60, or .9X appended to the version string indicates that this is a version "
-                       "of Emacs in between stable releases. These are not well supported.\n"))
+               (explain! "This is the bleeding edge of Emacs. As it is constantly changing, Doom will not "
+                         "(officially) support it. If you've found a stable commit, great! But be cautious "
+                         "about updating Emacs too eagerly!\n")
+             (explain! "A version that ends in .50, .60, or .9X indicates a build of Emacs in between "
+                       "stable releases (i.e. development builds). Doom does not support these well.\n"))
            (explain! "Because development builds are prone to random breakage, there will be a greater "
                      "burden on you to investigate and deal with issues. Please make extra sure that "
-                     "your issue is reproducible in 29.1 before reporting them to Doom's issue tracker!\n"
+                     "your issue is reproducible on a stable version (between 27.1 and 29.4) before "
+                     "reporting them to Doom's issue tracker!\n"
                      "\n"
                      "If this doesn't phase you, read the \"Why does Doom not support Emacs HEAD\" QnA "
                      "in Doom's FAQ. It offers some advice for debugging and surviving issues on the "
-                     "bleeding edge. Failing that, 29.1 is highly recommended and will always be "
+                     "bleeding edge. Failing that, the latest stable release of Emacs will always be "
                      "Doom's best supported version of Emacs."))
           ((= emacs-major-version 27)
-           (warn! "Emacs 27 is supported, but consider upgrading to 28.1")
-           (explain! "Emacs 28.1 is better supported, faster, and more stable. Plus, Doom will drop "
-                     "27.x support sometime late-2023."))))
+           (warn! "Emacs 27 is supported, but not for long!")
+           (explain! "Doom will drop 27.x support sometime late-2024. It's recommended that you upgrade "
+                     "to the latest stable release (currently 29.4). It is better supported, faster, and "
+                     "more stable."))))
 
   (print! (start "Checking for Doom's prerequisites..."))
   (print-group!
