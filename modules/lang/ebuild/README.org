@@ -1,0 +1,66 @@
+:PROPERTIES:
+:ID:       e77e2c17-4eb5-445a-8735-a068ff103d10
+:END:
+#+title:     :lang ebuild
+#+subtitle:  emerge -e world
+#+created:   March 28, 2024
+#+since:     3.0.0 (#COMMIT-OR-PR-REF)
+
+* Description :unfold:
+This module adds [[https://wiki.gentoo.org/wiki/Ebuild][Ebuild]] support.
+
+- Code completion (~company-ebuild~) (requires [[doom-module::completion company]])
+- Generate keywords for ebuild (~ebuild-mode~)
+- Auto-generate manifest and git-commit for ebuild (~pkgdev~)
+- QA check (~flycheck-pkgcheck~) (requires [[doom-module::checkers syntax]])
+- Run ~ebuild~ command (~ebuild~)
+- Skeleton for ebuild & inline-tag
+- Auto-formatting on save (~shfmt~) (requires [[doom-module::editor format +onsave]])
+
+** Maintainers
+- [[doom-user:][@st0nie]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+/This module doesn't install any packages./
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+** Dependencies
+Use ~$ emerge -a~ to install these packages:
+- ~app-emacs/ebuild-mode~ (for ebuild-mode)
+- ~app-emacs/company-ebuild~ (for code completion)
+- ~dev-util/sh~ (for formatting)
+- ~dev-util/pkgcheck~ (for syntax check, need ~emacs~ use flag enabled)
+
+* TODO Usage
+#+begin_quote
+󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
