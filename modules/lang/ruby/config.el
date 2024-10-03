@@ -214,7 +214,7 @@
         "r" #'projectile-rails-command-map))
 
 (use-package! rails-routes
-  :when (featurep! +rails)
+  :when (modulep! +rails)
   :defer t
   :init
   (map! :after ruby-mode
@@ -229,7 +229,7 @@
         "C-c ! o" #'rails-routes-jump))
 
 (use-package! rails-i18n
-  :when (featurep! +rails)
+  :when (modulep! +rails)
   :defer t
   :init
   (map! :after ruby-mode
