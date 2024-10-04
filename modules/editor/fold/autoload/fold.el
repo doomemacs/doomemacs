@@ -8,6 +8,7 @@
 ;;
 ;;; Helpers
 
+;;;###autoload
 (defun +fold--ensure-hideshow-mode ()
   "Enable `hs-minor-mode' if not already enabled.
 
