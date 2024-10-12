@@ -276,6 +276,7 @@ whose dimensions may not be fully initialized by the time this is run."
         (set-window-fringes win 0 0)
         (set-window-margins
          win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2))))
+      (setq mode-line-right-align-edge 'right-margin)
       (with-current-buffer (doom-fallback-buffer)
         (save-excursion
           (with-silent-modifications
