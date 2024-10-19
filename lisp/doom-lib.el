@@ -51,7 +51,7 @@
             (unless absolute?
               (append (cons '* (remq t (reverse doom-context)))
                       (if (bound-and-true-p doom-module-context)
-                          (let ((key (doom-module-context-key)))
+                          (let ((key (doom-module-context-key doom-module-context)))
                             (delq nil (list (car key) (cdr key)))))))
             ":")
            args)))
@@ -616,6 +616,25 @@ See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
 ;; For backwards compatibility
 (defalias 'λ!  #'cmd!)
 (defalias 'λ!! #'cmd!!)
+
+(pcase-defmacro doom-struct (type &rest fields)
+  `(and (pred (cl-struct-p))
+        ;; TODO: Support `&rest', `&key', and `&optional' in FIELDS
+        ,@(mapcar
+           (lambda (field)
+             (let ((offset (cl-struct-slot-offset type field)))
+               `(app (lambda (it)
+                       ,(if offset
+                            `(aref it ,offset)
+                          `(,(intern (format "%s-%s" ',type ',field)) it)))
+                     ,field)))
+           fields)))
+
+(pcase-defmacro doom-module-context (&rest fields)
+  `(doom-struct doom-module-context ,@fields))
+
+(pcase-defmacro doom-module (&rest fields)
+  `(doom-struct doom-module ,@fields))
 
 
 ;;; Mutation

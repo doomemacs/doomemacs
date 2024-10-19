@@ -1878,7 +1878,7 @@ errors to `doom-cli-error-file')."
   (when doom-cli--context
     (error "Cannot nest `run!' calls"))
   (doom-run-hooks 'doom-after-init-hook)
-  (doom-context-with 'cli
+  (with-doom-context 'cli
     (let* ((args (flatten-list args))
            (context (make-doom-cli-context :prefix prefix :whole args))
            (doom-cli--context context)

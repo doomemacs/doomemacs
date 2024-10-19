@@ -317,18 +317,18 @@ in."
           (print! (start "Checking your enabled modules..."))
           (advice-add #'require :around #'doom-shut-up-a)
           (pcase-dolist (`(,group . ,name) (doom-module-list))
-            (doom-context-with 'doctor
+            (with-doom-context 'doctor
               (let (doom-local-errors
                     doom-local-warnings)
                 (let (doom-doctor--errors
                       doom-doctor--warnings)
                   (condition-case-unless-debug ex
-                      (doom-module-context-with (cons group name)
-                        (let ((doctor-file   (doom-module-expand-path group name "doctor.el"))
-                              (packages-file (doom-module-expand-path group name doom-module-packages-file)))
+                      (with-doom-module (cons group name)
+                        (let ((doctor-file   (doom-module-expand-path (cons group name) "doctor.el"))
+                              (packages-file (doom-module-expand-path (cons group name) doom-module-packages-file)))
                           (when packages-file
                             (cl-loop with doom-output-indent = 6
-                                     for name in (doom-context-with 'packages
+                                     for name in (with-doom-context 'packages
                                                    (let* (doom-packages
                                                           doom-disabled-packages)
                                                      (load packages-file 'noerror 'nomessage)

@@ -317,8 +317,8 @@ ready to be pasted in a bug report on github."
                         do (setq lastcat cat)
                         and collect lastcat
                         collect
-                        (let* ((flags (doom-module-get lastcat mod :flags))
-                               (path  (doom-module-get lastcat mod :path))
+                        (let* ((flags (doom-module-get (cons lastcat mod) :flags))
+                               (path  (doom-module-get (cons lastcat mod) :path))
                                (module
                                 (append
                                  (cond ((null path)

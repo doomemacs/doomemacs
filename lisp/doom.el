@@ -601,7 +601,7 @@ wasn't active when this was called."
     (doom-log ":context: -%s %s" context doom-context)
     (setq doom-context (delq context doom-context))))
 
-(defmacro doom-context-with (contexts &rest body)
+(defmacro with-doom-context (contexts &rest body)
   "Evaluate BODY with CONTEXTS added to `doom-context'."
   (declare (indent 1))
   `(let ((doom-context doom-context))

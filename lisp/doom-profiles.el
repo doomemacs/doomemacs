@@ -389,50 +389,54 @@ Defaults to the profile at `doom-profile-default'."
   (let* ((init-modules-list (doom-module-list nil t))
          (config-modules-list (doom-module-list))
          (pre-init-modules
-          (seq-filter (fn! (<= (doom-module-depth (car %) (cdr %) t) -100))
-                      (remove '(:user) init-modules-list)))
+          (seq-filter (fn! (<= (car (doom-module-get % :depth)) -100))
+                      (remove '(:user . nil) init-modules-list)))
          (init-modules
-          (seq-filter (fn! (<= 0 (doom-module-depth (car %) (cdr %) t) 100))
+          (seq-filter (fn! (<= 0 (car (doom-module-get % :depth)) 100))
                       init-modules-list))
          (config-modules
-          (seq-filter (fn! (<= 0 (doom-module-depth (car %) (cdr %)) 100))
+          (seq-filter (fn! (<= 0 (cdr (doom-module-get % :depth)) 100))
                       config-modules-list))
          (post-config-modules
-          (seq-filter (fn! (>= (doom-module-depth (car %) (cdr %)) 100))
+          (seq-filter (fn! (>= (cdr (doom-module-get % :depth)) 100))
                       config-modules-list))
          (init-file   doom-module-init-file)
          (config-file doom-module-config-file))
-    (letf! ((defun module-loader (group name file &optional noerror)
-              (doom-module-context-with (cons group name)
-                `(let ((doom-module-context ,doom-module-context))
-                   (doom-load
-                    ,(pcase (cons group name)
-                       ('(:core . nil)
-                        `(file-name-concat
-                          doom-core-dir ,(file-name-nondirectory (file-name-sans-extension file))))
-                       ('(:user . nil)
-                        `(file-name-concat
-                          doom-user-dir ,(file-name-nondirectory (file-name-sans-extension file))))
-                       (_ (abbreviate-file-name (file-name-sans-extension file))))
-                    t))))
-            (defun module-list-loader (modules file &optional noerror)
-              (cl-loop for (cat . mod) in modules
-                       if (doom-module-locate-path cat mod file)
-                       collect (module-loader cat mod it noerror))))
+    (letf! ((defun module-loader (key file)
+              (let ((noextfile (file-name-sans-extension file)))
+                `(with-doom-module ',key
+                   ,(pcase key
+                      ('(:core . nil)
+                       `(doom-load
+                         (file-name-concat
+                          doom-core-dir ,(file-name-nondirectory noextfile))
+                         t))
+                      ('(:user . nil)
+                       `(doom-load
+                         (file-name-concat
+                          doom-user-dir ,(file-name-nondirectory noextfile))
+                         t))
+                      (_
+                       (when (doom-file-cookie-p file "if" t)
+                         `(doom-load ,(abbreviate-file-name noextfile) t)))))))
+            (defun module-list-loader (modules file)
+              (cl-loop for key in modules
+                       if (doom-module-locate-path key file)
+                       collect (module-loader key it))))
       ;; FIX: Same as above (see `doom-profile--generate-init-vars').
       `((if (or (doom-context-p 'init)
                 (doom-context-p 'reload))
-            (doom-context-with 'modules
+            (with-doom-context 'modules
               (set 'doom-modules ',doom-modules)
               (set 'doom-disabled-packages ',doom-disabled-packages)
-              ;; Cache module state and flags in symbol plists for quick lookup by
-              ;; `modulep!' later.
+              ;; Cache module state and flags in symbol plists for quick lookup
+              ;; by `modulep!' later.
               ,@(cl-loop
                  for (category . modules) in (seq-group-by #'car config-modules-list)
                  collect
                  `(setplist ',category
                    (quote ,(cl-loop for (_ . module) in modules
-                                    nconc `(,module ,(get category module))))))
+                                    nconc `(,module ,(doom-module->context (cons category module)))))))
               (let ((old-custom-file custom-file))
                 ,@(module-list-loader pre-init-modules init-file)
                 (doom-run-hooks 'doom-before-modules-init-hook)
@@ -441,7 +445,7 @@ Defaults to the profile at `doom-profile-default'."
                 (doom-run-hooks 'doom-before-modules-config-hook)
                 ,@(module-list-loader config-modules config-file)
                 (doom-run-hooks 'doom-after-modules-config-hook)
-                ,@(module-list-loader post-config-modules config-file t)
+                ,@(module-list-loader post-config-modules config-file)
                 (when (eq custom-file old-custom-file)
                   (doom-load custom-file 'noerror)))))))))
 

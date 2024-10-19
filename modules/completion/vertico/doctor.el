@@ -2,7 +2,7 @@
 ;;; completion/vertico/doctor.el
 
 (dolist (module '(ivy helm ido))
-  (when (doom-module-p :completion module)
+  (when (doom-module-active-p :completion module)
     (error! "This module is incompatible with :completion %s; disable one or the other"
             module)))
 

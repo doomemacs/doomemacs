@@ -1,4 +1,5 @@
 ;;; editor/evil/init.el -*- lexical-binding: t; -*-
+;;;###if (modulep! +everywhere)
 
 (defvar evil-collection-key-blacklist)
 
@@ -22,9 +23,7 @@
 ;;    disable modules, and to reduce the effort required to maintain our copy of
 ;;    `evil-collection-list' (now I can just copy it from time to time).
 
-(when (and (not noninteractive)
-           (not (doom-context-p 'reload))
-           (modulep! +everywhere))
+(unless (or noninteractive (doom-context-p 'reload))
 
   (setq evil-collection-company-use-tng (modulep! :completion company +tng))
 

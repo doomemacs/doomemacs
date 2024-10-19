@@ -251,7 +251,7 @@ SEE ALSO:
 ;; Load $DOOMDIR/init.el, to read the user's `doom!' block and give users an
 ;; opportunity to customize the CLI environment, if they like. Otherwise, they
 ;; can do so in .doomrc or .doomproject.
-(load! doom-module-init-file doom-user-dir t)
+(doom-modules-initialize)
 
 ;; There are a lot of CLIs, and some have expensive initialization, so best we
 ;; load them lazily.
@@ -297,9 +297,9 @@ SEE ALSO:
 
   (let ((cli-file "cli.el"))
     (defcli-group! "Module commands"
-      (doom-context-with 'modules
+      (with-doom-context 'modules
         (dolist (key (doom-module-list))
-          (when-let (path (doom-module-locate-path (car key) (cdr key) cli-file))
+          (when-let (path (doom-module-locate-path key cli-file))
             (defcli-group! :prefix (if (cdr key) (format "+%s" (cdr key)))
               (doom-load (file-name-sans-extension path))))))))
 

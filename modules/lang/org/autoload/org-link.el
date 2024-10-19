@@ -157,12 +157,11 @@ exist, and `org-link' otherwise."
   (cl-destructuring-bind (&key category module flag)
       (+org-link--read-module-spec module-path)
     (when category
-      (let ((doom-modules-dirs (list doom-modules-dir)))
-        (if-let* ((path (doom-module-locate-path category module))
-                  (path (or (car (doom-glob path "README.org"))
-                            path)))
-            (find-file path)
-          (user-error "Can't find Doom module '%s'" module-path))))
+      (if-let* ((path (doom-module-locate-path (cons category module)))
+                (path (or (car (doom-glob path "README.org"))
+                          path)))
+          (find-file path)
+        (user-error "Can't find Doom module '%s'" module-path)))
     (when flag
       (goto-char (point-min))
       (when (and (re-search-forward "^\\*+ \\(?:TODO \\)?Module flags")
@@ -179,13 +178,13 @@ exist, and `org-link' otherwise."
     (cl-destructuring-bind (&key category module flag)
         (+org-link--read-module-spec module-path)
       (let ((overall-face
-             (if (and category (doom-module-locate-path category module))
+             (if (and category (doom-module-locate-path (cons category module)))
                  '((:underline nil) org-link org-block bold)
                '(shadow org-block bold)))
             (icon-face
              (cond
-              ((doom-module-p category module flag) 'success)
-              ((and category (doom-module-locate-path category module)) 'warning)
+              ((doom-module-active-p category module flag) 'success)
+              ((and category (doom-module-locate-path (cons category module))) 'warning)
               (t 'error))))
         (add-text-properties
          start end
@@ -294,9 +293,9 @@ exist, and `org-link' otherwise."
         (cl-destructuring-bind (&key category module flag)
             (+org-link--read-module-spec (org-element-property :path link))
           (cond
-           ((doom-module-p category module)
+           ((doom-module-active-p category module)
             (propertize "enabled" 'face 'success))
-           ((and category (doom-module-locate-path category module))
+           ((and category (doom-module-locate-path (cons category module)))
             (propertize "disabled" 'face 'error))
            (t (propertize "unknown" 'face '(bold error)))))))
       ("doom-executable"

@@ -119,7 +119,7 @@
   :config
   (pcase-dolist (`((,category . ,modules) :after ,after :require ,libs)
                  +debugger--dap-alist)
-    (when (doom-module-p category (car modules) (cadr modules))
+    (when (doom-module-active-p category (car modules) (cadr modules))
       (dolist (lib (ensure-list after))
         (with-eval-after-load lib
           (mapc #'require (ensure-list libs))))))

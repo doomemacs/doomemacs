@@ -13,11 +13,11 @@ to a pop up buffer."
           (debug-on-error t))
       (unwind-protect
           (condition-case-unless-debug e
-              (doom-module-context-with
+              (with-doom-module
                   (doom-module-from-path
                    (or (buffer-file-name (buffer-base-buffer))
                        default-directory))
-                (doom-context-with 'eval
+                (with-doom-context 'eval
                   (eval-region beg end buffer load-read-function))
                 (with-current-buffer buffer
                   (let ((pp-max-width nil))

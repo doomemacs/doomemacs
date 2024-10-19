@@ -431,13 +431,13 @@ installed."
                       (push (cons
                              name (plist-put
                                    plist :modules
-                                   (list (doom-module-context-key))))
+                                   (list (doom-module-context-key doom-module-context))))
                             doom-packages)))))))))
     (user-error
      (user-error (error-message-string e)))
     (error
      (signal 'doom-package-error
-             (list (doom-module-context-key)
+             (list (doom-module-context-key doom-module-context)
                    file e)))))
 
 (defun doom-package-list (&optional module-list)
@@ -454,11 +454,11 @@ also be a list of module keys."
         doom-disabled-packages
         doom-packages)
     (letf! (defun read-packages (key)
-             (doom-module-context-with key
+             (with-doom-module key
                (when-let (file (doom-module-locate-path
-                                (car key) (cdr key) doom-module-packages-file))
+                                key doom-module-packages-file))
                  (doom-packages--read file nil 'noerror))))
-      (doom-context-with 'packages
+      (with-doom-context 'packages
         (let ((user? (assq :user module-list)))
           (when user?
             ;; We load the private packages file twice to populate

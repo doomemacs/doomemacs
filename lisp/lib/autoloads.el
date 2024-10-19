@@ -148,9 +148,13 @@ hoist buggy forms into autoloads.")
          ;; So `autoload-generate-file-autoloads' knows where to write it
          (target-buffer (current-buffer))
          (module (doom-module-from-path file))
-         (generated-autoload-load-name (abbreviate-file-name (file-name-sans-extension file)))
-         (module-enabled-p (and (doom-module-p (car module) (cdr module))
-                                (doom-file-cookie-p file "if" t))))
+         (generated-autoload-load-name
+          (abbreviate-file-name (file-name-sans-extension file)))
+         (module-enabled-p
+          (and (doom-module-active-p (car module) (cdr module))
+               (doom-file-cookie-p file "if" t)))
+         ;; (load-path (cons doom-modules-dir load-path))
+         )
     (save-excursion
       (when module-enabled-p
         (quiet! (autoload-generate-file-autoloads file target-buffer)))

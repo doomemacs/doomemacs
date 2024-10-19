@@ -49,8 +49,8 @@
                   (or buffer-file-name
                       (bound-and-true-p org-src-source-file-name)))
                  (package
-                  (doom-context-with 'packages
-                    (doom-module-context-with (doom-module-from-path buffer-file-name)
+                  (with-doom-context 'packages
+                    (with-doom-module (doom-module-from-path buffer-file-name)
                       (eval (sexp-at-point) t)))))
             (list :beg beg
                   :end end
@@ -164,14 +164,14 @@ each package."
      (list (intern (car module))
            (ignore-errors (intern (cadr module)))
            current-prefix-arg)))
-  (mapc (lambda! ((cat . mod))
-          (if-let (packages-file (doom-module-locate-path cat mod doom-module-packages-file))
+  (mapc (lambda! (key)
+          (if-let (packages-file (doom-module-locate-path key doom-module-packages-file))
               (with-current-buffer
                   (or (get-file-buffer packages-file)
                       (find-file-noselect packages-file))
                 (doom/bump-packages-in-buffer select)
                 (save-buffer))
-            (message "Module %s has no packages.el file" (cons cat mod))))
+            (message "Module %s has no packages.el file" key)))
         (if module
             (list (cons category module))
           (cl-remove-if-not (lambda (m) (eq (car m) category))
@@ -188,7 +188,7 @@ each package."
     (unless modules
       (user-error "This package isn't installed by any Doom module"))
     (dolist (module modules)
-      (when (doom-module-locate-path (car module) (cdr module) doom-module-packages-file)
+      (when (doom-module-locate-path module doom-module-packages-file)
         (doom/bump-module (car module) (cdr module))))))
 
 
