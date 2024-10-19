@@ -17,8 +17,7 @@
 (package! clojure-mode :pin "59888c84b61081e9b0085e388f55132925a66e7a")
 (package! clj-refactor :pin "dc1bbc8cdaa723bdbb6669ea7d280625c370755d")
 (package! cider :pin "8fdb53e8be764704f5023fa024d023bffedf5a8b")
-(when (and (modulep! :checkers syntax)
-           (not (modulep! :checkers syntax +flymake)))
+(when (modulep! :checkers syntax -flymake)
   (package! flycheck-clj-kondo :pin "e38c67ba9db1ea1cbe1b61ab39b506c05efdcdbf"))
 (package! jet :pin "c9a92675efd802f37df5e3eab7858dbbeced6ea4")
 (package! neil

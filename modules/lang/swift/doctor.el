@@ -1,6 +1,6 @@
 ;;; lang/swift/doctor.el -*- lexical-binding: t; -*-
 
-(assert! (or (not (modulep! +tree-sitter))
+(assert! (or (modulep! -tree-sitter)
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 

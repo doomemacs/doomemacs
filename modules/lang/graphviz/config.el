@@ -16,8 +16,7 @@
   (after! dtrt-indent
     (add-to-list 'dtrt-indent-hook-mapping-list '(graphviz-mode graphviz-dot-indent-width)))
 
-  (when (and (modulep! :checker syntax)
-             (not (modulep! :checker syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (after! flycheck
       (eval '(flycheck-define-checker graphviz-dot
                "A checker using graphviz dot."

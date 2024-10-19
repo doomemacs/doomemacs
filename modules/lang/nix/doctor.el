@@ -8,6 +8,6 @@
   (unless (executable-find nix-nixfmt-bin)
     (warn! (concat "Couldn't find " nix-nixfmt-bin ". nix-format-buffer won't work."))))
 
-(assert! (or (not (modulep! +tree-sitter))
+(assert! (or (modulep! -tree-sitter)
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")

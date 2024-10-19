@@ -27,7 +27,7 @@
 
 (use-package! lsp-sourcekit
   :when (modulep! +lsp)
-  :when (not (modulep! :tools lsp +eglot))
+  :when (modulep! :tools lsp -eglot)
   :defer t
   :init (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
   :config

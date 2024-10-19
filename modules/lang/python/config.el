@@ -323,8 +323,7 @@
 
 (use-package! flycheck-cython
   :when (modulep! +cython)
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after cython-mode)
 
 
@@ -352,7 +351,7 @@
 (use-package! lsp-pyright
   :when (modulep! +lsp)
   :when (modulep! +pyright)
-  :when (not (modulep! :tools lsp +eglot))
+  :when (modulep! :tools lsp -eglot)
   :defer t
   :init
   (when-let ((exe (executable-find "basedpyright")))

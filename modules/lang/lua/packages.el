@@ -5,8 +5,7 @@
 
 (when (modulep! +moonscript)
   (package! moonscript :pin "56f90471e2ced2b0a177aed4d8c2f854797e9cc7")
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (package! flycheck-moonscript
       :recipe (:host github :repo "hlissner/emacs-flycheck-moonscript")
       :pin "fcb99e5efcf31db05f236f02eaa575986a57172d")))

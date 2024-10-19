@@ -70,7 +70,7 @@
 ;;
 ;;; Implementations
 
-(eval-if! (not (modulep! +flyspell))
+(eval-if! (modulep! -flyspell)
 
     (use-package! spell-fu
       :when (executable-find "aspell")

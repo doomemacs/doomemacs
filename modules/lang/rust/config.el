@@ -46,7 +46,7 @@
   (setq rustic-babel-format-src-block nil
         rustic-format-trigger nil)
 
-  (if (not (modulep! +lsp))
+  (if (modulep! -lsp)
       (after! rustic-flycheck
         (add-to-list 'flycheck-checkers 'rustic-clippy))
     (setq rustic-lsp-client

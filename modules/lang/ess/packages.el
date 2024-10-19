@@ -11,6 +11,5 @@
   (package! eldoc-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581")
   (when (modulep! :completion company)
     (package! company-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581"))
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (package! flycheck-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581")))

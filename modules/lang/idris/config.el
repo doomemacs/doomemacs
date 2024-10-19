@@ -23,6 +23,5 @@
 
 
 (use-package! flycheck-idris
-  :when (modulep! :checkers syntax)
-  :when (not (modulep! :checkers syntax +flymake))
+  :when (modulep! :checkers syntax -flymake)
   :after idris-mode)

@@ -78,8 +78,7 @@
 
 (use-package! flycheck-guile
   :when (modulep! +guile)
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after geiser)
 
 ;; Add Guix channels to Guile load path

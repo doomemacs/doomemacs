@@ -52,8 +52,7 @@
 
 
 (use-package! flycheck-credo
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after elixir-mode
   :config (flycheck-credo-setup))
 

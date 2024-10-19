@@ -70,9 +70,7 @@
         "t" #'merlin-type-enclosing)
 
   (use-package! flycheck-ocaml
-    :when (and (modulep! :checkers syntax)
-               (not (modulep! :checkers syntax +flymake)))
-
+    :when (modulep! :checkers syntax -flymake)
     :hook (merlin-mode . +ocaml-init-flycheck-h)
     :config
     (defun +ocaml-init-flycheck-h ()

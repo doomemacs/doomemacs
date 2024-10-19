@@ -20,8 +20,7 @@
   (when (modulep! +tree-sitter)
     (add-hook 'zig-mode-local-vars-hook #'tree-sitter! 'append))
 
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (eval '(flycheck-define-checker zig
              "A zig syntax checker using zig's `ast-check` command."
              :command ("zig" "ast-check" (eval (buffer-file-name)))

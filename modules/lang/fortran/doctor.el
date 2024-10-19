@@ -9,7 +9,7 @@
            (not (executable-find "ifort")))
   (warn! "Couldn't find Intel ifort - compilation will not work."))
 
-(when (and (not (modulep! +intel))
+(when (and (modulep! -intel)
            (not (executable-find "gfortran")))
   (warn! "Couldn't find gfortran - compilation will not work."))
 

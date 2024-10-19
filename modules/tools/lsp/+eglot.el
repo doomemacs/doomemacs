@@ -9,8 +9,7 @@
         ;; NOTE: We disable eglot-auto-display-help-buffer because :select t in
         ;;   its popup rule causes eglot to steal focus too often.
         eglot-auto-display-help-buffer nil)
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (setq eglot-stay-out-of '(flymake)))
 
   :config
@@ -62,6 +61,5 @@ server an expensive restart when its buffer is reverted."
 
 
 (use-package! flycheck-eglot
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :hook (eglot-managed-mode . flycheck-eglot-mode))

@@ -35,7 +35,6 @@
   :hook (purescript-mode . psc-ide-mode)
   :config
   (remove-hook 'company-backends 'company-psc-ide-backend)
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (psc-ide-flycheck-setup))
   (set-company-backend! 'purescript-mode 'company-psc-ide-backend))

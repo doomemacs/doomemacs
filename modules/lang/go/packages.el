@@ -10,6 +10,5 @@
 (when (modulep! :completion company)
   (package! company-go :pin "31948b463f2fc18f8801e5a8fe511fef300eb3dd"))
 
-(when (and (modulep! :checkers syntax)
-           (not (modulep! :checkers syntax +flymake)))
+(when (modulep! :checkers syntax -flymake)
   (package! flycheck-golangci-lint :pin "91c59b128aa6f719069cfb3e5df77588691a3e14"))

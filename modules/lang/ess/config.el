@@ -105,7 +105,6 @@
     :hook (stan-mode . company-stan-setup))
 
   (use-package! flycheck-stan
-    :when (and  (modulep! :checkers syntax)
-                (not (modulep! :checkers syntax +flymake)))
+    :when (modulep! :checkers syntax -flymake)
     :hook (stan-mode . flycheck-stan-stanc2-setup)
     :hook (stan-mode . flycheck-stan-stanc3-setup)))

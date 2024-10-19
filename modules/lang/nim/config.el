@@ -36,6 +36,5 @@ windows."
 
 
 (use-package! flycheck-nim
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after nim-mode)

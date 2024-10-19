@@ -265,7 +265,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
            (replace-regexp-in-string
             "[! |]" (lambda (substr)
                       (cond ((and (string= substr " ")
-                                  (not (modulep! +fuzzy)))
+                                  (modulep! -fuzzy))
                              "  ")
                             ((string= substr "|")
                              "\\\\\\\\|")

@@ -41,7 +41,7 @@
        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
        :desc "List errors"                           "x"   #'+default/diagnostics
-       (:when (and (modulep! :tools lsp) (not (modulep! :tools lsp +eglot)))
+       (:when (modulep! :tools lsp -eglot)
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                  "o"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
@@ -344,7 +344,7 @@
        (:when (modulep! :lang org +present)
         :desc "org-tree-slide mode"        "p" #'org-tree-slide-mode)
        :desc "Read-only mode"               "r" #'read-only-mode
-       (:when (and (modulep! :checkers spell) (not (modulep! :checkers spell +flyspell)))
+       (:when (modulep! :checkers spell -flyspell)
         :desc "Spell checker"              "s" #'spell-fu-mode)
        (:when (modulep! :checkers spell +flyspell)
         :desc "Spell checker"              "s" #'flyspell-mode)

@@ -12,5 +12,5 @@
 (when (modulep! :ui workspaces)
   (package! treemacs-persp))
 (when (and (modulep! +lsp)
-           (not (modulep! :tools lsp +eglot)))
+           (modulep! :tools lsp -eglot))
   (package! lsp-treemacs :pin "fb1a07ae0a3d781dea8ac78da2933e0173eb48a4"))

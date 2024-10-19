@@ -1,7 +1,6 @@
 ;;; tools/lsp/doctor.el -*- lexical-binding: t; -*-
 
-(assert! (not (and (modulep! +eglot)
-                   (modulep! +peek)))
+(assert! (not (modulep! +eglot +peek))
          "+eglot and +peek flags are not compatible. Peek uses lsp-mode, while Eglot is another package altogether for LSP.")
 
 (unless (modulep! +eglot)

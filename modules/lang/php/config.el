@@ -49,7 +49,7 @@
     :return "return"
     :yield "use")
 
-  (if (not (modulep! +lsp))
+  (if (modulep! -lsp)
       ;; `+php-company-backend' uses `php-extras-company' or
       ;; `company-dabbrev-code', in that order.
       (when +php--company-backends

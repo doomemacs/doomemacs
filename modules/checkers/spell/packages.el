@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; checkers/spell/packages.el
 
-(if (not (modulep! +flyspell))
+(if (modulep! -flyspell)
     (package! spell-fu
       :recipe (:host github :repo "emacsmirror/spell-fu")
       :pin "e4031935803c66eca2f076dce72b0a6a770d026c")

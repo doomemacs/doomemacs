@@ -12,8 +12,7 @@
   (package! merlin :pin "e016abfac6da88ff7a6b49a42ca37854a4378ace")
   (package! merlin-eldoc :pin "bf8edc63d85b35e4def352fa7ce4ea39f43e1fd8")
   (package! merlin-company :pin "e016abfac6da88ff7a6b49a42ca37854a4378ace")
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (package! flycheck-ocaml :pin "77f8ddbd9bfc3a11957ac7ec7e45d5fa9179b192")))
 
 (when (modulep! :tools eval)

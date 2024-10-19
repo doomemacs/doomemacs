@@ -366,7 +366,7 @@ workable results ripgrep produces, despite the error."
   :when (modulep! +fuzzy)
   :unless (modulep! +prescient)
   :defer t  ; is loaded by ivy
-  :preface (when (or (not (modulep! +fuzzy))
+  :preface (when (or (modulep! -fuzzy)
                      (modulep! +prescient))
              (setq ivy--flx-featurep nil))
   :init (setq ivy-flx-limit 10000))

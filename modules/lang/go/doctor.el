@@ -19,7 +19,7 @@
   (warn! "Couldn't find gomodifytags. Manipulating struct tags will not work"))
 
 (when (and (modulep! :completion company)
-           (not (modulep! +lsp)))
+           (modulep! -lsp))
   (require 'company-go)
   (unless (executable-find company-go-gocode-command)
     (warn! "Couldn't find gocode. Code completion won't work")))

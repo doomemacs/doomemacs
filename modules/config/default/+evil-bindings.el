@@ -440,7 +440,7 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
-       (:when (and (modulep! :tools lsp) (not (modulep! :tools lsp +eglot)))
+       (:when (modulep! :tools lsp -eglot)
         :desc "LSP Execute code action"              "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                 "o"   #'lsp-organize-imports
         :desc "LSP"                                  "l"   #'+default/lsp-command-map
@@ -842,8 +842,7 @@
        :desc "Fill Column Indicator"        "c" #'global-display-fill-column-indicator-mode
        :desc "Diff Highlights (Git Gutter)" "d" #'diff-hl-mode
        :desc "Flymake"                      "f" #'flymake-mode
-       (:when (and (modulep! :checkers syntax)
-                   (not (modulep! :checkers syntax +flymake)))
+       (:when (modulep! :checkers syntax -flymake)
         :desc "Flycheck"                   "f" #'flycheck-mode)
        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
        :desc "Evil goggles"                 "g" #'evil-goggles-mode
@@ -856,7 +855,7 @@
        (:when (modulep! :lang org +present)
         :desc "org-tree-slide mode"        "p" #'org-tree-slide-mode)
        :desc "Read-only mode"               "r" #'read-only-mode
-       (:when (and (modulep! :checkers spell) (not (modulep! :checkers spell +flyspell)))
+       (:when (modulep! :checkers spell -flyspell)
         :desc "Spell checker"              "s" #'spell-fu-mode)
        (:when (modulep! :checkers spell +flyspell)
         :desc "Spell checker"              "s" #'flyspell-mode)

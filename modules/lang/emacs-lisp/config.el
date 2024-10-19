@@ -195,8 +195,7 @@ See `+emacs-lisp-non-package-mode' for details.")
 
 
 (use-package! flycheck-cask
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :defer t
   :init
   (add-hook! 'emacs-lisp-mode-hook
@@ -204,8 +203,7 @@ See `+emacs-lisp-non-package-mode' for details.")
 
 
 (use-package! flycheck-package
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after flycheck
   :config (flycheck-package-setup))
 

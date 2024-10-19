@@ -282,7 +282,7 @@
 
 
 (use-package! clj-refactor
-  :when (or (not (modulep! +lsp))
+  :when (or (modulep! -lsp)
             +clojure-load-clj-refactor-with-lsp)
   :hook (clojure-mode . clj-refactor-mode)
   :config
@@ -295,9 +295,8 @@
 
 ;; clojure-lsp already uses clj-kondo under the hood
 (use-package! flycheck-clj-kondo
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake))
-             (not (modulep! +lsp)))
+  :when (modulep! -lsp)
+  :when (modulep! :checkers syntax -flymake)
   :after flycheck)
 
 

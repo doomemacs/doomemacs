@@ -7,8 +7,7 @@
 
 (package! consult :pin "0c3f53916ea0db0c472c0a0c620a85cc1b00caf2")
 (package! consult-dir :pin "15891383f34d43acc5bb82bda92239b1f54cf178")
-(when (and (modulep! :checkers syntax)
-           (not (modulep! :checkers syntax +flymake)))
+(when (modulep! :checkers syntax -flymake)
   (package! consult-flycheck :pin "3b999ae983900c16c0b5b5c30b7eca640d386a76"))
 (package! embark :pin "19a13e344e04bbf861eaa74491b23da52b398672")
 (package! embark-consult :pin "19a13e344e04bbf861eaa74491b23da52b398672")

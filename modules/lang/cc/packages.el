@@ -19,5 +19,5 @@
       :pin "404cd0694ab34971f9c01eb22126cd2e7d3f9dc4")))
 
 (when (and (modulep! +lsp)
-           (not (modulep! :tools lsp +eglot)))
+           (modulep! :tools lsp -eglot))
   (package! ccls :pin "41399b0eba03f9b80769ced71501ba702db4cd62"))

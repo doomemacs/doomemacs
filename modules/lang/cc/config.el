@@ -160,7 +160,7 @@ This is ignored by ccls.")
                cuda-mode-local-vars-hook)
              :append #'lsp!)
 
-  (if (not (modulep! :tools lsp +eglot))
+  (if (modulep! :tools lsp -eglot)
       (after! lsp-clangd
         ;; Prevent clangd from consuming all your cores indexing larger projects
         ;; and grinding your system to a halt.
@@ -185,7 +185,7 @@ This is ignored by ccls.")
 
 (use-package! ccls
   :when (modulep! +lsp)
-  :unless (modulep! :tools lsp +eglot)
+  :when (modulep! :tools lsp -eglot)
   :defer t
   :init
   (defvar ccls-sem-highlight-method 'font-lock)

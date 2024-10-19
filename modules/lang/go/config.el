@@ -58,6 +58,5 @@
 
 
 (use-package! flycheck-golangci-lint
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :hook (go-mode . flycheck-golangci-lint-setup))

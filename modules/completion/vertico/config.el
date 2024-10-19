@@ -253,8 +253,7 @@ orderless."
   (add-to-list 'consult-dir-sources 'consult-dir--source-tramp-local t))
 
 (use-package! consult-flycheck
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after (consult flycheck))
 
 (use-package! consult-yasnippet
