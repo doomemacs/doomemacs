@@ -329,6 +329,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
 ;; REVIEW Should I deprecate this? The macro's name is so long...
 (defalias 'letenv! 'with-environment-variables)
 
+(put 'defun* 'lisp-indent-function 'defun)
 (defmacro letf! (bindings &rest body)
   "Temporarily rebind function, macros, and advice in BODY.
 
