@@ -228,7 +228,6 @@ the return value of the executed CLI."
 ;;
 ;;; Errors
 
-(define-error 'doom-cli-error "There was an unexpected error" 'doom-error)
 (define-error 'doom-cli-definition-error "Invalid CLI definition" 'doom-cli-error)
 (define-error 'doom-cli-autoload-error "Failed to autoload deferred command" 'doom-cli-error)
 (define-error 'doom-cli-invalid-prefix-error "Prefix has no defined commands" 'doom-cli-error)
