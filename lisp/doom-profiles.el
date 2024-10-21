@@ -33,9 +33,15 @@ Can be changed externally by setting $DOOMPROFILELOADPATH to a colon-delimited
 list of paths or profile config files (semi-colon delimited on Windows).")
 
 (defvar doom-profile-load-file
-  (if-let (loader (getenv-internal "DOOMPROFILELOADFILE"))
-      (expand-file-name loader doom-emacs-dir)
-    (file-name-concat doom-emacs-dir (format "profiles/load.el" emacs-major-version)))
+  ;; REVIEW: Derive from `doom-data-dir' in v3
+  (expand-file-name
+   (format (or (getenv-internal "DOOMPROFILELOADFILE")
+               (file-name-concat (if doom--system-windows-p "doomemacs/data" "doom")
+                                 "profiles.%d.el"))
+           emacs-major-version)
+   (or (if doom--system-windows-p (getenv-internal "LOCALAPPDATA"))
+       (getenv-internal "XDG_DATA_HOME")
+       "~/.local/share"))
   "Where Doom writes its interactive profile loader script.
 
 Can be changed externally by setting $DOOMPROFILELOADFILE.")

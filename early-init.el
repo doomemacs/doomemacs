@@ -78,22 +78,20 @@
        ;; FIX: Discard the switch to prevent "invalid option" errors later.
        (push (cons "--profile" (lambda (_) (pop argv))) command-switch-alist)
        ;; Running 'doom sync' or 'doom profile sync' (re)generates a light
-       ;; profile loader in $EMACSDIR/profiles/load.el (or
+       ;; profile loader in $XDG_DATA_HOME/doom/profiles.X.el (or
        ;; $DOOMPROFILELOADFILE), after reading `doom-profile-load-path'. This
        ;; loader requires `$DOOMPROFILE' be set to function.
        (setenv "DOOMPROFILE" profile)
-       (or (load (expand-file-name
-                  (format (let ((lfile (getenv-internal "DOOMPROFILELOADFILE")))
-                            (if lfile
-                                (concat (let ((suffix ".el"))
-                                          (if (string-suffix-p suffix lfile)
-                                              (substring lfile 0 (- (length lfile) (length suffix)))
-                                            lfile))
-                                        ".%d.elc")
-                              "profiles/load.%d.elc"))
-                          emacs-major-version)
-                  user-emacs-directory)
-                 'noerror (not init-file-debug) 'nosuffix)
+       (or (load (let ((windows? (memq system-type '(ms-dos windows-nt cygwin))))
+                   (expand-file-name
+                    (format (or (getenv-internal "DOOMPROFILELOADFILE")
+                                (file-name-concat (if windows? "doomemacs/data" "doom")
+                                                  "profiles.%d.el"))
+                            emacs-major-version)
+                    (or (if windows? (getenv-internal "LOCALAPPDATA"))
+                        (getenv-internal "XDG_DATA_HOME")
+                        "~/.local/share"))
+                   'noerror (not init-file-debug) 'nosuffix))
            (user-error "Profiles not initialized yet; run 'doom sync' first"))))
 
    ;; PERF: When `load'ing or `require'ing files, each permutation of
