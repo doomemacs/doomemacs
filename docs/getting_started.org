@@ -1313,16 +1313,16 @@ what kind of session it is. Doom has three types of sessions:
 
 With that out of the way, here is the load order of Doom's most important files:
 
-| File                                        | Interactive | Batch | CLI |
-|---------------------------------------------+-------------+-------+-----|
+| File                                              | Interactive | Batch | CLI |
+|---------------------------------------------------+-------------+-------+-----|
 | ~/..config/emacs/early-init.el (Emacs 27+ only)   | yes         | no    | no  |
 | ~/..config/emacs/init.el                          | yes         | no    | no  |
-| $DOOMDIR/init.el                            | yes         | yes   | yes |
+| $DOOMDIR/init.el                                  | yes         | yes   | yes |
 | {~/..config/emacs,$DOOMDIR}/modules/*/*/init.el   | yes         | yes   | yes |
-| $DOOMDIR/cli.el                             | no          | no    | yes |
+| $DOOMDIR/cli.el                                   | no          | no    | yes |
 | {~/..config/emacs,$DOOMDIR}/modules/*/*/cli.el    | no          | no    | yes |
 | {~/..config/emacs,$DOOMDIR}/modules/*/*/config.el | yes         | no    | no  |
-| $DOOMDIR/config.el                          | yes         | no    | no  |
+| $DOOMDIR/config.el                                | yes         | no    | no  |
 
 *** Flags
 A module's flag is an arbitrary symbol. By convention, these symbols are
