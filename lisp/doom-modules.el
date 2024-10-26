@@ -458,9 +458,9 @@ If ENABLED-ONLY?, return nil if the containing module isn't enabled."
                (and (or (null enabled-only?)
                         (doom-module-active-p group name))
                     (cons group name))))
-            ((string-match (concat "^" (regexp-quote doom-core-dir)) path)
+            ((file-in-directory-p path doom-core-dir)
              (cons :doom nil))
-            ((string-match (concat "^" (regexp-quote doom-user-dir)) path)
+            ((file-in-directory-p path doom-user-dir)
              (cons :user nil))))))
 
 (defun doom-module-load-path (&optional module-load-path)
