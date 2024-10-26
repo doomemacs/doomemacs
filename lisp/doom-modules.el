@@ -159,16 +159,23 @@ Never set this variable directly, use `with-doom-module'.")
 (defmacro with-doom-module (key &rest body)
   "Evaluate BODY with `doom-module-context' informed by KEY."
   (declare (indent 1))
-  `(let ((doom-module-context
-          (let ((key ,key))
-            (cond ((null key) (make-doom-module-context))
-                  ((doom-module-context-p key) key)
-                  ((doom-module-p key) (doom-module->context key))
-                  ((doom-module (car key) (cdr key)))
-                  ((doom-module->context key))
-                  ((error "Invalid module: %S" key))))))
+  `(let ((doom-module-context (doom-module-context ,key)))
      (doom-log ":context:module: =%s" doom-module-context)
      ,@body))
+
+(defun doom-module-context (key)
+  "Return a `doom-module-context' from KEY.
+
+KEY can be a `doom-module-context', `doom-module', or a `doom-module-key' cons
+cell."
+  (declare (side-effect-free t))
+  (unless key
+    (error "Invalid module context: %S" key))
+  (or (pcase (type-of key)
+        (`doom-module-context key)
+        (`doom-module (doom-module->context key))
+        (`cons (doom-module (car key) (cdr key))))
+      (error "Invalid module context or key: %S" key)))
 
 (defun doom-module<-context (context)
   "Return a `doom-module' plist from CONTEXT."
