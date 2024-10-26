@@ -252,7 +252,7 @@ uses a straight or package.el command directly).")
   "Ensure `straight' is installed and was compiled with this version of Emacs."
   (when (or force-p (null (bound-and-true-p straight-recipe-repositories)))
     (doom-log "Initializing straight")
-    (let ((packages (doom-package-list '((:core)))))
+    (let ((packages (doom-package-list '((:doom)))))
       (cl-destructuring-bind (&key recipe pin &allow-other-keys)
           (alist-get 'straight packages)
         (doom--ensure-straight recipe pin))
@@ -445,7 +445,7 @@ installed."
 
 If MODULE-LIST is omitted, read enabled module list in configdepth order (see
 `doom-module-set'). Otherwise, MODULE-LIST may be any symbol (or t) to mean read
-all modules in `doom-modules-dir', including :core and :user. MODULE-LIST may
+all modules in `doom-modules-dir', including :doom and :user. MODULE-LIST may
 also be a list of module keys."
   (let ((module-list (cond ((null module-list) (doom-module-list))
                            ((symbolp module-list) (doom-module-list 'all))

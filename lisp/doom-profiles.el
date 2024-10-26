@@ -412,7 +412,7 @@ Defaults to the profile at `doom-profile-default'."
               (let ((noextfile (file-name-sans-extension file)))
                 `(with-doom-module ',key
                    ,(pcase key
-                      ('(:core . nil)
+                      ('(:doom . nil)
                        `(doom-load
                          (file-name-concat
                           doom-core-dir ,(file-name-nondirectory noextfile))
