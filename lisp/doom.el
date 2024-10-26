@@ -117,7 +117,7 @@
 ;; announce, and don't belong in `features', so they are stored here, which can
 ;; include information about the external system environment. Module-specific
 ;; features are kept elsewhere, however.
-(defconst doom-features
+(defconst doom-system
   (pcase system-type
     ('darwin                           '(macos bsd))
     ((or 'cygwin 'windows-nt 'ms-dos)  '(windows))
@@ -127,16 +127,15 @@
   "A list of symbols denoting available features in the active Doom profile.")
 
 ;; Convenience aliases for internal use only (may be removed later).
-(defconst doom-system            (car doom-features))
-(defconst doom--system-windows-p (eq 'windows doom-system))
-(defconst doom--system-macos-p   (eq 'macos doom-system))
-(defconst doom--system-linux-p   (eq 'linux doom-system))
+(defconst doom--system-windows-p (eq 'windows (car doom-system)))
+(defconst doom--system-macos-p   (eq 'macos   (car doom-system)))
+(defconst doom--system-linux-p   (eq 'linux   (car doom-system)))
 
 ;; `system-type' is esoteric, so I create a pseudo feature as a stable and
 ;; consistent alternative, and all while using the same `featurep' interface
 ;; we're already familiar with.
 (push :system features)
-(put :system 'subfeatures doom-features)
+(put :system 'subfeatures doom-system)
 
 ;; Emacs needs a more consistent way to detect build features, and the docs
 ;; claim `system-configuration-features' is not da way. Some features (that
@@ -162,7 +161,7 @@
   (defconst IS-MAC      doom--system-macos-p)
   (defconst IS-LINUX    doom--system-linux-p)
   (defconst IS-WINDOWS  doom--system-windows-p)
-  (defconst IS-BSD      (memq 'bsd doom-features))
+  (defconst IS-BSD      (memq 'bsd doom-system))
   (defconst EMACS28+    (> emacs-major-version 27))
   (defconst EMACS29+    (> emacs-major-version 28))
   (defconst MODULES     (featurep 'dynamic-modules))
