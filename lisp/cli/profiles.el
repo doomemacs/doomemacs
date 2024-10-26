@@ -69,15 +69,9 @@
               (dolist (p removed) (print! (item "Removed %S") (car p)))
               (dolist (p changed) (print! (item "Changed %S") (car p)))
               (doom-file-write doom-cli-known-profiles-file (list new-profiles) :mode #o600)
-              (doom-profiles-save new-profiles load-file)
+              (doom-profiles-write-load-file new-profiles load-file)
               (print! (success "Regenerated profile loader: %s")
                       (path load-file)))))))))
-
-
-;;
-;;; Helpers
-
-
 
 (provide 'doom-cli-profiles)
 ;;; profiles.el ends here

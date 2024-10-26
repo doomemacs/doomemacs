@@ -104,7 +104,7 @@ Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
   (doom--if-compile doom-reload-command
-      (with-doom-context '(reload modules)
+      (with-doom-context '(reload module)
         (doom-run-hooks 'doom-before-reload-hook)
         (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
@@ -127,7 +127,7 @@ remove orphaned ones. It also doesn't reload your private config.
 It is useful to only pull in changes performed by 'doom sync' on the command
 line."
   (interactive)
-  (require 'doom-profiles)
+  (doom-require 'doom-lib 'profiles)
   ;; TODO: Make this more robust
   (with-doom-context 'reload
     (dolist (file (mapcar #'car doom-profile-generators))

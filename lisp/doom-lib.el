@@ -182,7 +182,8 @@ at the values with which this function was called."
 (defun doom-load (path &optional noerror)
   "Load PATH and handle any Doom errors that arise from it.
 
-If NOERROR, don't throw an error if PATH doesn't exist."
+If NOERROR, don't throw an error if PATH doesn't exist.
+Return non-nil if loading the file succeeds."
   (doom-log "load: %s %s" (abbreviate-file-name path) noerror)
   (condition-case-unless-debug e
       (load path noerror 'nomessage)
@@ -283,7 +284,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs has initialized.
             (when (and (not running?)
-                       (not (doom-context-p 'init))
+                       (not (doom-context-p 'startup))
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
                            ;; inhibit them during expensive batch operations on
@@ -412,23 +413,35 @@ The def* forms accepted are:
                  (setq type (list 'symbol-function type)))
                (list 'cl-letf (list (cons type rest)) body)))))))
 
+
+(defmacro quiet!! (&rest forms)
+  "Run FORMS without generating any output (for real).
+
+Unlike `quiet!', which will only suppress output in the echo area in interactive
+sessions, this truly suppress all output from FORMS."
+  (declare (indent 0))
+  `(if init-file-debug
+       (progn ,@forms)
+     (letf! ((standard-output (lambda (&rest _)))
+             (defun message (&rest _))
+             (defun load (file &optional noerror nomessage nosuffix must-suffix)
+               (funcall load file noerror t nosuffix must-suffix))
+             (defun write-region (start end filename &optional append visit lockname mustbenew)
+               (unless visit (setq visit 'no-message))
+               (funcall write-region start end filename append visit lockname mustbenew)))
+       ,@forms)))
+
 (defmacro quiet! (&rest forms)
   "Run FORMS without generating any output.
 
 This silences calls to `message', `load', `write-region' and anything that
 writes to `standard-output'. In interactive sessions this inhibits output to the
 echo-area, but not to *Messages*."
+  (declare (indent 0))
   `(if init-file-debug
        (progn ,@forms)
      ,(if noninteractive
-          `(letf! ((standard-output (lambda (&rest _)))
-                   (defun message (&rest _))
-                   (defun load (file &optional noerror nomessage nosuffix must-suffix)
-                     (funcall load file noerror t nosuffix must-suffix))
-                   (defun write-region (start end filename &optional append visit lockname mustbenew)
-                     (unless visit (setq visit 'no-message))
-                     (funcall write-region start end filename append visit lockname mustbenew)))
-             ,@forms)
+          `(quiet!! ,@forms)
         `(let ((inhibit-message t)
                (save-silently t))
            (prog1 ,@forms (message ""))))))
@@ -1058,6 +1071,678 @@ and return the value found in PLACE instead."
 ;; Introduced in Emacs 29+ (emacs-mirror/emacs@f117b5df4dc6)
 (defbackport! defalias 'bol #'line-beginning-position)
 (defbackport! defalias 'eol #'line-end-position)
+
+
+;;; Types
+
+(cl-defstruct doom-module
+  "TODO"
+  (index 0 :read-only t)
+  ;; source
+  group
+  name
+  depth
+  flags
+  features
+  ;; sources
+  path
+  ;; disabled-p
+  ;; frozen-p
+  ;; layer-p
+  ;; recipe
+  ;; alist
+  ;; package
+  ;; if
+  )
+
+(cl-defstruct doom-module-context
+  "Hot cache object for the containing Doom module."
+  index key path flags features)
+
+
+;;; `doom-context'
+
+(defvar doom-context '(t)
+  "A list of symbols identifying all active Doom execution contexts.
+
+This should never be directly changed, only let-bound, and should never be
+empty. Each context describes what phase Doom is in, and may respond to.
+
+Use `with-doom-context' instead of let-binding or setting this variable
+directly.
+
+All valid contexts:
+  cli        -- executing a Doom CLI or doomscript
+  emacs      -- in an interactive doom session
+  module     -- loading any modules' elisp files
+
+  Universal sub-contexts:
+    compile    -- byte-compiling elisp
+    startup    -- while doom is starting up, before any user config
+    error      -- while Doom is in an error state
+
+  `emacs' sub-contexts:
+    docs       -- while rendering docs in `doom-docs-mode'
+    reload     -- while reloading doom with `doom/reload'
+    sandbox    -- this session was launched from Doom's sandbox
+    eval       -- while interactively evaluating elisp
+
+  `module' sub-contexts:
+    external   -- loading packages or modules outside of $EMACSDIR or $DOOMDIR
+    config     -- loading a module's config.el or cli.el
+    doctor     -- loading a module's doctor.el
+    init       -- loading a module's init.el
+    package    -- loading a module's packages.el or managing packages
+    source     -- while initializing a module source
+    test       -- preparing for or running Doom's unit tests
+
+  `cli' sub-contexts:
+    run        -- running a CLI command")
+(put 'doom-context 'valid
+     '(compile error startup emacs docs reload sandbox eval module external
+       config doctor init package test cli run))
+(put 'doom-context 'risky-local-variable t)
+
+(defun doom-context-p (contexts)
+  "Return t if all CONTEXTS are active, nil otherwise.
+
+See `doom-context' for possible values for CONTEXT."
+  (declare (side-effect-free t))
+  (catch 'result
+    (let (result)
+      (dolist (context (ensure-list contexts) result)
+        (if (memq context doom-context)
+            (push context result)
+          (throw 'result nil))))))
+
+(defun doom-context-valid-p (context)
+  "Return non-nil if CONTEXT is a valid `doom-context'."
+  (declare (pure t) (side-effect-free error-free))
+  (memq context (get 'doom-context 'valid)))
+
+(defun doom-context-push (contexts)
+  "Add CONTEXTS to `doom-context', if not present.
+
+Return list of successfully added contexts. Throws a `doom-context-error' if
+CONTEXTS contains invalid contexts."
+  (let ((contexts (ensure-list contexts)))
+    (if (cl-loop for context in contexts
+                 unless (doom-context-valid-p context)
+                 return t)
+        (doom-context-error
+         (cl-remove-if #'doom-context-valid-p contexts)
+         "Unrecognized context")
+      (let (added)
+        (dolist (context contexts)
+          (unless (memq context doom-context)
+            (push context added)))
+        (when added
+          (setq doom-context (nconc added doom-context))
+          (doom-log 3 ":context: +%s %s" added doom-context)
+          added)))))
+
+(defun doom-context-pop (contexts)
+  "Remove CONTEXTS from `doom-context'.
+
+Return list of removed contexts if successful. Throws `doom-context-error' if
+one of CONTEXTS isn't active."
+  (if (not (doom-context-p contexts))
+      (doom-context-error
+       doom-context "Attempt to pop missing context"
+       contexts)
+    (let ((current-context (copy-sequence doom-context))
+          removed)
+      (dolist (context (ensure-list contexts))
+        (setq current-context (delq context current-context))
+        (push context removed))
+      (when removed
+        (setq doom-context current-context)
+        (doom-log 3 ":context: +%s %s" removed doom-context)
+        removed))))
+
+(defmacro with-doom-context (contexts &rest body)
+  "Evaluate BODY with CONTEXTS added to `doom-context'."
+  (declare (indent 1))
+  `(let ((doom-context doom-context))
+     (doom-context-push ,contexts)
+     ,@body))
+
+
+;;; `doom-module-context'
+
+(defvar doom-module-context (make-doom-module-context)
+  "A `doom-module-context' for the module associated with the current file.
+
+Never set this variable directly, use `with-doom-module'.")
+
+(defmacro with-doom-module (key &rest body)
+  "Evaluate BODY with `doom-module-context' informed by KEY."
+  (declare (indent 1))
+  `(let ((doom-module-context (doom-module-context ,key)))
+     (doom-log ":context:module: =%s" doom-module-context)
+     ,@body))
+
+(defun doom-module-context (key)
+  "Return a `doom-module-context' from KEY.
+
+KEY can be a `doom-module-context', `doom-module', or a `doom-module-key' cons
+cell."
+  (declare (side-effect-free t))
+  (or (pcase (type-of key)
+        (`doom-module-context key)
+        (`doom-module (ignore-errors (doom-module->context key)))
+        (`cons (doom-module (car key) (cdr key))))
+      (make-doom-module-context :key (doom-module-key key))))
+
+(defun doom-module<-context (context)
+  "Return a `doom-module' plist from CONTEXT."
+  (declare (side-effect-free t))
+  (doom-module-get (doom-module-context-key context)))
+
+(defun doom-module->context (key)
+  "Change a `doom-module' into a `doom-module-context'."
+  (declare (side-effect-free t))
+  (pcase-let
+      (((doom-module index path flags group name)
+        (if (doom-module-p key)
+            key (doom-module-get (doom-module-key key)))))
+    (make-doom-module-context
+     :index index
+     :key (cons group name)
+     :path path
+     :flags flags)))
+
+(defun doom-module (group name &optional property)
+  "Return the `doom-module-context' for any active module by GROUP NAME.
+
+Return its PROPERTY, if specified."
+  (declare (side-effect-free t))
+  (when-let ((context (get group name)))
+    (if property
+        (aref
+         context
+         (or (plist-get
+              (eval-when-compile
+                (cl-loop with i = 1
+                         for info in (cdr (cl-struct-slot-info 'doom-module-context))
+                         nconc (list (doom-keyword-intern (symbol-name (car info)))
+                                     (prog1 i (cl-incf i)))))
+              property)
+             (error "Unknown doom-module-context property: %s" property)))
+      context)))
+
+
+;;; `doom-module'
+
+(defun doom-module-key (key)
+  "Normalize KEY into a (GROUP . MODULE) tuple representing a Doom module key."
+  (declare (pure t) (side-effect-free t))
+  (cond ((doom-module-p key)
+         (cons (doom-module-group key) (doom-module-name key)))
+        ((doom-module-context-p key)
+         (doom-module-context-key key))
+        ((car-safe key)
+         (if (nlistp (cdr-safe key))
+             key
+           (cons (car key) (cadr key))))
+        ((error "Invalid key: %S" key))))
+
+(defun doom-module--has-flag-p (flags wanted-flags)
+  "Return t if the list of WANTED-FLAGS satisfies the list of FLAGS."
+  (declare (pure t) (side-effect-free error-free))
+  (cl-loop with flags = (ensure-list flags)
+           for flag in (ensure-list wanted-flags)
+           for flagstr = (symbol-name flag)
+           if (if (eq ?- (aref flagstr 0))
+                  (memq (intern (concat "+" (substring flagstr 1)))
+                        flags)
+                (not (memq flag flags)))
+           return nil
+           finally return t))
+
+(defun doom-module--fold-flags (flags)
+  "Returns a collapsed list of FLAGS (a list of +/- prefixed symbols).
+
+FLAGS is read in sequence, cancelling out negated flags and removing
+duplicates."
+  (declare (pure t) (side-effect-free error-free))
+  (let (newflags)
+    (while flags
+      (let* ((flag (car flags))
+             (flagstr (symbol-name flag)))
+        (when-let ((sym (intern-soft
+                         (concat (if (eq ?- (aref flagstr 0)) "+" "-")
+                                 (substring flagstr 1)))))
+          (setq newflags (delq sym newflags)))
+        (cl-pushnew flag newflags :test 'eq))
+      (setq flags (cdr flags)))
+    (nreverse newflags)))
+
+(defun doom-module-get (key &optional property)
+  "Returns the plist for GROUP MODULE. Gets PROPERTY, specifically, if set."
+  (declare (side-effect-free t))
+  (when-let ((m (gethash key doom-modules)))
+    (if property
+        (aref
+         m (or (plist-get
+                (eval-when-compile
+                  (cl-loop with i = 1
+                           for info in (cdr (cl-struct-slot-info 'doom-module))
+                           nconc (list (doom-keyword-intern (symbol-name (car info)))
+                                       (prog1 i (cl-incf i)))))
+                property)
+               (error "Unknown doom-module property: %s" property)))
+      m)))
+
+(defun doom-module-active-p (group module &optional flags)
+  "Return t if GROUP MODULE is active, and with FLAGS (if given)."
+  (declare (side-effect-free t))
+  (when-let ((val (doom-module-get (cons group module) (if flags :flags))))
+    (or (null flags)
+        (doom-module--has-flag-p flags val))))
+
+(defun doom-module-exists-p (group module)
+  "Returns t if GROUP MODULE is present in any active source."
+  (declare (side-effect-free t))
+  (if (doom-module-get group module) t))
+
+(cl-defun doom-module--depth< (keya keyb &optional initorder?)
+  "Return t if module with KEY-A comes before another with KEY-B.
+
+If INITORDER? is non-nil, grab the car of the module's :depth, rather than it's
+cdr. See `doom-module-put' for details about the :depth property."
+  (declare (pure t) (side-effect-free t))
+  (let* ((adepth (doom-module-get keya :depth))
+         (bdepth (doom-module-get keyb :depth))
+         (adepth (if initorder? (car adepth) (cdr adepth)))
+         (bdepth (if initorder? (car bdepth) (cdr bdepth))))
+    (if (or (null adepth) (null bdepth)
+            (= adepth bdepth))
+        (< (or (doom-module-get keya :index) 0)
+           (or (doom-module-get keyb :index) 0))
+      (< adepth bdepth))))
+
+(defun doom-module-list (&optional paths-or-all initorder?)
+  "Return a list of (:group . name) module keys in order of their :depth.
+
+PATHS-OR-ALL can either be a non-nil value or a list of directories. If given a
+list of directories, return a list of module keys for all modules present
+underneath it.  If non-nil, return the same, but search `doom-module-load-path'
+(includes :doom and :user). Modules that are enabled are sorted first by their
+:depth, followed by disabled modules in lexicographical order (unless a :depth
+is specified in their .doommodule).
+
+If INITORDER? is non-nil, sort modules by the CAR of that module's :depth."
+  (sort (if paths-or-all
+            (delete-dups
+             (append (seq-remove #'cdr (doom-module-list nil initorder?))
+                     (doom-files-in (if (listp paths-or-all)
+                                        paths-or-all
+                                      doom-module-load-path)
+                                    :map #'doom-module-from-path
+                                    :type 'dirs
+                                    :mindepth 1
+                                    :depth 1)))
+          (hash-table-keys doom-modules))
+        (doom-rpartial #'doom-module--depth< initorder?)))
+
+(defun doom-module-expand-path (key &optional file)
+  "Expands a path to FILE relative to KEY, a cons cell: (GROUP . NAME)
+
+GROUP is a keyword. MODULE is a symbol. FILE is an optional string path.
+If the group isn't enabled this returns nil. For finding disabled modules use
+`doom-module-locate-path' instead."
+  (when-let ((path (doom-module-get key :path)))
+    (if file
+        (file-name-concat path file)
+      path)))
+
+(defun doom-module-locate-path (key &optional file)
+  "Searches `doom-module-load-path' to find the path to a module by KEY.
+
+KEY is a cons cell (GROUP . NAME), where GROUP is a keyword (e.g. :lang) and
+NAME is a symbol (e.g. \\='python). FILE is a string that will be appended to
+the resulting path. If said path doesn't exist, this returns nil, otherwise an
+absolute path."
+  (let (file-name-handler-alist)
+    (if-let ((path (doom-module-expand-path key file)))
+        (if (or (null file)
+                (file-exists-p path))
+            path)
+      (cl-destructuring-bind (group . module) (doom-module-key key)
+        (let* ((group (doom-keyword-name group))
+               (module (if module (symbol-name module)))
+               (path (file-name-concat group module file)))
+          (if file
+              ;; PERF: locate-file-internal is a little faster for finding files,
+              ;;   but its interface for finding directories is clumsy.
+              (locate-file-internal path doom-module-load-path '("" ".elc" ".el"))
+            (cl-loop for default-directory in doom-module-load-path
+                     if (file-exists-p path)
+                     return (expand-file-name path))))))))
+
+(defun doom-module-locate-paths (module-list file)
+  "Return all existing paths to FILE under each module in MODULE-LIST.
+
+MODULE-LIST is a list of cons cells (GROUP . NAME). See `doom-module-list' for
+an example."
+  (cl-loop for key in (or module-list (doom-module-list))
+           if (doom-module-locate-path key file)
+           collect it))
+
+(defun doom-module-from-path (path &optional enabled-only?)
+  "Returns a cons cell (GROUP . NAME) derived from PATH (a file path).
+If ENABLED-ONLY?, return nil if the containing module isn't enabled."
+  (let* ((file-name-handler-alist nil)
+         (path (expand-file-name path)))
+    (save-match-data
+      (cond ((string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
+             (when-let* ((group (doom-keyword-intern (match-string 1 path)))
+                         (name  (intern (match-string 2 path))))
+               (and (or (null enabled-only?)
+                        (doom-module-active-p group name))
+                    (cons group name))))
+            ((file-in-directory-p path doom-core-dir)
+             (cons :doom nil))
+            ((file-in-directory-p path doom-user-dir)
+             (cons :user nil))))))
+
+(defun doom-module-load-path (&optional module-load-path)
+  "Return a list of file paths to activated modules.
+
+The list is in no particular order and its file paths are absolute. If
+MODULE-DIRS is non-nil, include all modules (even disabled ones) available in
+those directories."
+  (declare (pure t) (side-effect-free t))
+  (mapcar #'doom-module-locate-path
+          (doom-module-list (or module-load-path doom-module-load-path))))
+
+(put :if     'lisp-indent-function 2)
+(put :when   'lisp-indent-function 'defun)
+(put :unless 'lisp-indent-function 'defun)
+
+(defmacro doom! (&rest modules)
+  "Bootstraps DOOM Emacs and its modules.
+
+If the first item in MODULES doesn't satisfy `keywordp', MODULES is evaluated,
+otherwise, MODULES is a variadic-property list (a plist whose key may be
+followed by one or more values).
+
+This macro does nothing in interactive sessions, but in noninteractive session
+iterates through MODULES, enabling and initializing them. The order of modules
+in these blocks dictates their load order (unless given an explicit :depth)."
+  `(when noninteractive
+     ;; REVIEW: A temporary fix for flycheck until I complete backporting
+     ;;   module/profile architecture from v3.0.
+     (when (fboundp 'doom-module-mplist-map)
+       (doom-module-mplist-map
+        #'doom-module--put
+        ,@(if (keywordp (car modules))
+              (list (list 'quote modules))
+            modules)))
+     t))
+
+;; DEPRECATED Remove in 3.0
+(define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
+
+(defmacro modulep! (group &optional module &rest flags)
+  "Return t if :GROUP MODULE (and +FLAGS) are enabled.
+
+If FLAGS is provided, returns t if GROUP MODULE has all of FLAGS enabled.
+
+  (modulep! :config default +flag)
+  (modulep! :config default +flag1 +flag2 +flag3)
+
+GROUP and MODULE may be omitted when this macro is used from a Doom module's
+source (except your $DOOMDIR, which is a special module). Like so:
+
+  (modulep! +flag3 +flag1 +flag2)
+  (modulep! +flag)
+
+FLAGS can be negated. E.g. This will return non-nil if ':tools lsp' is enabled
+without `+eglot':
+
+  (modulep! :tools lsp -eglot)
+
+To interpolate dynamic values, use comma:
+
+  (let ((flag '-eglot))
+    (modulep! :tools lsp ,flag))
+
+For more about modules and flags, see `doom!'."
+  (if (keywordp group)
+      (if flags
+          `(doom-module--has-flag-p
+            (doom-module (backquote ,group) (backquote ,module) :flags)
+            (backquote ,flags))
+        `(and (get (backquote ,group) (backquote ,module)) t))
+    (let ((flags (delq nil (cons group (cons module flags)))))
+      (if (doom-module-context-index doom-module-context)
+          `(doom-module--has-flag-p
+            ',(doom-module-context-flags doom-module-context)
+            (backquote ,flags))
+        `(let ((file (file!)))
+           (if-let ((module (doom-module-from-path file)))
+               (doom-module--has-flag-p
+                (doom-module (car module) (cdr module) :flags)
+                (backquote ,flags))
+             (error "(modulep! %s) couldn't resolve current module from %s"
+                    (backquote ,flags) (abbreviate-file-name file))))))))
+
+
+;;; `doom-package'
+
+(cl-defmacro package!
+    (name &rest plist &key built-in recipe ignore _type _pin _disable)
+  "Declares a package and how to install it (if applicable).
+
+This macro is declarative and does not load nor install packages. It is used to
+populate `doom-packages' with metadata about the packages Doom needs to keep
+track of.
+
+Only use this macro in a module's packages.el file.
+
+Accepts the following properties:
+
+ :type core|local|built-in|virtual
+   Specifies what kind of package this is. Can be a symbol or a list thereof.
+     `core' = this is a protected package and cannot be disabled!
+     `local' = this package is being modified in-place. This package's repo is
+       unshallowed and will be skipped when you update packages.
+     `built-in' = this package is already built-in (otherwise, will be
+       installed)
+     `virtual' = this package is not tracked by Doom's package manager. It won't
+       be installed or uninstalled. Use this to pin 2nd order dependencies.
+ :recipe RECIPE
+   Specifies a straight.el recipe to allow you to acquire packages from external
+   sources. See https://github.com/radian-software/straight.el#the-recipe-format
+   for details on this recipe.
+ :disable BOOL
+   Do not install or update this package AND disable all of its `use-package!'
+   and `after!' blocks.
+ :ignore FORM
+   Do not install this package.
+ :pin STR|nil
+   Pin this package to commit hash STR. Setting this to nil will unpin this
+   package if previously pinned.
+ :built-in BOOL|'prefer
+   Same as :ignore if the package is a built-in Emacs package. This is more to
+   inform help commands like `doom/help-packages' that this is a built-in
+   package. If set to 'prefer, the package will not be installed if it is
+   already provided by Emacs.
+
+Returns t if package is successfully registered, and nil if it was disabled
+elsewhere."
+  (declare (indent defun))
+  (when (and recipe (keywordp (car-safe recipe)))
+    (cl-callf plist-put plist :recipe `(quote ,recipe)))
+  ;; :built-in t is basically an alias for :ignore (locate-library NAME)
+  (when built-in
+    (when (and (not ignore)
+               (equal built-in '(quote prefer)))
+      (setq built-in `(locate-library ,(symbol-name name) nil (get 'load-path 'initial-value))))
+    (cl-callf map-delete plist :built-in)
+    (cl-callf plist-put plist :ignore built-in))
+  `(let* ((name ',name)
+          (plist (cdr (assq name doom-packages)))
+          (dir (dir!))
+          (module (doom-module-from-path dir)))
+     (unless (doom-context-p 'package)
+       (signal 'doom-module-error
+               (list module "package! can only be used in packages.el files")))
+     ;; Record what module this declaration was found in
+     (let ((module-list (plist-get plist :modules)))
+       (unless (member module module-list)
+         (cl-callf plist-put plist :modules
+                   (append module-list
+                           (list module)
+                           (when (file-in-directory-p dir doom-user-dir)
+                             '((:user . modules)))
+                           nil))))
+     ;; Merge given plist with pre-existing one
+     (cl-loop for (key value) on (list ,@plist) by 'cddr
+              when (or (eq key :pin) value)
+              do (cl-callf plist-put plist key value))
+     ;; Some basic key validation; throws an error on invalid properties
+     (condition-case e
+         (when-let (recipe (plist-get plist :recipe))
+           (cl-destructuring-bind
+               (&key local-repo _files _flavor _build _pre-build _post-build
+                     _includes _type _repo _host _branch _protocol _remote
+                     _nonrecursive _fork _depth _source _inherit)
+               recipe
+             ;; Expand :local-repo from current directory
+             (when local-repo
+               (cl-callf plist-put plist :recipe
+                         (plist-put recipe :local-repo
+                                    (let ((local-path (expand-file-name local-repo dir)))
+                                      (if (file-directory-p local-path)
+                                          local-path
+                                        local-repo)))))))
+       (error
+        (signal 'doom-package-error
+                (cons ,(symbol-name name)
+                      (error-message-string e)))))
+     ;; These are the only side-effects of this macro!
+     (setf (alist-get name doom-packages) plist)
+     (if (plist-get plist :disable)
+         (add-to-list 'doom-disabled-packages name)
+       (with-no-warnings
+         (cons name plist)))))
+
+;; DEPRECATED: Will be replaced with new `packages!' macro in v3.0
+(defmacro disable-packages! (&rest packages)
+  "A convenience macro for disabling packages in bulk.
+Only use this macro in a module's (or your private) packages.el file."
+  (macroexp-progn
+   (mapcar (lambda (p) `(package! ,p :disable t))
+           packages)))
+
+;; DEPRECATED: Will be replaced with new `packages!' macro in v3.0
+(defmacro unpin! (&rest targets)
+  "Unpin packages in TARGETS.
+
+This unpins packages, so that `doom upgrade' or `doom sync -u' will update them
+to the latest commit available. Some examples:
+
+- To disable pinning wholesale: (unpin! t)
+- To unpin individual packages: (unpin! packageA packageB ...)
+- To unpin all packages in a group of modules: (unpin! :lang :tools ...)
+- To unpin packages in individual modules:
+    (unpin! (:lang python javascript) (:tools docker))
+
+Or any combination of the above.
+
+This macro should only be used from the user's private packages.el. No module
+should use it!"
+  (if (memq t targets)
+      `(mapc (doom-rpartial #'doom-package-set :unpin t)
+             (mapcar #'car doom-packages))
+    (macroexp-progn
+     (mapcar
+      (lambda (target)
+        (when target
+          `(doom-package-set ',target :unpin t)))
+      (cl-loop for target in targets
+               if (or (keywordp target) (listp target))
+               append
+               (cl-loop with (category . modules) = (ensure-list target)
+                        for (name . plist) in doom-packages
+                        for pkg-modules = (plist-get plist :modules)
+                        if (and (assq category pkg-modules)
+                                (or (null modules)
+                                    (cl-loop for module in modules
+                                             if (member (cons category module) pkg-modules)
+                                             return t))
+                                name)
+                        collect it)
+               else if (symbolp target)
+               collect target)))))
+
+
+;;; `doom-profile'
+
+(defun doom-profile-key (profile &optional default?)
+  "Normalize PROFILE into a (NAME . REF) doom-profile key.
+
+PROFILE can be a `doom-profile', a profile id (i.e. a string in the NAME@REF
+format), or a (NAME . REF) cons cell.
+
+If DEFAULT? is non-nil, an unspecified CAR/CDR will fall bakc to (_default .
+0)."
+  (declare (pure t) (side-effect-free t))
+  (let ((default-name (if default? "_default"))
+        (default-ref  (if default? "0")))
+    (cond ((eq profile t) (cons default-name default-ref))
+          ;; ((doom-profile-p profile)
+          ;;  (cons (or (doom-profile-name profile) default-name)
+          ;;        (or (doom-profile-ref profile)  default-ref)))
+          ((stringp profile)
+           (save-match-data
+             (let (case-fold-search)
+               (if (string-match "^\\([^@]+\\)@\\(.+\\)$" profile)
+                   (cons (match-string 1 profile)
+                         (match-string 2 profile))
+                 (cons profile default-ref)))))
+          ((and (consp profile) (nlistp (cdr profile)))
+           (cons (or (car profile) default-name)
+                 (or (cdr profile) default-ref)))
+          ((and (null profile) default?)
+           (cons default-name default-ref))
+          ((signal 'wrong-type-argument
+                   (list "Expected PROFILE to be a string, cons cell, or `doom-profile'"
+                         (type-of profile) profile))))))
+
+(defun doom-profile-init-file (profile &optional el?)
+  "Return the init file for PROFILE."
+  (declare (side-effect-free t))
+  (cl-destructuring-bind (name . ref)
+      (if profile
+          (doom-profile-key profile t)
+        (cons nil nil))
+    (file-name-concat doom-data-dir name "@" ref
+                      (format "init.%d.%d.%s"
+                              emacs-major-version
+                              emacs-minor-version
+                              (if el? "el" "elc")))))
+
+(defun doom-profile-get (profile-name &optional property null-value)
+  "Return PROFILE-NAME's PROFILE, otherwise its PROPERTY, otherwise NULL-VALUE."
+  (when (stringp profile-name)
+    (setq profile-name (intern profile-name)))
+  (if-let (profile (assq profile-name (doom-profiles)))
+      (if property
+          (if-let (propval (assq property (cdr profile)))
+              (cdr propval)
+            null-value)
+        profile)
+    null-value))
+
+(defun doom-profile->id (profile)
+  "Return a NAME@VERSION id string from profile cons cell (NAME . VERSION)."
+  (cl-check-type profile cons)
+  (cl-destructuring-bind (name . ref) (doom-profile-key profile)
+    (format "%s@%s" name ref)))
 
 (provide 'doom-lib)
 ;;; doom-lib.el ends here

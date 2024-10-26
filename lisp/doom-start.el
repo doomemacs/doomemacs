@@ -270,84 +270,11 @@ If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
            "Doom loaded %d packages across %d modules in %.03fs"
            (- (length load-path) (length (get 'load-path 'initial-value)))
-           (hash-table-count doom-modules)
+           (if doom-modules (hash-table-count doom-modules) -1)
            doom-init-time))
 
 
 ;;
-;;; Load Doom's defaults and DSL
-
-;;; Load core modules and set up their autoloads
-(require 'doom-modules)
-;; TODO (autoload 'doom-profiles-initialize "doom-profiles")
-;; TODO (autoload 'doom-packages-initialize "doom-packages")
-
-;; UX: There's a chance the user will later use package.el or straight in this
-;;   interactive session. If they do, make sure they're properly initialized
-;;   when they do.
-(autoload 'doom-initialize-packages "doom-packages")
-(with-eval-after-load 'package (require 'doom-packages))
-(with-eval-after-load 'straight (doom-initialize-packages))
-
-
-;;
-;;; Let 'er rip!
-
-;; A last ditch opportunity to undo dodgy optimizations or do extra
-;; configuration before the session is complicated by user config and packages.
-(doom-run-hooks 'doom-before-init-hook)
-
-;;; Load envvar file
-;; 'doom env' generates an envvar file. This is a snapshot of your shell
-;; environment, which Doom loads here. This is helpful in scenarios where Emacs
-;; is launched from an environment detached from the user's shell environment.
-(when (and (or initial-window-system
-               (daemonp))
-           doom-env-file)
-  (doom-load-envvars-file doom-env-file 'noerror))
-
-;;; Last minute setup
-(add-hook 'doom-after-init-hook #'doom-load-packages-incrementally-h 100)
-(add-hook 'doom-after-init-hook #'doom-display-benchmark-h 110)
-(doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
-(doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
-(doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
-
-;; If the user's already opened something (e.g. with command-line arguments),
-;; then we should assume nothing about the user's intentions and simply treat
-;; this session as fully initialized.
-(add-hook! 'doom-after-init-hook :depth 100
-  (defun doom-run-first-hooks-if-files-open-h ()
-    (when file-name-history
-      (doom-run-hooks 'doom-first-file-hook 'doom-first-buffer-hook))))
-
-;; PERF: Activate these later, otherwise they'll fire for every buffer created
-;;   between now and the end of startup.
-(add-hook! 'after-init-hook
-  (defun doom-init-local-var-hooks-h ()
-    ;; These fire `MAJOR-MODE-local-vars-hook' hooks, which is a Doomism. See
-    ;; the `MODE-local-vars-hook' section above.
-    (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
-    (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)))
-
-;;; Load $DOOMDIR/init.el early
-;; TODO: Catch errors
-(load! (string-remove-suffix ".el" doom-module-init-file) doom-user-dir t)
-
-;; If the user is loading this file from a batch script, let's assume they want
-;; to load their userland config immediately.
-(when noninteractive
-  (doom-require 'doom-profiles)
-  (let ((init-file (doom-profile-init-file)))
-    (unless (file-exists-p init-file)
-      (user-error "Profile init file hasn't been generated. Did you forgot to run 'doom sync'?"))
-    (let (kill-emacs-query-functions
-          kill-emacs-hook)
-      ;; Loads modules, then $DOOMDIR/config.el
-      (doom-load init-file 'noerror)
-      (doom-initialize-packages))))
-
-
 ;;; Entry point
 ;; HACK: This advice hijacks Emacs' initfile loader to accomplish the following:
 ;;
@@ -378,30 +305,30 @@ If RETURN-P, return the message as a string instead of displaying it."
                    ;; Compiling them in one place is a big reduction in startup
                    ;; time, and by keeping a history of them, you get a snapshot
                    ;; of your config in time.
-                   (file-name-concat
-                    doom-profile-dir (format "init.%d.elc" emacs-major-version))))
-              ;; If `user-init-file' is t, then `load' will store the name of
-              ;; the next file it loads into `user-init-file'.
-              (setq user-init-file t)
-              (when init-file-name
-                (load init-file-name 'noerror 'nomessage 'nosuffix)
-                ;; HACK: if `init-file-name' happens to be higher in
-                ;;   `load-history' than a symbol's actual definition,
-                ;;   `symbol-file' (and help/helpful buffers) will report the
-                ;;   source of a symbol as `init-file-name', rather than it's
-                ;;   true source. By removing this file from `load-history', no
-                ;;   one will make that mistake.
-                (setq load-history (delete (assoc init-file-name load-history)
-                                           load-history)))
-              ;; If it's still `t', then it failed to load the profile initfile.
-              ;; This likely means the user has forgotten to run `doom sync'!
-              (when (eq user-init-file t)
-                (signal 'doom-nosync-error (list init-file-name)))
+                   (doom-profile-init-file doom-profile)))
               ;; If we loaded a compiled file, set `user-init-file' to the
               ;; source version if that exists.
               (setq user-init-file
                     (concat (string-remove-suffix ".elc" user-init-file)
-                            ".el"))))
+                            ".el"))
+              ;; HACK: if `init-file-name' happens to be higher in
+              ;;   `load-history' than a symbol's actual definition,
+              ;;   `symbol-file' (and help/helpful buffers) will report the
+              ;;   source of a symbol as `init-file-name', rather than it's true
+              ;;   source. By removing this file from `load-history', no one
+              ;;   will make that mistake.
+              (setq load-history
+                    (delete (assoc init-file-name load-history)
+                            load-history))
+              (let ((startup-or-reload?
+                     (or (doom-context-p 'startup)
+                         (doom-context-p 'reload))))
+                (when startup-or-reload?
+                  (doom--startup-vars))
+                (doom--startup-module-autoloads)
+                (doom--startup-package-autoloads)
+                (when startup-or-reload?
+                  (doom--startup-modules)))))
         ;; TODO: Add safe-mode profile.
         ;; (error
         ;;  ;; HACK: This is not really this variable's intended purpose, but it

@@ -70,7 +70,7 @@
 ;;
 ;;; Code:
 
-;; For `when-let' and `if-let' on versions of Emacs before they were autoloaded.
+;; For `when-let*' and `if-let*' on versions of Emacs before they were autoloaded.
 (eval-when-compile (require 'subr-x))
 
 (eval-and-compile  ; Check version at both compile and runtime.
@@ -100,7 +100,8 @@
                             "  $ EMACS=\"snap run emacs\" " command " ..."))
                   "\n\nAborting...")
         (concat "If you believe this error is a mistake, run 'doom doctor' on the command line\n"
-                "to diagnose common issues with your config and system."))))))
+                "to diagnose common issues with your config and system.")))))
+  nil)
 
 ;; Doom needs to be synced/rebuilt if either Doom or Emacs has been
 ;; up/downgraded. This is because byte-code isn't backwards compatible, and many
@@ -512,22 +513,13 @@ users).")
     ;;   causes unnecessary redraws at startup which can impact startup time
     ;;   drastically and cause flashes of white. It also pollutes the logs. I
     ;;   suppress it here and load it myself, later, in a more controlled way
-    ;;   (see `startup--load-user-init-file@undo-hacks').
+    ;;   (see `doom-initialize').
     (put 'site-run-file 'initial-value site-run-file)
     (setq site-run-file nil)
 
     (define-advice startup--load-user-init-file (:around (fn &rest args) undo-hacks 95)
       "Undo Doom's startup optimizations to prep for the user's session."
-      (unwind-protect
-          (progn
-            (when (setq site-run-file (get 'site-run-file 'initial-value))
-              (let ((inhibit-startup-screen inhibit-startup-screen))
-                (letf! ((defun load-file (file)
-                          (load file nil (not init-file-debug)))
-                        (defun load (file &optional noerror _nomessage &rest args)
-                          (apply load file noerror (not init-file-debug) args)))
-                  (load site-run-file t))))
-            (apply fn args))
+      (unwind-protect (apply fn args)
         ;; Now it's safe to be verbose.
         (setq-default inhibit-message nil)
         ;; COMPAT: Once startup is sufficiently complete, undo our earlier
@@ -543,70 +535,6 @@ users).")
       (setq command-line-ns-option-alist nil))
     (unless (memq initial-window-system '(x pgtk))
       (setq command-line-x-option-alist nil))))
-
-
-;;
-;;; `doom-context'
-
-(defvar doom-context '(t)
-  "A list of symbols identifying all active Doom execution contexts.
-
-This should never be directly changed, only let-bound, and should never be
-empty. Each context describes what phase Doom is in, and may respond to.
-
-All valid contexts:
-  cli        -- while executing a Doom CLI
-  compile    -- while byte-compiling packages
-  eval       -- during interactive evaluation of elisp
-  init       -- while doom is formally starting up for the first time, after its
-                core libraries are loaded, but before $DOOMDIR is
-  modules    -- while loading modules configuration files (but not packages)
-  sandbox    -- This session was launched from Doom's sandbox
-  packages   -- while a module's packages.el's file is being evaluated
-  reload     -- while reloading doom with `doom/reload'")
-(put 'doom-context 'valid-values '(cli compile eval init modules packages reload doctor sandbox))
-(put 'doom-context 'risky-local-variable t)
-
-(defun doom-context--assert (context)
-  (let ((valid (get 'doom-context 'valid-values)))
-    (unless (memq context valid)
-      (signal 'doom-context-error
-              (list context "Unrecognized context" valid)))))
-
-(defun doom-context-p (context)
-  "Return t if CONTEXT is active, nil otherwise.
-
-See `doom-context' for possible values for CONTEXT."
-  (if (memq context doom-context) t))
-
-(defun doom-context-push (context)
-  "Add CONTEXT to `doom-context', if it isn't already.
-
-Return non-nil if successful. Throws an error if CONTEXT is invalid."
-  (unless (memq context doom-context)
-    (doom-context--assert context)
-    (doom-log ":context: +%s %s" context doom-context)
-    (push context doom-context)))
-
-(defun doom-context-pop (context &optional strict?)
-  "Remove CONTEXT from `doom-context'.
-
-Return non-nil if successful. If STRICT? is non-nil, throw an error if CONTEXT
-wasn't active when this was called."
-  (if (not (doom-context-p context))
-      (when strict?
-        (signal 'doom-context-error
-                (list doom-context "Attempt to pop missing context" context)))
-    (doom-log ":context: -%s %s" context doom-context)
-    (setq doom-context (delq context doom-context))))
-
-(defmacro with-doom-context (contexts &rest body)
-  "Evaluate BODY with CONTEXTS added to `doom-context'."
-  (declare (indent 1))
-  `(let ((doom-context doom-context))
-     (dolist (context (ensure-list ,contexts))
-       (doom-context-push context))
-     ,@body))
 
 
 ;;
@@ -687,13 +615,17 @@ to `doom-cache-dir'/comp/ instead, so that Doom can safely clean it up as part
 of 'doom sync' or 'doom gc'."
     (let ((temporary-file-directory (expand-file-name "comp/" doom-profile-cache-dir)))
       (make-directory temporary-file-directory t)
-      (apply fn args))))
+      (apply fn args)))
 
-;;; Suppress package.el
-;; Since Emacs 27, package initialization occurs before `user-init-file' is
-;; loaded, but after `early-init-file'. Doom handles package initialization, so
-;; we must prevent Emacs from doing it again.
-(setq package-enable-at-startup nil)
+  (after! comp
+    ;; HACK Disable native-compilation for some troublesome packages
+    (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
+          (list "/seq-tests\\.el\\'"
+                "/emacs-jupyter.*\\.el\\'"
+                "/evil-collection-vterm\\.el\\'"
+                "/vterm\\.el\\'"
+                "/with-editor\\.el\\'"))))
+
 
 ;;; Reduce unnecessary/unactionable warnings/logs
 ;; Disable warnings from the legacy advice API. They aren't actionable or
@@ -738,6 +670,35 @@ of 'doom sync' or 'doom gc'."
                     "gnutls-cli -p %p %h"))
 
 
+;;; Package managers
+;; Since Emacs 27, package initialization occurs before `user-init-file' is
+;; loaded, but after `early-init-file'. Doom handles package initialization, so
+;; we must prevent Emacs from doing it again.
+(setq package-enable-at-startup nil)
+
+;; Ensure that, if the user does want package.el, it is configured correctly.
+;; You really shouldn't be using it, though...
+(with-eval-after-load 'package
+  (setq package-user-dir (file-name-concat doom-local-dir "elpa/")
+        package-gnupghome-dir (expand-file-name "gpg" package-user-dir))
+  (let ((s (if gnutls-verify-error "s" "")))
+    (prependq! package-archives
+               ;; I omit Marmalade because its packages are manually submitted
+               ;; rather than pulled, and so often out of date.
+               `(("melpa" . ,(format "http%s://melpa.org/packages/" s))
+                 ("org"   . ,(format "http%s://orgmode.org/elpa/"   s)))))
+
+  ;; Refresh package.el the first time you call `package-install', so it's still
+  ;; trivially usable. Remember to run 'doom sync' to purge them; they can
+  ;; conflict with packages installed via straight!
+  (add-transient-hook! 'package-install (package-refresh-contents)))
+
+;; DEPRECATED: Interactive sessions won't be able to interact with Straight (or
+;;   Elpaca) in the future, so this is temporary.
+(with-eval-after-load 'straight
+  (require 'doom-straight))
+
+
 ;;
 ;;; Custom hooks
 
@@ -765,47 +726,155 @@ appropriately against `noninteractive' or the `cli' context."
   :group 'doom
   :type 'hook)
 
+(defcustom doom-before-modules-init-hook nil
+  "Hooks run before module init.el files are loaded."
+  :group 'doom
+  :type 'hook)
+
+(defcustom doom-after-modules-init-hook nil
+  "Hooks run after module init.el files are loaded."
+  :group 'doom
+  :type 'hook)
+
+(defcustom doom-before-modules-config-hook nil
+  "Hooks run before module config.el files are loaded."
+  :group 'doom
+  :type 'hook)
+
+(defcustom doom-after-modules-config-hook nil
+  "Hooks run after module config.el files are loaded (but before the user's)."
+  :group 'doom
+  :type 'hook)
+
 
 ;;
-;;; Last minute initialization
+;;; Initializers
 
-(when (daemonp)
-  (message "Starting Doom Emacs in daemon mode...")
-  (unless doom-inhibit-log
-    (add-hook! 'doom-after-init-hook :depth 106
+(defun doom-initialize (&optional interactive?)
+  "Bootstrap the Doom session ahead."
+  (when (doom-context-push 'startup)
+    (when (daemonp)
+      (message "Starting Doom Emacs in daemon mode...")
       (unless doom-inhibit-log
-        (setq doom-inhibit-log (not (or noninteractive init-file-debug))))
-      (message "Disabling verbose mode. Have fun!"))
-    (add-hook! 'kill-emacs-hook :depth 110
-      (message "Killing Emacs. Sayonara!"))))
+        (add-hook! 'doom-after-init-hook :depth 106
+          (unless doom-inhibit-log
+            (setq doom-inhibit-log (not (or noninteractive init-file-debug))))
+          (message "Disabling verbose mode. Have fun!"))
+        (add-hook! 'kill-emacs-hook :depth 110
+          (message "Killing Emacs. Sayonara!"))))
 
-(add-hook! 'doom-before-init-hook :depth -105
-  (defun doom--begin-init-h ()
-    "Begin the startup process."
+    (if interactive?
+        (when (doom-context-push 'emacs)
+          (add-hook 'doom-after-init-hook #'doom-load-packages-incrementally-h 100)
+          (add-hook 'doom-after-init-hook #'doom-display-benchmark-h 110)
+          (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
+          (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
+          (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
+
+          ;; If the user's already opened something (e.g. with command-line
+          ;; arguments), then we should assume nothing about the user's
+          ;; intentions and simply treat this session as fully initialized.
+          (add-hook! 'doom-after-init-hook :depth 100
+            (defun doom-run-first-hooks-if-files-open-h ()
+              (when file-name-history
+                (doom-run-hooks 'doom-first-file-hook 'doom-first-buffer-hook))))
+
+          ;; These fire `MAJOR-MODE-local-vars-hook' hooks, which is a Doomism.
+          ;; See the `MODE-local-vars-hook' section above.
+          (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
+          (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
+
+          ;; This is the absolute latest a hook can run in Emacs' startup
+          ;; process.
+          (advice-add #'command-line-1 :after #'doom-finalize)
+
+          (require 'doom-start)
+          (let ((init-file (doom-profile-init-file doom-profile)))
+            (or (doom-load init-file t)
+                (signal 'doom-nosync-error (list init-file)))))
+
+      (when (doom-context-push 'cli)
+        ;; REVIEW: Remove later. The endpoints should be responsibile for
+        ;;   ensuring they exist. For now, they exist to quell file errors.
+        (with-file-modes #o700
+          (mapc (doom-rpartial #'make-directory 'parents)
+                (list doom-local-dir
+                      doom-data-dir
+                      doom-cache-dir
+                      doom-state-dir)))
+
+        (doom-require 'doom-lib 'debug)
+        (if init-file-debug (doom-debug-mode +1))
+
+        ;; Then load the rest of Doom's libs eagerly, since autoloads may not
+        ;; be generated/loaded yet.
+        (require 'seq)
+        (require 'map)
+        (mapc (doom-partial #'doom-require 'doom-lib)
+              '(process
+                system
+                git
+                plist
+                files
+                print
+                autoloads
+                profiles
+                modules
+                packages))
+
+        ;; Ensure the CLI framework is ready.
+        (require 'doom-cli)
+        (add-hook 'doom-cli-initialize-hook #'doom-finalize)))
+
+    ;; HACK: We suppress loading of site files so they can be loaded manually,
+    ;;   here. Why? To suppress the otherwise unavoidable output they commonly
+    ;;   produce (like deprecation notices, file-loaded messages, and linter
+    ;;   warnings). This output pollutes the output of doom's CLI (or scripts
+    ;;   derived from it) with potentially confusing or alarming -- but always
+    ;;   unimportant -- information to the user.
+    (let ((site-loader
+           (lambda ()
+             (quiet!!
+               (unless interactive?
+                 (require 'cl nil t))  ; "Package cl is deprecated"
+               (unless site-run-file
+                 (when-let* ((site-file (get 'site-run-file 'initial-value)))
+                   (let ((inhibit-startup-screen inhibit-startup-screen))
+                     (setq site-run-file site-file)
+                     (load site-run-file t))))))))
+      (if interactive?
+          (define-advice startup--load-user-init-file (:before (&rest _) load-site-files 100)
+            (funcall site-loader))
+        (funcall site-loader)))
+
+    ;; A last ditch opportunity to undo hacks or do extra configuration before
+    ;; the session is complicated by user config and packages.
+    (doom-run-hooks 'doom-before-init-hook)
+
     ;; HACK: Later versions of Emacs 30 emit warnings about missing
     ;;   lexical-bindings directives at the top of loaded files. This is a good
     ;;   thing, but it inundates users with unactionable warnings (from old
     ;;   packages or internal subdirs.el files), which aren't useful.
-    (setq-default delayed-warnings-list
-                  (assq-delete-all 'lexical-binding delayed-warnings-list))
-    (when (doom-context-push 'init)
-      ;; HACK: Ensure OS checks are as fast as possible (given their ubiquity).
-      (setq features (cons :system (delq :system features)))
-      ;; Remember these variables' initial values, so we can safely reset them
-      ;; at a later time, or consult them without fear of contamination.
-      (dolist (var '(exec-path load-path process-environment))
-        (put var 'initial-value (default-toplevel-value var))))))
+    (cl-callf2 assq-delete-all 'lexical-binding delayed-warnings-list)
 
-(add-hook! 'doom-after-init-hook :depth 105
-  (defun doom--end-init-h ()
-    "Set `doom-init-time'."
-    (when (doom-context-pop 'init)
-      (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
+    ;; HACK: Ensure OS checks are as fast as possible (given their ubiquity).
+    (setq features (cons :system (delq :system features)))
 
-(unless noninteractive
-  ;; This is the absolute latest a hook can run in Emacs' startup process.
-  (define-advice command-line-1 (:after (&rest _) run-after-init-hook)
-    (doom-run-hooks 'doom-after-init-hook)))
+    ;; Remember these variables' initial values, so we can safely reset them
+    ;; at a later time, or consult them without fear of contamination.
+    (dolist (var '(exec-path load-path process-environment))
+      (put var 'initial-value (default-toplevel-value var)))
+
+    t))
+
+(defun doom-finalize (&rest _)
+  "Finalize the current Doom session, marking the end of its startup process.
+
+Triggers `doom-after-init-hook' and sets `doom-init-time.'"
+  (when (doom-context-pop 'startup)
+    (setq doom-init-time (float-time (time-subtract (current-time) before-init-time)))
+    (doom-run-hooks 'doom-after-init-hook)
+    t))
 
 (provide 'doom)
 ;;; doom.el ends here

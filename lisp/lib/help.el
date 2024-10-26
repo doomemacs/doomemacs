@@ -533,7 +533,6 @@ If prefix arg is present, refresh the cache."
                           packages nil t nil nil
                           (when guess (symbol-name guess))))))))
   ;; TODO Refactor me.
-  (require 'doom-packages)
   (doom-initialize-packages)
   (help-setup-xref (list #'doom/help-packages package)
                    (called-interactively-p 'interactive))
