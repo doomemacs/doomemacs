@@ -278,6 +278,7 @@ variable for an explanation of the defaults (in comments). See
       wdired
       wgrep
       which-key
+      with-editor
       woman
       xref
       xwidget
