@@ -169,13 +169,11 @@ Never set this variable directly, use `with-doom-module'.")
 KEY can be a `doom-module-context', `doom-module', or a `doom-module-key' cons
 cell."
   (declare (side-effect-free t))
-  (unless key
-    (error "Invalid module context: %S" key))
   (or (pcase (type-of key)
         (`doom-module-context key)
-        (`doom-module (doom-module->context key))
+        (`doom-module (ignore-errors (doom-module->context key)))
         (`cons (doom-module (car key) (cdr key))))
-      (error "Invalid module context or key: %S" key)))
+      (make-doom-module-context :key (doom-module-key key))))
 
 (defun doom-module<-context (context)
   "Return a `doom-module' plist from CONTEXT."
