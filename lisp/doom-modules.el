@@ -184,6 +184,7 @@ cell."
 
 (defun doom-module->context (key)
   "Change a `doom-module' into a `doom-module-context'."
+  (declare (side-effect-free t))
   (pcase-let
       (((doom-module index path flags group name)
         (if (doom-module-p key)
