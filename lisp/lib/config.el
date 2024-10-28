@@ -70,17 +70,23 @@ And jumps to your `doom!' block."
                ("DEBUG" (if doom-debug-mode (number-to-string doom-log-level) "")))
        (with-current-buffer
            (compile (format ,command (expand-file-name doom-bin doom-bin-dir)) t)
-         (let ((w (get-buffer-window (current-buffer))))
-           (select-window w)
-           (add-hook
-            'compilation-finish-functions
-            (lambda (_buf status)
-              (if (equal status "finished\n")
-                  (progn
-                    (delete-window w)
-                    ,on-success)
-                ,on-failure))
-            nil 'local))))))
+         (add-hook
+          'compilation-finish-functions
+          (lambda (_buf status)
+            (if (equal status "finished\n")
+                ,on-success
+              ,on-failure))
+          nil 'local)
+         (add-hook 'compilation-finish-functions ,#'doom-handle-compile-buffer-fn nil 'local)))))
+
+(defun doom--handle-compile-buffer-default (_buf status)
+  (when (equal status "finished\n")
+    (let ((w (get-buffer-window _buf)))
+      (select-window w)
+      (delete-window w))))
+
+(defvar doom-handle-compile-buffer-fn doom--handle-compile-buffer-default
+  "Function run by doom to clean up the compile buffer/window")
 
 (defvar doom-reload-command
   (format "%s sync -B -e"
