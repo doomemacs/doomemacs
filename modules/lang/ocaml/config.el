@@ -125,10 +125,10 @@
     (when (executable-find opam-switch-program-name)
       (apply fn args)))
   :config
-  ;; Use opam to set environment
-  (setq tuareg-opam-insinuate t)
-  (opam-switch-set-switch (tuareg-opam-current-compiler)))
-
+  (after! tuareg
+    ;; Use opam to set environment
+    (setq tuareg-opam-insinuate t)
+    (opam-switch-set-switch (tuareg-opam-current-compiler))))
 
 (when (modulep! +tree-sitter)
   (add-hook 'tuareg-mode-local-vars-hook #'tree-sitter!))
