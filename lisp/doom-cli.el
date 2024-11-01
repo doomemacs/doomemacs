@@ -19,11 +19,12 @@
 
 ;; REVIEW: Remove these later. The endpoints should be responsibile for
 ;;   ensuring they exist. For now, they exist to quell file errors.
-(mapc (doom-rpartial #'make-directory 'parents)
-      (list doom-local-dir
-            doom-data-dir
-            doom-cache-dir
-            doom-state-dir))
+(with-file-modes #o700
+  (mapc (doom-rpartial #'make-directory 'parents)
+        (list doom-local-dir
+              doom-data-dir
+              doom-cache-dir
+              doom-state-dir)))
 
 ;; HACK: bin/doom suppresses loading of site files so they can be loaded
 ;;   manually, here. Why? To suppress the otherwise unavoidable output they
