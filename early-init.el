@@ -85,7 +85,7 @@
                   (expand-file-name
                    (format (or (getenv-internal "DOOMPROFILELOADFILE")
                                (file-name-concat (if windows? "doomemacs/data" "doom")
-                                                 "profiles.%d.el"))
+                                                 "profiles.%d.elc"))
                            emacs-major-version)
                    (or (if windows? (getenv-internal "LOCALAPPDATA"))
                        (getenv-internal "XDG_DATA_HOME")

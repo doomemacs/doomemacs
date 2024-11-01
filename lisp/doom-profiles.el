@@ -248,7 +248,7 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
   (print-group!
     (or (let ((byte-compile-warnings (if init-file-debug byte-compile-warnings))
               (byte-compile-dest-file-function
-               (lambda (_) (format "%s.%d.elc" (file-name-sans-extension file) emacs-major-version))))
+               (lambda (_) (format "%s.elc" (file-name-sans-extension file)))))
           (byte-compile-file file))
         ;; Do it again? So the errors/warnings are visible?
         ;; (let ((byte-compile-warnings t))
