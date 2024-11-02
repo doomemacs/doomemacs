@@ -89,8 +89,8 @@
                            emacs-major-version)
                    (or (if windows? (getenv-internal "LOCALAPPDATA"))
                        (getenv-internal "XDG_DATA_HOME")
-                       "~/.local/share"))
-                  'noerror (not init-file-debug) 'nosuffix))
+                       "~/.local/share")))
+                'noerror (not init-file-debug) 'nosuffix)
           (user-error "Profiles not initialized yet; run 'doom sync' first"))))
 
   ;; PERF: When `load'ing or `require'ing files, each permutation of
