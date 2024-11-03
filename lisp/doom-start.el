@@ -309,7 +309,7 @@ If RETURN-P, return the message as a string instead of displaying it."
               ;; If we loaded a compiled file, set `user-init-file' to the
               ;; source version if that exists.
               (setq user-init-file
-                    (concat (string-remove-suffix ".elc" user-init-file)
+                    (concat (string-remove-suffix ".elc" init-file-name)
                             ".el"))
               ;; HACK: if `init-file-name' happens to be higher in
               ;;   `load-history' than a symbol's actual definition,
