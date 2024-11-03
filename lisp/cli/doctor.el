@@ -237,7 +237,9 @@ in."
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
-        (require 'doom-start)
+        (doom-initialize t)
+        (doom-startup)
+        (require 'straight)
 
         (print! (success "Initialized Doom Emacs %s") doom-version)
         (print!

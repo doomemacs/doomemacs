@@ -289,7 +289,17 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
             (dolist (file (doom-glob init-dir "*.el"))
               (print-group! :level 'info
                 (print! (start "Reading %s...") file))
-              (doom-file-read file :by 'insert)))
+              (doom-file-read file :by 'insert))
+            (prin1 `(defun doom-startup ()
+                      (let ((startup-or-reload?
+                             (or (doom-context-p 'startup)
+                                 (doom-context-p 'reload))))
+                        (when startup-or-reload?
+                          (doom--startup-vars)
+                          (doom--startup-module-autoloads)
+                          (doom--startup-package-autoloads)
+                          (doom--startup-modules))))
+                   (current-buffer)))
           (print! (start "Byte-compiling %s...") (relpath init-file))
           (print-group!
             (let ((byte-compile-warnings (if init-file-debug '(suspicious make-local callargs))))
@@ -358,18 +368,19 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                        if (doom-module-locate-path key file)
                        collect (module-loader key it))))
       ;; FIX: Same as above (see `doom-profile--generate-init-vars').
-      `((defun doom--startup-modules ()
+      `((set 'doom-modules ',doom-modules)
+        (set 'doom-disabled-packages ',doom-disabled-packages)
+        ;; Cache module state and flags in symbol plists for quick lookup by
+        ;; `modulep!' later.
+        ,@(cl-loop
+           for (category . modules) in (seq-group-by #'car config-modules-list)
+           collect
+           `(setplist ',category
+                      (quote ,(cl-loop for (_ . module) in modules
+                                       nconc `(,module ,(doom-module->context (cons category module)))))))
+
+        (defun doom--startup-modules ()
           (with-doom-context 'module
-            (set 'doom-modules ',doom-modules)
-            (set 'doom-disabled-packages ',doom-disabled-packages)
-            ;; Cache module state and flags in symbol plists for quick lookup
-            ;; by `modulep!' later.
-            ,@(cl-loop
-               for (category . modules) in (seq-group-by #'car config-modules-list)
-               collect
-               `(setplist ',category
-                          (quote ,(cl-loop for (_ . module) in modules
-                                           nconc `(,module ,(doom-module->context (cons category module)))))))
             (let ((old-custom-file custom-file))
               (with-doom-context 'init
                 ,@(module-list-loader pre-init-modules init-file)

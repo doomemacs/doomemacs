@@ -704,7 +704,8 @@ of 'doom sync' or 'doom gc'."
 ;; DEPRECATED: Interactive sessions won't be able to interact with Straight (or
 ;;   Elpaca) in the future, so this is temporary.
 (with-eval-after-load 'straight
-  (require 'doom-straight))
+  (require 'doom-straight)
+  (doom-initialize-packages))
 
 
 ;;

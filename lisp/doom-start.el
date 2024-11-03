@@ -320,15 +320,7 @@ If RETURN-P, return the message as a string instead of displaying it."
               (setq load-history
                     (delete (assoc init-file-name load-history)
                             load-history))
-              (let ((startup-or-reload?
-                     (or (doom-context-p 'startup)
-                         (doom-context-p 'reload))))
-                (when startup-or-reload?
-                  (doom--startup-vars))
-                (doom--startup-module-autoloads)
-                (doom--startup-package-autoloads)
-                (when startup-or-reload?
-                  (doom--startup-modules)))))
+              (doom-startup)))
         ;; TODO: Add safe-mode profile.
         ;; (error
         ;;  ;; HACK: This is not really this variable's intended purpose, but it
