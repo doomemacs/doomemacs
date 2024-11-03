@@ -36,6 +36,8 @@
 ;;
 ;;; Code:
 
+(require 'doom-straight)
+
 ;; DEPRECATED: Will be stored in the local profile in v3.0
 (defvar doom-packages ()
   "A list of enabled packages. Each element is a sublist, whose CAR is the
