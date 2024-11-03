@@ -177,6 +177,14 @@
   (make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "3.0.0")
   (make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "3.0.0"))
 
+;; HACK: Silence obnoxious obsoletion warnings about (if|when)-let in >=31.
+;;   These warnings are unhelpful to end-users, and so, so many packages use
+;;   these macros so rather than hopelessly pester them, I'll silence them. Not
+;;   to mention, Emacs doesn't respect `warning-suppress-types' when it comes to
+;;   obsoletion warnings.
+(put 'if-let 'byte-obsolete-info nil)
+(put 'when-let 'byte-obsolete-info nil)
+
 
 ;;; Fix $HOME on Windows
 ;; $HOME isn't normally defined on Windows, but many unix tools expect it.
