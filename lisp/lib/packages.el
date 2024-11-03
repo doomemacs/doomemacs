@@ -153,7 +153,6 @@ package's name as a symbol, and whose CDR is the plist supplied to its
 ;;;###autoload
 (defun doom-initialize-core-packages (&optional force-p)
   "Ensure `straight' is installed and was compiled with this version of Emacs."
-  (require 'doom-straight)
   (when (or force-p (null (bound-and-true-p straight-recipe-repositories)))
     (doom-log "Initializing straight")
     (let ((packages (doom-package-list '((:doom)))))
@@ -172,7 +171,6 @@ If FORCE-P is non-nil, do it anyway.
 
 This ensures `doom-packages' is populated and `straight' recipes are properly
 processed."
-  (require 'doom-straight)
   (doom-initialize-core-packages force-p)
   (when (or force-p (not (bound-and-true-p package--initialized)))
     (doom-log "Initializing package.el")
