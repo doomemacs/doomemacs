@@ -15,7 +15,7 @@
   :type 'core
   :recipe `(:host github
             :repo "radian-software/straight.el"
-            :branch ,straight-repository-branch
+            :branch "develop"
             :local-repo "straight.el"
             :files ("straight*.el"))
   :pin "33fb4695066781c634ff1c3c81ba96e880deccf7")
