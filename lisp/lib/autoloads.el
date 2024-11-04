@@ -182,7 +182,7 @@ non-nil, treat FILES as pre-generated autoload files instead."
               ;; Fixup the special #$ reader form and throw away comments.
               (while (re-search-forward "#\\$\\|^;\\(.*\n\\)" nil 'move)
                 (unless (ppss-string-terminator (save-match-data (syntax-ppss)))
-                  (replace-match (if (match-end 1) "" pfile) t t))))
+                  (replace-match (if (match-end 1) "" file) t t))))
             (let ((load-file-name file)
                   (load-path
                    (append (list doom-user-dir)
