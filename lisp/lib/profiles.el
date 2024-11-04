@@ -52,10 +52,10 @@ Can be changed externally by setting $DOOMPROFILELOADFILE.")
 
 ;;; Profile storage variables
 (defvar doom-profile-generators
-  '(("05-vars.auto.el"              . doom-profile--generate-init-vars)
-    ("80-loaddefs.auto.el"          . doom-profile--generate-doom-autoloads)
-    ("90-loaddefs-packages.auto.el" . doom-profile--generate-package-autoloads)
-    ("95-modules.auto.el"           . doom-profile--generate-load-modules))
+  '(("05-vars.auto.el"              doom-profile--generate-vars               doom--startup-vars)
+    ("80-loaddefs.auto.el"          doom-profile--generate-loaddefs-doom      doom--startup-loaddefs-doom)
+    ("90-loaddefs-packages.auto.el" doom-profile--generate-loaddefs-packages  doom--startup-loaddefs-packages)
+    ("95-modules.auto.el"           doom-profile--generate-load-modules       doom--startup-modules))
   "An alist mapping file names to generator functions.
 
 The file will be generated in `doom-profile-dir'/`doom-profile-init-dir-name',
@@ -259,7 +259,7 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
               (dolist (file auto-files)
                 (print! (item "Deleting %s...") file)
                 (delete-file file))
-              (pcase-dolist (`(,file . ,fn) doom-profile-generators)
+              (pcase-dolist (`(,file ,fn _) doom-profile-generators)
                 (let ((file (doom-path init-dir file)))
                   (doom-log "Building %s..." file)
                   (insert "\n;;;; START " file " ;;;;\n")
@@ -292,18 +292,21 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
               (doom-file-read file :by 'insert))
             (prin1 `(defun doom-startup ()
                       (let ((startup-or-reload?
+                             ;; Make sure this only runs at startup to protect
+                             ;; us Emacs' interpreter re-evaluating this file
+                             ;; when lazy-loading dynamic docstrings from the
+                             ;; byte-compiled init file.
                              (or (doom-context-p 'startup)
                                  (doom-context-p 'reload))))
                         (when startup-or-reload?
-                          (doom--startup-vars)
-                          (doom--startup-module-autoloads)
-                          (doom--startup-package-autoloads)
-                          (doom--startup-modules)
-                          ,(when-let* ((info-dirs (butlast Info-directory-list)))
-                             `(progn (require 'info)
-                                     (info-initialize)
-                                     (setq Info-directory-list
-                                           (append ',info-dirs Info-directory-list)))))))
+                          ,@(cl-loop for (_ genfn initfn) in doom-profile-generators
+                                     if (fboundp genfn)
+                                     collect (list initfn))
+                          ,@(when-let* ((info-dirs (butlast Info-directory-list)))
+                              `((require 'info)
+                                (info-initialize)
+                                (setq Info-directory-list
+                                      (append ',info-dirs Info-directory-list)))))))
                    (current-buffer)))
           (print! (start "Byte-compiling %s...") (relpath init-file))
           (print-group!
@@ -314,10 +317,7 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
              (delete-file (byte-compile-dest-file init-file))
              (signal 'doom-autoload-error (list init-file e))))))
 
-(defun doom-profile--generate-init-vars ()
-  ;; FIX: Make sure this only runs at startup to protect us Emacs' interpreter
-  ;;   re-evaluating this file when lazy-loading dynamic docstrings from the
-  ;;   byte-compiled init file.
+(defun doom-profile--generate-vars ()
   `((defun doom--startup-vars ()
       ,@(cl-loop for var in doom-autoloads-cached-vars
                  if (boundp var)
@@ -400,8 +400,8 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
               (when (eq custom-file old-custom-file)
                 (doom-load custom-file 'noerror)))))))))
 
-(defun doom-profile--generate-doom-autoloads ()
-  `((defun doom--startup-module-autoloads ()
+(defun doom-profile--generate-loaddefs-doom ()
+  `((defun doom--startup-loaddefs-doom ()
       (let ((load-in-progress t))
         ,@(doom-autoloads--scan
            (append (doom-glob doom-core-dir "lib/*.el")
@@ -413,8 +413,8 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                    (mapcan #'doom-glob doom-autoloads-files))
            nil)))))
 
-(defun doom-profile--generate-package-autoloads ()
-  `((defun doom--startup-package-autoloads ()
+(defun doom-profile--generate-loaddefs-packages ()
+  `((defun doom--startup-loaddefs-packages ()
       (let ((load-in-progress t))
         ,@(doom-autoloads--scan
            (mapcar #'straight--autoloads-file
