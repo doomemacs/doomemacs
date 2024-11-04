@@ -291,22 +291,15 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                 (print! (start "Reading %s...") file))
               (doom-file-read file :by 'insert))
             (prin1 `(defun doom-startup ()
-                      (let ((startup-or-reload?
-                             ;; Make sure this only runs at startup to protect
-                             ;; us Emacs' interpreter re-evaluating this file
-                             ;; when lazy-loading dynamic docstrings from the
-                             ;; byte-compiled init file.
-                             (or (doom-context-p 'startup)
-                                 (doom-context-p 'reload))))
-                        (when startup-or-reload?
-                          ,@(cl-loop for (_ genfn initfn) in doom-profile-generators
-                                     if (fboundp genfn)
-                                     collect (list initfn))
-                          ,@(when-let* ((info-dirs (butlast Info-directory-list)))
-                              `((require 'info)
-                                (info-initialize)
-                                (setq Info-directory-list
-                                      (append ',info-dirs Info-directory-list)))))))
+                      ;; Make sure this only runs at startup to protect us
+                      ;; Emacs' interpreter re-evaluating this file when
+                      ;; lazy-loading dynamic docstrings from the byte-compiled
+                      ;; init file.
+                      (when (or (doom-context-p 'startup)
+                                (doom-context-p 'reload))
+                        ,@(cl-loop for (_ genfn initfn) in doom-profile-generators
+                                   if (fboundp genfn)
+                                   collect (list initfn))))
                    (current-buffer)))
           (print! (start "Byte-compiling %s...") (relpath init-file))
           (print-group!
@@ -421,7 +414,17 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                    (nreverse (seq-difference (hash-table-keys straight--build-cache)
                                              doom-autoloads-excluded-packages)))
            doom-autoloads-excluded-files
-           'literal)))))
+           'literal))
+      ,@(when-let* ((info-dirs
+                     (cl-loop for key in (hash-table-keys straight--build-cache)
+                              for dir = (straight--build-dir key)
+                              for file = (straight--build-file dir "dir")
+                              if (file-exists-p file)
+                              collect dir)))
+          `((require 'info)
+            (info-initialize)
+            (setq Info-directory-list
+                  (append ',info-dirs Info-directory-list)))))))
 
 (provide 'doom-lib '(profiles))
 ;;; profiles.el ends here
