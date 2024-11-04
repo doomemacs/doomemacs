@@ -298,7 +298,12 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                           (doom--startup-vars)
                           (doom--startup-module-autoloads)
                           (doom--startup-package-autoloads)
-                          (doom--startup-modules))))
+                          (doom--startup-modules)
+                          ,(when-let* ((info-dirs (butlast Info-directory-list)))
+                             `(progn (require 'info)
+                                     (info-initialize)
+                                     (setq Info-directory-list
+                                           (append ',info-dirs Info-directory-list)))))))
                    (current-buffer)))
           (print! (start "Byte-compiling %s...") (relpath init-file))
           (print-group!

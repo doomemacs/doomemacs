@@ -16,8 +16,7 @@ hoist buggy forms into autoloads.")
     auto-mode-alist
     interpreter-mode-alist
     magic-mode-alist
-    magic-fallback-mode-alist
-    Info-directory-list)
+    magic-fallback-mode-alist)
   "A list of variables to be cached in `doom-autoloads-file'.")
 
 (defvar doom-autoloads-files ()
