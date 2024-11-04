@@ -104,9 +104,8 @@ Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
   (doom--if-compile doom-reload-command
-      (with-doom-context '(reload module)
+      (with-doom-context 'reload
         (doom-run-hooks 'doom-before-reload-hook)
-        (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
