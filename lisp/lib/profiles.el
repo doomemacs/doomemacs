@@ -397,24 +397,26 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
 
 (defun doom-profile--generate-doom-autoloads ()
   `((defun doom--startup-module-autoloads ()
-      ,@(doom-autoloads--scan
-         (append (doom-glob doom-core-dir "lib/*.el")
-                 (cl-loop for dir
-                          in (append (doom-module-load-path)
-                                     (list doom-user-dir))
-                          if (doom-glob dir "autoload.el") collect (car it)
-                          if (doom-glob dir "autoload/*.el") append it)
-                 (mapcan #'doom-glob doom-autoloads-files))
-         nil))))
+      (let ((load-in-progress t))
+        ,@(doom-autoloads--scan
+           (append (doom-glob doom-core-dir "lib/*.el")
+                   (cl-loop for dir
+                            in (append (doom-module-load-path)
+                                       (list doom-user-dir))
+                            if (doom-glob dir "autoload.el") collect (car it)
+                            if (doom-glob dir "autoload/*.el") append it)
+                   (mapcan #'doom-glob doom-autoloads-files))
+           nil)))))
 
 (defun doom-profile--generate-package-autoloads ()
   `((defun doom--startup-package-autoloads ()
-      ,@(doom-autoloads--scan
-         (mapcar #'straight--autoloads-file
-                 (nreverse (seq-difference (hash-table-keys straight--build-cache)
-                                           doom-autoloads-excluded-packages)))
-         doom-autoloads-excluded-files
-         'literal))))
+      (let ((load-in-progress t))
+        ,@(doom-autoloads--scan
+           (mapcar #'straight--autoloads-file
+                   (nreverse (seq-difference (hash-table-keys straight--build-cache)
+                                             doom-autoloads-excluded-packages)))
+           doom-autoloads-excluded-files
+           'literal)))))
 
 (provide 'doom-lib '(profiles))
 ;;; profiles.el ends here

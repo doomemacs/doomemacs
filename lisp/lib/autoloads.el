@@ -174,29 +174,29 @@ non-nil, treat FILES as pre-generated autoload files instead."
                  (file-readable-p file))
         (doom-log "loaddefs:scan: %s" file)
         (with-temp-buffer
-          (if literal
-              (insert-file-contents file)
-            (doom-autoloads--scan-file file))
-          (save-excursion
-            (while (re-search-forward "\\_<load-file-name\\_>" nil t)
-              ;; `load-file-name' is meaningless in a concatenated
-              ;; mega-autoloads file, but also essential in isolation, so we
-              ;; replace references to it with the file they came from.
-              (let ((ppss (save-excursion (syntax-ppss))))
-                (or (nth 3 ppss)
-                    (nth 4 ppss)
-                    (replace-match (prin1-to-string (abbreviate-file-name file)) t t)))))
-          (let ((load-file-name file)
-                (load-path
-                 (append (list doom-user-dir)
-                         doom-module-load-path
-                         load-path)))
-            (condition-case _
-                (while t
-                  (push (doom-autoloads--cleanup-form (read (current-buffer))
-                                                      (not literal))
-                        autoloads))
-              (end-of-file))))))))
+          (let (subautoloads)
+            (if literal
+                (insert-file-contents file)
+              (doom-autoloads--scan-file file))
+            (save-excursion
+              ;; Fixup the special #$ reader form and throw away comments.
+              (while (re-search-forward "#\\$\\|^;\\(.*\n\\)" nil 'move)
+                (unless (ppss-string-terminator (save-match-data (syntax-ppss)))
+                  (replace-match (if (match-end 1) "" pfile) t t))))
+            (let ((load-file-name file)
+                  (load-path
+                   (append (list doom-user-dir)
+                           doom-module-load-path
+                           load-path)))
+              (condition-case _
+                  (while t
+                    (push (doom-autoloads--cleanup-form (read (current-buffer))
+                                                        (not literal))
+                          subautoloads))
+                (end-of-file)))
+            (push `(let* ((load-file-name ,file) (load-true-file-name load-file-name))
+                     ,@(delq nil subautoloads))
+                  autoloads)))))))
 
 (provide 'doom-lib '(autoloads))
 ;;; autoloads.el end here
