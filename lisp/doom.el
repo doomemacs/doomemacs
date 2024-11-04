@@ -257,6 +257,20 @@
 Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
 whichever is found first. Must end in a slash.")
 
+;; DEPRECATED: Will be replaced in v3
+(defvar doom-module-load-path
+  (list (file-name-concat doom-user-dir "modules")
+        (file-name-concat doom-emacs-dir "modules"))
+  "A list of paths where Doom should search for modules.
+
+Order determines priority (from highest to lowest).
+
+Each entry is a string; an absolute path to the root directory of a module tree.
+In other words, they should contain a two-level nested directory structure,
+where the module's group and name was deduced from the first and second level of
+directories. For example: if $DOOMDIR/modules/ is an entry, a
+$DOOMDIR/modules/lang/ruby/ directory represents a ':lang ruby' module.")
+
 (defvar doom-bin-dir (expand-file-name "bin/" doom-emacs-dir)
   "Where Doom's executables are stored.
 

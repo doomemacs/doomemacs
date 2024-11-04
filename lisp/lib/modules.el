@@ -5,20 +5,6 @@
 (defvar doom-modules nil
   "A table of enabled modules and metadata. See `doom-modules-initialize'.")
 
-(define-obsolete-variable-alias 'doom-modules-dirs 'doom-module-load-path "3.0.0")
-(defvar doom-module-load-path
-  (list (file-name-concat doom-user-dir "modules")
-        (file-name-concat doom-emacs-dir "modules"))
-  "A list of paths where Doom should search for modules.
-
-Order determines priority (from highest to lowest).
-
-Each entry is a string; an absolute path to the root directory of a module tree.
-In other words, they should contain a two-level nested directory structure,
-where the module's group and name was deduced from the first and second level of
-directories. For example: if $DOOMDIR/modules/ is an entry, a
-$DOOMDIR/modules/lang/ruby/ directory represents a ':lang ruby' module.")
-
 ;; DEPRECATED: Remove in v3, as it will be handled in the CLI
 (make-obsolete-variable 'doom-obsolete-modules nil "3.0.0")
 (defconst doom-obsolete-modules
