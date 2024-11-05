@@ -277,8 +277,8 @@ remains lean."
           (straight--packages-to-rebuild
            (or (if force-p :all straight--packages-to-rebuild)
                (make-hash-table :test #'equal)))
-          (recipes (doom-package-recipe-list))
-          (pinned (doom-package-pinned-list)))
+          (recipes (doom-package-recipe-alist))
+          (pinned (doom-package-pinned-alist)))
       (add-hook 'native-comp-async-cu-done-functions #'doom-packages--native-compile-done-h)
       (straight--make-build-cache-available)
       (if-let (built
@@ -374,8 +374,8 @@ remains lean."
   (doom-initialize-packages)
   (doom-packages--barf-if-incomplete)
   (let* ((repo-dir (straight--repos-dir))
-         (pinned (doom-package-pinned-list))
-         (recipes (doom-package-recipe-list))
+         (pinned (doom-package-pinned-alist))
+         (recipes (doom-package-recipe-alist))
          (packages-to-rebuild (make-hash-table :test 'equal))
          (repos-to-rebuild (make-hash-table :test 'equal))
          (total (length recipes))
@@ -585,7 +585,6 @@ remains lean."
       (delq nil (mapcar #'doom-packages--purge-repo repos))))))
 
 (defun doom-packages--purge-elpa ()
-  (require 'doom-packages)
   (let ((dirs (doom-files-in package-user-dir :type t :depth 0)))
     (if (not dirs)
         (prog1 0

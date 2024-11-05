@@ -88,7 +88,7 @@ human-readable variant of its associated major mode name."
                          (+eval-repl-known-repls)))
          (founds (mapcar (lambda (fn) (list (+eval-pretty-mode-name-from-fn fn) fn))
                          (+eval-repl-found-repls)))
-         (repls (cl-delete-duplicates (append knowns founds)))
+         (repls (cl-delete-duplicates (append knowns founds) :test #'equal))
          (names (mapcar #'car repls))
          (choice (or (completing-read "Open a REPL for: " names)
                      (user-error "Aborting"))))

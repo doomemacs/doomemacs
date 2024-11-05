@@ -24,7 +24,7 @@
         ;; than the current OSes preference
         doom-modeline-buffer-encoding 'nondefault
         doom-modeline-default-eol-type
-        (pcase doom-system ('macos 2) ('windows 1) (_ 0)))
+        (pcase (car doom-system) ('macos 2) ('windows 1) (_ 0)))
 
   :config
   ;; Fix an issue where these two variables aren't defined in TTY Emacs on MacOS

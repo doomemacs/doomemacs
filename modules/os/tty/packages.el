@@ -6,7 +6,7 @@
       :recipe (:host github :repo "spudlyo/clipetty")
       :pin "01b39044b9b65fa4ea7d3166f8b1ffab6f740362")
   ;; Despite its name, this works for macOS as well.
-  (package! xclip :pin "e132bbff5529c674a02929ebffd1fe4790d284b9"))
+  (package! xclip :pin "9ab22517f3f2044e1c8c19be263da9803fbca26a"))
 
 ;; NOTE Despite the evil-* prefix, evil-terminal-cursor-changer does not depend
 ;;      on evil (anymore).

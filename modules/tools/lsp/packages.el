@@ -3,12 +3,12 @@
 
 (if (modulep! +eglot)
     (progn
-      (package! eglot :pin "6b9c4faa5201915ab81fe470a872ebce8921fe51")
+      (package! eglot :pin "81eb273965be82cd56d7502cccd68b5231a8fbab")
       (when (modulep! :completion vertico)
         (package! consult-eglot :pin "64262e72452f8fe6dd49d31bcdd4bd577b7d682d"))
       (when (modulep! :checkers syntax -flymake)
-        (package! flycheck-eglot :pin "09e37f4c726d9b565b040ba9e89215158d3bd6b6")))
-  (package! lsp-mode :pin "dd61303b2dc989a58f7dddd4c754f828a3f52107")
+        (package! flycheck-eglot :pin "18d0c9869585e6a9ea5c40678f266cf7f5bb2d2e")))
+  (package! lsp-mode :pin "9b104105adecf637188f4e3bf5cc228bda12374a")
   (package! lsp-ui :pin "072bb29152038518c2478813b82c8d04d07df84c")
   (when (modulep! :completion ivy)
     (package! lsp-ivy :pin "9ecf4dd9b1207109802bd1882aa621eb1c385106"))

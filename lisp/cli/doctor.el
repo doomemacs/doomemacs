@@ -237,7 +237,9 @@ in."
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
-        (require 'doom-start)
+        (doom-initialize t)
+        (doom-startup)
+        (require 'straight)
 
         (print! (success "Initialized Doom Emacs %s") doom-version)
         (print!
@@ -328,7 +330,7 @@ in."
                               (packages-file (doom-module-expand-path (cons group name) doom-module-packages-file)))
                           (when packages-file
                             (cl-loop with doom-output-indent = 6
-                                     for name in (with-doom-context 'packages
+                                     for name in (with-doom-context 'package
                                                    (let* (doom-packages
                                                           doom-disabled-packages)
                                                      (load packages-file 'noerror 'nomessage)
