@@ -184,6 +184,7 @@ non-nil, treat FILES as pre-generated autoload files instead."
                 (unless (ppss-string-terminator (save-match-data (syntax-ppss)))
                   (replace-match (if (match-end 1) "" file) t t))))
             (let ((load-file-name file)
+                  (load-true-file-name load-file-name)
                   (load-path
                    (append (list doom-user-dir)
                            doom-module-load-path
