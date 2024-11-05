@@ -37,6 +37,11 @@
 ;;; Code:
 
 (require 'doom-straight)
+(doom-require 'doom-lib 'modules)
+
+
+;;
+;;; Variables
 
 ;; DEPRECATED: Will be stored in the local profile in v3.0
 (defvar doom-packages ()
