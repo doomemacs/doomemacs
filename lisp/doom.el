@@ -467,20 +467,6 @@ users).")
                   (doom-partial #'tty-run-terminal-initialization
                                 (selected-frame) nil t))))
 
-    ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on each
-    ;;   `require' and `load'. Doom won't load any modules this early, so I omit
-    ;;   *.so for a tiny startup boost. Is later restored in `doom-start'.
-    (put 'load-suffixes 'initial-value (default-toplevel-value 'load-suffixes))
-    (put 'load-file-rep-suffixes 'initial-value (default-toplevel-value 'load-file-rep-suffixes))
-    (set-default-toplevel-value 'load-suffixes '(".elc" ".el"))
-    (set-default-toplevel-value 'load-file-rep-suffixes '(""))
-    ;; COMPAT: Undo any problematic startup optimizations eventually, to prevent
-    ;;   incompatibilities with anything loaded in userland.
-    (add-hook! 'doom-before-init-hook
-      (defun doom--reset-load-suffixes-h ()
-        (setq load-suffixes (get 'load-suffixes 'initial-value)
-              load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value))))
-
     ;; These optimizations are brittle, difficult to debug, and obscure other
     ;; issues, so bow out when debug mode is on.
     (unless init-file-debug
