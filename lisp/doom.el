@@ -378,6 +378,27 @@ which is loaded at startup (if it exists). This is helpful if Emacs can't
 \(easily) be launched from the correct shell session (particularly for MacOS
 users).")
 
+;;; Module file variables
+(defvar doom-module-init-file "init.el"
+  "The filename for module early initialization config files.
+
+Init files are loaded early, just after Doom core, and before modules' config
+files. They are always loaded, even in non-interactive sessions, and before
+`doom-before-modules-init-hook'. Related to `doom-module-config-file'.")
+
+(defvar doom-module-config-file "config.el"
+  "The filename for module configuration files.
+
+Config files are loaded later, and almost always in interactive sessions. These
+run before `doom-after-modules-config-hook' and after `doom-module-init-file'.")
+
+(defvar doom-module-packages-file "packages.el"
+  "The filename for the package configuration file.
+
+Package files are read whenever Doom's package manager wants a manifest of all
+desired packages. They are rarely read in interactive sessions (unless the user
+uses a straight or package.el command directly).")
+
 
 ;;
 ;;; Startup optimizations
