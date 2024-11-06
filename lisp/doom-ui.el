@@ -398,7 +398,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (add-hook! 'evil-visual-state-exit-hook
     (defun doom-enable-hl-line-maybe-h ()
       (when doom--hl-line-mode
-        (hl-line-mode +1)))))
+        (hl-line-mode +1))))
+
+  ;; Otherwise we always hit hl-line-face
+  (define-advice face-at-point (:around (&rest args))
+    (if hl-line-mode
+        (unwind-protect
+            (progn (hl-line-mode -1)
+                   (apply args))
+          (hl-line-mode +1))
+      (apply args))))
 
 
 (use-package! winner
