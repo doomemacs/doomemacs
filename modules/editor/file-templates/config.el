@@ -148,10 +148,10 @@ must be non-read-only, empty, and there must be a rule in
        (null (buffer-base-buffer))  ; ...isn't an indirect clone
        (file-templates-apply)))
 
-(defun file-templates-apply ()
+(defun +file-templates/apply ()
   "Actually expand a file template if one exists"
   (interactive)
-  (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
+  (when-let* ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
     (apply #'+file-templates--expand rule)))
 
 ;;
