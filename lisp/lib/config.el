@@ -13,7 +13,7 @@
   "Browse your `doom-user-dir'."
   (interactive)
   (unless (file-directory-p doom-user-dir)
-    (make-directory doom-user-dir t))
+    (user-error "$DOOMDIR doesn't exist (%s)" (abbreviate-file-name doom-user-dir)))
   (doom-project-browse doom-user-dir))
 
 ;;;###autoload
@@ -21,30 +21,6 @@
   "Search for a file in `doom-user-dir'."
   (interactive)
   (doom-project-find-file doom-user-dir))
-
-;;;###autoload
-(defun doom/goto-private-init-file ()
-  "Open your private init.el file.
-And jumps to your `doom!' block."
-  (interactive)
-  (find-file (expand-file-name doom-module-init-file doom-user-dir))
-  (goto-char
-   (or (save-excursion
-         (goto-char (point-min))
-         (search-forward "(doom!" nil t))
-       (point))))
-
-;;;###autoload
-(defun doom/goto-private-config-file ()
-  "Open your private config.el file."
-  (interactive)
-  (find-file (expand-file-name doom-module-config-file doom-user-dir)))
-
-;;;###autoload
-(defun doom/goto-private-packages-file ()
-  "Open your private packages.el file."
-  (interactive)
-  (find-file (expand-file-name doom-module-packages-file doom-user-dir)))
 
 
 ;;

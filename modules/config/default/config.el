@@ -375,8 +375,7 @@ Continues comments if executed from a commented line."
   ;; replaces `apropos-documentation' b/c `apropos' covers this
   "d"    nil
   "db"   #'doom/report-bug
-  "dc"   #'doom/goto-private-config-file
-  "dC"   #'doom/goto-private-init-file
+  "dc"   #'doom/open-private-config
   "dd"   #'doom-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
@@ -386,7 +385,6 @@ Continues comments if executed from a commented line."
   "dn"   #'doom/help-news
   "dN"   #'doom/help-search-news
   "dpc"  #'doom/help-package-config
-  "dpd"  #'doom/goto-private-packages-file
   "dph"  #'doom/help-package-homepage
   "dpp"  #'doom/help-packages
   "ds"   #'doom/help-search-headings
