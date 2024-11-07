@@ -410,9 +410,19 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
   `((defun doom--startup-loaddefs-packages ()
       (let ((load-in-progress t))
         ,@(doom-autoloads--scan
-           (mapcar #'straight--autoloads-file
-                   (nreverse (seq-difference (hash-table-keys straight--build-cache)
-                                             doom-autoloads-excluded-packages)))
+           ;; Create a list of packages starting with the Nth-most dependencies
+           ;; by walking the package dependency tree depth-first. This ensures
+           ;; any load-order constraints in package autoloads are always met.
+           (let (packages)
+             (letf! (defun* walk-packages (pkglist)
+                      (cond ((null pkglist) nil)
+                            ((stringp pkglist)
+                             (walk-packages (nth 1 (gethash pkglist straight--build-cache)))
+                             (cl-pushnew pkglist packages :test #'equal))
+                            ((listp pkglist)
+                             (mapc #'walk-packages (reverse pkglist)))))
+               (walk-packages (mapcar #'symbol-name (mapcar #'car doom-packages))))
+             (mapcar #'straight--autoloads-file (nreverse packages)))
            doom-autoloads-excluded-files
            'literal))
       ,@(when-let* ((info-dirs
