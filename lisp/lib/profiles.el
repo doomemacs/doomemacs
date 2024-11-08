@@ -204,7 +204,8 @@ run.")
    :mode (cons #o600 #o700)
    :printfn #'prin1)
   (print-group!
-    (or (let ((byte-compile-warnings (if init-file-debug byte-compile-warnings))
+    (or (let ((byte-compile-debug t)
+              (byte-compile-warnings (if init-file-debug byte-compile-warnings))
               (byte-compile-dest-file-function
                (lambda (_) (format "%s.elc" (file-name-sans-extension file)))))
           (byte-compile-file file))
@@ -303,7 +304,8 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                    (current-buffer)))
           (print! (start "Byte-compiling %s...") (relpath init-file))
           (print-group!
-            (let ((byte-compile-warnings (if init-file-debug '(suspicious make-local callargs))))
+            (let ((byte-compile-debug t)
+                  (byte-compile-warnings (if init-file-debug '(suspicious make-local callargs))))
               (byte-compile-file init-file)))
           (print! (success "Built %s") (byte-compile-dest-file init-file))))
       (error (delete-file init-file)
