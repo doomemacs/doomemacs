@@ -1791,6 +1791,7 @@ yet. They won't be included in command listings (by help documentation)."
 
 (defmacro defcli-group! (&rest body)
   "Declare common properties for any CLI commands defined in BODY."
+  (declare (indent 1))
   (when (stringp (car body))
     (push :group body))
   `(let ((doom-cli--group-plist (copy-sequence doom-cli--group-plist)))
