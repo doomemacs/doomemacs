@@ -1767,11 +1767,11 @@ WHEN specifies what version this command was rendered obsolete."
 Use this to define commands that will eventually be implemented, but haven't
 yet. They won't be included in command listings (by help documentation)."
   (declare (indent 2) (doc-string 3))
-  `(defcli! ,commandspec (&rest _)
+  `(defcli! ,commandspec (&cli cli &rest _)
      ,(concat "THIS COMMAND IS A STUB AND HAS NOT BEEN IMPLEMENTED YET."
               (if (stringp (car body)) (concat "\n\n" (pop body))))
      :hide t
-     (user-error "Command not implemented yet")))
+     (user-error "Command not implemented yet: %s" (doom-cli-command-string cli))))
 
 (defmacro defcli-autoload! (commandspec &optional path &rest plist)
   "Defer loading of PATHS until PREFIX is called."
@@ -1945,8 +1945,8 @@ errors to `doom-cli-error-file')."
               (let* ((command (cdr e))
                      (cli (doom-cli-get command)))
                 (cond ((null cli)
-                       (print! (red "Error: unrecognized command '%s'")
-                               (doom-cli-command-string (or (cdr command) command)))
+                       (print! (red "Error: unrecognized command: %s")
+                               (doom-cli-command-string command))
                        (doom-cli-call `(:help "--similar" "--postamble" ,@(cdr command)) context e))
                       ((null (doom-cli-fn cli))
                        (print! (red "Error: a subcommand is required"))
