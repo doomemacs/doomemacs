@@ -195,9 +195,11 @@ non-nil, treat FILES as pre-generated autoload files instead."
                                                         (not literal))
                           subautoloads))
                 (end-of-file)))
-            (push `(let* ((load-file-name ,file) (load-true-file-name load-file-name))
-                     ,@(nreverse (delq nil subautoloads)))
-                  autoloads)))))))
+            (when (delq nil subautoloads)
+              (push `(let* ((load-file-name ,file)
+                            (load-true-file-name load-file-name))
+                       ,@(nreverse subautoloads))
+                    autoloads))))))))
 
 (provide 'doom-lib '(autoloads))
 ;;; autoloads.el end here
