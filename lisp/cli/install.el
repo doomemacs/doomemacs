@@ -14,7 +14,7 @@
 ;;
 ;;; Commands
 
-(defcli! ((install i))
+(defcli! install
     ((aot?     ("--aot") "Enable ahead-of-time native-compilation (if available)")
      &flags
      (config?  ("--config" :yes)  "Create `$DOOMDIR' or dummy files therein?")
