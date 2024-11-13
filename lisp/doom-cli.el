@@ -982,13 +982,13 @@ considered as well."
       (print! (error "Last %d lines of straight's error log:")
               doom-cli-log-straight-error-lines)
       (print-group!
-       (print!
-        "%s" (string-join
-              (seq-subseq straight-error
-                          (max 0 (- (length straight-error)
-                                    doom-cli-log-straight-error-lines))
-                          (length straight-error))
-              "\n")))
+        (print!
+         "%s" (string-join
+               (seq-subseq straight-error
+                           (max 0 (- (length straight-error)
+                                     doom-cli-log-straight-error-lines))
+                           (length straight-error))
+               "\n")))
       (print! (warn "Wrote extended straight log to %s")
               (path (let ((coding-system-for-write 'utf-8-auto))
                       (with-file-modes #o600
@@ -1003,30 +1003,30 @@ considered as well."
             (print! (error "There was an unexpected runtime error"))
           (print! (bold (error "There was a fatal initialization error"))))
         (print-group!
-         (print! "%s %s" (bold "Message:")
-                 (if generic?
-                     (error-message-string data)
-                   (get (car data) 'error-message)))
-         (unless generic?
-           (print! "%s %s" (bold "Details:")
-                   (let* ((print-level 4)
-                          (print-circle t)
-                          (print-escape-newlines t))
-                     (prin1-to-string (cdr data)))))
-         (when backtrace
-           (print! (bold "Backtrace:"))
-           (print-group!
-            (dolist (frame (seq-take backtrace doom-cli-log-backtrace-depth))
-              (print! "%s" (truncate (prin1-to-string
-                                      (cons (backtrace-frame-fun  frame)
-                                            (backtrace-frame-args frame)))
-                                     (- (doom-cli-context-width context)
-                                        doom-print-indent
-                                        1)
-                                     "..."))))
-           (when-let (backtrace-file (doom-backtrace-write-to-file backtrace error-file))
-             (print! (warn "Wrote extended backtrace to %s")
-                     (path backtrace-file))))))))
+          (print! "%s %s" (bold "Message:")
+                  (if generic?
+                      (error-message-string data)
+                    (get (car data) 'error-message)))
+          (unless generic?
+            (print! "%s %s" (bold "Details:")
+                    (let* ((print-level 4)
+                           (print-circle t)
+                           (print-escape-newlines t))
+                      (prin1-to-string (cdr data)))))
+          (when backtrace
+            (print! (bold "Backtrace:"))
+            (print-group!
+              (dolist (frame (seq-take backtrace doom-cli-log-backtrace-depth))
+                (print! "%s" (truncate (prin1-to-string
+                                        (cons (backtrace-frame-fun  frame)
+                                              (backtrace-frame-args frame)))
+                                       (- (doom-cli-context-width context)
+                                          doom-print-indent
+                                          1)
+                                       "..."))))
+            (when-let (backtrace-file (doom-backtrace-write-to-file backtrace error-file))
+              (print! (warn "Wrote extended backtrace to %s")
+                      (path backtrace-file))))))))
     (exit! 255)))
 
 (defmacro doom-cli-redirect-output (context &rest body)
