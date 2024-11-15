@@ -20,11 +20,7 @@
 ;;; Library
 
 ;;;###autoload
-(defun doom-plist-get (plist prop &optional nil-value)
-  "Return PROP in PLIST, if it exists. Otherwise NIL-VALUE."
-  (if-let (val (plist-member plist prop))
-      (cadr val)
-    nil-value))
+(define-obsolete-function-alias 'doom-plist-get #'cl-getf "3.0.0")
 
 ;;;###autoload
 (defun doom-plist-map (fn plist)
