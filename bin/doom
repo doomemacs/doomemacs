@@ -257,10 +257,14 @@ SEE ALSO:
 ;; load them lazily.
 (defcli-group!
   :prefix 'doom
+  (defcli-alias! ((version v)) (:root :version))
   ;; Import this for implicit 'X help' commands for your script:
   (defcli-alias! ((help h)) (:root :help))
   ;; And suggest its use when errors occur.
   (add-to-list 'doom-help-commands "%p h[elp] %c")
+
+  (defcli-autoload! ((doctor doc)))
+  (defcli-autoload! (info))
 
   (defcli-group! "Config Management"
     :docs "Commands for maintaining your Doom Emacs configuration."
@@ -269,7 +273,7 @@ SEE ALSO:
     (defcli-autoload! ((upgrade up)))
     (defcli-autoload! (env))
     (defcli-autoload! ((build b purge p gc rollback)) "packages")
-    (defcli-autoload! ((install i)))
+    (defcli-autoload! (install))
 
     ;; TODO Post-3.0 commands
     ;; (load! "gc" dir)
@@ -278,12 +282,6 @@ SEE ALSO:
     ;; (load! "package" dir)
     ;; (load! "profile" dir)
     )
-
-  (defcli-group! "Diagnostics"
-    :docs "Commands for troubleshooting and debugging Doom."
-    (defcli-autoload! ((doctor doc)))
-    (defcli-autoload! (info))
-    (defcli-alias! ((version v)) (:root :version)))
 
   (defcli-group! "Development"
     :docs "Commands for developing or launching Doom."

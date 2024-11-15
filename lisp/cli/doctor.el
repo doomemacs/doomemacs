@@ -86,22 +86,22 @@ in."
 
   (print! (start "Checking for Doom's prerequisites..."))
   (print-group!
-   (if (not (executable-find "git"))
-       (error! "Couldn't find git on your machine! Doom's package manager won't work.")
-     (save-match-data
-       (let* ((version
-               (cdr (doom-call-process "git" "version")))
-              (version
-               (and (string-match "git version \\([0-9]+\\(?:\\.[0-9]+\\)\\{2\\}\\)" version)
-                    (match-string 1 version))))
-         (if version
-             (when (version< version "2.23")
-               (error! "Git %s detected! Doom requires git 2.23 or newer!"
-                       version))
-           (warn! "Cannot determine Git version. Doom requires git 2.23 or newer!")))))
+    (if (not (executable-find "git"))
+        (error! "Couldn't find git on your machine! Doom's package manager won't work.")
+      (save-match-data
+        (let* ((version
+                (cdr (doom-call-process "git" "version")))
+               (version
+                (and (string-match "git version \\([0-9]+\\(?:\\.[0-9]+\\)\\{2\\}\\)" version)
+                     (match-string 1 version))))
+          (if version
+              (when (version< version "2.23")
+                (error! "Git %s detected! Doom requires git 2.23 or newer!"
+                        version))
+            (warn! "Cannot determine Git version. Doom requires git 2.23 or newer!")))))
 
-   (unless (executable-find "rg")
-     (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all")))
+    (unless (executable-find "rg")
+      (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all")))
 
   (print! (start "Checking for Emacs config conflicts..."))
   (print-group!

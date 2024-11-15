@@ -14,7 +14,7 @@
 ;;
 ;;; Commands
 
-(defcli! ((install i))
+(defcli! install
     ((aot?     ("--aot") "Enable ahead-of-time native-compilation (if available)")
      &flags
      (config?  ("--config" :yes)  "Create `$DOOMDIR' or dummy files therein?")
@@ -114,10 +114,10 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
         (print! (warn "Not deploying commit-msg and pre-push git hooks, as requested"))
       (print! (start "Deploying commit-msg and pre-push git hooks"))
       (print-group!
-       (condition-case e
-           (call! `(ci deploy-hooks ,@(if yes? '("--force"))))
-         ('user-error
-          (print! (warn "%s") (error-message-string e))))))
+        (condition-case e
+            (call! `(ci deploy-hooks ,@(if yes? '("--force"))))
+          ('user-error
+           (print! (warn "%s") (error-message-string e))))))
 
     (when (file-exists-p "~/.emacs")
       (print! (warn "A ~/.emacs file was detected. This conflicts with Doom and should be deleted!")))

@@ -554,6 +554,17 @@ uses a straight or package.el command directly).")
 ;;
 ;;; Reasonable, global defaults
 
+;;; CLI settings
+(when noninteractive
+  ;; Don't generate superfluous files when writing temp buffers.
+  (setq make-backup-files nil)
+  ;; Stop user config from interfering with package management.
+  (setq enable-dir-local-variables nil)
+  ;; Reduce ambiguity, embrace specificity, enjoy predictability.
+  (setq case-fold-search nil)
+  ;; Don't clog the user's trash with our CLI refuse.
+  (setq delete-by-moving-to-trash nil))
+
 ;;; Don't litter `doom-emacs-dir'/$HOME
 ;; HACK: I change `user-emacs-directory' because many packages (even built-in
 ;;   ones) abuse it to build paths for storage/cache files (instead of correctly

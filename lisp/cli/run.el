@@ -113,8 +113,8 @@ performance, it is best to run Doom out of ~/.config/emacs or ~/.emacs.d."
                     (print-escape-newlines t))
                (print! (error "There was an unexpected error"))
                (print-group!
-                (print! "%s %s" (bold "Message:") (error-message-string e))
-                (print! "%s %S" (bold "Details:") (cdr e))))))))
+                 (print! "%s %s" (bold "Message:") (error-message-string e))
+                 (print! "%s %S" (bold "Details:") (cdr e))))))))
       (terpri))))
 
 (provide 'doom-cli-run)
