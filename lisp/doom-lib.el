@@ -1713,7 +1713,7 @@ If DEFAULT? is non-nil, an unspecified CAR/CDR will fall bakc to (_default .
                    (list "Expected PROFILE to be a string, cons cell, or `doom-profile'"
                          (type-of profile) profile))))))
 
-(defun doom-profile-init-file (profile &optional el?)
+(defun doom-profile-init-file (profile)
   "Return the init file for PROFILE."
   (declare (side-effect-free t))
   (cl-destructuring-bind (name . ref)
@@ -1721,10 +1721,9 @@ If DEFAULT? is non-nil, an unspecified CAR/CDR will fall bakc to (_default .
           (doom-profile-key profile t)
         (cons nil nil))
     (file-name-concat doom-data-dir name "@" ref
-                      (format "init.%d.%d.%s"
+                      (format "init.%d.%d.el"
                               emacs-major-version
-                              emacs-minor-version
-                              (if el? "el" "elc")))))
+                              emacs-minor-version))))
 
 (defun doom-profile-get (profile-name &optional property null-value)
   "Return PROFILE-NAME's PROFILE, otherwise its PROPERTY, otherwise NULL-VALUE."
