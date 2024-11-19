@@ -35,10 +35,10 @@
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "ccd4212866fb1be70d1f15a41264c45a281901ad")
+  :pin "f22bdd6a580953a10df1f218e65cf250ac0ae87c")
 
 (package! avy)
-(package! htmlize :pin "ed5e5b05fd260e8f161a488d56f10e7f6e01fb75")
+(package! htmlize :pin "8e3841c837b4b78bd72ad7f0436e919f39315a46")
 (package! ox-clip :pin "a549cc8e1747beb6b7e567ffac27e31ba45cb8e8")
 (package! toc-org :pin "6d3ae0fc47ce79b1ea06cabe21a3c596395409cd")
 (package! org-cliplink :pin "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
@@ -72,16 +72,16 @@
 (when (modulep! +brain)
   (package! org-brain :pin "2bad7732aae1a3051e2a14de2e30f970bbe43c25"))
 (when (modulep! +dragndrop)
-  (package! org-download :pin "19e166f0a8c539b4144cfbc614309d47a9b2a9b7"))
+  (package! org-download :pin "c8be2611786d1d8d666b7b4f73582de1093f25ac"))
 (when (modulep! +gnuplot)
   (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "f97f4b5d8c83e0b901020f835183dde8a2bf649e"))
+  (package! jupyter :pin "e966c5d3d6ac147992832af69135655290072042"))
 (when (modulep! +journal)
   (package! org-journal :pin "17b34ce8df9649a73b715c13698220bde1628668"))
 (when (modulep! +noter)
-  (package! org-noter :pin "6f292d7f1efb11222c09f3a91c902ea6e4dbfa33"))
+  (package! org-noter :pin "691efc3ed4a2828d791a148e53851365c2eb380f"))
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
@@ -97,7 +97,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "472535065c7525abf0cc9df51c66f19fd2d2204f"))
+    :pin "0d02d8a303a39b02c919d86c94ec477d1e1b107d"))
 (cond
  ((modulep! +roam)
   (package! org-roam
@@ -108,7 +108,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "0b9fcbc97b65b349826e63bad89ca121a08fd2be")
+    :pin "2a630476b3d49d7106f582e7f62b515c62430714")
   (when (< emacs-major-version 29)
     ;; HACK: Needed until org-roam/org-roam#2485 is resolved.
     (package! emacsql :pin "491105a01f58bf0b346cbc0254766c6800b229a2"))))
@@ -153,6 +153,6 @@
 (when (modulep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "c4156d9d383bf97853ba9e16271b7c4d5e697f49"))
+    :pin "98421a1298adc6d80ce21b3cb5c951af818b27bf"))
 (when (modulep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))

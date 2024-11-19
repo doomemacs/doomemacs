@@ -6,7 +6,7 @@
 (package! yard-mode :pin "de1701753a64544c3376b015805f3661136d8038")
 
 ;; REPL
-(package! inf-ruby :pin "b234625c85a48cc71e7045f5d48f079f410d576a")
+(package! inf-ruby :pin "6399a3668224aa48423c54e81383f73e5e39439a")
 (when (modulep! :completion company)
   (package! company-inf-ruby :pin "fe3e4863bc971fbb81edad447efad5795ead1b17"))
 
@@ -20,7 +20,7 @@
 
 ;; Environment management
 (when (modulep! +rbenv)
-  (package! rbenv :pin "588b817d510737b9d6afd6d1ecddd517d96b78e5"))
+  (package! rbenv :pin "4afe1dc6bd76efdbf2e54b58ea76a05837553575"))
 (when (modulep! +rvm)
   (package! rvm :pin "e1e83b5466c132c066142ac63729ba833c530c83"))
 (when (modulep! +chruby)

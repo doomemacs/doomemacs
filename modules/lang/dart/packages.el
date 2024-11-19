@@ -1,11 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/dart/packages.el
 
-(package! dart-mode :pin "44beb628e5b4774062f7486008e06ae663e1ced0")
+(package! dart-mode :pin "02e919c1cf200b4938139c18068577faff1fb364")
 
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
-  (package! lsp-dart :pin "9ffbafb7dcea3ef3d9e29bafb51d5167f0585d2c"))
+  (package! lsp-dart :pin "7e3d3429418bc42cda7fa7b58e6644a705cf2f89"))
 
 (when (modulep! +flutter)
   (package! flutter :pin "e71235d400787d977da7ed792709437899c2a03c")

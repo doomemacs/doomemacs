@@ -12,7 +12,7 @@
 
 ;; +css.el
 (package! css-mode :built-in t)
-(package! less-css-mode :built-in t :pin "c7fa3d56d83206b28657f2e56439dc62280a2bf2")
+(package! less-css-mode :built-in t :pin "c78b88ff9af245daf05d45f5adf4befc11c1d4ef")
 
 (package! sass-mode :pin "247a0d4b509f10b28e4687cd8763492bca03599b")
 (package! stylus-mode :pin "1ad7c51f3c6a6ae64550d9510c5e4e8470014375")
