@@ -354,5 +354,5 @@
   :when (modulep! :tools lsp -eglot)
   :defer t
   :init
-  (when-let ((exe (executable-find "basedpyright")))
-    (setq lsp-pyright-langserver-command exe)))
+  (when (executable-find "basedpyright")
+    (setq lsp-pyright-langserver-command "basedpyright")))
