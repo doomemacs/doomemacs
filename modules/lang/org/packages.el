@@ -108,7 +108,10 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "0b9fcbc97b65b349826e63bad89ca121a08fd2be")))
+    :pin "0b9fcbc97b65b349826e63bad89ca121a08fd2be")
+  (when (< emacs-major-version 29)
+    ;; HACK: Needed until org-roam/org-roam#2485 is resolved.
+    (package! emacsql :pin "491105a01f58bf0b346cbc0254766c6800b229a2"))))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
