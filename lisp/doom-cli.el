@@ -1201,7 +1201,7 @@ Emacs' batch library lacks an implementation of the exec system call."
                   "\n} finally {\n"
                   ,(cl-loop for file in persistent-files
                             concat (format "  Remove-Item -Path %S\n  " file))
-                  ,(cl-loop for (var . val) in envvars
+                  ,(cl-loop for (var . _) in persisted-env
                             concat (format "  $env:%s = $__%s\n  " var var))
                   "\n}")))))
     (doom-log "_doomrun: %s %s"
