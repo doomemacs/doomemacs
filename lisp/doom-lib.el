@@ -1261,7 +1261,9 @@ Never set this variable directly, use `with-doom-module'.")
 (defmacro with-doom-module (key &rest body)
   "Evaluate BODY with `doom-module-context' informed by KEY."
   (declare (indent 1))
-  `(let ((doom-module-context (doom-module-context ,key)))
+  `(let ((doom-module-context
+          (or (doom-module-context ,key)
+              (make-doom-module-context))))
      (doom-log ":context:module: =%s" doom-module-context)
      ,@body))
 
