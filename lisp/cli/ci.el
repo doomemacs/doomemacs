@@ -338,24 +338,24 @@ Prevents pushing if there are unrebased or WIP commits."
                         (equal local-sha z40))
               (throw 'continue t))
             (print-group!
-             (mapc (lambda (commit)
-                     (seq-let (hash msg) (split-string commit "\t")
-                       (setq error t)
-                       (print! (item "%S commit in %s"
-                                     (car (split-string msg " "))
-                                     (substring hash 0 12)))))
-                   (split-string
-                    (cdr (doom-call-process
-                          "git" "rev-list"
-                          "--grep" (concat "^" (regexp-opt '("WIP" "squash!" "fixup!" "FIXUP") t) " ")
-                          "--format=%H\t%s"
-                          (if (equal remote-sha z40)
-                              local-sha
-                            (format "%s..%s" remote-sha local-sha))))
-                    "\n" t))
-             (when error
-               (print! (error "Aborting push due to unrebased WIP, squash!, or fixup! commits"))
-               (exit! 1)))))))))
+              (mapc (lambda (commit)
+                      (seq-let (hash msg) (split-string commit "\t")
+                        (setq error t)
+                        (print! (item "%S commit in %s"
+                                      (car (split-string msg " "))
+                                      (substring hash 0 12)))))
+                    (split-string
+                     (cdr (doom-call-process
+                           "git" "rev-list"
+                           "--grep" (concat "^" (regexp-opt '("WIP" "squash!" "fixup!" "FIXUP") t) " ")
+                           "--format=%H\t%s"
+                           (if (equal remote-sha z40)
+                               local-sha
+                             (format "%s..%s" remote-sha local-sha))))
+                     "\n" t))
+              (when error
+                (print! (error "Aborting push due to unrebased WIP, squash!, or fixup! commits"))
+                (exit! 1)))))))))
 
 
 ;;
@@ -425,24 +425,24 @@ Prevents pushing if there are unrebased or WIP commits."
         (failures 0))
     (print! (start "Linting %d commits" (length commits)))
     (print-group!
-     (pcase-dolist (`(,ref . ,commitmsg) commits)
-       (let* ((commit   (doom-ci--parse-commit commitmsg))
-              (shortref (substring ref 0 7))
-              (subject  (plist-get commit :subject)))
-         (cl-block 'linter
-           (letf! ((defun skip! (reason &rest args)
-                     (print! (warn "Skipped because: %s") (apply #'format reason args))
-                     (cl-return-from 'linter))
-                   (defun warn! (reason &rest args)
-                     (cl-incf warnings)
-                     (print! (warn "%s") (apply #'format reason args)))
-                   (defun fail! (reason &rest args)
-                     (cl-incf failures)
-                     (print! (error "%s") (apply #'format reason args))))
-             (print! (start "%s %s") shortref subject)
-             (print-group!
-              (mapc (doom-rpartial #'apply commit)
-                    doom-ci-commit-rules)))))))
+      (pcase-dolist (`(,ref . ,commitmsg) commits)
+        (let* ((commit   (doom-ci--parse-commit commitmsg))
+               (shortref (substring ref 0 7))
+               (subject  (plist-get commit :subject)))
+          (cl-block 'linter
+            (letf! ((defun skip! (reason &rest args)
+                      (print! (warn "Skipped because: %s") (apply #'format reason args))
+                      (cl-return-from 'linter))
+                    (defun warn! (reason &rest args)
+                      (cl-incf warnings)
+                      (print! (warn "%s") (apply #'format reason args)))
+                    (defun fail! (reason &rest args)
+                      (cl-incf failures)
+                      (print! (error "%s") (apply #'format reason args))))
+              (print! (start "%s %s") shortref subject)
+              (print-group!
+                (mapc (doom-rpartial #'apply commit)
+                      doom-ci-commit-rules)))))))
     (let ((issues (+ warnings failures)))
       (if (= issues 0)
           (print! (success "There were no issues!"))

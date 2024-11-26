@@ -198,40 +198,40 @@ original state.")
                    return (funcall func))
         (print! (start "%s") (red prompt))
         (print-group!
-         (terpri)
-         (let (recommended options)
-           (print-group!
-            (print! " 1) Abort")
-            (cl-loop for (_key desc func) in actions
-                     when desc
-                     do (push func options)
-                     and do
-                     (print! "%2s) %s" (1+ (length options))
-                             (if (doom-straight--recommended-option-p prompt desc)
-                                 (progn
-                                   (setq doom-straight--auto-options nil
-                                         recommended (length options))
-                                   (green (concat desc " (Choose this if unsure)")))
-                               desc))))
-           (terpri)
-           (let* ((options
-                   (cons (lambda ()
-                           (let ((doom-output-indent 0))
-                             (terpri)
-                             (print! (warn "Aborted")))
-                           (doom-cli--exit 1 doom-cli--context))
-                         (nreverse options)))
-                  (prompt
-                   (format! "How to proceed? (%s%s) "
-                            (mapconcat #'number-to-string
-                                       (number-sequence 1 (length options))
-                                       ", ")
-                            (if (not recommended) ""
-                              (format "; don't know? Pick %d" (1+ recommended)))))
-                  answer fn)
-             (while (null (nth (setq answer (1- (read-number prompt))) options))
-               (print! (warn "%s is not a valid answer, try again.") answer))
-             (funcall (nth answer options)))))))))
+          (terpri)
+          (let (recommended options)
+            (print-group!
+              (print! " 1) Abort")
+              (cl-loop for (_key desc func) in actions
+                       when desc
+                       do (push func options)
+                       and do
+                       (print! "%2s) %s" (1+ (length options))
+                               (if (doom-straight--recommended-option-p prompt desc)
+                                   (progn
+                                     (setq doom-straight--auto-options nil
+                                           recommended (length options))
+                                     (green (concat desc " (Choose this if unsure)")))
+                                 desc))))
+            (terpri)
+            (let* ((options
+                    (cons (lambda ()
+                            (let ((doom-output-indent 0))
+                              (terpri)
+                              (print! (warn "Aborted")))
+                            (doom-cli--exit 1 doom-cli--context))
+                          (nreverse options)))
+                   (prompt
+                    (format! "How to proceed? (%s%s) "
+                             (mapconcat #'number-to-string
+                                        (number-sequence 1 (length options))
+                                        ", ")
+                             (if (not recommended) ""
+                               (format "; don't know? Pick %d" (1+ recommended)))))
+                   answer fn)
+              (while (null (nth (setq answer (1- (read-number prompt))) options))
+                (print! (warn "%s is not a valid answer, try again.") answer))
+              (funcall (nth answer options)))))))))
 
 (setq straight-arrow " > ")
 (defadvice! doom-straight--respect-print-indent-a (string &rest objects)

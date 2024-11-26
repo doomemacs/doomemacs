@@ -86,36 +86,36 @@ package's name as a symbol, and whose CDR is the plist supplied to its
                               version)))))
         (print! (start "Installing straight..."))
         (print-group!
-         (cl-destructuring-bind (depth . options)
-             (ensure-list straight-vc-git-default-clone-depth)
-           (let ((branch-switch (if (memq 'single-branch options)
-                                    "--single-branch"
-                                  "--no-single-branch")))
-             (cond
-              ((eq 'full depth)
-               (funcall call "git" "clone" "--origin" "origin"
-                        branch-switch repo-url repo-dir))
-              ((integerp depth)
-               (if (null pin)
-                   (progn
-                     (when (file-directory-p repo-dir)
-                       (delete-directory repo-dir 'recursive))
-                     (funcall call "git" "clone" "--origin" "origin" repo-url
-                              "--no-checkout" repo-dir
-                              "--depth" (number-to-string depth)
-                              branch-switch
-                              "--no-tags"
-                              "--branch" straight-repository-branch))
-                 (make-directory repo-dir 'recursive)
-                 (let ((default-directory repo-dir))
-                   (funcall call "git" "init")
-                   (funcall call "git" "branch" "-m" straight-repository-branch)
-                   (funcall call "git" "remote" "add" "origin" repo-url
-                            "--master" straight-repository-branch)
-                   (funcall call "git" "fetch" "origin" pin
-                            "--depth" (number-to-string depth)
-                            "--no-tags")
-                   (funcall call "git" "reset" "--hard" pin)))))))))
+          (cl-destructuring-bind (depth . options)
+              (ensure-list straight-vc-git-default-clone-depth)
+            (let ((branch-switch (if (memq 'single-branch options)
+                                     "--single-branch"
+                                   "--no-single-branch")))
+              (cond
+               ((eq 'full depth)
+                (funcall call "git" "clone" "--origin" "origin"
+                         branch-switch repo-url repo-dir))
+               ((integerp depth)
+                (if (null pin)
+                    (progn
+                      (when (file-directory-p repo-dir)
+                        (delete-directory repo-dir 'recursive))
+                      (funcall call "git" "clone" "--origin" "origin" repo-url
+                               "--no-checkout" repo-dir
+                               "--depth" (number-to-string depth)
+                               branch-switch
+                               "--no-tags"
+                               "--branch" straight-repository-branch))
+                  (make-directory repo-dir 'recursive)
+                  (let ((default-directory repo-dir))
+                    (funcall call "git" "init")
+                    (funcall call "git" "branch" "-m" straight-repository-branch)
+                    (funcall call "git" "remote" "add" "origin" repo-url
+                             "--master" straight-repository-branch)
+                    (funcall call "git" "fetch" "origin" pin
+                             "--depth" (number-to-string depth)
+                             "--no-tags")
+                    (funcall call "git" "reset" "--hard" pin)))))))))
       (require 'straight (concat repo-dir "/straight.el"))
       (doom-log "Initializing recipes")
       (mapc #'straight-use-recipes
@@ -147,9 +147,9 @@ package's name as a symbol, and whose CDR is the plist supplied to its
         (when-let (local-repo (plist-get recipe :local-repo))
           (setq repo local-repo)))
       (print-group!
-       ;; Only clone the package, don't build them. Straight hasn't been fully
-       ;; configured by this point.
-       (straight-use-package name nil t))
+        ;; Only clone the package, don't build them. Straight hasn't been fully
+        ;; configured by this point.
+        (straight-use-package name nil t))
       ;; In case the package hasn't been built yet.
       (or (member (directory-file-name (straight--build-dir (symbol-name name)))
                   load-path)

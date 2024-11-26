@@ -12,7 +12,7 @@
 (unless (modulep! +tree-sitter)
   (package! modern-cpp-font-lock :pin "43c6b68ff58fccdf9deef11674a172e4eaa8455c"))
 
-(when (package! glsl-mode :pin "9b2e5f28e489a1f73c4aed734105618ac0dc0c43")
+(when (package! glsl-mode :pin "c5f2c2e7edf8a647eda74abe2cdf73fa6f62ebd2")
   (when (modulep! :completion company)
     (package! company-glsl
       :recipe (:host github :repo "Kaali/company-glsl")

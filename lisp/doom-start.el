@@ -308,9 +308,7 @@ If RETURN-P, return the message as a string instead of displaying it."
                    (doom-profile-init-file doom-profile)))
               ;; If we loaded a compiled file, set `user-init-file' to the
               ;; source version if that exists.
-              (setq user-init-file
-                    (concat (string-remove-suffix ".elc" init-file-name)
-                            ".el"))
+              (setq user-init-file init-file-name)
               ;; HACK: if `init-file-name' happens to be higher in
               ;;   `load-history' than a symbol's actual definition,
               ;;   `symbol-file' (and help/helpful buffers) will report the

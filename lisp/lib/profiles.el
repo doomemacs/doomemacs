@@ -204,7 +204,8 @@ run.")
    :mode (cons #o600 #o700)
    :printfn #'prin1)
   (print-group!
-    (or (let ((byte-compile-warnings (if init-file-debug byte-compile-warnings))
+    (or (let ((byte-compile-debug t)
+              (byte-compile-warnings (if init-file-debug byte-compile-warnings))
               (byte-compile-dest-file-function
                (lambda (_) (format "%s.elc" (file-name-sans-extension file)))))
           (byte-compile-file file))
@@ -241,7 +242,7 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
   (doom-initialize-packages)
   (let* ((default-directory doom-profile-dir)
          (init-dir  doom-profile-init-dir-name)
-         (init-file (doom-profile-init-file doom-profile t)))
+         (init-file (doom-profile-init-file doom-profile)))
     (print! (start "(Re)building profile in %s/...") (path default-directory))
     (condition-case-unless-debug e
       (with-file-modes #o750
@@ -301,13 +302,8 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                                    if (fboundp genfn)
                                    collect (list initfn))))
                    (current-buffer)))
-          (print! (start "Byte-compiling %s...") (relpath init-file))
-          (print-group!
-            (let ((byte-compile-warnings (if init-file-debug '(suspicious make-local callargs))))
-              (byte-compile-file init-file)))
-          (print! (success "Built %s") (byte-compile-dest-file init-file))))
+          (print! (success "Built %s") (filename init-file))))
       (error (delete-file init-file)
-             (delete-file (byte-compile-dest-file init-file))
              (signal 'doom-autoload-error (list init-file e))))))
 
 (defun doom-profile--generate-vars ()
@@ -410,9 +406,19 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
   `((defun doom--startup-loaddefs-packages ()
       (let ((load-in-progress t))
         ,@(doom-autoloads--scan
-           (mapcar #'straight--autoloads-file
-                   (nreverse (seq-difference (hash-table-keys straight--build-cache)
-                                             doom-autoloads-excluded-packages)))
+           ;; Create a list of packages starting with the Nth-most dependencies
+           ;; by walking the package dependency tree depth-first. This ensures
+           ;; any load-order constraints in package autoloads are always met.
+           (let (packages)
+             (letf! (defun* walk-packages (pkglist)
+                      (cond ((null pkglist) nil)
+                            ((stringp pkglist)
+                             (walk-packages (nth 1 (gethash pkglist straight--build-cache)))
+                             (cl-pushnew pkglist packages :test #'equal))
+                            ((listp pkglist)
+                             (mapc #'walk-packages (reverse pkglist)))))
+               (walk-packages (mapcar #'symbol-name (mapcar #'car doom-packages))))
+             (mapcar #'straight--autoloads-file (nreverse packages)))
            doom-autoloads-excluded-files
            'literal))
       ,@(when-let* ((info-dirs

@@ -2,6 +2,10 @@
 
 ;;;###package proof-general
 (setq proof-splash-enable nil)
+;; REVIEW: Remove when ProofGeneral/PG#771 is fixed. Also see #8169.
+(require 'proof-site
+         (expand-file-name "generic/proof-site"
+                           (file-name-directory (locate-library "proof-general"))))
 
 
 ;;;###package coq

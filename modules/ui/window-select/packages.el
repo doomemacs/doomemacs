@@ -2,7 +2,7 @@
 ;;; ui/window-select/packages.el
 
 (if (modulep! +switch-window)
-    (package! switch-window :pin "71ef2f54c97f3fd2e7ff7964d82e6562eb6282f7")
+    (package! switch-window :pin "61e425e703bee66825c33f4be11fabac1a3d992a")
   (package! ace-window :pin "77115afc1b0b9f633084cf7479c767988106c196"))
 
 (when (modulep! +numbers)
