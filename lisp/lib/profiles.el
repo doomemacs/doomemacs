@@ -242,7 +242,8 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
   (doom-initialize-packages)
   (let* ((default-directory doom-profile-dir)
          (init-dir  doom-profile-init-dir-name)
-         (init-file (doom-profile-init-file doom-profile)))
+         (init-file (doom-profile-init-file doom-profile))
+         (generators (seq-sort-by #'car #'string< doom-profile-generators)))
     (print! (start "(Re)building profile in %s/...") (path default-directory))
     (condition-case-unless-debug e
       (with-file-modes #o750
@@ -255,12 +256,12 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                      do (print! (item "Deleting %s...") file)
                      and do (delete-file file)))
           (let ((auto-files (doom-glob init-dir "*.auto.el")))
-            (print! (start "Generating %d init files...") (length doom-profile-generators))
+            (print! (start "Generating %d init files...") (length generators))
             (print-group! :level 'info
               (dolist (file auto-files)
                 (print! (item "Deleting %s...") file)
                 (delete-file file))
-              (pcase-dolist (`(,file ,fn _) doom-profile-generators)
+              (pcase-dolist (`(,file ,fn _) generators)
                 (let ((file (doom-path init-dir file)))
                   (doom-log "Building %s..." file)
                   (insert "\n;;;; START " file " ;;;;\n")
@@ -298,7 +299,7 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                       ;; init file.
                       (when (or (doom-context-p 'startup)
                                 (doom-context-p 'reload))
-                        ,@(cl-loop for (_ genfn initfn) in doom-profile-generators
+                        ,@(cl-loop for (_ genfn initfn) in generators
                                    if (fboundp genfn)
                                    collect (list initfn))))
                    (current-buffer)))
