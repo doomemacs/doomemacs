@@ -13,7 +13,7 @@
 (use-package! sh-script ; built-in
   :mode ("\\.bats\\'" . sh-mode)
   :mode ("\\.\\(?:zunit\\|env\\)\\'" . sh-mode)
-  :mode ("/bspwmrc\\'" . sh-mode)
+  :mode ("/[a-z]+rc\\'" . sh-mode)
   :magic ("#compdef " . sh-mode)
   :config
   (set-docsets! 'sh-mode "Bash")
