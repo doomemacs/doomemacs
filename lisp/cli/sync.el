@@ -99,7 +99,7 @@ OPTIONS:
         (unless noupdate? (doom-packages-update (not update?)))
         (doom-packages-purge purge? purge? purge? purge? purge?)
         (when (doom-profile-generate)
-          (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect"))
+          (print! (item "Restart Emacs for changes to take effect"))
           (run-hooks 'doom-after-sync-hook))
         (when (or rebuild? (not (file-exists-p doom-cli-sync-info-file)))
           (with-temp-file doom-cli-sync-info-file
