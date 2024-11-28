@@ -137,5 +137,19 @@ and return the value found in PLACE instead."
                  (assq mode major-mode-remap-defaults)))
         mode)))
 
+;; Introduced in Emacs 30+
+(unless (boundp 'safe-local-variable-directories)
+  (defvar safe-local-variable-directories ())
+  (define-advice hack-local-variables-filter
+      (:around (fn variables dir-name) backport-safe-local-variable-directories)
+    (let ((enable-local-variables
+           (if (delq nil (mapcar (lambda (dir)
+                                   (and dir-name dir
+                                        (file-equal-p dir dir-name)))
+                                 safe-local-variable-directories))
+               :all
+             enable-local-variables)))
+      (funcall fn variables dir-name))))
+
 (provide 'doom-compat)
 ;;; doom-compat.el ends here
