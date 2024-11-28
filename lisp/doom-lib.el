@@ -389,8 +389,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (let (file-name-handler-alist)
     (file-name-directory (macroexpand '(file!)))))
 
-;; REVIEW Should I deprecate this? The macro's name is so long...
-(defalias 'letenv! 'with-environment-variables)
+(define-obsolete-function-alias 'letenv! 'with-environment-variables "3.0.0")
 
 (put 'defun* 'lisp-indent-function 'defun)
 (defmacro letf! (bindings &rest body)

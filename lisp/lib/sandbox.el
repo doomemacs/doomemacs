@@ -49,9 +49,10 @@
 
 (defun doom--sandbox-run (&optional mode)
   "TODO"
-  (letenv! (("DOOMDIR" (if (eq mode 'vanilla-doom+)
-                           (expand-file-name "___does_not_exist___" temporary-file-directory)
-                         doom-user-dir)))
+  (with-environment-variables
+      (("DOOMDIR" (if (eq mode 'vanilla-doom+)
+                      (expand-file-name "___does_not_exist___" temporary-file-directory)
+                    doom-user-dir)))
     (doom--sandbox-launch
      (unless (memq mode '(doom vanilla-doom+)) '("-Q"))
      (let ((forms

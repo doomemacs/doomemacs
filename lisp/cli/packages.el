@@ -825,10 +825,11 @@ However, in batch mode, print to stdout instead of stderr."
 (defadvice! doom-cli--straight-ignore-gitconfig-a (fn &rest args)
   "Prevent user and system git configuration from interfering with git calls."
   :around #'straight--process-call
-  (letenv! (("GIT_CONFIG" nil)
-            ("GIT_CONFIG_NOSYSTEM" "1")
-            ("GIT_CONFIG_GLOBAL" (or (getenv "DOOMGITCONFIG")
-                                     "/dev/null")))
+  (with-environment-variables
+      (("GIT_CONFIG" nil)
+       ("GIT_CONFIG_NOSYSTEM" "1")
+       ("GIT_CONFIG_GLOBAL" (or (getenv "DOOMGITCONFIG")
+                                "/dev/null")))
     (apply fn args)))
 
 ;; If the repo failed to clone correctly (usually due to a connection failure),
