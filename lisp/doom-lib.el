@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(when (< emacs-major-version 30)
+  (require 'doom-compat))
+
 ;;; Custom error types
 (define-error 'doom-error "An unexpected Doom error")
 (dolist (type '((doom-font-error "Could not find a font on your system" doom-error)
@@ -1012,108 +1015,6 @@ testing advice (when combined with `rotate-text').
     `(dolist (targets (list ,@(nreverse where-alist)))
        (dolist (target (cdr targets))
          (advice-remove target #',symbol)))))
-
-
-;;
-;;; Backports
-
-(defmacro defbackport! (type symbol &rest body)
-  "Backport a function/macro/alias from later versions of Emacs."
-  (declare (indent defun) (doc-string 4))
-  (unless (fboundp (doom-unquote symbol))
-    `(,type ,symbol ,@body)))
-
-;; `format-spec' wasn't autoloaded until 28.1
-(defbackport! autoload 'format-spec "format-spec")
-
-;; Introduced in Emacs 28.1
-(defbackport! defun ensure-list (object)
-  "Return OBJECT as a list.
-If OBJECT is already a list, return OBJECT itself.  If it's
-not a list, return a one-element list containing OBJECT."
-  (declare (pure t) (side-effect-free t))
-  (if (listp object) object (list object)))
-
-;; Introduced in Emacs 28.1
-(defbackport! defun always (&rest _args)
-  "Do nothing and return t.
-This function accepts any number of ARGUMENTS, but ignores them.
-Also see `ignore'."
-  t)
-
-;; Introduced in Emacs 28.1
-(defbackport! defun file-name-concat (directory &rest components)
-  "Append COMPONENTS to DIRECTORY and return the resulting string.
-
-Elements in COMPONENTS must be a string or nil.
-DIRECTORY or the non-final elements in COMPONENTS may or may not end
-with a slash -- if they don't end with a slash, a slash will be
-inserted before contatenating."
-  (mapconcat
-   #'identity
-   (cl-loop for str in (cons directory components)
-            if (and str (/= 0 (length str))
-                    (if (string-suffix-p "/" str)
-                        (substring str 0 -1)
-                      str))
-            collect it)
-   "/"))
-
-;; Introduced in Emacs 28.1
-(defbackport! defmacro with-environment-variables (variables &rest body)
-  "Set VARIABLES in the environment and execute BODY.
-VARIABLES is a list of variable settings of the form (VAR VALUE),
-where VAR is the name of the variable (a string) and VALUE
-is its value (also a string).
-
-The previous values will be restored upon exit."
-  (declare (indent 1) (debug (sexp body)))
-  (unless (consp variables)
-    (error "Invalid VARIABLES: %s" variables))
-  `(let ((process-environment (copy-sequence process-environment)))
-     ,@(cl-loop for var in variables
-                collect `(setenv ,(car var) ,(cadr var)))
-     ,@body))
-
-;; Introduced in Emacs 28.1
-(defbackport! defun file-name-with-extension (filename extension)
-  "Return FILENAME modified to have the specified EXTENSION.
-The extension (in a file name) is the part that begins with the last \".\".
-This function removes any existing extension from FILENAME, and then
-appends EXTENSION to it.
-
-EXTENSION may include the leading dot; if it doesn't, this function
-will provide it.
-
-It is an error if FILENAME or EXTENSION is empty, or if FILENAME
-is in the form of a directory name according to `directory-name-p'.
-
-See also `file-name-sans-extension'."
-  (let ((extn (string-trim-left extension "[.]")))
-    (cond ((string-empty-p filename)
-           (error "Empty filename"))
-          ((string-empty-p extn)
-           (error "Malformed extension: %s" extension))
-          ((directory-name-p filename)
-           (error "Filename is a directory: %s" filename))
-          ((concat (file-name-sans-extension filename) "." extn)))))
-
-;; Introduced in Emacs 29+
-(defbackport! defmacro with-memoization (place &rest code)
-  "Return the value of CODE and stash it in PLACE.
-If PLACE's value is non-nil, then don't bother evaluating CODE
-and return the value found in PLACE instead."
-  (declare (indent 1) (debug (gv-place body)))
-  (gv-letplace (getter setter) place
-    `(or ,getter
-         ,(macroexp-let2 nil val (macroexp-progn code)
-            `(progn
-               ,(funcall setter val)
-               ,val)))))
-
-;; Introduced in Emacs 29+ (emacs-mirror/emacs@f117b5df4dc6)
-(defbackport! defalias 'bol #'line-beginning-position)
-(defbackport! defalias 'eol #'line-end-position)
 
 
 ;;; Types
