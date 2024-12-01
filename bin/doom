@@ -279,10 +279,9 @@ SEE ALSO:
     (defcli-obsolete! ((purge p)) (gc) "3.0.0")
 
     ;; TODO Post-3.0 commands
-    ;; (load! "module" dir)
-    ;; (load! "nuke" dir)
-    ;; (load! "package" dir)
-    ;; (load! "profile" dir)
+    (defcli-stub! module)
+    (defcli-stub! nuke)
+    (defcli-stub! package)
     (defcli-stub! rollback))
 
   (defcli-group! "Development"
@@ -291,9 +290,8 @@ SEE ALSO:
     (defcli-autoload! (make))
     (defcli-autoload! (run))
 
-    ;; FIXME Test framework
-    ;; (load! "test" dir)
-    )
+    ;; TODO Post-3.0 commands
+    (defcli-stub! test))
 
   (let ((cli-file "cli.el"))
     (defcli-group! "Module commands"
