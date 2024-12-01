@@ -183,9 +183,6 @@ remains lean."
                 (doom-gc--eln)))))))
   t)
 
-;;;###autoload
-(defcli-obsolete! ((purge p)) (gc) "3.0.0")
-
 ;; (defcli! gc
 ;;     ((keep           (     "--keep" time)     "Don't delete generations in the last TIME units")
 ;;      (keep-last      (     "--keep-last" num) "Don't delete last NUM generations")

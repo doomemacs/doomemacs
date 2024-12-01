@@ -272,16 +272,18 @@ SEE ALSO:
     (defcli-autoload! ((profiles profile)))
     (defcli-autoload! ((upgrade up)))
     (defcli-autoload! (env))
-    (defcli-autoload! ((build b purge p gc rollback)) "packages")
+    (defcli-autoload! (gc))
     (defcli-autoload! (install))
 
+    (defcli-obsolete! ((build b)) (sync "--rebuild") "3.0.0")
+    (defcli-obsolete! ((purge p)) (gc) "3.0.0")
+
     ;; TODO Post-3.0 commands
-    ;; (load! "gc" dir)
     ;; (load! "module" dir)
     ;; (load! "nuke" dir)
     ;; (load! "package" dir)
     ;; (load! "profile" dir)
-    )
+    (defcli-stub! rollback))
 
   (defcli-group! "Development"
     :docs "Commands for developing or launching Doom."
