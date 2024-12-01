@@ -104,7 +104,7 @@
                (`vanilla       ; nothing loaded
                 `(progn
                    (setq native-comp-deferred-compilation nil
-                         native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-async-env-modifier-form)
+                         native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-deferred-compilation-deny-list)
                          native-comp-async-env-modifier-form ',(bound-and-true-p native-comp-async-env-modifier-form)
                          native-comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path))
                    (package-initialize t)
