@@ -56,7 +56,7 @@ OPTIONS:
     packages."
   :benchmark t
   (when (doom-profiles-bootloadable-p)
-    (call! '(profiles sync "--reload")))
+    (call! '(profile sync "--all" "--reload")))
   (when aot?
     (after! straight
       (setq straight--native-comp-available t)))
