@@ -125,7 +125,6 @@
 ;;
 ;;; Commands
 
-;;;###autoload
 (defcli! (gc)
     ((nobuilds-p  ("-b" "--no-builds")  "Don't purge unneeded (built) packages")
      (noelpa-p    ("-p" "--no-elpa")    "Don't purge ELPA packages")
@@ -191,5 +190,5 @@ remains lean."
 ;;      (keep-history-p (     "--keep-history")  "Don't regraft repos"))
 ;;   "Purge unused profile data, generations, and packages.")
 
-(provide 'doom-cli '(gc))
+(provide 'doom-cli-gc)
 ;;; gc.el ends here
