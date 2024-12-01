@@ -71,9 +71,6 @@
 ;; - The user may have mounted /tmp with a noexec flag, so pass the exit script
 ;;   to /bin/sh rather than executing them directly.
 
-;; In CLI sessions, prefer correctness over performance.
-(setq load-prefer-newer t)
-
 ;; Doom's core sets up everything we need; including `doom-*-dir' variables,
 ;; universal defaults, and autoloads for doom-*-initialize functions.
 (condition-case e
