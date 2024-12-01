@@ -160,7 +160,7 @@ If DIR is not a project, it will be indexed (but not cached)."
           ((and (bound-and-true-p helm-mode)
                 (fboundp 'helm-find-files))
            (call-interactively #'helm-find-files))
-          ((when-let* ((project-current-directory-override t)
+          ((when-let* ((project-current-directory-override dir)
                        (pr (project-current t dir)))
              (condition-case _
                  (project-find-file-in nil nil pr)
