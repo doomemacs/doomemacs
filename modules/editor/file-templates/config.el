@@ -146,9 +146,13 @@ must be non-read-only, empty, and there must be a rule in
        (not (file-exists-p buffer-file-name))  ; ...is a new file
        (not (buffer-modified-p))    ; ...hasn't been modified
        (null (buffer-base-buffer))  ; ...isn't an indirect clone
-       (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
-         (apply #'+file-templates--expand rule))))
+       (+file-templates/apply)))
 
+(defun +file-templates/apply ()
+  "Actually expand a file template if one exists"
+  (interactive)
+  (when-let* ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
+    (apply #'+file-templates--expand rule)))
 
 ;;
 ;;; Bootstrap
