@@ -306,55 +306,56 @@ are set by `+emacs-lisp-linter-warnings'
 
 This backend does not need to be added directly
 as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers."
-  ;; if a process already exists. kill it.
-  (when (and +emacs-lisp-reduced-flymake-byte-compile--process
-             (process-live-p +emacs-lisp-reduced-flymake-byte-compile--process))
-    (kill-process +emacs-lisp-reduced-flymake-byte-compile--process))
-  (let ((source (current-buffer))
-        (tmp-file (make-temp-file "+emacs-lisp-byte-compile-src"))
-        (out-buf (generate-new-buffer "+emacs-lisp-byte-compile-out")))
-    ;; write the content to a temp file
-    (save-restriction
-      (widen)
-      (write-region nil nil tmp-file nil 'nomessage))
-    ;; make the process
-    (setq +emacs-lisp-reduced-flymake-byte-compile--process
-          (make-process
-           :name "+emacs-reduced-flymake"
-           :noquery t
-           :connection-type 'pipe
-           :buffer out-buf
-           :command `(,(expand-file-name invocation-name invocation-directory)
-                      "-Q"
-                      "--batch"
-                      ,@(mapcan (lambda (p) (list "-L" p)) elisp-flymake-byte-compile-load-path)
-                      ;; this is what silences the byte compiler
-                      "--eval" ,(prin1-to-string `(setq doom-modules ',doom-modules
-                                                        doom-disabled-packages ',doom-disabled-packages
-                                                        byte-compile-warnings ',+emacs-lisp-linter-warnings))
-                      "-f" "elisp-flymake--batch-compile-for-flymake"
-                      ,tmp-file)
-           :stderr "*stderr of +elisp-flymake-byte-compile-out*"
-           :sentinel
-           ;; deal with the process when it exits
-           (lambda (proc _event)
-             (when (memq (process-status proc) '(exit signal))
-               (unwind-protect
-                   (cond
-                    ;; if the buffer is dead or the process is not the same, log the process as old.
-                    ((or (not (buffer-live-p source))
-                         (not (with-current-buffer source (eq proc +emacs-lisp-reduced-flymake-byte-compile--process))))
-                     (flymake-log :warning "byte compile process %s is old" proc))
-                    ;; if the process exited without problem process the buffer
-                    ((zerop (process-exit-status proc))
-                     (elisp-flymake--byte-compile-done report-fn source out-buf))
-                    ;; otherwise something else horrid has gone wrong and we panic
-                    (t (funcall report-fn :panic
-                                :explanation
-                                (format "byte compile process %s died" proc))))
-                 ;; cleanup
-                 (ignore-errors (delete-file tmp-file))
-                 (kill-buffer out-buf))))))))
+  (when (doom-project-p)
+    ;; if a process already exists. kill it.
+    (when (and +emacs-lisp-reduced-flymake-byte-compile--process
+               (process-live-p +emacs-lisp-reduced-flymake-byte-compile--process))
+      (kill-process +emacs-lisp-reduced-flymake-byte-compile--process))
+    (let ((source (current-buffer))
+          (tmp-file (make-temp-file "+emacs-lisp-byte-compile-src"))
+          (out-buf (generate-new-buffer "+emacs-lisp-byte-compile-out")))
+      ;; write the content to a temp file
+      (save-restriction
+        (widen)
+        (write-region nil nil tmp-file nil 'nomessage))
+      ;; make the process
+      (setq +emacs-lisp-reduced-flymake-byte-compile--process
+            (make-process
+             :name "+emacs-reduced-flymake"
+             :noquery t
+             :connection-type 'pipe
+             :buffer out-buf
+             :command `(,(expand-file-name invocation-name invocation-directory)
+                        "-Q"
+                        "--batch"
+                        ,@(mapcan (lambda (p) (list "-L" p)) elisp-flymake-byte-compile-load-path)
+                        ;; this is what silences the byte compiler
+                        "--eval" ,(prin1-to-string `(setq doom-modules ',doom-modules
+                                                          doom-disabled-packages ',doom-disabled-packages
+                                                          byte-compile-warnings ',+emacs-lisp-linter-warnings))
+                        "-f" "elisp-flymake--batch-compile-for-flymake"
+                        ,tmp-file)
+             :stderr "*stderr of +elisp-flymake-byte-compile-out*"
+             :sentinel
+             ;; deal with the process when it exits
+             (lambda (proc _event)
+               (when (memq (process-status proc) '(exit signal))
+                 (unwind-protect
+                     (cond
+                      ;; if the buffer is dead or the process is not the same, log the process as old.
+                      ((or (not (buffer-live-p source))
+                           (not (with-current-buffer source (eq proc +emacs-lisp-reduced-flymake-byte-compile--process))))
+                       (flymake-log :warning "byte compile process %s is old" proc))
+                      ;; if the process exited without problem process the buffer
+                      ((zerop (process-exit-status proc))
+                       (elisp-flymake--byte-compile-done report-fn source out-buf))
+                      ;; otherwise something else horrid has gone wrong and we panic
+                      (t (funcall report-fn :panic
+                                  :explanation
+                                  (format "byte compile process %s died" proc))))
+                   ;; cleanup
+                   (ignore-errors (delete-file tmp-file))
+                   (kill-buffer out-buf)))))))))
 
 (define-minor-mode +emacs-lisp--flymake-non-package-mode
   ""
