@@ -396,8 +396,10 @@ as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers.
                                     (car command-line-args-left))
                                 0 0 (error-message-string e)))))
                     ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
-                flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
-                                                 flycheck-disabled-checkers))))
+                flycheck-disabled-checkers
+                (cons 'emacs-lisp-checkdoc
+                      (remq 'emacs-lisp-checkdoc
+                            flycheck-disabled-checkers)))))
 
 ;;;###autoload
 (define-minor-mode +emacs-lisp-non-package-mode
