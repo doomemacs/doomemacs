@@ -590,12 +590,6 @@ uses a straight or package.el command directly).")
 ;; config (e.g. ~/.doom.d/).
 (setq custom-file (file-name-concat doom-user-dir "custom.el"))
 
-;; By default, Emacs stores `authinfo' in $HOME and in plain-text. Let's not do
-;; that, mkay? This file stores usernames, passwords, and other treasures for
-;; the aspiring malicious third party. You'll need a GPG setup though.
-(setq auth-sources (list (file-name-concat doom-profile-state-dir "authinfo.gpg")
-                         "~/.authinfo.gpg"))
-
 (define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)
   "Save safe-local-variables to `custom-file' instead of `user-init-file'.
 
