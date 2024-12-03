@@ -334,12 +334,10 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
 (cl-defgeneric doom-copy (val &optional deep?)
   "Return a (optionally deep) copy of VAL."
   (if (recordp val)  ; `record' specializer not supported until Emacs 30
-      (if deep?
-          (cl-loop with newval = (copy-sequence val)
-                   for idx from 1 to (length (cdr (cl-struct-slot-info (type-of val))))
-                   do (aset newval idx (doom-copy (aref newval idx) t))
-                   finally return newval)
-        (copy-sequence val))
+      (cl-loop with newval = (copy-sequence val)
+               for idx from 1 to (length (cdr (cl-struct-slot-info (type-of val))))
+               do (aset newval idx (doom-copy (aref newval idx) deep?))
+               finally return newval)
     (cl-check-type val (or integer float boolean symbol null))
     val))
 
