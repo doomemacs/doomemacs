@@ -386,7 +386,8 @@ as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers.
                         (progn
                           (require 'doom)
                           (require 'doom-cli)
-                          (require 'doom-start))
+                          (doom-initialize t)
+                          (doom-startup))
                       (error
                        (princ
                         (format "%s:%d:%d:Error:Failed to load Doom: %s\n"
