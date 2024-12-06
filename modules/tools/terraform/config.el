@@ -13,9 +13,12 @@
 
   (map! :map terraform-mode-map
         :localleader
-        :desc "apply" "a" (cmd! (compile (format "%s apply" +terraform-runner) t))
-        :desc "init"  "i" (cmd! (compile (format "%s init" +terraform-runner)))
-        :desc "plan"  "p" (cmd! (compile (format "%s plan" +terraform-runner)))))
+        :desc "apply"    "a" (cmd! (compile (format "%s apply" +terraform-runner) t))
+        :desc "init"     "i" (cmd! (compile (format "%s init" +terraform-runner)))
+        :desc "plan"     "p" (cmd! (compile (format "%s plan" +terraform-runner)))
+        :desc "validate" "v" (cmd! (compile (format "%s validate" +terraform-runner)))
+        :desc "fmt"      "f" (cmd! (compile (format "%s fmt" +terraform-runner)))
+        :desc "destroy"  "f" (cmd! (compile (format "%s destroy" +terraform-runner)))))
 
 (use-package! company-terraform
   :when (modulep! :completion company)
