@@ -255,12 +255,6 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
       (with-file-modes #o750
         (print-group!
           (make-directory init-dir t)
-          (print! (start "Deleting old init files..."))
-          (print-group! :level 'info
-            (cl-loop for file in (cons init-file (doom-glob "*.elc"))
-                     if (file-exists-p file)
-                     do (print! (item "Deleting %s...") file)
-                     and do (delete-file file)))
           (let ((auto-files (doom-glob init-dir "*.auto.el")))
             (print! (start "Generating %d init files...") (length doom-profile-generators))
             (print-group! :level 'info
