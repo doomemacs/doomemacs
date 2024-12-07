@@ -28,9 +28,10 @@
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  `(let ((doom-bin "doom")
-         (default-directory doom-emacs-dir)
-         (exec-path (cons doom-bin-dir exec-path)))
+  `(let* ((doom-bin "doom")
+          (doom-bin-dir (expand-file-name "bin/" doom-emacs-dir))
+          (default-directory doom-emacs-dir)
+          (exec-path (cons doom-bin-dir exec-path)))
      (when (and (featurep :system 'windows)
                 (string-match-p "cmdproxy.exe$" shell-file-name))
        (unless (executable-find "pwsh")

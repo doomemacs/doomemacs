@@ -272,12 +272,6 @@ where the module's group and name was deduced from the first and second level of
 directories. For example: if $DOOMDIR/modules/ is an entry, a
 $DOOMDIR/modules/lang/ruby/ directory represents a ':lang ruby' module.")
 
-(defvar doom-bin-dir (expand-file-name "bin/" doom-emacs-dir)
-  "Where Doom's executables are stored.
-
-Defaults to $EMACSDIR/bin, where $EMACSDIR is `doom-emacs-dir'. Must end in a
-slash.")
-
 ;; DEPRECATED: .local will be removed entirely in 3.0
 (defvar doom-local-dir
   (if-let* ((localdir (getenv-internal "DOOMLOCALDIR")))
