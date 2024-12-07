@@ -89,7 +89,7 @@
 ;; well not be using gcmh at all.
 (setq gcmh-idle-delay 'auto  ; default is 15s
       gcmh-auto-idle-delay-factor 10
-      gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
+      gcmh-high-cons-threshold (* 64 1024 1024))  ; 64mb
 (add-hook 'doom-first-buffer-hook #'gcmh-mode)
 
 
