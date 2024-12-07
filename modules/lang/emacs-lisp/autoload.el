@@ -91,7 +91,7 @@ Intended to replace `lisp-outline-level'."
 ;;;###autoload
 (defun +emacs-lisp-lookup-definition (_thing)
   "Lookup definition of THING."
-  (if-let (module (+emacs-lisp--module-at-point))
+  (if-let* ((module (+emacs-lisp--module-at-point)))
       (doom/help-modules (car module) (cadr module) 'visit-dir)
     (call-interactively #'elisp-def)))
 

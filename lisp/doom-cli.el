@@ -272,7 +272,7 @@ execution. Can be generated from a `doom-cli-context' with
 (defun doom-cli-key (cli)
   "Return CLI's (type . command), used as a table key or unique identifier."
   (let ((command (doom-cli-command cli)))
-    (if-let (type (doom-cli-type cli))
+    (if-let* ((type (doom-cli-type cli)))
         (cons type command)
       command)))
 
@@ -648,11 +648,11 @@ Throws `doom-cli-invalid-option-error' for illegal values."
   "A CLI context, containing all state pertinent to the current session."
   (init-time before-init-time) ; When this context was created
   ;; A session-specific ID of the current context (defaults to number
-  (pid (if-let (pid (getenv "__DOOMPID"))
+  (pid (if-let* ((pid (getenv "__DOOMPID")))
            (string-to-number pid)
          (emacs-pid)))
   ;; Number of Emacs processes this context has been processed through
-  (step (if-let (step (getenv "__DOOMSTEP"))
+  (step (if-let* ((step (getenv "__DOOMSTEP")))
             (string-to-number step)
           -1))
   ;; The geometry of the terminal window.
@@ -877,10 +877,10 @@ state tied to switches (\"--foo\" or \"-x\") or arbitrary symbols (state).
 If KEY is a string, fetch KEY from context's OPTIONS (by switch).
 If KEY is a symbol, fetch KEY from context's STATE.
 Return NULL-VALUE if KEY does not exist."
-  (if-let (value
-           (if (stringp key)
-               (assoc key (doom-cli-context-options context))
-             (assq key (doom-cli-context-state context))))
+  (if-let* ((value
+             (if (stringp key)
+                 (assoc key (doom-cli-context-options context))
+               (assq key (doom-cli-context-state context)))))
       (cdr value)
     null-value))
 
@@ -1254,7 +1254,7 @@ Emacs' batch library lacks an implementation of the exec system call."
 
       ;; Run a custom action, defined in `doom-cli-exit-commands'.
       ((pred (keywordp))
-       (if-let (fn (alist-get command doom-cli-exit-commands))
+       (if-let* ((fn (alist-get command doom-cli-exit-commands)))
            (funcall fn args context)
          (error "Invalid exit command: %s" command)))
 
@@ -1290,7 +1290,7 @@ Arguments don't have to be switches either."
       (when omit
         (while argv
           (let ((arg (pop argv)))
-            (if-let (n (cdr (assoc arg omit)))
+            (if-let* ((n (cdr (assoc arg omit))))
                 (if (= n -1)
                     (setq argv nil)
                   (dotimes (i n) (pop argv)))
@@ -1905,7 +1905,7 @@ errors to `doom-cli-error-file')."
           (setq doom-print-backend nil))
         (when (doom-cli-context-pipe-p context :in)
           (with-current-buffer (doom-cli-context-stdin context)
-            (while (if-let (in (ignore-errors (read-from-minibuffer "")))
+            (while (if-let* ((in (ignore-errors (read-from-minibuffer ""))))
                        (insert in "\n")
                      (ignore-errors (delete-char -1))))))
         (doom-cli--exit
@@ -1960,9 +1960,9 @@ errors to `doom-cli-error-file')."
              (doom-cli-invalid-prefix-error
               (let ((prefix (cadr e)))
                 (print! (red "Error: `run!' called with invalid prefix %S") prefix)
-                (if-let (suggested (cl-loop for cli being the hash-value of doom-cli--table
-                                            unless (doom-cli-type cli)
-                                            return (car (doom-cli-command cli))))
+                (if-let* ((suggested (cl-loop for cli being the hash-value of doom-cli--table
+                                              unless (doom-cli-type cli)
+                                              return (car (doom-cli-command cli)))))
                     (print! "Did you mean %S?" suggested)
                   (print! "There are no commands defined under %S." prefix)))
               4)

@@ -491,7 +491,7 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (let ((host (or (file-remote-p file 'host) "localhost")))
     (concat "/" (when (file-remote-p file)
                   (concat (file-remote-p file 'method) ":"
-                          (if-let (user (file-remote-p file 'user))
+                          (if-let* ((user (file-remote-p file 'user)))
                               (concat user "@" host)
                             host)
                           "|"))
@@ -561,7 +561,7 @@ which case it will save it without prompting."
   "Save this file as root."
   (interactive)
   (let ((file (doom--sudo-file-path (buffer-file-name (buffer-base-buffer)))))
-    (if-let (buffer (find-file-noselect file))
+    (if-let* ((buffer (find-file-noselect file)))
         (let ((origin (current-buffer)))
           (copy-to-buffer buffer (point-min) (point-max))
           (unwind-protect

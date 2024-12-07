@@ -311,7 +311,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
          (progn
            (message "No files marked, aborting.")
            (kill-buffer-and-window))
-       (if-let ((mail-target-buffer (bound-and-true-p dired-mail-buffer)))
+       (if-let* ((mail-target-buffer (bound-and-true-p dired-mail-buffer)))
            (progn (kill-buffer-and-window)
                   (switch-to-buffer mail-target-buffer))
          (if (and (+mu4e-current-buffers)

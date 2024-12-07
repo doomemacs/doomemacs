@@ -20,10 +20,10 @@
   (let ((buf (ibuffer-current-buffer t)))
     (unless (buffer-live-p buf)
       (user-error "Not a valid or live buffer: %s" buf))
-    (if-let (workspaces
-             (cl-loop for wk in (+workspace-list)
-                      if (+workspace-contains-buffer-p buf wk)
-                      collect wk))
+    (if-let* ((workspaces
+               (cl-loop for wk in (+workspace-list)
+                        if (+workspace-contains-buffer-p buf wk)
+                        collect wk)))
         (+workspace-switch
          (if (and (not select-first) (cdr workspaces))
              (or (completing-read "Select workspace: " (mapcar #'persp-name workspaces))

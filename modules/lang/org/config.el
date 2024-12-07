@@ -794,7 +794,7 @@ these buffers they'll see a gimped, half-broken org buffer, so to avoid that,
 install a hook to restart `org-mode' when they're switched to so they can grow
 up to be fully-fledged org-mode buffers."
     :around #'org-get-agenda-file-buffer
-    (if-let (buf (org-find-base-buffer-visiting file))
+    (if-let* ((buf (org-find-base-buffer-visiting file)))
         buf
       (let ((recentf-exclude '(always))
             (doom-inhibit-large-file-detection t)
@@ -1124,7 +1124,7 @@ between the two."
   (defadvice! +org-eldoc--display-link-at-point-a (&rest _)
     "Display help for doom-*: links in minibuffer when cursor/mouse is over it."
     :before-until #'org-eldoc-documentation-function
-    (if-let ((url (thing-at-point 'url t)))
+    (if-let* ((url (thing-at-point 'url t)))
         (format "LINK: %s" url)
       (and (eq (get-text-property (point) 'help-echo)
                #'+org-link-doom--help-echo-from-textprop)

@@ -133,7 +133,7 @@ EXAMPLES:
                 ;; Tangling doesn't expand #+INCLUDE directives, so we do it
                 ;; ourselves, since includes are so useful for literate configs!
                 (org-export-expand-include-keyword)
-                (if-let ((results (reverse (org-babel-tangle nil nil lang))))
+                (if-let* ((results (reverse (org-babel-tangle nil nil lang))))
                     (dolist (file results)
                       (if (not quiet?)
                           (print-group!

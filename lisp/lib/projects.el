@@ -119,8 +119,8 @@ Returns nil if not in a project."
   "Return the name of the current project.
 
 Returns '-' if not in a valid project."
-  (if-let (project-root (or (doom-project-root dir)
-                            (if dir (expand-file-name dir))))
+  (if-let* ((project-root (or (doom-project-root dir)
+                              (if dir (expand-file-name dir)))))
       (funcall projectile-project-name-function project-root)
     "-"))
 

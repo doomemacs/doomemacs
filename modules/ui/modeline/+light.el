@@ -129,7 +129,7 @@ Using optionals attributes FACE, HELP-ECHO and VOFFSET."
   "Set the modeline to NAME.
 If DEFAULT is non-nil, apply to all future buffers. Modelines are defined with
 `def-modeline!'."
-  (if-let (format (assq name +modeline-format-alist))
+  (if-let* ((format (assq name +modeline-format-alist)))
       (cl-destructuring-bind (lhs . rhs) (cdr format)
         (if default
             (setq-default +modeline-format-left lhs

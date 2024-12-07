@@ -160,10 +160,10 @@ If ARG (universal argument), open selection in other-window."
     (user-error "No completion session is active"))
   (require 'wgrep)
   (let ((caller (ivy-state-caller ivy-last)))
-    (if-let (occur-fn (plist-get +ivy-edit-functions caller))
+    (if-let* ((occur-fn (plist-get +ivy-edit-functions caller)))
         (ivy-exit-with-action
          (lambda (_) (funcall occur-fn)))
-      (if-let (occur-fn (plist-get ivy--occurs-list caller))
+      (if-let* ((occur-fn (plist-get ivy--occurs-list caller)))
           (let ((buffer (generate-new-buffer
                          (format "*ivy-occur%s \"%s\"*"
                                  (if caller (concat " " (prin1-to-string caller)) "")

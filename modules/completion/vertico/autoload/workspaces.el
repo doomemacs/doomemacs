@@ -81,7 +81,7 @@ buffer will be opened in the current workspace instead."
           (funcall consult--buffer-display (car buffer))
         (+workspace-switch origin-workspace)
         (message "Switched to %S workspace" origin-workspace)
-        (if-let (window (get-buffer-window (car buffer)))
+        (if-let* ((window (get-buffer-window (car buffer))))
             (select-window window)
           (funcall consult--buffer-display (car buffer)))))))
 

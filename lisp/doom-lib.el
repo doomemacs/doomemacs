@@ -43,9 +43,9 @@ TYPE should be a keyword of any of the known doom-*-error errors (e.g. :font,
 
 (defvar doom-log-level
   (if init-file-debug
-      (if-let ((level (getenv-internal "DEBUG"))
-               (level (string-to-number level))
-               ((not (zerop level))))
+      (if-let* ((level (getenv-internal "DEBUG"))
+                (level (string-to-number level))
+                ((not (zerop level))))
           level
         2)
     0)
@@ -1346,7 +1346,7 @@ NAME is a symbol (e.g. \\='python). FILE is a string that will be appended to
 the resulting path. If said path doesn't exist, this returns nil, otherwise an
 absolute path."
   (let (file-name-handler-alist)
-    (if-let ((path (doom-module-expand-path key file)))
+    (if-let* ((path (doom-module-expand-path key file)))
         (if (or (null file)
                 (file-exists-p path))
             path)
@@ -1463,7 +1463,7 @@ For more about modules and flags, see `doom!'."
             ',(doom-module-context-flags doom-module-context)
             (backquote ,flags))
         `(let ((file (file!)))
-           (if-let ((module (doom-module-from-path file)))
+           (if-let* ((module (doom-module-from-path file)))
                (doom-module--has-flag-p
                 (doom-module (car module) (cdr module) :flags)
                 (backquote ,flags))
@@ -1670,9 +1670,9 @@ If DEFAULT? is non-nil, an unspecified CAR/CDR will fall bakc to (_default .
   "Return PROFILE-NAME's PROFILE, otherwise its PROPERTY, otherwise NULL-VALUE."
   (when (stringp profile-name)
     (setq profile-name (intern profile-name)))
-  (if-let (profile (assq profile-name (doom-profiles)))
+  (if-let* ((profile (assq profile-name (doom-profiles))))
       (if property
-          (if-let (propval (assq property (cdr profile)))
+          (if-let* ((propval (assq property (cdr profile))))
               (cdr propval)
             null-value)
         profile)

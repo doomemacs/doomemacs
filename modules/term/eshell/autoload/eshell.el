@@ -98,7 +98,7 @@
         (with-current-buffer eshell-buffer
           (fundamental-mode)
           (erase-buffer))))
-    (if-let (win (get-buffer-window eshell-buffer))
+    (if-let* ((win (get-buffer-window eshell-buffer)))
         (let (confirm-kill-processes)
           (delete-window win)
           (ignore-errors (kill-buffer eshell-buffer)))

@@ -53,16 +53,16 @@ window that already exists in that direction. It will split otherwise."
   (let ((direction (or (alist-get 'direction alist)
                        +magit-open-windows-in-direction))
         (origin-window (selected-window)))
-    (if-let (window (window-in-direction direction))
+    (if-let* ((window (window-in-direction direction)))
         (unless magit-display-buffer-noselect
           (select-window window))
-      (if-let (window (and (not (one-window-p))
-                           (window-in-direction
-                            (pcase direction
-                              (`right 'left)
-                              (`left 'right)
-                              ((or `up `above) 'down)
-                              ((or `down `below) 'up)))))
+      (if-let* ((window (and (not (one-window-p))
+                             (window-in-direction
+                              (pcase direction
+                                (`right 'left)
+                                (`left 'right)
+                                ((or `up `above) 'down)
+                                ((or `down `below) 'up))))))
         (unless magit-display-buffer-noselect
           (select-window window))
         (let ((window (split-window nil nil direction)))

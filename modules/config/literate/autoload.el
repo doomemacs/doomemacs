@@ -50,7 +50,7 @@
                         (not (re-search-forward "^ *#\\+begin_src e\\(?:macs-\\)?lisp" nil t))))
                     (print! (warn "No src blocks to tangle in %s. Skipping...") (path target))
                     nil)
-                   ((if-let (files (org-babel-tangle-file target dest))
+                   ((if-let* ((files (org-babel-tangle-file target dest)))
                         (always (print! (success "Done tangling %d file(s)!" (length files))))
                       (print! (error "Failed to tangle any blocks from your config."))
                       nil))))))))

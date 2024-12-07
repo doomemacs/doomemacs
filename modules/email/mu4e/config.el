@@ -115,9 +115,9 @@ is non-nil."
               (t #'ido-completing-read))
         mu4e-attachment-dir
         (concat
-         (if-let ((xdg-download-query (and (executable-find "xdg-user-dir")
-                                           (doom-call-process "xdg-user-dir" "DOWNLOAD")))
-                  (xdg-download-dir (and (= 0 (car xdg-download-query)) (cdr xdg-download-query))))
+         (if-let* ((xdg-download-query (and (executable-find "xdg-user-dir")
+                                            (doom-call-process "xdg-user-dir" "DOWNLOAD")))
+                   (xdg-download-dir (and (= 0 (car xdg-download-query)) (cdr xdg-download-query))))
              xdg-download-dir
            (expand-file-name (or (getenv "XDG_DOWNLOAD_DIR")
                                  "Downloads")
@@ -291,12 +291,12 @@ is non-nil."
     (defun +mu4e-view-select-attachment ()
       "Use completing-read to select a single attachment.
 Acts like a singular `mu4e-view-save-attachments', without the saving."
-      (if-let ((parts (delq nil (mapcar
-                                 (lambda (part)
-                                   (when (assoc "attachment" (cdr part))
-                                     part))
-                                 (mu4e--view-gather-mime-parts))))
-               (files (+mu4e-part-selectors parts)))
+      (if-let* ((parts (delq nil (mapcar
+                                  (lambda (part)
+                                    (when (assoc "attachment" (cdr part))
+                                      part))
+                                  (mu4e--view-gather-mime-parts))))
+                (files (+mu4e-part-selectors parts)))
           (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
         (user-error (mu4e-format "No attached files found"))))
 

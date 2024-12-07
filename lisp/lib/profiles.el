@@ -10,7 +10,7 @@ Profile directories are in the format {data-profiles-dir}/$NAME/@/$VERSION, for
 example: '~/.local/share/doom/_/@/0/'")
 
 (defvar doom-profile-load-path
-  (if-let (path (getenv-internal "DOOMPROFILELOADPATH"))
+  (if-let* ((path (getenv-internal "DOOMPROFILELOADPATH")))
       (mapcar #'expand-file-name (split-string-and-unquote path path-separator))
     (list (file-name-concat doom-user-dir "profiles.el")
           (file-name-concat doom-emacs-dir "profiles.el")
@@ -114,7 +114,7 @@ run.")
                                      `(,val)
                                    `(,(abbreviate-file-name path) ,val))))
                        (cons `(user-emacs-directory :path ,@val)
-                             (if-let (profile-file (file-exists-p! doom-profile-rcfile path))
+                             (if-let* ((profile-file (file-exists-p! doom-profile-rcfile path)))
                                  (car (doom-file-read profile-file :by 'read*))
                                (when (file-exists-p (doom-path path subdir "lisp/doom.el"))
                                  '((doom-user-dir :path ,@val)))))))

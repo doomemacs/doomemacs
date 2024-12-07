@@ -42,8 +42,8 @@
 (defun +default/yank-buffer-path (&optional root)
   "Copy the current buffer's path to the kill ring."
   (interactive)
-  (if-let (filename (or (buffer-file-name (buffer-base-buffer))
-                        (bound-and-true-p list-buffers-directory)))
+  (if-let* ((filename (or (buffer-file-name (buffer-base-buffer))
+                          (bound-and-true-p list-buffers-directory))))
       (let ((path (abbreviate-file-name
                    (if root
                        (file-relative-name filename root)
