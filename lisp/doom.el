@@ -108,11 +108,11 @@
 ;; up/downgraded. This is because byte-code isn't backwards compatible, and many
 ;; packages (including Doom), bake in absolute paths into their caches that need
 ;; to be refreshed.
-(let ((old-version (eval-when-compile emacs-version)))
-  (unless (equal emacs-version old-version)
+(let ((old-version (eval-when-compile emacs-major-version)))
+  (unless (= emacs-major-version old-version)
     (user-error (concat "Doom was compiled with Emacs %s, but was loaded with %s. Run 'doom sync' to"
                         "recompile it.")
-                emacs-version old-version)))
+                emacs-major-version old-version)))
 
 ;;; Custom features & global constants
 ;; Doom has its own features that its modules, CLI, and user extensions can
