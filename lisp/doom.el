@@ -899,6 +899,13 @@ Triggers `doom-after-init-hook' and sets `doom-init-time.'"
   (when (doom-context-pop 'startup)
     (setq doom-init-time (float-time (time-subtract (current-time) before-init-time)))
     (doom-run-hooks 'doom-after-init-hook)
+
+    ;; If `gc-cons-threshold' hasn't been reset at this point, we reset it by
+    ;; force (without overwriting `gcmh' or the user's config). If this isn't
+    ;; done, this session will be prone to freezing and crashes. This also
+    ;; handles the case where the user has `gcmh' disabled.
+    (when (eq (default-value 'gc-cons-threshold) most-positive-fixnum)
+      (setq-default gc-cons-threshold (* 16 1024 1024)))
     t))
 
 (provide 'doom)
