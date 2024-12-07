@@ -27,26 +27,28 @@
 ;;; Code:
 
 (let (file-name-handler-alist)
-  ;; PERF: Garbage collection is a big contributor to startup times. This fends
-  ;;   it off, but will be reset later by `gcmh-mode'. Not resetting it later
-  ;;   causes stuttering/freezes.
-  (if noninteractive
-      ;; PERF: Deferring the GC in non-interactive sessions isn't as important,
-      ;;   but still yields a notable benefit. Still, avoid setting it to high
-      ;;   here, as runaway memory usage is a real risk in longer sessions.
+  ;; PERF: Garbage collection is a big contributor to startup times in both
+  ;;   interactive and CLI sessions, so I defer it.
+  (if noninteractive  ; in CLI sessions
+      ;; PERF: GC deferral is less important in the CLI, but still helps script
+      ;;   startup times. Just don't set it too high to avoid runaway memory
+      ;;   usage in long-running elisp shell scripts.
       (setq gc-cons-threshold 134217728  ; 128mb
             ;; Backported from 29 (see emacs-mirror/emacs@73a384a98698)
             gc-cons-percentage 1.0)
+    ;; PERF: Doom relies on `gcmh-mode' to reset this while the user is idle, so
+    ;;   I effectively disable GC during startup. DON'T COPY THIS BLINDLY! If
+    ;;   it's not reset later there will be stuttering, freezes, and crashes.
     (setq gc-cons-threshold most-positive-fixnum))
 
-  ;; PERF: Don't use precious startup time checking mtime on elisp bytecode.
-  ;;   Ensuring correctness is 'doom sync's job, not the interactive session's.
-  ;;   Still, stale byte-code will cause *heavy* losses in startup efficiency,
-  ;;   but performance is unimportant when Emacs is in an error state.
+  ;; PERF: Don't use precious startup time to check mtimes on elisp bytecode.
+  ;;   Ensuring correctness is 'doom sync's job. Although stale byte-code will
+  ;;   heavily impact startup times, performance is unimportant when Emacs is in
+  ;;   an error state.
   (setq load-prefer-newer noninteractive)
 
   ;; UX: Respect DEBUG envvar as an alternative to --debug-init, and to make
-  ;;   startup sufficiently verbose from this point on.
+  ;;   startup more verbose sooner.
   (when (getenv-internal "DEBUG")
     (setq init-file-debug t
           debug-on-error t))
@@ -76,10 +78,10 @@
             (setq user-emacs-directory (expand-file-name init-dir))))
       ;; FIX: Discard the switch to prevent "invalid option" errors later.
       (push (cons "--profile" (lambda (_) (pop argv))) command-switch-alist)
-      ;; Running 'doom sync' or 'doom profile sync' (re)generates a light
-      ;; profile loader in $EMACSDIR/profiles/load.el (or $DOOMPROFILELOADFILE),
-      ;; after reading `doom-profile-load-path'. This loader requires
-      ;; `$DOOMPROFILE' be set to function.
+      ;; Running 'doom sync' or 'doom profile sync --all' (re)generates a light
+      ;; profile loader in $XDG_DATA_HOME/doom/profiles.X.el (or
+      ;; $DOOMPROFILELOADFILE), after reading `doom-profile-load-path'. This
+      ;; loader requires `$DOOMPROFILE' be set to function.
       (setenv "DOOMPROFILE" profile)
       (or (load (let ((windows? (memq system-type '(ms-dos windows-nt cygwin))))
                   (expand-file-name
@@ -133,9 +135,10 @@
           ;;   fit guess. It's better than Emacs' 80kb default.
           (setq gc-cons-threshold (* 16 1024 1024))
           nil))
-      ;; In non-interactive sessions, leave to the consumer to call
-      ;; `doom-initialize' at the best time, otherwise we need to initialize
-      ;; ASAP for the Emacs session ahead.
+      ;; Sets up Doom (particularly `doom-profile') for the session ahead. This
+      ;; loads the profile's init file, if it's available. In interactive
+      ;; session, a missing profile is an error state, in a non-interactive one,
+      ;; it's not (and left to the consumer to deal with).
       (doom-initialize (not noninteractive))
     ;; If we're here, the user wants to load another config/profile (that may or
     ;; may not be a Doom config).
