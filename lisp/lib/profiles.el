@@ -10,14 +10,15 @@ Profile directories are in the format {data-profiles-dir}/$NAME/@/$VERSION, for
 example: '~/.local/share/doom/_/@/0/'")
 
 (defvar doom-profile-load-path
-  (if-let* ((path (getenv-internal "DOOMPROFILELOADPATH")))
-      (mapcar #'expand-file-name (split-string-and-unquote path path-separator))
-    (list (file-name-concat doom-user-dir "profiles.el")
-          (file-name-concat doom-emacs-dir "profiles.el")
-          (expand-file-name "doom-profiles.el" (or (getenv "XDG_CONFIG_HOME") "~/.config"))
-          (expand-file-name "~/.doom-profiles.el")
-          (file-name-concat doom-user-dir "profiles")
-          (file-name-concat doom-emacs-dir "profiles")))
+  (append
+   (when-let* ((path (getenv-internal "DOOMPROFILELOADPATH")))
+     (mapcar #'doom-path (split-string-and-unquote path path-separator)))
+   (list (file-name-concat doom-user-dir "profiles.el")
+         (file-name-concat doom-emacs-dir "profiles.el")
+         (expand-file-name "doom-profiles.el" (or (getenv "XDG_CONFIG_HOME") "~/.config"))
+         (expand-file-name "~/.doom-profiles.el")
+         (file-name-concat doom-user-dir "profiles")
+         (file-name-concat doom-emacs-dir "profiles")))
   "A list of profile config files or directories that house implicit profiles.
 
 `doom-profiles-initialize' loads and merges all profiles defined in the above
