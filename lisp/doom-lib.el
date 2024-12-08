@@ -1158,8 +1158,10 @@ Never set this variable directly, use `with-doom-module'.")
   "Evaluate BODY with `doom-module-context' informed by KEY."
   (declare (indent 1))
   `(let ((doom-module-context
-          (or (doom-module-context ,key)
-              (make-doom-module-context))))
+          (let ((key ,key))
+            (if key
+                (doom-module-context key)
+              (make-doom-module-context)))))
      (doom-log ":context:module: =%s" doom-module-context)
      ,@body))
 
