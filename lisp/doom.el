@@ -629,7 +629,7 @@ to `doom-profile-cache-dir' instead, so it can be safely cleaned up as part of
       (make-directory temporary-file-directory t)
       (apply fn args)))
 
-  (after! comp
+  (with-eval-after-load 'comp
     ;; HACK: On Emacs 30.0.92, `native-comp-jit-compilation-deny-list' was moved
     ;;   to comp-run. See emacsmirror/emacs@e6a955d24268. Doom forces straight
     ;;   to consult this variable when building packages.
