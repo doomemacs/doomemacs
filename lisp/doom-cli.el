@@ -1750,20 +1750,27 @@ TARGET is not a command specification, and should be a command list."
 See `defcli!' for information about COMMANDSPEC.
 TARGET is simply a command list.
 WHEN specifies what version this command was rendered obsolete."
-  `(let ((ncommand (doom-cli-command-normalize (backquote ,target) doom-cli--group-plist)))
+  `(let* ((target (backquote ,target)))
      (defcli! ,commandspec (&context _context &cli cli &rest args)
-       :docs (format "An obsolete alias for '%s'." (doom-cli-command-string ncommand))
-       :obsolete (cons ncommand ,when)
+       :docs (if (stringp target)
+                 (format "An obsolete command: %s" target)
+               (format "An obsolete alias for '%s'."
+                       (doom-cli-command-string
+                        (doom-cli-command-normalize target doom-cli--group-plist))))
+       :obsolete (cons target ,when)
        :hide t
-       (let* ((obsolete (plist-get (doom-cli-plist cli) :obsolete))
-              (newcmd (car obsolete))
-              (when (cdr obsolete)))
-         (print! (warn "'%s' was deprecated in %s")
+       (cl-destructuring-bind (target . when)
+           (plist-get (doom-cli-plist cli) :obsolete)
+         (print! (warn "'%s' was %s in %s")
                  (doom-cli-command-string cli)
+                 (if (stringp target) "removed" "deprecated")
                  when)
-         (print! (warn "It will eventually be removed; use '%s' instead.")
-                 (doom-cli-command-string newcmd))
-         (call! ',target args)))))
+         (if (stringp target)
+             (print! (warn "%s." target))
+           (setq target (doom-cli-command-normalize target doom-cli--group-plist))
+           (print! (warn "It will eventually be removed; use '%s' instead.")
+                   (doom-cli-command-string target))
+           (call! ',target args))))))
 
 (defmacro defcli-stub! (commandspec &optional _argspec &rest body)
   "Define a stub CLI, which will throw an error if invoked.
