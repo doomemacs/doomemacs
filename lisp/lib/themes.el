@@ -45,7 +45,7 @@ all themes. It will apply to all themes once they are loaded."
        ;; Apply the changes immediately if the user is using the default theme
        ;; or the theme has already loaded. This allows you to evaluate these
        ;; macros on the fly and customize your faces iteratively.
-       (when (or (get 'doom-theme 'previous-themes)
+       (when (or (get 'doom-theme 'history)
                  (null doom-theme))
          (doom--run-customize-theme-hook #',fn))
        ;; FIXME Prevent clobbering this on-the-fly
@@ -63,23 +63,20 @@ doom-themes' API without worry."
 
 ;;;###autoload
 (defun doom/reload-theme ()
-  "Reload the current Emacs theme."
+  "Reload all currently active themes."
   (interactive)
-  (unless doom-theme
-    (user-error "No theme is active"))
-  (let ((themes (copy-sequence custom-enabled-themes)))
-    (mapc #'disable-theme custom-enabled-themes)
-    (let (doom-load-theme-hook)
-      (mapc #'enable-theme (reverse themes)))
-    (doom-run-hooks 'doom-load-theme-hook)
+  (let* ((themes (copy-sequence custom-enabled-themes))
+         (real-themes (cl-remove-if-not #'doom--theme-is-colorscheme-p themes)))
+    (mapc #'disable-theme themes)
+    (mapc #'enable-theme (reverse themes))
     (doom/reload-font)
     (message "%s %s"
              (propertize
               (format "Reloaded %d theme%s:"
-                      (length themes)
-                      (if (cdr themes) "s" ""))
+                      (length real-themes)
+                      (if (cdr real-themes) "s" ""))
               'face 'bold)
-             (mapconcat #'prin1-to-string themes ", "))))
+             (mapconcat #'prin1-to-string real-themes ", "))))
 
 
 ;;
