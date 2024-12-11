@@ -126,6 +126,29 @@ and return the value found in PLACE instead."
           (setq set-auto-mode--last (cons mode major-mode)))
         mode))))
 
+;; Introduced in Emacs 29.1
+(unless (boundp 'enable-theme-functions)
+  (defcustom enable-theme-functions nil
+    "Abnormal hook that is run after a theme has been enabled.
+The functions in the hook are called with one parameter -- the
+ name of the theme that's been enabled (as a symbol)."
+    :type 'hook
+    :group 'customize
+    :version "29.1")
+  (defcustom disable-theme-functions nil
+    "Abnormal hook that is run after a theme has been disabled.
+The functions in the hook are called with one parameter -- the
+ name of the theme that's been disabled (as a symbol)."
+    :type 'hook
+    :group 'customize
+    :version "29.1")
+  (define-advice enable-theme (:after (theme) trigger-hooks)
+    (run-hook-with-args 'enable-theme-functions theme))
+  (define-advice disable-theme (:around (fn theme) trigger-hooks)
+    (when (custom-theme-enabled-p theme)
+      (funcall fn theme)
+      (run-hook-with-args 'enable-theme-functions theme)))
+
 
 ;;; From Emacs 30+
 ;; Introduced in Emacs 30+
