@@ -142,13 +142,13 @@ Return non-nil if successful in doing so."
 Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
-    (cond ((+fold--vimish-fold-p) (vimish-fold-toggle))
+    (cond ((+fold--ts-fold-p) (ts-fold-toggle))
+          ((+fold--vimish-fold-p) (vimish-fold-toggle))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding)))
           ((+fold--outline-fold-p)
            (cl-letf (((symbol-function #'outline-hide-subtree)
                       (symbol-function #'outline-hide-entry)))
-             (outline-toggle-children)))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding)))
-          ((+fold--ts-fold-p) (ts-fold-toggle)))))
+             (outline-toggle-children))))))
 
 ;;;###autoload
 (defun +fold/open-rec ()
@@ -166,12 +166,12 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
 Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
-    (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
+    (cond ((+fold--ts-fold-p) (ts-fold-open))
+          ((+fold--vimish-fold-p) (vimish-fold-unfold))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
           ((+fold--outline-fold-p)
            (outline-show-branches)
-           (outline-show-entry))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
-          ((+fold--ts-fold-p) (ts-fold-open)))))
+           (outline-show-entry)))))
 
 ;;;###autoload
 (defun +fold/close ()
@@ -180,10 +180,10 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
 Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
-    (cond ((+fold--vimish-fold-p) (vimish-fold-refold))
-          ((+fold--outline-fold-p) (outline-hide-subtree))
+    (cond ((+fold--ts-fold-p) (ts-fold-close))
+          ((+fold--vimish-fold-p) (vimish-fold-refold))
           ((+fold--hideshow-fold-p) (+fold-from-eol (hs-hide-block)))
-          ((+fold--ts-fold-p) (ts-fold-close)))))
+          ((+fold--outline-fold-p) (outline-hide-subtree)))))
 
 ;;;###autoload
 (defun +fold/open-all (&optional level)
