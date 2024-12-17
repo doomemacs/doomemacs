@@ -49,9 +49,10 @@
 
 (defun doom--sandbox-run (&optional mode)
   "TODO"
-  (letenv! (("DOOMDIR" (if (eq mode 'vanilla-doom+)
-                           (expand-file-name "___does_not_exist___" temporary-file-directory)
-                         doom-user-dir)))
+  (with-environment-variables
+      (("DOOMDIR" (if (eq mode 'vanilla-doom+)
+                      (expand-file-name "___does_not_exist___" temporary-file-directory)
+                    doom-user-dir)))
     (doom--sandbox-launch
      (unless (memq mode '(doom vanilla-doom+)) '("-Q"))
      (let ((forms
@@ -103,7 +104,7 @@
                (`vanilla       ; nothing loaded
                 `(progn
                    (setq native-comp-deferred-compilation nil
-                         native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-async-env-modifier-form)
+                         native-comp-deferred-compilation-deny-list ',(bound-and-true-p native-comp-deferred-compilation-deny-list)
                          native-comp-async-env-modifier-form ',(bound-and-true-p native-comp-async-env-modifier-form)
                          native-comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path))
                    (package-initialize t)

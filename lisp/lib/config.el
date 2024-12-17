@@ -38,12 +38,13 @@
        (setq doom-bin "doom.ps1"))
      ;; Ensure the bin/doom operates with the same environment as this
      ;; running session.
-     (letenv! (("PATH" (string-join exec-path path-separator))
-               ("EMACS" (doom-path invocation-directory invocation-name))
-               ("EMACSDIR" doom-emacs-dir)
-               ("DOOMDIR" doom-user-dir)
-               ("DOOMLOCALDIR" doom-local-dir)
-               ("DEBUG" (if doom-debug-mode (number-to-string doom-log-level) "")))
+     (with-environment-variables
+         (("PATH" (string-join exec-path path-separator))
+          ("EMACS" (doom-path invocation-directory invocation-name))
+          ("EMACSDIR" doom-emacs-dir)
+          ("DOOMDIR" doom-user-dir)
+          ("DOOMLOCALDIR" doom-local-dir)
+          ("DEBUG" (if doom-debug-mode (number-to-string doom-log-level) "")))
        (with-current-buffer
            (compile (format ,command (expand-file-name doom-bin doom-bin-dir)) t)
          (let ((w (get-buffer-window (current-buffer))))

@@ -20,6 +20,9 @@ This module provides a set of reasonable defaults, including:
 
 ** Module flags
 - +bindings :: ...
+- +gnupg ::
+  Enable GnuPG integration and defaults, allowing Emacs to pick up on your
+  default GPG keys, including interop with pinentry-emacs.
 - +smartparens :: ...
 
 ** Packages

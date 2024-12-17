@@ -249,7 +249,6 @@ tell you about it. Very annoying. This prevents that."
 (nconc
  auto-mode-alist
  '(("/LICENSE\\'" . text-mode)
-   ("\\.log\\'" . text-mode)
    ("rc\\'" . conf-mode)))
 
 

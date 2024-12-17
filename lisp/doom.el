@@ -215,7 +215,7 @@
   "Current version of Doom Emacs core.")
 
 ;; DEPRECATED: Remove these when the modules are moved out of core.
-(defconst doom-modules-version "24.12.0-pre"
+(defconst doom-modules-version "25.01.0-pre"
   "Current version of Doom Emacs.")
 
 (defvar doom-init-time nil
@@ -590,12 +590,6 @@ uses a straight or package.el command directly).")
 ;; config (e.g. ~/.doom.d/).
 (setq custom-file (file-name-concat doom-user-dir "custom.el"))
 
-;; By default, Emacs stores `authinfo' in $HOME and in plain-text. Let's not do
-;; that, mkay? This file stores usernames, passwords, and other treasures for
-;; the aspiring malicious third party. You'll need a GPG setup though.
-(setq auth-sources (list (file-name-concat doom-profile-state-dir "authinfo.gpg")
-                         "~/.authinfo.gpg"))
-
 (define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)
   "Save safe-local-variables to `custom-file' instead of `user-init-file'.
 
@@ -644,6 +638,10 @@ of 'doom sync' or 'doom gc'."
       (apply fn args)))
 
   (after! comp
+    ;; HACK: On Emacs 30.0.92, `native-comp-jit-compilation-deny-list' was moved
+    ;;   to comp-run. See emacsmirror/emacs@e6a955d24268. Doom forces straight
+    ;;   to consult this variable when building packages.
+    (require 'comp-run nil t)
     ;; HACK Disable native-compilation for some troublesome packages
     (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
           (list "/seq-tests\\.el\\'"

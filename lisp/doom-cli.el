@@ -1691,7 +1691,7 @@ ignored.
        (cl-destructuring-bind
            (&whole plist &key
                    alias autoload _benchmark docs disable hide _group partial
-                   _prefix)
+                   _prefix _obsolete)
            (append (list ,@plist) doom-cli--group-plist)
          (unless disable
            (let* ((command  (doom-cli-command-normalize (backquote ,commandspec) plist))
@@ -1753,13 +1753,17 @@ WHEN specifies what version this command was rendered obsolete."
   `(let ((ncommand (doom-cli-command-normalize (backquote ,target) doom-cli--group-plist)))
      (defcli! ,commandspec (&context _context &cli cli &rest args)
        :docs (format "An obsolete alias for '%s'." (doom-cli-command-string ncommand))
+       :obsolete (cons ncommand ,when)
        :hide t
-       (print! (warn "'%s' was deprecated in %s")
-               (doom-cli-command-string cli)
-               ,when)
-       (print! (warn "It will eventually be removed; use '%s' instead.")
-               (doom-cli-command-string ncommand))
-       (call! ',target args))))
+       (let* ((obsolete (plist-get (doom-cli-plist cli) :obsolete))
+              (newcmd (car obsolete))
+              (when (cdr obsolete)))
+         (print! (warn "'%s' was deprecated in %s")
+                 (doom-cli-command-string cli)
+                 when)
+         (print! (warn "It will eventually be removed; use '%s' instead.")
+                 (doom-cli-command-string newcmd))
+         (call! ',target args)))))
 
 (defmacro defcli-stub! (commandspec &optional _argspec &rest body)
   "Define a stub CLI, which will throw an error if invoked.

@@ -41,6 +41,13 @@ list of paths or profile config files (semi-colon delimited on Windows).")
 
 Can be changed externally by setting $DOOMPROFILELOADFILE.")
 
+(defvar doom-profile-cache-file
+  (file-name-concat
+   doom-cache-dir (format "profiles.%s.el" (or (car doom-profile) "@")))
+  "Where Doom writes its interactive profile loader script.
+
+Can be changed externally by setting $DOOMPROFILELOADFILE.")
+
 (defvar doom-profile-env-file-name "init.env.el"
   "TODO")
 
