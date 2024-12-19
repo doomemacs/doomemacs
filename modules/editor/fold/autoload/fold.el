@@ -113,9 +113,7 @@ Return non-nil if successful in doing so."
   (when (featurep 'vimish-fold)
     ;; from `vimish-fold-unfold-all'
     (mapc #'vimish-fold--unfold
-          (vimish-fold--folds-in
-           (point-min)
-           (point-max))))
+          (vimish-fold--folds-in beg end)))
   (and (+fold--outline-fold-p)
        (outline-show-subtree))
   (hs-life-goes-on
@@ -126,7 +124,7 @@ Return non-nil if successful in doing so."
   (when (bound-and-true-p ts-fold-mode)
     ;; from `ts-fold-open-all'
     (ts-fold--ensure-ts
-      (thread-last (overlays-in (point-min) (point-max))
+      (thread-last (overlays-in beg end)
                    (seq-filter
                     (lambda (ov)
                       (eq (overlay-get ov 'invisible) 'ts-fold)))
