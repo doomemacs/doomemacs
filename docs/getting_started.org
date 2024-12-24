@@ -12,7 +12,7 @@ soon as possible. A more technical user manual is in the works for aspiring
 contributors who want a deeper understanding of how Doom Emacs works.
 
 #+begin_quote
-If you feel like we've missed something, [[https://discord.gg/qvGgnVx][join us on our Discord server]] and let
+If you feel like we've missed something, [[https://doomemacs.org/discord][join us on our Discord server]] and let
 us know!
 #+end_quote
 
@@ -671,14 +671,14 @@ things to be aware of while you convert your old config to Doom:
 ** TODO From vanilla Emacs
 #+begin_quote
 Have you migrated from your own config? Help me flesh out this section by
-letting me know what kind of hurdles you faced in doing so. You'll find me [[https://discord.gg/qvGgnVx][on
+letting me know what kind of hurdles you faced in doing so. You'll find me [[https://doomemacs.org/discord][on
 our Discord server]].
 #+end_quote
 
 ** TODO From Spacemacs
 #+begin_quote
 Have you migrated from Spacemacs? Help me flesh out this section by letting me
-know what kind of hurdles you faced in doing so. You'll find me [[https://discord.gg/qvGgnVx][on our Discord
+know what kind of hurdles you faced in doing so. You'll find me [[https://doomemacs.org/discord][on our Discord
 server]].
 #+end_quote
 
@@ -1528,7 +1528,7 @@ provide tools to make this easier. Here are a few things you can try, first:
   without Doom) and/or vanilla Doom (Doom without your private config). [[#testing-in-dooms-sandbox][Doom's
   sandbox can help you check]].
 
-+ Ask for help on [[https://discord.gg/qvGgnVx][our Discord server]]. It is the quickest way to get help,
++ Ask for help on [[https://doomemacs.org/discord][our Discord server]]. It is the quickest way to get help,
   sometimes straight from Doom's maintainer, who is very active there.
 
 If none of these things have helped you, then it's time to open a bug report.
@@ -1574,7 +1574,7 @@ You can also evaluate code with ~eval-expression~ (=M-;= or =SPC ;=).
 
 ** How to extract a backtrace from an error
 If you encounter an error while using Doom Emacs, you're probably about to head
-off and file a bug report (or request help on [[https://discord.gg/qvGgnVx][our Discord server]]). Before you
+off and file a bug report (or request help on [[https://doomemacs.org/discord][our Discord server]]). Before you
 do, please generate a backtrace to include with it.
 
 To do so you must enable ~debug-on-error~ then recreate the error.

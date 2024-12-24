@@ -7,7 +7,7 @@ shortage of things that need doing; bugs that need stomping, features that need
 implementing, and documentation that needs documenting. If Doom's been useful to
 you, convert some caffiene into code; it'd be a huge help!
 
-You are welcome to [[https://discord.gg/qvGgnVx][join us on our Discord server]], otherwise read on to learn how
+You are welcome to [[https://doomemacs.org/discord][join us on our Discord server]], otherwise read on to learn how
 to contribute to our fine corner of the interwebs.
 
 * Table of Contents :TOC_3:
@@ -155,7 +155,7 @@ public variables/functions (e.g. ~bookmark-default-file~ or
 * TODO Contributing documentation
 Doom Emacs' documentation is an ongoing effort. If you have suggestions,
 improvements, tutorials and/or articles to submit, don't hesitate to get in
-contact via our [[https://discord.gg/bcZ6P3y][Discord server]] or [[mailto:henrik@lissner.net][email]]. I appreciate any help I can get!
+contact via our [[https://doomemacs.org/discord][Discord server]] or [[mailto:henrik@lissner.net][email]]. I appreciate any help I can get!
 
 ** TODO Contributing to Doom's manual
 
