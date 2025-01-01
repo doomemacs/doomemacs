@@ -35,5 +35,6 @@
   :files (or "roles/"
              "tasks/main.yml"
              "tasks/main.yaml"
+             "ansible.cfg"
              "galaxy.yml"
              "galaxy.yaml"))
