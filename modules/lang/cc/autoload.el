@@ -1,7 +1,7 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.cl\\'" . opencl-mode))
+(add-to-list 'auto-mode-alist '("\\.cl\\'" . opencl-c-mode))
 
 ;; The plusses in c++-mode can be annoying to search for ivy/helm (which reads
 ;; queries as regexps), so we add these for convenience.
