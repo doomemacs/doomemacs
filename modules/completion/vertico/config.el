@@ -265,8 +265,23 @@ orderless."
 (use-package! embark
   :defer t
   :init
-  (setq which-key-use-C-h-commands nil
+  ;; Allow C-h to open Consult when calling which-key without a prefix.
+  (setq which-key-use-C-h-commands t
         prefix-help-command #'embark-prefix-help-command)
+  (defvar +vertico-which-key-current-keymap nil
+    "The current keymap being displayed by which-key.")
+  (defadvice! +vertico-which-key-update-current-keymap-a (_keymap-name keymap &rest args)
+    :before #'which-key--show-keymap
+    (setq +vertico-which-key-current-keymap keymap))
+  (defadvice! +vertico-which-key-consult-C-h-dispatch (oldfun)
+    :around #'which-key-C-h-dispatch
+    (setq this-command 'embark-prefix-help-command)
+    (cond ((not (which-key--popup-showing-p))
+           (call-interactively #'embark-prefix-help-command))
+          ((string-empty-p (which-key--current-key-string))
+           (embark-bindings-in-keymap +vertico-which-key-current-keymap))
+          (t (call-interactively #'embark-prefix-help-command))))
+
   (map! [remap describe-bindings] #'embark-bindings
         "C-;"               #'embark-act  ; to be moved to :config default if accepted
         (:map minibuffer-local-map
@@ -312,10 +327,10 @@ orderless."
   (map! (:map embark-file-map
          :desc "Open target with sudo"        "s"   #'doom/sudo-find-file
          (:when (modulep! :tools magit)
-           :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
+          :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
          (:when (modulep! :ui workspaces)
-           :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace
-           :desc "Open in new workspace"       "<tab>" #'+vertico/embark-open-in-new-workspace))))
+          :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace
+          :desc "Open in new workspace"       "<tab>" #'+vertico/embark-open-in-new-workspace))))
 
 
 (use-package! marginalia
@@ -378,13 +393,13 @@ orderless."
     "If MODE is enabled, highlight it as font-lock-constant-face."
     (let ((sym (intern cmd)))
       (with-current-buffer (nth 1 (buffer-list))
-      (if (or (eq sym major-mode)
-              (and
-               (memq sym minor-mode-list)
-               (boundp sym)
-               (symbol-value sym)))
-          (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
-        cmd))
+        (if (or (eq sym major-mode)
+                (and
+                 (memq sym minor-mode-list)
+                 (boundp sym)
+                 (symbol-value sym)))
+            (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
+      cmd))
 
   (add-to-list 'vertico-multiform-categories
                '(file
