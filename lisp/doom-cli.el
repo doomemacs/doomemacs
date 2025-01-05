@@ -2349,9 +2349,10 @@ The alist's CAR are lists of formatted switches plus their arguments, e.g.
           (let ((lead (current-indentation))
                 (buffer (current-buffer)))
             (while (not (eobp))
-              (let ((heading (string-trim (buffer-substring (point-at-bol) (point-at-eol))))
-                    (beg (point-at-bol 2))
-                    end)
+              (let ((heading (string-trim
+                              (buffer-substring (line-beginning-position)
+                                                (line-end-position))))
+                    (beg (line-beginning-position 2)))
                 (forward-line 1)
                 (while (and (not (eobp))
                             (/= (current-indentation) lead)

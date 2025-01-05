@@ -151,7 +151,7 @@ Once the eshell process is killed, the previous frame layout is restored."
   (cond ((modulep! :completion ivy)
          (require 'em-hist)
          (let* ((ivy-completion-beg (eshell-bol))
-                (ivy-completion-end (point-at-eol))
+                (ivy-completion-end (line-end-position))
                 (input (buffer-substring-no-properties
                         ivy-completion-beg
                         ivy-completion-end)))

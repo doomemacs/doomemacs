@@ -225,7 +225,7 @@ is tomorrow.  With two prefixes, select the deadline."
           (when (re-search-forward sec nil t)
             (let (org-M-RET-may-split-line
                   (lev (org-outline-level))
-                  (folded-p (invisible-p (point-at-eol)))
+                  (folded-p (invisible-p (line-end-position)))
                   (from (plist-get msg :from)))
               (when (consp (car from)) ; Occurs when using mu4e 1.8+.
                 (setq from (car from)))
