@@ -300,8 +300,8 @@ prepended, and the keyword is in front."
 (defun doom-cli-command-string (command)
   "Return a joined string representation of normalized COMMAND.
 
-COMMAND should either be a command list (e.g. '(doom foo bar)) or a `doom-cli'
-struct."
+COMMAND should either be a command list (e.g. \\='(doom foo bar)) or a
+`doom-cli' struct."
   (mapconcat (doom-partial #'format "%s")
              (doom-cli--command command)
              " "))
@@ -1293,7 +1293,7 @@ Arguments don't have to be switches either."
             (if-let* ((n (cdr (assoc arg omit))))
                 (if (= n -1)
                     (setq argv nil)
-                  (dotimes (i n) (pop argv)))
+                  (dotimes (_ n) (pop argv)))
               (push arg newargs)))))
       (doom-cli--exit (cons "$1" (or (nreverse newargs) argv))
                       context))))
@@ -1459,9 +1459,9 @@ COMMANDSPEC is the specification for the command that will trigger this CLI. It
 can either be a symbol or list of symbols (or nested symbols). Nested lists are
 treated as a list of aliases for the command. For example:
 
-  (defcli! doom () ...)              ; invoked on 'doom'
-  (defcli! (doom foo) () ...)        ; invoked on 'doom foo'
-  (defcli! (doom (foo bar)) () ...)  ; invoked on 'doom foo' or 'doom bar'
+  (defcli! doom () ...)              ; invoked on \\='doom'
+  (defcli! (doom foo) () ...)        ; invoked on \\='doom foo'
+  (defcli! (doom (foo bar)) () ...)  ; invoked on \\='doom foo' or \\='doom bar'
 
 COMMANDSPEC may be prefixed with any of these special keywords:
 
@@ -1472,12 +1472,13 @@ COMMANDSPEC may be prefixed with any of these special keywords:
   :after ...
     This command will run after the specified command(s).
   :version
-    A special handler, executed when 'X --version' is called. Define your own,
+    A special handler, executed when \\='X --version' is called. Define your own,
     if you don't want it spewing Doom's version information.
   :help COMMAND...
     A special handler, executed when help documentation is requested for a
-    command. E.g. 'doom help foo' or 'doom foo --help' will call (:help foo).
-    You can define your own global :help handler, or one for a specific command.
+    command. E.g. \\='doom help foo' or \\='doom foo --help' will call (:help
+    foo). You can define your own global :help handler, or one for a specific
+    command.
   :dump COMMAND...
     A special handler, executed when the __DOOMDUMP environment variable is set.
     You can define one for a specific COMMAND, or omit it to redefine the
@@ -1494,7 +1495,7 @@ COMMANDSPEC may be prefixed with any of these special keywords:
 To interpolate values into COMMANDSPEC (e.g. to dynamically generate commands),
 use the comma operator:
 
-  (let ((somevar 'bfg))
+  (let ((somevar \\='bfg))
     (defcli! (doom ,somevar) ...))
 
 DOCSTRING is a string description; its first line should be a short summary
@@ -1512,8 +1513,8 @@ sections are special:
     Use this to specify longer-form documentation for arguments. They are
     prepended to the documentation for commands. If pseudo CLIs specify their
     own ARGUMENTS sections, they are joined with that of the root command's CLI
-    as well. E.g. ':before doom sync's ARGUMENTS will be prepended to 'doom
-    sync's.
+    as well. E.g. \\=':before doom sync's ARGUMENTS will be prepended to
+    \\='doom sync's.
   OPTIONS:
     Use this to specify longer-form documentation for options. They are appended
     to the auto-generated section of the same name. Only the option needs to be
@@ -1522,14 +1523,14 @@ sections are special:
   EXAMPLES:
     To list example uses of the containing script. These are appended to
     SYNOPSIS in generated manpages, but treated as a normal section otherwise
-    (i.e. appended to 'doom help's output).
+    (i.e. appended to \\='doom help's output).
 
 DOCSTRING may use any of these format specifications:
 
-  %p  The running script's prefix. E.g. for 'doom ci deploy-hooks' the
-      prefix is 'doom'.
-  %c  The parent command minus the prefix. E.g. for 'doom ci deploy-hooks',
-      the command is 'ci deploy-hooks'.
+  %p  The running script's prefix. E.g. for \\='doom ci deploy-hooks' the prefix
+      is \\='doom'.
+  %c  The parent command minus the prefix. E.g. for \\='doom ci deploy-hooks',
+      the command is \\='ci deploy-hooks'.
 
 ARGLIST is a specification for options and arguments that is accepted by this
 command. Arguments are represented by either a symbol or a cons cell where
@@ -1598,8 +1599,8 @@ ARGLIST may be segmented with the following auxiliary keywords:
   &context ARG
     The active `doom-cli-context' struct is bound to ARG.
   &flags OPTION...
-    An option '--foo' declared after &flags will implicitly include a
-    '--no-foo', and will appear as \"--[no-]foo\" in 'doom help' docs.
+    An option --foo declared after &flags will implicitly include a --no-foo,
+    and will appear as \"--[no-]foo\" in \\='doom help' docs.
   &multiple OPTION...
     Options specified after &multiple may be passed to the command multiple
     times. Its symbol will be bound to a list of cons cells containing (FLAG .
@@ -1643,7 +1644,7 @@ properties:
     define (doom foo bar), two \"partial\" commands are implicitly created:
     \"doom\" and \"doom foo\". When called directly, partials will list its
     subcommands and complain that a subcommand is rqeuired, rather than display
-    an 'unknown command' error.
+    an \\='unknown command' error.
   :prefix (STR...)
     A command path to prepend to the command name. This is more useful as part
     of `defcli-group!'s inheritance.
@@ -1654,7 +1655,7 @@ ignored.
 \(fn COMMANDSPEC ARGLIST [DOCSTRING] &rest BODY...)"
   (declare (indent 2) (doc-string 3))
   (let ((docstring (if (stringp (car body)) (pop body)))
-        (plist (cl-loop for (key val) on body by #'cddr
+        (plist (cl-loop for (key _) on body by #'cddr
                         while (keywordp key)
                         collect (pop body)
                         collect (pop body)))
@@ -1842,9 +1843,11 @@ example:
   (exit! 42)
     Abort to shell with an explicit exit code.
   (exit! context)
-    Restarts the current session, but with context (a `doom-cli-context' struct).
+    Restarts the current session, but with context (a `doom-cli-context'
+    struct).
   (exit! :pager [FILES...])
-    Invoke $DOOMPAGER (or less) on the output of this session. If ARGS are given, launch the pager on those
+    Invoke $DOOMPAGER (or less) on the output of this session. If ARGS are
+    given, launch the pager on those
   (exit! :pager? [FILES...])
     Same as :pager, but does so only if output is longer than the terminal is
     tall.
@@ -1945,7 +1948,7 @@ errors to `doom-cli-error-file')."
               (doom-cli-call `(:help "--synopsis" "--postamble" ,@(cdr (doom-cli--command context))) context e)
               5)
              (doom-cli-invalid-option-error
-              (pcase-let ((`(,types ,option ,value ,errors) (cdr e)))
+              (pcase-let ((`(,_types ,option ,value ,errors) (cdr e)))
                 (print! (red "Error: %s received invalid value %S")
                         (string-join (doom-cli-option-switches option) "/")
                         value)
@@ -2194,7 +2197,7 @@ substring is edited more than once."
                       80 (1+ (length (concat prefix command)))))))))
 
 ;;; Help: arguments
-(defun doom-cli-help--arguments (cli &optional all?)
+(defun doom-cli-help--arguments (cli &optional _all?)
   (doom-cli-help--parse-docs (doom-cli-find cli t) "ARGUMENTS"))
 
 (defun doom-cli-help--render-arguments (arguments)
@@ -2257,7 +2260,7 @@ substring is edited more than once."
   "Return an alist summarizing CLI's options.
 
 The alist's CAR are lists of formatted switches plus their arguments, e.g.
-'((\"`--foo'\" \"`BAR'\") ...). Their CDR is their formatted documentation."
+\\='((\"`--foo'\" \"`BAR'\") ...). Their CDR is their formatted documentation."
   (let* ((docs (doom-cli-help--parse-docs (doom-cli-find cli t) "OPTIONS"))
          (docs (mapcar (fn! (cons (split-string (car %) ", ")
                                   (cdr %)))
@@ -2298,7 +2301,7 @@ The alist's CAR are lists of formatted switches plus their arguments, e.g.
     `((local  . ,(nreverse local-options))
       (global . ,(nreverse global-options)))))
 
-(defun doom-cli-help--render-options (options &optional cli)
+(defun doom-cli-help--render-options (options &optional _cli)
   (let ((doom-print-indent 0)
         (local  (assq 'local options))
         (global (assq 'global options)))
