@@ -2,9 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(when (< emacs-major-version 30)
-  (require 'doom-compat))
-
 ;;; Custom error types
 (define-error 'doom-error "An unexpected Doom error")
 (dolist (type '((doom-font-error "Could not find a font on your system" doom-error)
