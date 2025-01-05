@@ -68,7 +68,7 @@ See `+emacs-lisp-non-package-mode' for details.")
     ;; As of Emacs 28+, `emacs-lisp-mode' uses a shorter label in the mode-line
     ;; ("ELisp/X", where X = l or d, depending on `lexical-binding'). In <=27,
     ;; it uses "Emacs-Lisp". The former is more useful, so I backport it:
-    (setq-hook! 'emacs-lisp-mode-hook
+    (setq-hook! 'emacs-lisp-mode-local-vars-hook
       mode-name `("ELisp"
                   (lexical-binding (:propertize "/l"
                                     help-echo "Using lexical-binding mode")
