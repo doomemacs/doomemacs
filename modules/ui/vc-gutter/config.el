@@ -128,7 +128,6 @@ Respects `diff-hl-disable-on-remote'."
                        (diff-hl-update-once))))))
   ;; UX: Update diff-hl when magit alters git state.
   (when (modulep! :tools magit)
-    (add-hook 'magit-pre-refresh-hook  #'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
   ;; FIX: The revert popup consumes 50% of the frame, whether or not you're
