@@ -14,7 +14,8 @@
 (defvar doom-before-sync-hook ()
   "Hooks run before 'doom sync' synchronizes the user's config with Doom.")
 
-(defvar doom-cli-sync-info-file (file-name-concat doom-profile-data-dir "sync"))
+;; DEPRECATED: Will be removed once `doom-profile' is a struct
+(defvar doom-sync-info-file (file-name-concat doom-profile-data-dir "sync"))
 
 
 ;;
@@ -74,7 +75,7 @@ OPTIONS:
         ;; necessarily back/forward compatible across major versions, and many
         ;; packages bake in hardcoded data at compile-time.
         (pcase-let ((`(,old-version . ,hash)
-                     (doom-file-read doom-cli-sync-info-file :by 'read :noerror t))
+                     (doom-file-read doom-sync-info-file :by 'read :noerror t))
                     (to-rebuild nil))
           (when (and old-version (not (equal old-version emacs-version)))
             (print! (warn "Emacs version has changed since last sync (from %s to %s)") old-version emacs-version)
@@ -101,8 +102,8 @@ OPTIONS:
         (when (doom-profile-generate)
           (print! (item "Restart Emacs for changes to take effect"))
           (run-hooks 'doom-after-sync-hook))
-        (when (or rebuild? (not (file-exists-p doom-cli-sync-info-file)))
-          (with-temp-file doom-cli-sync-info-file
+        (when (or rebuild? (not (file-exists-p doom-sync-info-file)))
+          (with-temp-file doom-sync-info-file
             (prin1 (cons emacs-version (doom-sync--system-hash))
                    (current-buffer))))
         t)
