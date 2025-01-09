@@ -247,7 +247,7 @@ tell you about it. Very annoying. This prevents that."
 ;;; Extra file extensions to support
 
 (add-to-list 'auto-mode-alist '("/LICENSE\\'" . text-mode))
-(add-to-list 'auto-mode-alist '("rc\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("rc\\'" . conf-mode) 'append)
 
 
 ;;
