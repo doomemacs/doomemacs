@@ -198,13 +198,10 @@
     (setq abbreviated-home-dir nil)))
 
 
-;;; Backport niceties from later versions of Emacs:
-(when (< emacs-major-version 30)
-  (require 'doom-compat))
-
-
 ;;; Load Doom's stdlib
 (add-to-list 'load-path (file-name-directory load-file-name))
+(when (< emacs-major-version 30)
+  (require 'doom-compat)) ; backport niceties from later versions of Emacs
 (require 'doom-lib)
 
 
