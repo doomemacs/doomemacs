@@ -91,10 +91,16 @@ run.")
 ;;; Helpers
 
 (defun doom-profiles-bootloadable-p ()
-  "Return non-nil if `doom-emacs-dir' can be a bootloader."
+  "Return non-nil if `doom-emacs-dir' can be a bootloader.
+
+This means it must be deployed to $XDG_CONFIG_HOME/emacs or $HOME/.emacs.d. Doom
+cannot bootload from an arbitrary location."
   (with-memoization (get 'doom 'bootloader)
-    (or (file-equal-p doom-emacs-dir "~/.config/emacs")
-        (file-equal-p doom-emacs-dir "~/.emacs.d"))))
+    (or (file-equal-p doom-emacs-dir "~/.emacs.d")
+        (file-equal-p
+         doom-emacs-dir (expand-file-name
+                         "emacs/" (or (getenv "XDG_CONFIG_HOME")
+                                      "~/.config"))))))
 
 (defun doom-profiles-read (&rest paths)
   "TODO"
