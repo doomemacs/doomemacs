@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "b7ab3840dbfc1da5f9ad56542fc94e3dab4be5f1")
+(package! evil :pin "6bed0e58dbafd75755c223a5c07aacd479386568")
 (package! evil-args :pin "a8151556f63c9d45d0c44c8a7ef9e5a542f3cdc7")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "3081d37811b6a3dfaaf01d578c7ab7a746c6064d")
@@ -10,9 +10,9 @@
   :pin "819f1ee1cf3f69a1ae920e6004f2c0baeebbe077")
 (package! evil-exchange :pin "5f0a2d41434c17c6fb02e4f744043775de1c63a2")
 (package! evil-indent-plus :pin "f392696e4813f1d3a92c7eeed333248914ba6dae")
-(package! evil-lion :pin "1e838a53b8f18a3c8bdf3e952186abc2ee9cb98e")
+(package! evil-lion :pin "5a0bca151466960e090d1803c4c5ded88875f90a")
 (package! evil-nerd-commenter :pin "ae52c5070a48793e2c24474c9c8dbf20175d18a0")
-(package! evil-numbers :pin "c7899894515d6be40dfcd589fb27c1801c5b199c")
+(package! evil-numbers :pin "f4bbb729eebeef26966fae17bd414a7b49f82275")
 (package! evil-snipe :pin "c2108d3932fcd2f75ac3e48250d6badd668f5b4f")
 (package! evil-surround :pin "da05c60b0621cf33161bb4335153f75ff5c29d91")
 (package! evil-textobj-anyblock
@@ -35,4 +35,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "01d791dd63c723c82d5d076570c015e77d3b5680"))
+  (package! evil-collection :pin "58766492f7dc830c010d5a4a095cf23d6eb0aefc"))

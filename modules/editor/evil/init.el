@@ -104,6 +104,7 @@ variable for an explanation of the defaults (in comments). See
       calc
       calendar
       cider
+      citre
       cmake-mode
       color-rg
       comint
@@ -167,6 +168,7 @@ variable for an explanation of the defaults (in comments). See
       gited
       gnus
       go-mode
+      gptel
       grep
       guix
       hackernews
@@ -226,6 +228,7 @@ variable for an explanation of the defaults (in comments). See
       proced
       prodigy
       profiler
+      p-search
       python
       quickrun
       racer
@@ -249,6 +252,7 @@ variable for an explanation of the defaults (in comments). See
       simple-mpc
       slime
       sly
+      smerge-mode
       snake
       so-long
       speedbar
