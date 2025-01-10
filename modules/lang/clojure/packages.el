@@ -14,12 +14,12 @@
 (package! parseedn :pin "3407e4530a367b6c2b857dae261cdbb67a440aaa")
 
 ;;; Core packages
-(package! clojure-mode :pin "59888c84b61081e9b0085e388f55132925a66e7a")
+(package! clojure-mode :pin "eabe29b076fff19db552d36d4babaa36ecf0b704")
 (package! clj-refactor :pin "dc1bbc8cdaa723bdbb6669ea7d280625c370755d")
-(package! cider :pin "c228dec27df6b2c68262f17158208fe699e1ce02")
+(package! cider :pin "f00e83d338434c92cc21663a1818139f0847b707")
 (when (modulep! :checkers syntax -flymake)
   (package! flycheck-clj-kondo :pin "e38c67ba9db1ea1cbe1b61ab39b506c05efdcdbf"))
 (package! jet :pin "c9a92675efd802f37df5e3eab7858dbbeced6ea4")
 (package! neil
   :recipe (:host github :repo "babashka/neil" :files ("*.el"))
-  :pin "78ffab1868dc04b2eec5d7195d2d8f92c416e528")
+  :pin "0b7373dd1b5a0dc7f8aff83b8e65d75d7d5e23bc")

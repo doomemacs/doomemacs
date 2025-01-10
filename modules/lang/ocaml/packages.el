@@ -6,14 +6,14 @@
 (package! ocp-indent :pin "f38578c25d62701847b1bcb45099a9020e2032fe")
 (package! dune
   :recipe (:host github :repo "ocaml/dune" :files ("editor-integration/emacs/*.el"))
-  :pin "5ac095c7c0c13ba5bf2de1becbe512d893c4e72b")
+  :pin "098117d2290f144adc16840cf8baa6041ef0de5c")
 
 (unless (modulep! +lsp)
-  (package! merlin :pin "a36f42a5b181d0c9cc84174e8eb241b11eeabc0f")
+  (package! merlin :pin "3a806ef87fb4b5c360261e3d12accc67e2d5de5b")
   (package! merlin-eldoc :pin "bf8edc63d85b35e4def352fa7ce4ea39f43e1fd8")
-  (package! merlin-company :pin "a36f42a5b181d0c9cc84174e8eb241b11eeabc0f")
+  (package! merlin-company :pin "3a806ef87fb4b5c360261e3d12accc67e2d5de5b")
   (when (modulep! :checkers syntax -flymake)
     (package! flycheck-ocaml :pin "77f8ddbd9bfc3a11957ac7ec7e45d5fa9179b192")))
 
 (when (modulep! :tools eval)
-  (package! utop :pin "b490baca2192312acc3c3bfe4902a43c115f93a6"))
+  (package! utop :pin "3322adaa5267b1188d14b15e85c802c21fe061cb"))

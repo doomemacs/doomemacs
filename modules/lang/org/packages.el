@@ -31,7 +31,7 @@
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                          "(provide 'org-version)\n")))))
-  :pin "6a5d0ed342efeb3a4c402672fbe9bfebd80af8b6")  ; release_9.7.11
+  :pin "5a4686915e568ace469f490c0606d2a016c1101c")  ; release_9.7.19
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
@@ -77,7 +77,7 @@
   (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "e966c5d3d6ac147992832af69135655290072042"))
+  (package! jupyter :pin "db8a9e233a010a61063f34220821ec76157a2d84"))
 (when (modulep! +journal)
   (package! org-journal :pin "17b34ce8df9649a73b715c13698220bde1628668"))
 (when (modulep! +noter)
@@ -93,11 +93,11 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
-  (package! org-re-reveal :pin "91610ba9b010b05c52ae7ab77a7890851222db06")
+  (package! org-re-reveal :pin "ab1422c163df5bb241ffc8657c02ea76af241bbc")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "0d02d8a303a39b02c919d86c94ec477d1e1b107d"))
+    :pin "e15cf92ccddfefe5355203914d1dd728cdf560e0"))
 (cond
  ((modulep! +roam)
   (package! org-roam
@@ -108,7 +108,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "2a630476b3d49d7106f582e7f62b515c62430714")
+    :pin "cad3518788991623aa5621341471aef67108937d")
   (when (< emacs-major-version 29)
     ;; HACK: Needed until org-roam/org-roam#2485 is resolved.
     (package! emacsql :pin "491105a01f58bf0b346cbc0254766c6800b229a2"))))

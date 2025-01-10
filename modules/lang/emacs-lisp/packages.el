@@ -8,7 +8,7 @@
 
 ;; Tools
 (package! helpful :pin "4ba24cac9fb14d5fdc32582cd947572040e82b2c")
-(package! macrostep :pin "419873665f3d0b3d5779aa119b58a3daa96e3326")
+(package! macrostep :pin "44faf4f7bf71df0c52592d4ca0f1dee0847b50af")
 (package! overseer :pin "7fdcf1a6fba6b1569a09c1666b4e51bcde266ed9")
 (package! elisp-def :pin "1ad4baccbf3d0d13e7607d332ae6bc60a5dd7360")
 (package! elisp-demos :pin "1a108d1c5011f9ced58be2ca98bea1fbd4130a2f")

@@ -10,7 +10,7 @@
 (package! npm-mode :pin "3ee7c0bad5b7a041d4739ef3aaa06a3dc764e5eb")
 
 ;; Eval
-(package! nodejs-repl :pin "03d0b64768b40b71ae54de1b50eb58719e615746")
+(package! nodejs-repl :pin "130d49b073a50b7aad472ae8cd05848a9840e480")
 (package! skewer-mode :pin "e5bed351939c92a1f788f78398583c2f83f1bb3c")
 
 ;; Programming environment
