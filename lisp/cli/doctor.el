@@ -171,7 +171,7 @@ in."
   (print! (start "Checking for common environmental issues..."))
   (print-group!
     (when (or (string-match-p "/fish$" shell-file-name)
-              (string-match-p "/nu$" shell-file-name))
+              (string-match-p "/nu\\(?:\\.exe\\)?$" shell-file-name))
       (print! (warn "Detected a non-POSIX $SHELL"))
       (explain! "Non-POSIX shells (particularly Fish and Nushell) can cause unpredictable issues "
                 "with any Emacs utilities that spawn child processes from shell commands (like "
