@@ -39,42 +39,6 @@
         "{" #'ruby-toggle-block))
 
 
-(use-package! robe
-  :defer t
-  :init
-  (add-hook! 'ruby-mode-hook
-    (defun +ruby-init-robe-mode-maybe-h ()
-      "Start `robe-mode' if `lsp-mode' isn't active."
-      (or (bound-and-true-p lsp-mode)
-          (bound-and-true-p lsp--buffer-deferred)
-          (robe-mode +1))))
-  :config
-  (set-repl-handler! 'ruby-mode #'+ruby-robe-repl-handler)
-  (set-company-backend! 'ruby-mode 'company-robe 'company-dabbrev-code)
-  (set-lookup-handlers! 'ruby-mode
-    :definition #'robe-jump
-    :documentation #'robe-doc)
-  (when (boundp 'read-process-output-max)
-    ;; Robe can over saturate IPC, making interacting with it slow/clobbering
-    ;; the GC, so increase the amount of data Emacs reads from it at a time.
-    (setq-hook! '(robe-mode-hook inf-ruby-mode-hook)
-      read-process-output-max (* 1024 1024)))
-  (when (modulep! :editor evil)
-    (add-hook 'robe-mode-hook #'evil-normalize-keymaps))
-  (map! :localleader
-        :map robe-mode-map
-        "'"  #'robe-start
-        "h"  #'robe-doc
-        "R"  #'robe-rails-refresh
-        :prefix "s"
-        "d"  #'ruby-send-definition
-        "D"  #'ruby-send-definition-and-go
-        "r"  #'ruby-send-region
-        "R"  #'ruby-send-region-and-go
-        "i"  #'ruby-switch-to-inf))
-
-
-;; NOTE Must be loaded before `robe-mode'
 (use-package! yard-mode
   :hook ruby-mode)
 
