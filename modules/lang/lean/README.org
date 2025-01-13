@@ -14,7 +14,6 @@ This module adds support for the [[https://leanprover.github.io/about/][Lean pro
 
 ** Packages
 - [[doom-package:lean-mode]]
-- [[doom-package:company-lean]] if [[doom-module::completion company]]
 
 ** TODO Hacks
 #+begin_quote
