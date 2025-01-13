@@ -203,8 +203,8 @@ kind!
 + I :heart: pull requests and bug reports (see the [Contributing
   Guidelines][contribute])!
 + Don't hesitate to [tell me my Elisp-fu
-  sucks](https://github.com/doomemacs/doomemacs/issues/new), but please tell me
-  why.
+  sucks](https://github.com/doomemacs/doomemacs/issues/new/choose), but please
+  tell me why.
 + Hop on [our Discord server][Discord] and say hi! Help others, hang out or talk
   to me about Emacs, gamedev, programming, physics, pixel art, anime, gaming --
   anything you like. Nourish this lonely soul.
