@@ -219,7 +219,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                 (run-hook-with-args-until-failure 'kill-buffer-query-functions))
            (let ((visible-p (delq (selected-window) (get-buffer-window-list buf nil t))))
              (unless visible-p
-               (when (and (buffer-modified-p buf)
+               (when (and (buffer-file-name (buffer-base-buffer))
+                          (buffer-modified-p buf)
                           (not (y-or-n-p
                                 (format "Buffer %s is modified; kill anyway?"
                                         buf))))
