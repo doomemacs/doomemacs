@@ -105,9 +105,10 @@ and return the value found in PLACE instead."
                  ,(funcall setter val)
                  ,val))))))
 
-;; Introduced in emacs-mirror/emacs@f117b5df4dc6
-(unless (fboundp 'bol) (defalias 'bol #'line-beginning-position))
-(unless (fboundp 'eol) (defalias 'eol #'line-end-position))
+;; Introduced in emacs-mirror/emacs@f117b5df4dc6, renamed to pos-* in
+;; emacs-mirror/emacs@2614e5321639
+(unless (fboundp 'pos-bol) (defalias 'pos-bol #'line-beginning-position))
+(unless (fboundp 'pos-eol) (defalias 'pos-eol #'line-end-position))
 
 ;; Introduced in Emacs 29+
 (unless (boundp 'major-mode-remap-alist)

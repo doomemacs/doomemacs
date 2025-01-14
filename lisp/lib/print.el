@@ -344,7 +344,7 @@ based on the print level of the message. For example:
       (letf! (defun current-fill-column ()
                (let ((target (funcall current-fill-column)))
                  (save-excursion
-                   (goto-char (line-beginning-position))
+                   (goto-char (pos-bol))
                    (let ((n 0)
                          (c 0))
                      (while (and (not (eolp)) (<= n target))
