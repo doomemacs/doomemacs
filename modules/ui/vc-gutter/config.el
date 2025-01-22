@@ -156,7 +156,7 @@ Respects `diff-hl-disable-on-remote'."
     "Suppresses unexpected cursor movement by `diff-hl-revert-hunk'."
     :around #'diff-hl-revert-hunk
     (let ((pt (point)))
-      (prog1 (apply fn args)
+      (unwind-protect (apply fn args)
         (goto-char pt))))
 
   ;; FIX: `global-diff-hl-mode' enables `diff-hl-mode' *everywhere*, which calls
