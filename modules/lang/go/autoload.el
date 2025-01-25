@@ -82,3 +82,34 @@
   (if (use-region-p)
       (go-play-region beg end)
     (go-play-buffer)))
+
+;;
+;; Go generate
+
+(defun +go--generate (dir args)
+  (let ((cd-cmd (concat "cd " dir))
+        (generate-cmd (concat "go generate " args)))
+    (+go--spawn (concat cd-cmd " && " generate-cmd))))
+
+;;;###autoload
+(defun +go/generate-file ()
+  "Run go generate for the current file only."
+  (interactive)
+  (if buffer-file-name
+      (+go--generate default-directory (file-name-nondirectory buffer-file-name))
+    (error "Couldn't get filename of curent buffer")))
+
+;;;###autoload
+(defun +go/generate-dir ()
+  "Run go generate for the current directory recursively."
+  (interactive)
+  (+go--generate default-directory "./..."))
+
+;;;###autoload
+(defun +go/generate-all ()
+  "Run go generate for the entire project."
+  (interactive)
+  ;; interactively choose project root if we cannot find it
+  (if-let ((project (project-current t nil)))
+      (+go--generate (file-truename (project-root project)) "./...")
+    (error "Couldn't get current project.")))

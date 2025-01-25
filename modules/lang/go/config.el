@@ -41,7 +41,11 @@
           "e" #'go-gen-test-exported
           (:prefix ("b" . "bench")
             "s" #'+go/bench-single
-            "a" #'+go/bench-all))))
+            "a" #'+go/bench-all))
+        (:prefix ("g" . "generate")
+          "f" #'+go/generate-file
+          "d" #'+go/generate-dir
+          "a" #'+go/generate-all)))
 
 
 (use-package! gorepl-mode
