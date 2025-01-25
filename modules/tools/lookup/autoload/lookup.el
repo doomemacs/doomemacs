@@ -223,14 +223,18 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
       (+lookup--xref-show 'xref-backend-references identifier #'xref--show-xrefs)
     (cl-no-applicable-method nil)))
 
-(defun +lookup-dumb-jump-backend-fn (_identifier)
+(defun +lookup-dumb-jump-backend-fn (identifier)
   "Look up the symbol at point (or selection) with `dumb-jump', which conducts a
 project search with ag, rg, pt, or git-grep, combined with extra heuristics to
 reduce false positives.
 
 This backend prefers \"just working\" over accuracy."
   (and (require 'dumb-jump nil t)
-       (dumb-jump-go)))
+       ;; See: https://github.com/jacktasia/dumb-jump/issues/353
+       ;; This is a workaround for a workaround to actually both fall back to dumb-jump and use the xref integration for it.
+       (let ((xref-backend-functions '(dumb-jump-xref-activate))
+             (stop-infinite-dumb-jump-recursion t))
+         (+lookup-xref-definitions-backend-fn identifier))))
 
 (defun +lookup-project-search-backend-fn (identifier)
   "Conducts a simple project text search for IDENTIFIER.
