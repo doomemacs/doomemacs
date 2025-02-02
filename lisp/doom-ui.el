@@ -624,7 +624,12 @@ them as such. Also intended as a helper for `doom--theme-is-colorscheme-p'."
       (with-temp-buffer
         (let ((enable-theme-functions
                (remq 'doom-enable-theme-h enable-theme-functions)))
-          (doom-run-hooks 'doom-load-theme-hook))))))
+          (doom-run-hooks 'doom-load-theme-hook))
+        ;; HACK: If the user uses `load-theme' in their $DOOMDIR instead of
+        ;;   setting `doom-theme', override the latter, because they shouldn't
+        ;;   be using both.
+        (unless (memq theme (ensure-list doom-theme))
+          (setq-default doom-theme theme))))))
 
 (add-hook! 'after-make-frame-functions :depth -90
   (defun doom-fix-frame-color-parameters-h (f)
