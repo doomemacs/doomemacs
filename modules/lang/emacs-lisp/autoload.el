@@ -32,7 +32,9 @@ to a pop up buffer."
 (defun +emacs-lisp-outline-level ()
   "Return outline level for comment at point.
 Intended to replace `lisp-outline-level'."
-  (- (match-end 1) (match-beginning 1)))
+  (if (match-beginning 1)
+      (- (match-end 1) (match-beginning 1))
+    0))
 
 
 ;;
