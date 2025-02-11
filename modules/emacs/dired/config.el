@@ -106,14 +106,6 @@ Fixes #3939: unsortable dired entries on Windows."
                 dirvish-header-line-height height)))))
 
   (when (modulep! :ui vc-gutter)
-    ;; HACK: Dirvish sets up the fringes for vc-state late in the startup
-    ;;   process, causing this jarring pop-in effect. This advice sets them up
-    ;;   sooner to avoid this.
-    ;; REVIEW: Upstream this later.
-    (defadvice! +dired--init-fringes-a (_dir _buffer setup)
-      :before #'dirvish-data-for-dir
-      (when (and setup (memq 'vc-state dirvish-attributes))
-        (set-window-fringes nil 5 1)))
     ;; The vc-gutter module uses `diff-hl-dired-mode' + `diff-hl-margin-mode'
     ;; for diffs in dirvish buffers. `vc-state' uses overlays, so they won't be
     ;; visible in the terminal.
@@ -134,29 +126,8 @@ Fixes #3939: unsortable dired entries on Windows."
     (let ((dirvish-reuse-session t))
       (apply fn args)))
 
-  ;; HACK: Makes `dirvish-hide-details' and `dirvish-hide-cursor' accept a list
-  ;;   of symbols to instruct Dirvish in what contexts they should be enabled.
-  ;;   The accepted values are:
-  ;;   - `dired': when opening a directory directly or w/o Dirvish's full UI.
-  ;;   - `dirvish': when opening full-frame Dirvish.
-  ;;   - `dirvish-side': when opening Dirvish in the sidebar.
-  ;; REVIEW: Upstream this behavior later.
   (setq dirvish-hide-details '(dirvish dirvish-side)
         dirvish-hide-cursor '(dirvish dirvish-side))
-  (defadvice! +dired--hide-details-maybe-a (fn &rest args)
-    :around #'dirvish-init-dired-buffer
-    (letf! (defun enabled? (val)
-             (if (listp val)
-                 (cond ((if dirvish--this (memq 'side (dv-type dirvish--this)))
-                        (memq 'dirvish-side val))
-                       ((or (null dirvish--this)
-                            (null (car (dv-layout dirvish--this))))
-                        (memq 'dired val))
-                       ((memq 'dirvish val)))
-               val))
-      (let ((dirvish-hide-details (enabled? dirvish-hide-details)))
-        (setq-local dirvish-hide-cursor (and (enabled? dirvish-hide-cursor) t))
-        (apply fn args))))
 
   (when (modulep! :ui tabs)
     (after! centaur-tabs
@@ -201,20 +172,6 @@ Fixes #3939: unsortable dired entries on Windows."
          :n "S"   #'dirvish-relative-symlink
          :n "h"   #'dirvish-hardlink))
 
-  ;; HACK: Modifies Dirvish to fall back to default `mode-line-format' if
-  ;;   `dirvish-use-mode-line' is nil, instead of when
-  ;;   `dirvish-mode-line-format' is nil (since the latter *still* prepends to
-  ;;   the default `mode-line-format'), and is overall less intuitive.
-  ;; REVIEW: Upstream this behavior later.
-  (defadvice! +dired--dirvish-use-modeline-a (fn &rest args)
-    "Change how `dirvish-use-mode-line' and `dirvish-mode-line-format' operate."
-    :around #'dirvish--setup-mode-line
-    (when dirvish-use-mode-line
-      (let ((dirvish--mode-line-fmt
-             (if dirvish-mode-line-format
-                 dirvish--mode-line-fmt)))
-        (apply fn args))))
-
   ;; HACK: Kill Dirvish session before switching projects/workspaces, otherwise
   ;;   it errors out on trying to delete/change dedicated windows.
   (add-hook! '(persp-before-kill-functions
@@ -228,35 +185,7 @@ Fixes #3939: unsortable dired entries on Windows."
                               return it)))
         (let (dirvish-reuse-session)
           (with-selected-window (dv-root-window dv)
-            (dirvish-quit))))))
-
-  ;; HACK: If a directory has a .dir-locals.el, its settings could
-  ;;   interfere/crash Dirvish trying to preview it.
-  ;; REVIEW: Upstream this later.
-  (defadvice! +dired--ignore-local-vars-for-dir-previews-a (fn &rest args)
-    :around #'dirvish-default-dp
-    (let ((result (apply fn args)))
-      (if (and (file-directory-p (car args))
-               (eq (car-safe result) 'dired))
-          `(dired . (,@(butlast (cdr result))
-                     ,(format "(let %s %s)"
-                              (prin1-to-string
-                               (mapcar (lambda (env) `(,(car env) ,(cdr env)))
-                                       (remove '(inhibit-message . t) dirvish-preview-environment)))
-                              (car (last (cdr result))))))
-        result)))
-
-  ;; HACK: Dirvish will complain that pdf-tools is required to preview PDFs,
-  ;;   even if the package is installed, so I advise it to try autoloading it
-  ;;   before complaining, otherwise complain if epdfinfo hasn't been built yet.
-  ;; REVIEW: Upstream this later.
-  (defadvice! +dired--autoload-pdf-tools-a (fn &rest args)
-    :around #'dirvish-pdf-dp
-    (when (equal (nth 1 args) "pdf")
-      (if (and (require 'pdf-tools nil t)
-               (file-exists-p pdf-info-epdfinfo-program))
-          (apply fn args)
-        '(info . "`epdfinfo' program required to preview pdfs; run `M-x pdf-tools-install'")))))
+            (dirvish-quit)))))))
 
 
 (use-package! diredfl
