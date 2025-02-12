@@ -88,15 +88,14 @@ orderless."
 
   (add-to-list
    'completion-styles-alist
-   '(+vertico-basic-remote
-     +vertico-basic-remote-try-completion
+   '(+vertico-basic-remote-try-completion
      +vertico-basic-remote-all-completions
      "Use basic completion on remote files only"))
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         ;; note that despite override in the name orderless can still be used in
         ;; find-file etc.
-        completion-category-overrides '((file (styles +vertico-basic-remote orderless partial-completion)))
+        completion-category-overrides '((file (styles orderless partial-completion)))
         orderless-component-separator #'orderless-escapable-split-on-space)
   ;; ...otherwise find-file gets different highlighting than other commands
   (set-face-attribute 'completions-first-difference nil :inherit nil))
@@ -377,13 +376,13 @@ orderless."
     "If MODE is enabled, highlight it as font-lock-constant-face."
     (let ((sym (intern cmd)))
       (with-current-buffer (nth 1 (buffer-list))
-      (if (or (eq sym major-mode)
-              (and
-               (memq sym minor-mode-list)
-               (boundp sym)
-               (symbol-value sym)))
-          (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
-        cmd))
+        (if (or (eq sym major-mode)
+                (and
+                 (memq sym minor-mode-list)
+                 (boundp sym)
+                 (symbol-value sym)))
+            (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
+      cmd))
 
   (add-to-list 'vertico-multiform-categories
                '(file
