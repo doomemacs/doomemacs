@@ -1,7 +1,7 @@
 ;;; lang/lean4/config.el -*- lexical-binding: t; -*-
 
 (after! lean4-mode
-  (sp-with-modes 'lean-mode
+  (sp-with-modes 'lean4-mode
     (sp-local-pair "/-" "-/")
     (sp-local-pair "`" "`")
     (sp-local-pair "{" "}")

@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/lean4/packages.el
 
-(package! lean4-mode :pin "d1c936409ade7d93e67107243cbc0aa55cda7fd5"
+(package! lean4-mode :pin "76895d8939111654a472cfc617cfd43fbf5f1eb6"
 	:recipe (:host github
 		:repo "leanprover/lean4-mode"
 		:files ("*.el" "data")))
