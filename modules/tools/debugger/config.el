@@ -25,7 +25,7 @@
     ((:lang php +lsp)        :after php-mode    :require dap-php)
     ((:lang python +lsp)     :after python      :require dap-python)
     ((:lang ruby +lsp)       :after ruby-mode   :require dap-ruby)
-    ((:lang rust +lsp)       :after rustic-mode :require (dap-lldb dap-cpptools))
+    ((:lang rust +lsp)       :after rustic      :require (dap-lldb dap-cpptools))
     ((:lang javascript +lsp)
      :after (js2-mode typescript-mode)
      :require (dap-node dap-chrome dap-firefox ,@(if (featurep :system 'windows) '(dap-edge)))))
