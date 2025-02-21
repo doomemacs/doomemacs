@@ -48,22 +48,11 @@
 (use-package! kkp
   :hook (after-init . global-kkp-mode)
   :config
-  ;; HACK: Emacs falls back to RET, TAB, and/or DEL if [return], [tab], and/or
-  ;;   [backspace] are unbound, but this isn't the case for all input events,
-  ;;   like these, which don't fall back to M-RET, M-TAB, etc. Therefore making
-  ;;   these keybinds inaccessible in KKP supported terminals.
-  ;; REVIEW: See benjaminor/kkp#13.
-  (define-key! local-function-key-map
-    [M-return] (kbd "M-RET")
-    [M-tab] (kbd "M-TAB")
-    [M-backspace] (kbd "M-DEL")
-    [M-delete] (kbd "M-DEL"))
-
   ;; HACK: Allow C-i to function independently of TAB in KKP-supported
   ;;   terminals. Requires the `input-decode-map' entry in
   ;;   lisp/doom-keybinds.el.
   (define-key! key-translation-map
-    [?\C-i] (cmd! (if-let* (((kkp--terminal-has-active-kkp-p))
+    [?\C-i] (cmd! (if-let* (((kkp--this-terminal-has-active-kkp-p))
                             (keys (this-single-command-raw-keys))
                             ((> (length keys) 2))
                             ((equal (cl-subseq keys -3) [27 91 49])))
