@@ -6,4 +6,4 @@
 
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
-  (package! lsp-metals :pin "6a6a345a8a6cd8814b40909aef8e99055b128fa0"))
+  (package! lsp-metals :pin "567089f7f42add43edbe840960d08d19f157f8e9"))

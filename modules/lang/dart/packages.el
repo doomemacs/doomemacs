@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/dart/packages.el
 
-(package! dart-mode :pin "02e919c1cf200b4938139c18068577faff1fb364")
+(package! dart-mode :pin "88b6683f4382ff169555115619f845a2681f239c")
 
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))

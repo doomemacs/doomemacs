@@ -15,15 +15,15 @@
       (package! lsp-pyright :pin "dd54b3ae7c22d34faaced7b1a89739063c552b1f"))))
 
 ;; Programming environment
-(package! anaconda-mode :pin "f900bd7656a03aa24ef3295251f266736f7756eb")
+(package! anaconda-mode :pin "5c6eff46458408c5a456ad216448109964aa5de4")
 (when (modulep! :completion company)
-  (package! company-anaconda :pin "169252fca79a79da41ef22f2ec0eab0cf1313966"))
+  (package! company-anaconda :pin "0f7984b3bee46c6c376b7c4b88f2e885bc2b12df"))
 
 ;; Environment management
 (package! pipenv :pin "3af159749824c03f59176aff7f66ddd6a5785a10")
 (package! pyvenv :pin "31ea715f2164dd611e7fc77b26390ef3ca93509b")
 (when (modulep! +pyenv)
-  (package! pyenv-mode :pin "76787ea44f633426df402341663784db3a9e9639"))
+  (package! pyenv-mode :pin "f7d53796d6d9d26df9f694299b7f67a1536ac462"))
 (when (modulep! +conda)
   (package! conda :pin "05de0c8f0cf336d90c044446aaa066ee13001b83"))
 (when (modulep! +poetry)

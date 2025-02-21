@@ -3,10 +3,10 @@
 
 ;; Major modes
 (package! rjsx-mode :pin "b697fe4d92cc84fa99a7bcb476f815935ea0d919")
-(package! typescript-mode :pin "dd10f702d4946ddb2e1c2863bf02bf241bce5fc8")
+(package! typescript-mode :pin "481df3ad2cdf569d8e6697679669ff6206fbd2f9")
 
 ;; Tools
-(package! js2-refactor :pin "a0977c4ce1918cc266db9d6cd7a2ab63f3a76b9a")
+(package! js2-refactor :pin "e1177c728ae52a5e67157fb18ee1409d8e95386a")
 (package! npm-mode :pin "3ee7c0bad5b7a041d4739ef3aaa06a3dc764e5eb")
 
 ;; Eval
