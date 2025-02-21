@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/prodigy/packages.el
 
-(package! prodigy :pin "c5a17c280d65a77b537ddec55df9276f2c42e49d")
+(package! prodigy :pin "99908d13beeb86cea6c7675af5885133192bf6dd")
