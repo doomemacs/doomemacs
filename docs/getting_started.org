@@ -294,7 +294,11 @@ to least recommended for Doom (based on compatibility).
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
   brew install emacs-mac --with-modules
-  ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
+  # Apple Silicon Macs
+  osascript -e 'tell application "Finder" to make alias file to POSIX file "/opt/homebrew/opt/emacs-mac/Emacs.app" at POSIX file "/Applications"'
+
+  # Intel Macs
+  osascript -e 'tell application "Finder" to make alias file to POSIX file "/usr/local/opt/emacs-mac/Emacs.app" at POSIX file "/Applications"'
   #+END_SRC
 
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
