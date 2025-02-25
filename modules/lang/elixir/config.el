@@ -38,7 +38,7 @@
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
   (when (modulep! +lsp +tree-sitter)
-    (add-hook 'elixir-ts-mode-local-vars-hook #'lsp! 'append)
+    (add-hook 'elixir-ts-mode-local-vars-hook #'lsp! 'append))
 
   (when (modulep! +lsp)
     (add-hook 'elixir-mode-local-vars-hook #'lsp! 'append)
