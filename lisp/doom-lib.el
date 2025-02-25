@@ -1453,11 +1453,13 @@ To interpolate dynamic values, use comma:
 
 For more about modules and flags, see `doom!'."
   (if (keywordp group)
-      (if flags
-          `(doom-module--has-flag-p
-            (doom-module (backquote ,group) (backquote ,module) :flags)
-            (backquote ,flags))
-        `(and (get (backquote ,group) (backquote ,module)) t))
+      (let ((ctxtform `(get (backquote ,group) (backquote ,module))))
+        (if flags
+            `(when-let* ((ctxt ,ctxtform))
+               (doom-module--has-flag-p
+                (doom-module-context-flags ctxt)
+                (backquote ,flags)))
+          `(and ,ctxtform t)))
     (let ((flags (delq nil (cons group (cons module flags)))))
       (if (doom-module-context-index doom-module-context)
           `(doom-module--has-flag-p
