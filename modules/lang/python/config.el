@@ -107,9 +107,11 @@
 
   (add-hook! 'eglot-server-initialized-hook
     (defun +python-disable-anaconda-mode-h (&rest _)
-      "Ensure `anaconda-mode' doesn't interfere with `eglot'."
+      "When `eglot' started, disable `anaconda-mode' so they don't interfere."
       (when (bound-and-true-p anaconda-mode)
+        (anaconda-eldoc-mode -1)
         (anaconda-mode -1))))
+
   :config
   (set-company-backend! 'anaconda-mode '(company-anaconda))
   (set-lookup-handlers! 'anaconda-mode
