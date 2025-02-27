@@ -107,9 +107,15 @@
 
   (add-hook! 'eglot-server-initialized-hook
     (defun +python-disable-anaconda-mode-h (&rest _)
-      "Ensure `anaconda-mode' doesn't interfere with `eglot'."
+      "When `eglot' started, disable `anaconda-mode' so they don't interfere."
       (when (bound-and-true-p anaconda-mode)
+
+        ;; disable `anaconda-eldoc-mode' without disabling `eldoc-mode'
+        ;; by just removing the documentation hook.
+        (remove-hook 'eldoc-documentation-functions
+                     'anaconda-mode-eldoc-function 't)
         (anaconda-mode -1))))
+
   :config
   (set-company-backend! 'anaconda-mode '(company-anaconda))
   (set-lookup-handlers! 'anaconda-mode
@@ -118,7 +124,10 @@
     :documentation #'anaconda-mode-show-doc)
   (set-popup-rule! "^\\*anaconda-mode" :select nil)
 
-  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
+  ;; `anaconda-eldoc-mode' enables/disables `eldoc-mode' internally
+  ;; so let's just add the doc hook.
+  (add-hook 'eldoc-documentation-functions
+            'anaconda-mode-eldoc-function nil 't)
 
   (defun +python-auto-kill-anaconda-processes-h ()
     "Kill anaconda processes if this buffer is the last python buffer."
