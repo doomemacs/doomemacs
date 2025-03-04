@@ -622,7 +622,6 @@ If you want to update Doom manually, ~doom upgrade~ is equivalent to:
 #+BEGIN_SRC bash
 cd ~/.emacs.d
 git pull        # updates Doom
-doom clean      # Ensure your config isn't byte-compiled
 doom sync       # synchronizes your config with Doom Emacs
 doom update     # updates installed packages
 #+END_SRC
@@ -1506,10 +1505,6 @@ provide tools to make this easier. Here are a few things you can try, first:
 
 + Run ~bin/doom doctor~ on the command line to diagnose common issues with your
   environment and config. It will suggest solutions for them as well.
-
-+ ~bin/doom clean~ will ensure the problem isn't stale bytecode in your private
-  config or Doom core. If you haven't used ~bin/doom compile~, there's no need
-  to do this.
 
 + ~bin/doom sync~ will ensure the problem isn't missing packages or outdated
   autoloads files
