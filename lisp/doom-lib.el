@@ -954,7 +954,10 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   (macroexp-progn
    (cl-loop for (var val hook fn) in (doom--setq-hook-fns hooks var-vals)
             collect `(defun ,fn (&rest _)
-                       ,(format "%s = %s" var (pp-to-string val))
+                       ,(format "%s = %s" var
+                                (let ((print-level nil)
+                                      (print-length nil))
+                                  (prin1-to-string val)))
                        (setq-local ,var ,val))
             collect `(add-hook ',hook #',fn -90))))
 
