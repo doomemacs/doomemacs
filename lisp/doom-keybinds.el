@@ -57,22 +57,27 @@ and Emacs states, and for non-evil users.")
 ;;   "<tab>" and "<return>"), which are only triggered in GUI frames, so here, I
 ;;   create one for C-i. Won't work in TTY frames, though. Doom's :os tty module
 ;;   has a workaround for that though.
-(pcase-dolist (`(,key ,fallback . ,events)
-               '(([C-i] [?\C-i] tab kp-tab)
-                 ([C-m] [?\C-m] return kp-return)))
-  (define-key
-   input-decode-map fallback
-   (cmd! (if (when-let ((keys (this-single-command-raw-keys)))
-               (and (display-graphic-p)
-                    (not (cl-loop for event in events
-                                  if (cl-position event keys)
-                                  return t))
-                    ;; Use FALLBACK if nothing is bound to KEY, otherwise we've
-                    ;; broken all pre-existing FALLBACK keybinds.
-                    (key-binding
-                     (vconcat (if (= 0 (length keys)) [] (cl-subseq keys 0 -1))
-                              key) nil t)))
-             key fallback))))
+(defun doom-setup-ret-tab-bindings (&optional frame)
+  (pcase-dolist (`(,key ,fallback . ,events)
+                 '(([C-i] [?\C-i] tab kp-tab)
+                   ([C-m] [?\C-m] return kp-return)))
+    (define-key
+     input-decode-map fallback
+     (cmd! (if (when-let ((keys (this-single-command-raw-keys)))
+                 (and (display-graphic-p)
+                      (not (cl-loop for event in events
+                                    if (cl-position event keys)
+                                    return t))
+                      ;; Use FALLBACK if nothing is bound to KEY, otherwise we've
+                      ;; broken all pre-existing FALLBACK keybinds.
+                      (key-binding
+                       (vconcat (if (= 0 (length keys)) [] (cl-subseq keys 0 -1))
+                                key) nil t)))
+               key fallback)))))
+
+(if (daemonp)
+    (add-hook 'server-after-make-frame-hook #'doom-setup-ret-tab-bindings)
+  (doom-setup-ret-tab-bindings))
 
 
 ;;
