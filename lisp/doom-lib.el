@@ -41,7 +41,7 @@ TYPE should be a keyword of any of the known doom-*-error errors (e.g. :font,
 (defvar doom-log-level
   (if init-file-debug
       (if-let* ((level (getenv-internal "DEBUG"))
-                (level (string-to-number level))
+                (level (if (string-empty-p level) 1 (string-to-number level)))
                 ((not (zerop level))))
           level
         2)
