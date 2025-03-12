@@ -12,18 +12,18 @@
 (when (modulep! +lsp)
   (unless (modulep! :tools lsp +eglot)
     (when (modulep! +pyright)
-      (package! lsp-pyright :pin "dd54b3ae7c22d34faaced7b1a89739063c552b1f"))))
+      (package! lsp-pyright :pin "b4cee81af46274303f2cb9b75de9fc8ddcba04d9"))))
 
 ;; Programming environment
-(package! anaconda-mode :pin "5c6eff46458408c5a456ad216448109964aa5de4")
+(package! anaconda-mode :pin "28b3e0088ac7113390aa006bf277c8aa14e561a2")
 (when (modulep! :completion company)
-  (package! company-anaconda :pin "0f7984b3bee46c6c376b7c4b88f2e885bc2b12df"))
+  (package! company-anaconda :pin "fe6a5290441f713945956adf74c45e369f3cbefa"))
 
 ;; Environment management
 (package! pipenv :pin "3af159749824c03f59176aff7f66ddd6a5785a10")
 (package! pyvenv :pin "31ea715f2164dd611e7fc77b26390ef3ca93509b")
 (when (modulep! +pyenv)
-  (package! pyenv-mode :pin "f7d53796d6d9d26df9f694299b7f67a1536ac462"))
+  (package! pyenv-mode :pin "7faed57eb7709cc98838ee4bea2eea1fa3e7589f"))
 (when (modulep! +conda)
   (package! conda :pin "05de0c8f0cf336d90c044446aaa066ee13001b83"))
 (when (modulep! +poetry)
