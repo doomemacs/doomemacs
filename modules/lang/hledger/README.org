@@ -1,0 +1,54 @@
+#+title:     :lang hledger
+#+subtitle:  ledger, but functional
+#+created:   September 28, 2024
+#+since:     3.0.0 (#COMMIT-OR-PR-REF)
+
+* Description :unfold:
+This module adds support for [[https://hledger.org/][hledger]] files. hledger is a command line double-entry
+accounting system that works with simple text files similar to [[https://ledger-cli.org/][ledger]].
+
+This module enables the following features:
+- Syntax and indentation support for hledger files
+- Add, edit and delete transactions
+- Generate reports
+- Schedule transactions
+- Sort transactions (with evil-ledger)
+
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:evil-ledger]] if [[doom-module::editor evil +everywhere]]
+- [[doom-package:hledger-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires [[https://hledger.org/][hledger]] to generate reports from your ledgers.
+
+* Usage
+Please refer to ~hledger-mode~'s documentation for information on how to use it.
+
+* Configuration
+Set the [[var:hledger-jfile][hledger-jfile]] variable to the path to your main .journal file
+that will be used by hledger for generating reports.
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
