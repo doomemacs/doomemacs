@@ -1,12 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/vertico/packages.el
 
-(package! vertico :pin "ac82acf177a0dfc97deac8626a8a98c06bffc96c")
+(package! vertico :pin "026a81a9c893b1d73cdbcb12436a0fad3ebdeb5f")
 
 (package! orderless :pin "c7cb04499d94ee1c17affb29b1cfcd2a45116c97")
 
-(package! consult :pin "ce38dd037769ccba93e7b854ab9b0cc0eced84ee")
-(package! consult-dir :pin "6cb46395df8f02ec5e5f4b58a08281e6981fda15")
+(package! consult :pin "d557305b730f7666d46bc3eb04c87cfcc493a8e5")
+(package! consult-dir :pin "4532b8d215d16b0159691ce4dee693e72d71e0ff")
 (when (modulep! :checkers syntax -flymake)
   (package! consult-flycheck :pin "3bc2141daf8cfad7e4d2e2f78b15d45033f707a5"))
 (package! embark :pin "d5df0eff182b014ab49328a4dbb1d69eb7faafbd")

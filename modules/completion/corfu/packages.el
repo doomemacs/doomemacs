@@ -2,9 +2,9 @@
 ;;; completion/corfu/packages.el
 
 (package! corfu :pin "c302b0526ad9d0c99d1d0639df63f6ca65accfc3")
-(package! cape :pin "50fdb708074e91bc3d465fbc86c68cbda353b319")
+(package! cape :pin "2e86b6deed2844fc1345ff01bc92c3a849a33778")
 (when (modulep! +icons)
-  (package! nerd-icons-corfu :pin "0a932e89cf88f300fa37f70944d73acc8bc0676c"))
+  (package! nerd-icons-corfu :pin "13166345b290d6c6a2ac6ba94a8d28ec3bb58c67"))
 (when (and (not (modulep! :completion vertico))
            (modulep! +orderless))
   ;; enabling +orderless without vertico should be fairly niche enough that to
@@ -14,4 +14,4 @@
 (when (modulep! :os tty)
   (package! corfu-terminal :pin "501548c3d51f926c687e8cd838c5865ec45d03cc"))
 (when (modulep! :editor snippets)
-  (package! yasnippet-capf :pin "4c2e33d70cd1d95cf1e08d134b058a6dd90a99c9"))
+  (package! yasnippet-capf :pin "de6446732b106965ea583c9e076770694f7226b8"))

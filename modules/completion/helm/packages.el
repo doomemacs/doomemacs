@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/helm/packages.el
 
-(package! helm :pin "cf557ff7451a7bf729f0f0fb39a1607031c17d99")
+(package! helm :pin "c0b70dbc2697ff361d9d5bb99e11c654317aa00d")
 (package! helm-company :pin "4622b82353220ee6cc33468f710fa5b6b253b7f1")
 (package! helm-c-yasnippet :pin "c5880e740da101fde7a995e94a7b16c330e57583")
 (package! helm-descbinds :pin "c12bc85ef3ce342fe1c78cdd86117c05d5310789")
@@ -17,4 +17,4 @@
 (when (modulep! +icons)
   (package! helm-icons :pin "0d113719ee72cb7b6bb7db29f7200d667bd86607"))
 (when (modulep! :lang org)
-  (package! helm-org :pin "9b7d5d4fd18180b2009a0f2b908c84d5363e41f3"))
+  (package! helm-org :pin "22d60952f8017e154c53b03087619eb269e12339"))
