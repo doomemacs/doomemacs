@@ -338,6 +338,9 @@ directives. By default, this only recognizes C directives.")
           ("<" . ">"))))
 
 
+(use-package! evil-textobj-line)
+
+
 (use-package! evil-traces
   :after evil-ex
   :config

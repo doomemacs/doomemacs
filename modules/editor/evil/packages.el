@@ -20,6 +20,7 @@
            :repo "willghatch/evil-textobj-anyblock"
            :branch "fix-inner-block")
   :pin "29280cd71a05429364cdceef2ff595ae8afade4d")
+(package! evil-textobj-line :pin "9eaf9a5485c2b5c05e16552b34632ca520cd681d")
 (package! evil-traces :pin "82e8a7b4213aed140f6eb5f2cc33a09bb5587166")
 (package! evil-visualstar :pin "06c053d8f7381f91c53311b1234872ca96ced752")
 (package! exato :pin "aee7af7b7a0e7551478f453d1de7d5b9cb2e06c4")

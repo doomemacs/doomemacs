@@ -32,6 +32,7 @@ This holy module brings the Vim editing model to Emacs.
 - [[doom-package:evil-snipe]]
 - [[doom-package:evil-surround]]
 - [[doom-package:evil-textobj-anyblock]]
+- [[doom-package:evil-textobj-line]]
 - [[doom-package:evil-vimish-fold]]
 - [[doom-package:evil-visualstar]]
 - [[doom-package:exato]]
@@ -105,6 +106,7 @@ And these are text objects added by this module:
 - [[kbd:][g]] The entire buffer
 - [[kbd:][i j k]] by indentation ([[kbd:][k]] includes one line above; [[kbd:][j]] includes one line above and
   below) (provided by ~evil-indent-plus~)
+- [[kbd:][l]] The line object (provided by ~evil-textobj-line~)
 - [[kbd:][q]] For quotes (any kind)
 - [[kbd:][u]] For URLs
 - [[kbd:][x]] XML attributes (provided by ~exato~)
