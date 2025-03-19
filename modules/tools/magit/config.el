@@ -163,6 +163,11 @@ Only has an effect in GUI Emacs.")
   :preface
   (setq forge-database-file (concat doom-data-dir "forge/forge-database.sqlite"))
   (setq forge-add-default-bindings (not (modulep! :editor evil +everywhere)))
+  :init
+  (after! ghub-graphql
+    ;; Killing recreating the status buffer prevents progress updates from being
+    ;; relayed through the modeline. Use `message' instead.
+    (setq ghub-graphql-message-progress t))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
