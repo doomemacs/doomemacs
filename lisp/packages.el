@@ -34,7 +34,7 @@
 (package! ws-butler :pin "e3a38d93e01014cd47bf5af4924459bd145fd7c4")
 
 ;; doom-projects.el
-(package! projectile :pin "0a15d81be953150399170f4b8e53b86ee96ad639")
+(package! projectile :pin "55db082cdf7b849335ccf24b7ba5aa2607d6fe93")
 (package! project :pin "2a3fe4c7dbb6cf4d449c4d358ec9aaf8658f6940")
 
 ;; doom-keybinds.el
