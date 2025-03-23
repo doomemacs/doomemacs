@@ -200,14 +200,16 @@ variable for an explanation of the defaults (in comments). See
       kotlin-mode
       macrostep
       man
-      (magit magit-repos magit-submodule)
+      (magit magit-submodule)
       magit-repos
       magit-section
       magit-todos
       markdown-mode
+      minesweeper
       monky
       mpc
       mpdel
+      mpdired
       mu4e
       mu4e-conversation
       neotree
@@ -226,6 +228,7 @@ variable for an explanation of the defaults (in comments). See
       (pdf pdf-tools)
       popup
       proced
+      (process-menu simple)
       prodigy
       profiler
       p-search
@@ -258,6 +261,7 @@ variable for an explanation of the defaults (in comments). See
       speedbar
       tab-bar
       tablist
+      tabulated-list
       tar-mode
       telega
       (term term ansi-term multi-term)
@@ -269,6 +273,7 @@ variable for an explanation of the defaults (in comments). See
       trashed
       tuareg
       typescript-mode
+      ultra-scroll
       vc-annotate
       vc-dir
       vc-git
