@@ -46,7 +46,7 @@
 
 ;; Add support for the Kitty keyboard protocol.
 (use-package! kkp
-  :hook (after-init . global-kkp-mode)
+  :hook (tty-setup . global-kkp-mode)
   :config
   ;; HACK: Allow C-i to function independently of TAB in KKP-supported
   ;;   terminals. Requires the `input-decode-map' entry in
