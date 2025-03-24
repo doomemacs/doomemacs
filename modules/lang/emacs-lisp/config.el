@@ -29,7 +29,6 @@ See `+emacs-lisp-non-package-mode' for details.")
 ;;; Config
 
 (use-package! elisp-mode
-  :mode ("\\.Cask\\'" . emacs-lisp-mode)
   :interpreter ("doomscript" . emacs-lisp-mode)
   :config
   (let ((modes '(emacs-lisp-mode lisp-interaction-mode lisp-data-mode)))
@@ -192,14 +191,6 @@ See `+emacs-lisp-non-package-mode' for details.")
 (autoload 'overseer-test "overseer" nil t)
 ;; Properly lazy load overseer by not loading it so early:
 (remove-hook 'emacs-lisp-mode-hook #'overseer-enable-mode)
-
-
-(use-package! flycheck-cask
-  :when (modulep! :checkers syntax -flymake)
-  :defer t
-  :init
-  (add-hook! 'emacs-lisp-mode-hook
-    (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
 (use-package! flycheck-package
