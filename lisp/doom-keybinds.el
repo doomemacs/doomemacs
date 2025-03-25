@@ -160,13 +160,14 @@ all hooks after it are ignored.")
                        ,bdef)
                     forms))
             (when-let (desc (cadr (memq :which-key udef)))
-              (prependq!
-               wkforms `((which-key-add-key-based-replacements
-                           (general--concat t doom-leader-alt-key ,key)
-                           ,desc)
-                         (which-key-add-key-based-replacements
-                           (general--concat t doom-leader-key ,key)
-                           ,desc))))))))
+              (cl-callf2 append
+                  `((which-key-add-key-based-replacements
+                      (general--concat t doom-leader-alt-key ,key)
+                      ,desc)
+                    (which-key-add-key-based-replacements
+                      (general--concat t doom-leader-key ,key)
+                      ,desc))
+                  wkforms))))))
     (macroexp-progn
      (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
              (nreverse forms)))))

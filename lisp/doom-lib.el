@@ -708,8 +708,10 @@ See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
 
 
 ;;; Mutation
+;; DEPRECATED: Remove in v3.0
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
+  (declare (obsolete "Use `cl-callf2' instead" "3.0.0"))
   `(setq ,sym (append ,sym ,@lists)))
 
 (defmacro setq! (&rest settings)
@@ -723,10 +725,12 @@ Unlike `setopt', this won't needlessly pull in dependencies."
             collect `(funcall (or (get ',var 'custom-set) #'set-default-toplevel-value)
                               ',var ,val))))
 
+;; DEPRECATED: Remove in v3.0
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 
 If FETCHER is a function, ELT is used as the key in LIST (an alist)."
+  (declare (obsolete "Use `cl-callf2' or `alist-get' instead" "3.0.0"))
   `(setq ,list (delq ,(if fetcher
                           `(funcall ,fetcher ,elt ,list)
                         elt)
@@ -739,8 +743,10 @@ This is a variadic `cl-pushnew'."
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
        (cl-pushnew ,var ,place :test #'equal))))
 
+;; DEPRECATED: Remove in v3.0
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
+  (declare (obsolete "Use `cl-callf2' instead" "3.0.0"))
   `(setq ,sym (append ,@lists ,sym)))
 
 
@@ -839,7 +845,7 @@ to reverse this and trigger `after!' blocks at a more reasonable time."
   (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
         (fns (or fns (list feature))))
     `(progn
-       (delq! ',feature features)
+       (cl-callf2 delq ',feature features)
        (defadvice! ,advice-fn (&rest _)
          :before ',fns
          ;; Some plugins (like yasnippet) will invoke a fn early to parse

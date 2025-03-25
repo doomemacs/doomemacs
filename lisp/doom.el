@@ -701,11 +701,12 @@ to `doom-profile-cache-dir' instead, so it can be safely cleaned up as part of
   (setq package-user-dir (file-name-concat doom-local-dir "elpa/")
         package-gnupghome-dir (expand-file-name "gpg" package-user-dir))
   (let ((s (if gnutls-verify-error "s" "")))
-    (prependq! package-archives
-               ;; I omit Marmalade because its packages are manually submitted
-               ;; rather than pulled, and so often out of date.
-               `(("melpa" . ,(format "http%s://melpa.org/packages/" s))
-                 ("org"   . ,(format "http%s://orgmode.org/elpa/"   s)))))
+    (cl-callf2 append
+        ;; I omit Marmalade because its packages are manually submitted rather
+        ;; than pulled, and so often out of date.
+        `(("melpa" . ,(format "http%s://melpa.org/packages/" s))
+          ("org"   . ,(format "http%s://orgmode.org/elpa/"   s)))
+        package-archives))
 
   ;; Refresh package.el the first time you call `package-install', so it's still
   ;; trivially usable. Remember to run 'doom sync' to purge them; they can

@@ -410,10 +410,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
   :hook (doom-first-buffer . winner-mode)
   :config
-  (appendq! winner-boring-buffers
-            '("*Compile-Log*" "*inferior-lisp*" "*Fuzzy Completions*"
-              "*Apropos*" "*Help*" "*cvs*" "*Buffer List*" "*Ibuffer*"
-              "*esh command on file*")))
+  (cl-callf append winner-boring-buffers
+    '("*Compile-Log*" "*inferior-lisp*" "*Fuzzy Completions*"
+      "*Apropos*" "*Help*" "*cvs*" "*Buffer List*" "*Ibuffer*"
+      "*esh command on file*")))
 
 
 (use-package! paren

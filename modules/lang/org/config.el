@@ -760,7 +760,7 @@ mutating hooks on exported output, like formatters."
     "Restart `org-mode', but only once."
     (remove-hook 'doom-switch-buffer-hook #'+org--restart-mode-h 'local)
     (quiet! (org-mode-restart))
-    (delq! (current-buffer) org-agenda-new-buffers)
+    (cl-callf2 delq (current-buffer) org-agenda-new-buffers)
     (run-hooks 'find-file-hook))
 
   (add-hook! 'org-agenda-finalize-hook

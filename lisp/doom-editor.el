@@ -644,29 +644,29 @@ on."
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing
   ;; experience in them, at least. It will remain off in `so-long-mode',
   ;; however, because long files have a far bigger impact on Emacs performance.
-  (delq! 'font-lock-mode so-long-minor-modes)
-  (delq! 'display-line-numbers-mode so-long-minor-modes)
-  (delq! 'buffer-read-only so-long-variable-overrides 'assq)
+  (cl-callf2 delq 'font-lock-mode so-long-minor-modes)
+  (cl-callf2 delq 'display-line-numbers-mode so-long-minor-modes)
+  (setf (alist-get 'buffer-read-only so-long-variable-overrides nil t) nil)
   ;; ...but at least reduce the level of syntax highlighting
   (add-to-list 'so-long-variable-overrides '(font-lock-maximum-decoration . 1))
   ;; ...and insist that save-place not operate in large/long files
   (add-to-list 'so-long-variable-overrides '(save-place-alist . nil))
   ;; But disable everything else that may be unnecessary/expensive for large or
   ;; wide buffers.
-  (appendq! so-long-minor-modes
-            '(spell-fu-mode
-              eldoc-mode
-              highlight-numbers-mode
-              better-jumper-local-mode
-              ws-butler-mode
-              auto-composition-mode
-              undo-tree-mode
-              highlight-indent-guides-mode
-              hl-fill-column-mode
-              ;; These are redundant on Emacs 29+
-              flycheck-mode
-              smartparens-mode
-              smartparens-strict-mode)))
+  (cl-callf append so-long-minor-modes
+    '(spell-fu-mode
+      eldoc-mode
+      highlight-numbers-mode
+      better-jumper-local-mode
+      ws-butler-mode
+      auto-composition-mode
+      undo-tree-mode
+      highlight-indent-guides-mode
+      hl-fill-column-mode
+      ;; These are redundant on Emacs 29+
+      flycheck-mode
+      smartparens-mode
+      smartparens-strict-mode)))
 
 
 (use-package! ws-butler

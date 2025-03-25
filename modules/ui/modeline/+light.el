@@ -474,7 +474,7 @@ lines are selected, or the NxM dimensions of a block selection.")
 (defun +modeline-add-selection-segment-h ()
   (add-to-list '+modeline-format-left '+modeline-selection-info 'append))
 (defun +modeline-remove-selection-segment-h ()
-  (delq! '+modeline-selection-info +modeline-format-left))
+  (cl-callf2 delq '+modeline-selection-info +modeline-format-left))
 
 (if (featurep 'evil)
     (progn

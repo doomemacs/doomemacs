@@ -217,9 +217,8 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   (defadvice! +latex--dont-indent-itemize-and-enumerate-and-description-a (fn &rest args)
     :around #'LaTeX-fill-region-as-paragraph
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
-      (delq! "itemize" LaTeX-indent-environment-list 'assoc)
-      (delq! "enumerate" LaTeX-indent-environment-list 'assoc)
-      (delq! "description" LaTeX-indent-environment-list 'assoc)
+      (dolist (item '("itemize" "enumerate" "description"))
+        (setf (alist-get item LaTeX-indent-environment-list nil t #'equal) nil))
       (apply fn args))))
 
 

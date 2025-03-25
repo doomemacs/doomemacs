@@ -182,7 +182,7 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'evil-open-below :around #'+evil--insert-newline-below-and-respect-comments-a)
 
   ;; Lazy load evil ex commands
-  (delq! 'evil-ex features)
+  (cl-callf2 delq 'evil-ex features)
   (add-transient-hook! 'evil-ex (provide 'evil-ex))
   (after! evil-ex (load! "+commands")))
 

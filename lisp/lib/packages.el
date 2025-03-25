@@ -199,7 +199,7 @@ processed."
                 (cl-pushnew name doom-disabled-packages)
               (when recipe
                 (straight-override-recipe (cons name recipe)))
-              (appendq! packages (cons name (straight--get-dependencies name)))))))
+              (cl-callf append packages (cons name (straight--get-dependencies name)))))))
       (dolist (package (cl-delete-duplicates packages :test #'equal))
         (straight-register-package package)
         (let ((name (symbol-name package)))

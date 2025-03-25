@@ -351,8 +351,8 @@ in."
                       (print! "%s" (string-join (append doom-doctor--errors doom-doctor--warnings) "\n")))
                     (setq doom-local-errors doom-doctor--errors
                           doom-local-warnings doom-doctor--warnings)))
-                (appendq! doom-doctor--errors doom-local-errors)
-                (appendq! doom-doctor--warnings doom-local-warnings))))))
+                (cl-callf append doom-doctor--errors doom-local-errors)
+                (cl-callf append doom-doctor--warnings doom-local-warnings))))))
     (error
      (warn! "Attempt to load DOOM failed\n  %s\n"
             (or (cdr-safe ex) (car ex)))

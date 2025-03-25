@@ -115,7 +115,7 @@ Fixes #3939: unsortable dired entries on Windows."
 
   (when (modulep! +icons)
     (setq dirvish-subtree-always-show-state t)
-    (appendq! dirvish-attributes '(nerd-icons subtree-state)))
+    (cl-callf append dirvish-attributes '(nerd-icons subtree-state)))
 
   (setq dirvish-hide-details '(dirvish dirvish-side)
         dirvish-hide-cursor '(dirvish dirvish-side))

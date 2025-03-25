@@ -630,7 +630,6 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
 
     (defvar +mu4e--last-invalid-gmail-action 0)
 
-    (delq! 'delete mu4e-marks #'assq)
     (setf (alist-get 'delete mu4e-marks)
           (list
            :char '("D" . "✘")

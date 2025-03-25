@@ -82,30 +82,6 @@ are great, but this file exists to add demos for Doom's API and beyond.
 (after! rustic ...)
 (after! python ...)
 #+end_src
-* appendq!
-:PROPERTIES:
-:added: 3.0.0-pre
-:END:
-#+begin_src emacs-lisp
-(let ((x '(a b c)))
-  (appendq! x '(c d e))
-  x)
-#+end_src
-
-#+RESULTS:
-: (a b c c d e)
-
-#+begin_src emacs-lisp
-(let ((x '(a b c))
-      (y '(c d e))
-      (z '(f g)))
-  (appendq! x y z '(h))
-  x)
-#+end_src
-
-#+RESULTS:
-: (a b c c d e f g h)
-
 * cmd!
 :PROPERTIES:
 :added: 3.0.0-pre
@@ -573,30 +549,6 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ;; refresh to delete packages used only on one system, use :ignore
 (package! evil :ignore (not (equal system-name "my-desktop")))
 #+end_src
-* prependq!
-:PROPERTIES:
-:added: 3.0.0-pre
-:END:
-#+begin_src emacs-lisp
-(let ((x '(a b c)))
-  (prependq! x '(c d e))
-  x)
-#+end_src
-
-#+RESULTS:
-: (c d e a b c)
-
-#+begin_src emacs-lisp
-(let ((x '(a b c))
-      (y '(c d e))
-      (z '(f g)))
-  (prependq! x y z '(h))
-  x)
-#+end_src
-
-#+RESULTS:
-: (c d e f g h a b c)
-
 * pushnew!
 :PROPERTIES:
 :added: 3.0.0-pre

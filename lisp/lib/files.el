@@ -113,24 +113,23 @@ MATCH is a string regexp. Only entries that match it will be included."
   (let (result)
     (dolist (file (mapcan (doom-rpartial #'doom-glob "*") (ensure-list paths)))
       (cond ((file-directory-p file)
-             (appendq!
-              result
-              (and (memq type '(t dirs))
-                   (string-match-p match file)
-                   (not (and filter (funcall filter file)))
-                   (not (and (file-symlink-p file)
-                             (not follow-symlinks)))
-                   (<= mindepth 0)
-                   (list (if relative-to
-                             (file-relative-name file relative-to)
-                           file)))
-              (and (>= depth 1)
-                   (apply #'doom-files-in file
-                          (append (list :mindepth (1- mindepth)
-                                        :depth (1- depth)
-                                        :relative-to relative-to
-                                        :map nil)
-                                  rest)))))
+             (cl-callf append result
+               (and (memq type '(t dirs))
+                    (string-match-p match file)
+                    (not (and filter (funcall filter file)))
+                    (not (and (file-symlink-p file)
+                              (not follow-symlinks)))
+                    (<= mindepth 0)
+                    (list (if relative-to
+                              (file-relative-name file relative-to)
+                            file)))
+               (and (>= depth 1)
+                    (apply #'doom-files-in file
+                           (append (list :mindepth (1- mindepth)
+                                         :depth (1- depth)
+                                         :relative-to relative-to
+                                         :map nil)
+                                   rest)))))
             ((and (memq type '(t files))
                   (string-match-p match file)
                   (not (and filter (funcall filter file)))

@@ -151,13 +151,13 @@ properties:
                (:cond
                 (cl-loop for (cond . mods) in (cdr m)
                          if (eval cond t)
-                         return (prependq! mplist mods)))
+                         return (cl-callf2 append mods mplist)))
                (:if (if (eval (cadr m) t)
                         (push (caddr m) mplist)
-                      (prependq! mplist (cdddr m))))
+                      (cl-callf2 append (cdddr m) mplist)))
                (test (if (xor (eval (cadr m) t)
                               (eq test :unless))
-                         (prependq! mplist (cddr m))))))
+                         (cl-callf2 append (cddr m) mplist)))))
             ((catch 'doom-modules
                (let* ((module (if (listp m) (car m) m))
                       (flags  (if (listp m) (cdr m))))
