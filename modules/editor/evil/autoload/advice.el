@@ -143,9 +143,9 @@ more information on modifiers."
   "Same as `evil-window-split', but correctly updates the window history."
   :repeat nil
   (interactive "P<f>")
-  ;; HACK This ping-ponging between the destination and source windows is to
-  ;;      update the window focus history, so that, if you close either split
-  ;;      afterwards you won't be sent to some random window.
+  ;; HACK: This ping-ponging between the destination and source windows is to
+  ;;   update the window focus history, so that, if you close either split
+  ;;   afterwards you won't be sent to some random window.
   (let ((origwin (selected-window))
         window-selection-change-functions)
     (select-window (split-window origwin count 'below))
@@ -162,9 +162,9 @@ more information on modifiers."
   "Same as `evil-window-split', but correctly updates the window history."
   :repeat nil
   (interactive "P<f>")
-  ;; HACK This ping-ponging between the destination and source windows is to
-  ;;      update the window focus history, so that, if you close either split
-  ;;      afterwards you won't be sent to some random window.
+  ;; HACK: This ping-ponging between the destination and source windows is to
+  ;;   update the window focus history, so that, if you close either split
+  ;;   afterwards you won't be sent to some random window.
   (let ((origwin (selected-window))
         window-selection-change-functions)
     (select-window (split-window origwin count 'right))

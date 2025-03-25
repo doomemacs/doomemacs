@@ -139,17 +139,18 @@ directives. By default, this only recognizes C directives.")
                  (count-lines (point-min) (point-max))
                  (buffer-size)))))
 
-  ;; REVIEW In evil, registers 2-9 are buffer-local. In vim, they're global,
-  ;;        so... Perhaps this should be PRed upstream?
+  ;; HACK: In vim, registers 2-9 are global. In Evil, they're buffer-local.  so
+  ;;   I enforce vim's way.
+  ;; REVIEW: PR this upstream?
   (defadvice! +evil--make-numbered-markers-global-a (char)
     :after-until #'evil-global-marker-p
     (and (>= char ?2) (<= char ?9)))
 
-  ;; Make J (evil-join) remove comment delimiters when joining lines.
+  ;; HACK: Fix joining commented lines with J (evil-join).
   (advice-add #'evil-join :around #'+evil-join-a)
 
-  ;; Prevent gw (`evil-fill') and gq (`evil-fill-and-move') from squeezing
-  ;; spaces. It doesn't in vim, so it shouldn't in evil.
+  ;; HACK: Prevent gw (`evil-fill') and gq (`evil-fill-and-move') from squeezing
+  ;;   spaces. It doesn't in vim, so it shouldn't in evil.
   (defadvice! +evil--no-squeeze-on-fill-a (fn &rest args)
     :around '(evil-fill evil-fill-and-move)
     (letf! (defun fill-region (from to &optional justify nosqueeze to-eop)
@@ -159,12 +160,12 @@ directives. By default, this only recognizes C directives.")
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
 
-  ;; monkey patch `evil-ex-replace-special-filenames' to improve support for
-  ;; file modifiers like %:p:h. This adds support for most of vim's modifiers,
-  ;; and one custom one: %:P (expand to the project root).
+  ;; HACK: Enhance `evil-ex-replace-special-filenames' to add support for
+  ;;   Vim-like Ex file modifiers like %:p:h. Most vim's modifiers are
+  ;;   supported, plus one custom one: %:P (expands to the project's root).
   (advice-add #'evil-ex-replace-special-filenames :override #'+evil-replace-filename-modifiers-a)
 
-  ;; make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
+  ;; HACK: Make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
   (add-hook 'minibuffer-inactive-mode-hook #'+evil--fix-dabbrev-in-minibuffer-h)
 
   ;; Focus and recenter new splits
