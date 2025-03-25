@@ -14,6 +14,7 @@ directives. By default, this only recognizes C directives.")
 
 ;; Set these defaults before `evil'; use `defvar' so they can be changed prior
 ;; to loading.
+(defvar evil-want-keybinding (not (modulep! +everywhere)))
 (defvar evil-want-C-g-bindings t)
 (defvar evil-want-C-i-jump nil)  ; we do this ourselves
 (defvar evil-want-C-u-scroll t)  ; moved the universal arg to <leader> u
@@ -184,6 +185,36 @@ directives. By default, this only recognizes C directives.")
   (delq! 'evil-ex features)
   (add-transient-hook! 'evil-ex (provide 'evil-ex))
   (after! evil-ex (load! "+commands")))
+
+
+(use-package! evil-collection
+  :after evil
+  :when (modulep! +everywhere)
+  :unless noninteractive
+  :unless (doom-context-p 'reload)
+  :hook (doom-after-modules-config . evil-collection-init)
+  :init
+  (defvar evil-collection-company-use-tng (modulep! :completion company +tng))
+  (defvar evil-collection-setup-minibuffer nil)
+  (defvar evil-collection-want-unimpaired-p nil)  ; we have our own
+  ;; We bind goto-reference on gD and goto-assignments on gA ourselves
+  (defvar evil-collection-want-find-usages-bindings-p nil)
+  ;; Reduces keybind conflicts between outline-mode and org-mode (which is
+  ;; derived from outline-mode).
+  (defvar evil-collection-outline-enable-in-minor-mode-p nil)
+  :config
+  (setq evil-collection-key-blacklist
+        (append (list doom-leader-key doom-localleader-key
+                      doom-leader-alt-key)
+                evil-collection-key-blacklist
+                (if (modulep! :tools lookup) '("gd" "gf" "K"))
+                (if (modulep! :tools eval) '("gr" "gR"))
+                '("[" "]" "gz" "<escape>")))
+
+  (defadvice! +evil-collection-disable-blacklist-a (fn)
+    :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
+    (let (evil-collection-key-blacklist)
+      (funcall-interactively fn))))
 
 
 ;;
