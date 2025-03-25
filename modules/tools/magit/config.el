@@ -83,11 +83,20 @@ Only has an effect in GUI Emacs.")
   ;;    screen are opened as popups.
   ;; 2. The status screen isn't buried when viewing diffs or logs from the
   ;;    status screen.
-  (setq transient-display-buffer-action '(display-buffer-below-selected)
-        transient-show-during-minibuffer-read t
-        magit-display-buffer-function #'+magit-display-buffer-fn
+  (setq magit-display-buffer-function #'+magit-display-buffer-fn
         magit-bury-buffer-function #'magit-mode-quit-window)
+  ;; Pop up transient windows at the bottom of the window where it was invoked.
+  ;; This is more ergonomic for users with large displays or many splits.
+  (setq transient-display-buffer-action
+        '(display-buffer-below-selected
+          (dedicated . t)
+          (inhibit-same-window . t))
+        transient-show-during-minibuffer-read t)
+
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
+
+  ;; The mode-line isn't useful in these popups and take up valuable screen
+  ;; estate, so free it up.
   (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
 
   ;; Add additional switches that seem common enough
