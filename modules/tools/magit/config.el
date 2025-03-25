@@ -258,7 +258,9 @@ Only has an effect in GUI Emacs.")
   :defer t
   :init
   (defvar evil-collection-magit-section-use-z-for-folds evil-collection-magit-use-z-for-folds)
-  (after! magit-section
+  :config
+  (defadvice! +magit--override-evil-collection-defaults-a (&rest _)
+    :after #'evil-collection-magit-section-setup
     ;; These numbered keys mask the numerical prefix keys. Since they've already
     ;; been replaced with z1, z2, z3, etc (and 0 with g=), there's no need to
     ;; keep them around:
