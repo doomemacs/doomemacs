@@ -14,6 +14,9 @@ Is nil if no executable is found in your PATH during startup.")
 
 Is nil if no executable is found in your PATH during startup.")
 
+(defvar doom-projectile-cache-dir (file-name-concat doom-profile-cache-dir "projectile")
+  "The directory where per-project projectile file index caches are stored.")
+
 
 ;;
 ;;; Packages
@@ -49,7 +52,7 @@ Is nil if no executable is found in your PATH during startup.")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-kill-buffers-filter 'kill-only-files
         projectile-ignored-projects '("~/")
-        projectile-known-projects-file (concat doom-cache-dir "projectile-projects.eld")
+        projectile-known-projects-file (concat doom-projectile-cache-dir "projects.eld")
         projectile-ignored-project-function #'doom-project-ignored-p
         projectile-fd-executable doom-fd-executable)
 
@@ -57,6 +60,8 @@ Is nil if no executable is found in your PATH during startup.")
   (global-set-key [remap find-tag]         #'projectile-find-tag)
 
   :config
+  (make-directory doom-projectile-cache-dir t)
+
   ;; HACK: Auto-discovery and cleanup on `projectile-mode' is slow and
   ;;   premature. Let's try to defer it until it's needed.
   (add-transient-hook! 'projectile-relevant-known-projects
@@ -96,6 +101,17 @@ Is nil if no executable is found in your PATH during startup.")
   ;; Per-project compilation buffers
   (setq compilation-buffer-name-function #'projectile-compilation-buffer-name
         compilation-save-buffers-predicate #'projectile-current-project-buffer-p)
+
+  ;; Centralize Projectile's per-project cache files, so they don't litter
+  ;; projects with dotfiles.
+  (defadvice! doom--projectile-centralized-cache-files-a (fn &optional proot)
+    :around #'projectile-project-cache-file
+    (let* ((proot (abbreviate-file-name (or proot (doom-project-root))))
+           (projectile-cache-file
+            (expand-file-name
+             (format "%s-%s" (doom-project-name proot) (sha1 proot))
+             doom-projectile-cache-dir)))
+      (funcall fn proot)))
 
   ;; Support the more generic .project files as an alternative to .projectile
   (defadvice! doom--projectile-dirconfig-file-a ()
