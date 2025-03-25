@@ -13,5 +13,5 @@
   (when (modulep! :lang org +roam2)
     (package! citar-org-roam :pin "ff38add0aa40ba2014a6ee28a293fc1b9180cefa")))
 
-(package! parsebib :pin "a25621930e67e267133b08698a72fa80a42edfc8")
+(package! parsebib :pin "7bfde4e4679413424a9a9af099203d5c23e32cd2")
 (package! citeproc :pin "54184baaff555b5c7993d566d75dd04ed485b5c0")

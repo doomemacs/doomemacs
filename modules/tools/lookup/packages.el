@@ -8,7 +8,7 @@
   (package! helm))
 
 ;;
-(package! dumb-jump :pin "93665381d94a468e3fe965e3688995c1290e92b7")
+(package! dumb-jump :pin "737267a6139a988369cb95ecd365b2db95e05db0")
 (when (modulep! :completion ivy)
   (package! ivy-xref :pin "a82e8e117d2dd62c28b6a3e3d6e4cfb11c0bda38"))
 (when (modulep! :completion helm)
