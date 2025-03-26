@@ -139,7 +139,7 @@
 (setq default-input-method nil)
 ;; ...And the clipboard on Windows is often a wider encoding (UTF-16), so leave
 ;; Emacs to its own devices there.
-(unless doom--system-windows-p
+(unless (or doom--system-windows-p (featurep :system 'wsl))
   (setq selection-coding-system 'utf-8))
 
 
