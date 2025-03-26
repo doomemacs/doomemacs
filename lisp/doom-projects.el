@@ -14,8 +14,10 @@ Is nil if no executable is found in your PATH during startup.")
 
 Is nil if no executable is found in your PATH during startup.")
 
-(defvar doom-projectile-cache-dir (file-name-concat doom-profile-cache-dir "projectile")
-  "The directory where per-project projectile file index caches are stored.")
+(defvar doom-projectile-cache-dir (file-name-concat doom-profile-cache-dir "projectile/")
+  "The directory where per-project projectile file index caches are stored.
+
+Must end with a slash.")
 
 
 ;;
