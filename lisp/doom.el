@@ -132,6 +132,13 @@
 (defconst doom--system-macos-p   (eq 'macos   (car doom-system)))
 (defconst doom--system-linux-p   (eq 'linux   (car doom-system)))
 
+;; Announce WSL if it is detected.
+(when (and doom--system-linux-p
+           (if (boundp 'operating-system-release) ; is deprecated since 28.x
+               (string-match-p "-[Mm]icrosoft" operating-system-release)
+             (getenv-internal "WSLENV")))
+  (add-to-list 'doom-system 'wsl 'append))
+
 ;; `system-type' is esoteric, so I create a pseudo feature as a stable and
 ;; consistent alternative, for use with `featurep'.
 (push :system features)
