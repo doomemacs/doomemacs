@@ -210,9 +210,9 @@ don't offer any/enough real value to users.")
   (defvar evil-collection-outline-enable-in-minor-mode-p nil)
   :config
   (dolist (sym +evil-collection-disabled-list)
-    (if-let* ((elt (memq sym evil-collection-mode-list)))
-        (cl-callf2 delq sym evil-collection-mode-list)
-      (cl-callf2 delete (assq elt evil-collection-mode-list) evil-collection-mode-list)))
+    (if-let* ((elt (assq sym evil-collection-mode-list)))
+        (cl-callf2 delete elt evil-collection-mode-list)
+      (cl-callf2 delq sym evil-collection-mode-list)))
 
   (setq evil-collection-key-blacklist
         (append (list doom-leader-key doom-localleader-key
