@@ -198,6 +198,8 @@ directives. By default, this only recognizes C directives.")
   ;; derived from outline-mode).
   (defvar evil-collection-outline-enable-in-minor-mode-p nil)
   :config
+  (setq evil-collection-mode-list
+        (delq 'lispy evil-collection-mode-list))
   (setq evil-collection-key-blacklist
         (append (list doom-leader-key doom-localleader-key
                       doom-leader-alt-key)
