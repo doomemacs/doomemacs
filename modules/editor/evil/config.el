@@ -188,6 +188,17 @@ directives. By default, this only recognizes C directives.")
   :unless noninteractive
   :unless (doom-context-p 'reload)
   :hook (doom-after-modules-config . evil-collection-init)
+  :preface
+  (defvar +evil-collection-disabled-list
+    '(anaconda-mode
+      company
+      elisp-mode
+      ert
+      lispy)
+    "A list of modules to ignore in `evil-collection-mode-list'.
+
+The defaults disable modules that we have our own keybinds for or that (IMO)
+don't offer any/enough real value to users.")
   :init
   (defvar evil-collection-company-use-tng (modulep! :completion company +tng))
   (defvar evil-collection-setup-minibuffer nil)
@@ -198,6 +209,11 @@ directives. By default, this only recognizes C directives.")
   ;; derived from outline-mode).
   (defvar evil-collection-outline-enable-in-minor-mode-p nil)
   :config
+  (dolist (sym +evil-collection-disabled-list)
+    (if-let* ((elt (memq sym evil-collection-mode-list)))
+        (cl-callf2 delq sym evil-collection-mode-list)
+      (cl-callf2 delete (assq elt evil-collection-mode-list) evil-collection-mode-list)))
+
   (setq evil-collection-key-blacklist
         (append (list doom-leader-key doom-localleader-key
                       doom-leader-alt-key)
