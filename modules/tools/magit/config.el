@@ -39,16 +39,18 @@ Only has an effect in GUI Emacs.")
         magit-revision-insert-related-refs nil)
   (add-hook 'magit-process-mode-hook #'goto-address-mode)
 
-  (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
-    :after '(magit-checkout magit-branch-and-checkout)
-    ;; Since the project likely now contains new files, best we undo the
-    ;; projectile cache so it can be regenerated later.
-    (projectile-invalidate-cache nil)
-    ;; Use a more efficient strategy to auto-revert buffers whose git state has
-    ;; changed: refresh the visible buffers immediately...
-    (+magit-mark-stale-buffers-h))
-  ;; ...then refresh the rest only when we switch to them, not all at once.
+  ;; Since the project likely now contains new files, best we undo the
+  ;; projectile cache so it can be regenerated later.
+  (add-hook! 'magit-post-refresh-hook
+    (defun +magit-invalidate-projectile-cache-h ()
+      (projectile-invalidate-cache nil)))
+  ;; Use a more efficient strategy to auto-revert buffers whose git state has
+  ;; changed: refresh the visible buffers immediately...
+  (add-hook 'magit-post-refresh-hook #'+magit-mark-stale-buffers-h)
+  ;; ...then refresh the rest only when we switch to them or refocus the active
+  ;; frame, not all at once.
   (add-hook 'doom-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
+  (add-hook 'focus-in-hook #'+magit-mark-stale-buffers-h)
 
   ;; The default location for git-credential-cache is in
   ;; ~/.cache/git/credential. However, if ~/.git-credential-cache/ exists, then

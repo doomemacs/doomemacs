@@ -101,12 +101,12 @@ window that already exists in that direction. It will split otherwise."
 (defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
     (kill-local-variable '+magit--stale-p)
-    (when (and buffer-file-name (file-exists-p buffer-file-name))
-      (if (buffer-modified-p (current-buffer))
-          (when (bound-and-true-p vc-mode)
-            (vc-refresh-state)
-            (force-mode-line-update))
-        (revert-buffer t t t)))))
+    (when (magit-auto-revert-repository-buffer-p buffer)
+      (when (bound-and-true-p vc-mode)
+        (vc-refresh-state))
+      (unless (buffer-modified-p buffer)
+        (revert-buffer t t t))
+      (force-mode-line-update))))
 
 ;;;###autoload
 (defun +magit-mark-stale-buffers-h ()
