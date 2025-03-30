@@ -86,6 +86,45 @@
     (error "Must be in a _test.go file")))
 
 
+;;; go generate ...
+
+(defun +go--generate (dir args)
+  (unless (file-directory-p dir)
+    (user-error "Directory does not exist: %s" dir))
+  (+go--spawn
+   (format "cd %s && go generate %s"
+           (shell-quote-argument dir)
+           args)))
+
+;;;###autoload
+(defun +go/generate-file ()
+  "Run \\='go generate' for the current file."
+  (interactive)
+  (+go--assert-buffer-visiting)
+  (+go--generate default-directory
+                 (file-name-nondirectory buffer-file-name)))
+
+;;;###autoload
+(defun +go/generate-dir ()
+  "Run \\='go generate' for the current directory, recursively."
+  (interactive)
+  (+go--generate default-directory "./..."))
+
+;;;###autoload
+(defun +go/generate-all (&optional arg)
+  "Run \\='go generate' for the entire project.
+
+Will prompt for the project if you're not in one or if the prefix ARG is
+non-nil."
+  (interactive "P")
+  (if-let*
+      ((proot
+        (let ((projectile-require-project-root 'prompt))
+          (projectile-ensure-project (unless arg (doom-project-root))))))
+      (+go--generate (file-truename proot) "./...")
+    (user-error "Not in a valid project")))
+
+
 ;;;###autoload
 (defun +go/play-buffer-or-region (&optional beg end)
   "Evaluate active selection or buffer in the Go playground."
