@@ -1,6 +1,14 @@
 ;;; completion/corfu/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun +corfu-dabbrev-friend-buffer-p (other-buffer)
+  (< (buffer-size other-buffer) +corfu-buffer-scanning-size-limit))
+
+
+;;
+;;; Commands
+
+;;;###autoload
 (defun +corfu/move-to-minibuffer ()
   "Move the current list of candidates to your choice of minibuffer completion UI."
   (interactive)
