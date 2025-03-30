@@ -98,12 +98,15 @@ Must end with a slash.")
   ;; projects with dotfiles.
   (defadvice! doom--projectile-centralized-cache-files-a (fn &optional proot)
     :around #'projectile-project-cache-file
-    (let* ((proot (abbreviate-file-name (or proot (doom-project-root))))
-           (projectile-cache-file
-            (expand-file-name
-             (format "%s-%s" (doom-project-name proot) (sha1 proot))
-             doom-projectile-cache-dir)))
-      (funcall fn proot)))
+    (let* ((proot (or proot (doom-project-root))))
+      (if (not proot)
+          (funcall fn)
+        (let* ((proot (abbreviate-file-name proot))
+               (projectile-cache-file
+                (expand-file-name
+                 (format "%s-%s" (doom-project-name proot) (sha1 proot))
+                 doom-projectile-cache-dir)))
+          (funcall fn proot)))))
 
   ;; Support the more generic .project files as an alternative to .projectile
   (defadvice! doom--projectile-dirconfig-file-a ()
