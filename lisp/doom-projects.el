@@ -94,11 +94,11 @@ Must end with a slash.")
   (setq compilation-buffer-name-function #'projectile-compilation-buffer-name
         compilation-save-buffers-predicate #'projectile-current-project-buffer-p)
 
-  ;; Centralize Projectile's per-project cache files, so they don't litter
-  ;; projects with dotfiles.
+  ;; HACK: Centralize Projectile's per-project cache files, so they don't litter
+  ;;   projects with dotfiles.
   (defadvice! doom--projectile-centralized-cache-files-a (fn &optional proot)
     :around #'projectile-project-cache-file
-    (let* ((proot (abbreviate-file-name (or proot (doom-project-root))))
+    (let* ((proot (or proot (doom-project-root) default-directory))
            (projectile-cache-file
             (expand-file-name
              (format "%s-%s" (doom-project-name proot) (sha1 proot))
