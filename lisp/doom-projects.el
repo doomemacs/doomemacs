@@ -105,6 +105,18 @@ Must end with a slash.")
              doom-projectile-cache-dir)))
       (funcall fn proot)))
 
+  ;; HACK: `projectile-ensure-project' operates on the current value of
+  ;;   `projectile-known-projects' when prompting the using for a project, which
+  ;;   may not have been initialized yet, so do so the first time it is called.
+  ;; REVIEW: PR this upstream
+  (defadvice! doom--projectile-update-known-projects-a (dir)
+    :before #'projectile-ensure-project
+    (unless dir
+      (when (and (eq projectile-require-project-root 'prompt)
+                 (not projectile-known-projects))
+        (projectile-known-projects))
+      (advice-remove 'projectile-ensure-project #'doom--projectile-update-known-projects-a)))
+
   ;; Support the more generic .project files as an alternative to .projectile
   (defadvice! doom--projectile-dirconfig-file-a ()
     :override #'projectile-dirconfig-file
