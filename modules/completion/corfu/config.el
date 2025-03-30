@@ -174,7 +174,15 @@ See `+corfu-want-minibuffer-completion'."
   ;; Emacs28.
   (when (< emacs-major-version 29)
     (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
-    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)))
+    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
+
+  (when (modulep! :lang latex)
+    ;; Allow file completion on latex directives.
+    (setq-hook! '(tex-mode-local-vars-hook
+                  latex-mode-local-vars-hook
+                  LaTeX-mode-local-vars-hook)
+      cape-file-prefix (if (stringp cape-file-prefix)
+                           "{" (cons "{" cape-file-prefix)))))
 
 (use-package! yasnippet-capf
   :when (modulep! :editor snippets)
