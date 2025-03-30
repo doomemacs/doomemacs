@@ -1,14 +1,18 @@
 ;;; lang/go/autoload.el -*- lexical-binding: t; -*-
 
-;;
-;; Tests
-
-(defvar +go-test-last nil
-  "The last test run.")
-
 (defun +go--spawn (cmd)
   (save-selected-window
     (compile cmd)))
+
+(defun +go--assert-buffer-visiting ()
+  (unless buffer-file-name
+    (user-error "Not in a file-visiting buffer")))
+
+
+;;; go test ...
+
+(defvar +go-test-last nil
+  "The last test run.")
 
 (defun +go--run-tests (args)
   (let ((cmd (concat "go test -test.v " args)))
@@ -39,24 +43,31 @@
 (defun +go/test-single ()
   "Run single test at point."
   (interactive)
-  (if (string-match "_test\\.go" buffer-file-name)
-      (save-excursion
-        (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
-        (+go--run-tests (concat "-run" "='^\\Q" (match-string-no-properties 2) "\\E$'")))
-    (error "Must be in a _test.go file")))
+  (+go--assert-buffer-visiting)
+  (unless (string-match-p "_test\\.go$" buffer-file-name)
+    (user-error "Must be in a *_test.go file"))
+  (save-excursion
+    (save-match-data
+      (unless (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)" nil t)
+        (user-error "No detectable test at or after point"))
+      (+go--run-tests (concat "-run" "='^\\Q" (match-string-no-properties 2) "\\E$'")))))
 
 ;;;###autoload
 (defun +go/test-file ()
   "Run all tests in current file."
   (interactive)
-  (if (string-match "_test\\.go" buffer-file-name)
-      (save-excursion
-        (goto-char (point-min))
-        (let ((func-list))
-          (while (re-search-forward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)" nil t)
-            (push (match-string-no-properties 2) func-list))
-          (+go--run-tests (concat "-run" "='^(" (string-join func-list "|")  ")$'"))))
-    (error "Must be in a _test.go file")))
+  (+go--assert-buffer-visiting)
+  (unless (string-match-p "_test\\.go$" buffer-file-name)
+    (user-error "Must be in a *_test.go file"))
+  (save-excursion
+    (save-match-data
+      (goto-char (point-min))
+      (let (func-list)
+        (while (re-search-forward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)" nil t)
+          (push (match-string-no-properties 2) func-list))
+        (unless func-list
+          (user-error "No detectable tests in this file"))
+        (+go--run-tests (concat "-run" "='^(" (string-join func-list "|")  ")$'"))))))
 
 ;;;###autoload
 (defun +go/bench-all ()
