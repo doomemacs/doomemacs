@@ -180,8 +180,7 @@ See `+corfu-want-minibuffer-completion'."
     (setq-hook! '(tex-mode-local-vars-hook
                   latex-mode-local-vars-hook
                   LaTeX-mode-local-vars-hook)
-      cape-file-prefix (if (stringp cape-file-prefix)
-                           "{" (cons "{" cape-file-prefix)))))
+      cape-file-prefix "{")))
 
 (use-package! yasnippet-capf
   :when (modulep! :editor snippets)
