@@ -192,7 +192,6 @@ See `+corfu-want-minibuffer-completion'."
 
 (use-package! corfu-terminal
   :when (modulep! :os tty)
-  :when (not (display-graphic-p))
   :hook ((corfu-mode . corfu-terminal-mode)))
 
 
