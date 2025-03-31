@@ -428,15 +428,34 @@ If no popups are available, display the *Messages* buffer in a popup window."
 
 ;;;###autoload
 (defun +popup/raise (window &optional arg)
-  "Raise the current popup window into a regular window and
-return it. If prefix ARG, raise the current popup into a new
-window and return that window."
+  "Raise a popup WINDOW into a regular window, then select it.
+
+When called interactively, the selected popup window will be raised. If the
+selected window isn't a popup, any sole, visible popup window in the active
+frame will be raised. If there are multiple visible popups, then the user will
+be prompted to select one.
+
+If prefix ARG, the popup is raised into `other-window' instead."
   (interactive
-   (list (selected-window) current-prefix-arg))
+   (list
+    (let ((win (selected-window)))
+      (if (+popup-window-p win)
+          win
+        (if-let* ((popups
+                   (cl-loop for w in (+popup-windows)
+                            collect (cons (buffer-name (window-buffer w)) w))))
+            (if (cdr popups)
+                (or (cdr (assoc (completing-read
+                                 "Select window: " (mapcar #'car popups))
+                                popups))
+                    (user-error "Aborted"))
+              (cdar popups))
+          (user-error "No popup windows to raise"))))
+    current-prefix-arg))
   (cl-check-type window window)
   (unless (+popup-window-p window)
     (user-error "Cannot raise a non-popup window"))
-  (let ((buffer (current-buffer))
+  (let ((buffer (window-buffer window))
         (+popup--inhibit-transient t)
         +popup--remember-last)
     (+popup/close window 'force)
