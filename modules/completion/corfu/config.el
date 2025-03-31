@@ -60,6 +60,7 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
                                    'separator t)
         corfu-quit-no-match corfu-quit-at-boundary
         tab-always-indent 'complete)
+
   (add-to-list 'completion-category-overrides `(lsp-capf (styles ,@completion-styles)))
   (add-to-list 'corfu-auto-commands #'lispy-colon)
   (add-to-list 'corfu-continue-commands #'+corfu/move-to-minibuffer)
@@ -125,11 +126,11 @@ See `+corfu-want-minibuffer-completion'."
     :around #'ispell-completion-at-point
     (condition-case-unless-debug e
         (apply fn args)
-     ('error
-      (message "Error: %s" (error-message-string e))
-      (message "Auto-disabling `text-mode-ispell-word-completion'")
-      (setq text-mode-ispell-word-completion nil)
-      (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t)))))
+      ('error
+       (message "Error: %s" (error-message-string e))
+       (message "Auto-disabling `text-mode-ispell-word-completion'")
+       (setq text-mode-ispell-word-completion nil)
+       (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t)))))
 
 (use-package! cape
   :defer t
@@ -218,8 +219,8 @@ See `+corfu-want-minibuffer-completion'."
 ;; If vertico is not enabled, orderless will be installed but not configured.
 ;; That may break smart separator behavior, so we conditionally configure it.
 (use-package! orderless
-  :when (and (not (modulep! :completion vertico))
-             (modulep! +orderless))
+  :when (not (modulep! :completion vertico))
+  :when (modulep! +orderless)
   :config
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil

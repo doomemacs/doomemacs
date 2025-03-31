@@ -10,7 +10,7 @@
 
 ;;;###autoload
 (defun +corfu/move-to-minibuffer ()
-  "Move the current list of candidates to your choice of minibuffer completion UI."
+  "Move list of candidates to your choice of minibuffer completion UI."
   (interactive)
   (pcase completion-in-region--data
     (`(,beg ,end ,table ,pred ,extras)
