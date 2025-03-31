@@ -143,6 +143,12 @@ directives. By default, this only recognizes C directives.")
                  (count-lines (point-min) (point-max))
                  (buffer-size)))))
 
+  ;; HACK: '=' moves the cursor to the beginning of selection. Disable this,
+  ;;   since it's more disruptive than helpful.
+  (defadvice! +evil--dont-move-cursor-a (fn &rest args)
+    :around #'evil-indent
+    (save-excursion (apply fn args)))
+
   ;; HACK: In vim, registers 2-9 are global. In Evil, they're buffer-local.  so
   ;;   I enforce vim's way.
   ;; REVIEW: PR this upstream?
