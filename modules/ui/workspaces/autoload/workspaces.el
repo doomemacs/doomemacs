@@ -562,17 +562,10 @@ the user to open a file in the new project.
 This be hooked to `projectile-after-switch-project-hook'."
   (when dir
     (setq +workspaces--project-dir dir))
-  ;; HACK Clear projectile-project-root, otherwise cached roots may interfere
-  ;;      with project switch (see #3166)
+  ;; HACK: Clear projectile-project-root or cached roots could interfere with
+  ;;   project switching (see #3166).
   (let (projectile-project-root)
     (when (and persp-mode +workspaces--project-dir)
-      (when projectile-before-switch-project-hook
-        (with-temp-buffer
-          ;; Load the project dir-local variables into the switch buffer, so the
-          ;; action can make use of them
-          (setq default-directory +workspaces--project-dir)
-          (hack-dir-local-variables-non-file-buffer)
-          (run-hooks 'projectile-before-switch-project-hook)))
       (unwind-protect
           (if (and (not (null +workspaces-on-switch-project-behavior))
                    (or (eq +workspaces-on-switch-project-behavior t)
@@ -600,7 +593,6 @@ This be hooked to `projectile-after-switch-project-hook'."
               (+workspace-rename (+workspace-current-name) (doom-project-name +workspaces--project-dir)))
             (unless current-prefix-arg
               (funcall +workspaces-switch-project-function +workspaces--project-dir)))
-        (run-hooks 'projectile-after-switch-project-hook)
         (setq +workspaces--project-dir nil)))))
 
 ;;;###autoload
