@@ -30,6 +30,10 @@
           :desc "go run ." "r" (cmd! (compile "go run ."))
           :desc "go build" "b" (cmd! (compile "go build"))
           :desc "go clean" "c" (cmd! (compile "go clean")))
+        (:prefix ("g" . "generate")
+          "f" #'+go/generate-file
+          "d" #'+go/generate-dir
+          "a" #'+go/generate-all)
         (:prefix ("t" . "test")
           "t" #'+go/test-rerun
           "a" #'+go/test-all

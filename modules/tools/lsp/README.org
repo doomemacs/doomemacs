@@ -8,31 +8,14 @@ This module integrates [[https://langserver.org/][language servers]] into Doom E
 you'd expect from IDEs, like code completion, realtime linting, language-aware
 [[doom-package:imenu]]/[[doom-package:xref]] integration, jump-to-definition/references support, and more.
 
-As of this writing, this is the state of LSP support in Doom Emacs:
+Depending on the presence of the =+eglot= flag, this module is powered by either
+[[doom-package:lsp-mode]] or [[doom-package:eglot]]. A comprehensive list of LSP clients that are supported
+out-of-the-box (as well as documentation on adding more) can be found [[https://emacs-lsp.github.io/lsp-mode/page/languages/][here]] (for
+lsp-mode) or [[https://github.com/joaotavora/eglot?tab=readme-ov-file#connecting-to-a-server][here]] (for eglot).
 
-| Module           | Major modes                                             | Default language server                                       |
-|------------------+---------------------------------------------------------+---------------------------------------------------------------|
-| [[doom-module::lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls, clangd                                                  |
-| [[doom-module::lang clojure]]    | clojure-mode                                            | clojure-lsp                                                   |
-| [[doom-module::lang csharp]]     | csharp-mode                                             | omnisharp                                                     |
-| [[doom-module::lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
-| [[doom-module::lang fsharp]]     | fsharp-mode                                             | Mono, .NET core                                               |
-| [[doom-module::lang go]]         | go-mode                                                 | go-langserver                                                 |
-| [[doom-module::lang haskell]]    | haskell-mode                                            | haskell-language-server                                       |
-| [[doom-module::lang java]]       | java-mode                                               | lsp-java                                                      |
-| [[doom-module::lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | ts-ls, deno-ls                                                |
-| [[doom-module::lang julia]]      | julia-mode                                              | LanguageServer.jl                                             |
-| [[doom-module::lang ocaml]]      | tuareg-mode                                             | ocaml-language-server                                         |
-| [[doom-module::lang php]]        | php-mode                                                | php-language-server                                           |
-| [[doom-module::lang purescript]] | purescript-mode                                         | purescript-language-server                                    |
-| [[doom-module::lang python]]     | python-mode                                             | lsp-python-ms                                                 |
-| [[doom-module::lang ruby]]       | ruby-mode                                               | solargraph                                                    |
-| [[doom-module::lang rust]]       | rust-mode                                               | rls                                                           |
-| [[doom-module::lang scala]]      | scala-mode                                              | metals                                                        |
-| [[doom-module::lang sh]]         | sh-mode                                                 | bash-language-server                                          |
-| [[doom-module::lang swift]]      | swift-mode                                              | sourcekit                                                     |
-| [[doom-module::lang web]]        | web-mode, css-mode, scss-mode, sass-mode, less-css-mode | vscode-css-languageserver-bin, vscode-html-languageserver-bin |
-| [[doom-module::lang zig]]        | zig-mode                                                | zls                                                           |
+Each of Doom's :lang modules may add new, extend existing, or change support for
+existing LSP clients. Remember to check out their documentation (particularly
+for its =+lsp= flag).
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]

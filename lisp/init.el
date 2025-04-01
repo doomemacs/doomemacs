@@ -1,7 +1,7 @@
 ;;; lisp/init.el -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
-;; :core is now treated like a normal module, and this is its (temporary) init
+;; :doom is now treated like a normal module, and this is its (temporary) init
 ;; file, which will be removed once we've resolved our `use-package' dependency
 ;; (which will soon be moved to its own module), then these will be returned to
 ;; the profile init file.
@@ -12,19 +12,6 @@
 (doom-require 'doom-ui)
 (doom-require 'doom-projects)
 (doom-require 'doom-editor)
-
-;; COMPAT: `safe-local-variable-directories' was introduced in Emacs 30.1
-(unless (boundp 'safe-local-variable-directories)
-  (defvar safe-local-variable-directories ())
-  (define-advice hack-local-variables-filter (:around (fn variables dir-name) respect)
-    (let ((enable-local-variables
-           (if (delq nil (mapcar (lambda (dir)
-                                   (and dir-name dir
-                                        (file-equal-p dir dir-name)))
-                                 safe-local-variable-directories))
-               :all
-             enable-local-variables)))
-      (funcall fn variables dir-name))))
 
 ;; Ensure .dir-locals.el in $EMACSDIR and $DOOMDIR are always respected
 (add-to-list 'safe-local-variable-directories doom-emacs-dir)

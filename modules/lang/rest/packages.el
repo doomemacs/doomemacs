@@ -6,5 +6,5 @@
   (package! company-restclient :pin "e5a3ec54edb44776738c13e13e34c85b3085277b"))
 
 (when (modulep! +jq)
-  (package! jq-mode :pin "a0f79eba786d46f01aeabb5913aadc337e985d6c")
+  (package! jq-mode :pin "eeb86b4d5ad823e97bd19979fcb22d0aa90ff07b")
   (package! restclient-jq :pin "e2a2b13482d72634f8e49864cd9e5c907a5fe137"))

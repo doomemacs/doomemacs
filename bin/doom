@@ -71,9 +71,6 @@
 ;; - The user may have mounted /tmp with a noexec flag, so pass the exit script
 ;;   to /bin/sh rather than executing them directly.
 
-;; In CLI sessions, prefer correctness over performance.
-(setq load-prefer-newer t)
-
 ;; Doom's core sets up everything we need; including `doom-*-dir' variables,
 ;; universal defaults, and autoloads for doom-*-initialize functions.
 (condition-case e
@@ -257,33 +254,33 @@ SEE ALSO:
 ;; load them lazily.
 (defcli-group!
   :prefix 'doom
+  (defcli-alias! ((version v)) (:root :version))
   ;; Import this for implicit 'X help' commands for your script:
   (defcli-alias! ((help h)) (:root :help))
   ;; And suggest its use when errors occur.
   (add-to-list 'doom-help-commands "%p h[elp] %c")
 
+  (defcli-autoload! ((doctor doc)))
+  (defcli-autoload! (info))
+
   (defcli-group! "Config Management"
     :docs "Commands for maintaining your Doom Emacs configuration."
     (defcli-autoload! ((sync s)))
-    (defcli-autoload! ((profiles profile)))
+    (defcli-autoload! ((profile pf)))
     (defcli-autoload! ((upgrade up)))
     (defcli-autoload! (env))
-    (defcli-autoload! ((build b purge p gc rollback)) "packages")
-    (defcli-autoload! ((install i)))
+    (defcli-autoload! (gc))
+    (defcli-autoload! (install))
+
+    (defcli-obsolete! (profiles sync) (profile sync "--all") "3.0.0")
+    (defcli-obsolete! ((build b)) (sync "--rebuild") "3.0.0")
+    (defcli-obsolete! ((purge p)) (gc) "3.0.0")
 
     ;; TODO Post-3.0 commands
-    ;; (load! "gc" dir)
-    ;; (load! "module" dir)
-    ;; (load! "nuke" dir)
-    ;; (load! "package" dir)
-    ;; (load! "profile" dir)
-    )
-
-  (defcli-group! "Diagnostics"
-    :docs "Commands for troubleshooting and debugging Doom."
-    (defcli-autoload! ((doctor doc)))
-    (defcli-autoload! (info))
-    (defcli-alias! ((version v)) (:root :version)))
+    (defcli-stub! module)
+    (defcli-stub! nuke)
+    (defcli-stub! package)
+    (defcli-stub! rollback))
 
   (defcli-group! "Development"
     :docs "Commands for developing or launching Doom."
@@ -291,13 +288,12 @@ SEE ALSO:
     (defcli-autoload! (make))
     (defcli-autoload! (run))
 
-    ;; FIXME Test framework
-    ;; (load! "test" dir)
-    )
+    ;; TODO Post-3.0 commands
+    (defcli-stub! test))
 
   (let ((cli-file "cli.el"))
     (defcli-group! "Module commands"
-      (with-doom-context 'modules
+      (with-doom-context 'module
         (dolist (key (doom-module-list))
           (when-let (path (doom-module-locate-path key cli-file))
             (defcli-group! :prefix (if (cdr key) (format "+%s" (cdr key)))

@@ -45,7 +45,7 @@
   (advice-add #'yas-snippet-dirs :filter-return #'delete-dups)
 
   ;; Remove GUI dropdown prompt (prefer ivy/helm)
-  (delq! 'yas-dropdown-prompt yas-prompt-functions)
+  (cl-callf2 delq 'yas-dropdown-prompt yas-prompt-functions)
   ;; Prioritize private snippets in `+snippets-dir' over built-in ones if there
   ;; are multiple choices.
   (add-to-list 'yas-prompt-functions #'+snippets-prompt-private)

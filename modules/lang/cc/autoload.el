@@ -1,7 +1,7 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.cl\\'" . opencl-mode))
+(add-to-list 'auto-mode-alist '("\\.cl\\'" . opencl-c-mode))
 
 ;; The plusses in c++-mode can be annoying to search for ivy/helm (which reads
 ;; queries as regexps), so we add these for convenience.
@@ -113,7 +113,7 @@ the children of class at point."
             (pcase-let ((`(,depth . ,node) (pop tree)))
               (cl-destructuring-bind (&key uri range) (plist-get node :location)
                 (insert (make-string depth ?\ ) (plist-get node :name) "\n")
-                (make-text-button (+ (point-at-bol 0) depth) (point-at-eol 0)
+                (make-text-button (+ (line-beginning-position 0) depth) (line-end-position 0)
                                   'action (lambda (_arg)
                                             (interactive)
                                             (find-file (eglot--uri-to-path uri))

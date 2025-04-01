@@ -2,6 +2,6 @@
 ;;; emacs/dired/packages.el
 
 (package! dirvish
-  :recipe (:host github :repo "hlissner/dirvish")
-  :pin "5f046190e886fb0a2dae7e884cc7cd9bcf48ac26")
-(package! diredfl :pin "f6d599c30875ab4894c1deab9713ff2faea54e06")
+  :recipe (:host github :repo "alexluigit/dirvish")
+  :pin "2d63995d3296c259cef90830cf0433602429ecec")
+(package! diredfl :pin "fe72d2e42ee18bf6228bba9d7086de4098f18a70")

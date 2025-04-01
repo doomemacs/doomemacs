@@ -68,7 +68,7 @@ If popup is focused, kill it."
                       (safe-persp-name (get-current-persp))
                     "main"))))
         (dir default-directory))
-    (if-let (win (get-buffer-window buffer))
+    (if-let* ((win (get-buffer-window buffer)))
         (let (confirm-kill-processes)
           (set-process-query-on-exit-flag (get-buffer-process buffer) nil)
           (delete-window win)

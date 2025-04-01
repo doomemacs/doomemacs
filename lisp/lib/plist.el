@@ -20,11 +20,37 @@
 ;;; Library
 
 ;;;###autoload
-(defun doom-plist-get (plist prop &optional nil-value)
-  "Return PROP in PLIST, if it exists. Otherwise NIL-VALUE."
-  (if-let (val (plist-member plist prop))
-      (cadr val)
-    nil-value))
+(define-obsolete-function-alias 'doom-plist-get #'cl-getf "3.0.0")
+
+;;;###autoload
+(defun doom-plist-map (fn plist)
+  "Map FN on each keyword/value pair in PLIST.
+
+FN is a function that takes two arguments: a keyword and value, and its return
+values are accumulated ala `mapcar'."
+  (cl-loop for (key val) on plist by #'cddr
+           while (keywordp key)
+           do (plist-put plist key (funcall fn key val))))
+
+;;;###autoload
+(defun doom-plist-map* (fn vplist)
+  "Apply FN to each variadic property in VPLIST.
+
+FN is a variadic function, whose first argument is the keyword and the rest the
+values that follow (until the next keyword). Its return value is accumulated ala
+`mapcar'.
+
+VPLIST is a variadic-property list (a plist whose key may be followed by one or
+more values)."
+  (let ((vplist (copy-sequence vplist))
+        results)
+    (while vplist
+      (let ((prop (pop vplist))
+            vals)
+        (while (and vplist (not (keywordp (car vplist))))
+          (push (pop vplist) vals))
+        (push (funcall fn prop (nreverse vals)) results)))
+    (nreverse results)))
 
 ;;;###autoload
 (defun doom-plist-merge (from-plist to-plist)

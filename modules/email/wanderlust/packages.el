@@ -4,11 +4,19 @@
 ;; HACK These are wanderlust's dependencies (wanderlust depends on semi, semi
 ;;      depends on flim, flim on apel), but they all have non-standard default
 ;;      branches which straight cannot detect without our help.
-(package! apel :recipe (:branch "apel-wl") :pin "1a6fd3bab2cc6b0a450c2d801f77a1c9da0f72fb")
-(package! flim :recipe (:branch "flim-1_14-wl") :pin "23bb29d70a13cada2eaab425ef80071564586a6d")
-(package! semi :recipe (:branch "semi-1_14-wl") :pin "85a52b899ac89be504d9e38d8d406bba98f4b0b3")
+(package! apel
+  :recipe (:host github :repo "wanderlust/apel" :branch "apel-wl")
+  :pin "1a6fd3bab2cc6b0a450c2d801f77a1c9da0f72fb")
+(package! flim
+  :recipe (:host github :repo "wanderlust/flim" :branch "flim-1_14-wl")
+  :pin "774e40da2b7de769e79c782dc82f09026a69163f")
+(package! semi
+  :recipe (:host github :repo "wanderlust/semi" :branch "semi-1_14-wl")
+  :pin "85a52b899ac89be504d9e38d8d406bba98f4b0b3")
 
-(package! wanderlust :pin "8b413b33cdb5a1b715f99a3919573fde2cfb3053")
+(package! wanderlust
+  :recipe (:host github :repo "wanderlust/wanderlust")
+  :pin "6a0605415d6661703e69fa2f860e179342b31e6f")
 
 (when (modulep! +xface)
   (package! x-face-e21

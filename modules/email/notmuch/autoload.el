@@ -36,7 +36,7 @@
 
 (defun +notmuch-get-sync-command ()
   "Return a shell command string to synchronize your notmuch mail with."
-  (let* ((afew-cmd "afew -a -t")
+  (let* ((afew-cmd "afew -n -t")
          (sync-cmd
           (pcase +notmuch-sync-backend
             (`gmi
@@ -44,10 +44,10 @@
             ((or `mbsync
                  `mbsync-xdg) ; DEPRECATED `mbsync-xdg' is now just `mbsync'
              (format "mbsync %s -a && notmuch new"
-                     (if-let (config-file
-                              (doom-glob (or (getenv "XDG_CONFIG_HOME")
-                                             "~/.config")
-                                         "isync/mbsyncrc"))
+                     (if-let* ((config-file
+                                (doom-glob (or (getenv "XDG_CONFIG_HOME")
+                                               "~/.config")
+                                           "isync/mbsyncrc")))
                          (format "-c %S" (car config-file))
                        "")))
             (`offlineimap

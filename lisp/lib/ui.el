@@ -200,7 +200,7 @@ narrowing doesn't affect other windows displaying the same buffer. Call
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive (if (region-active-p)
                    (list (doom-region-beginning) (doom-region-end))
-                 (list (bol) (eol))))
+                 (list (pos-bol) (pos-eol))))
   (deactivate-mark)
   (let ((orig-buffer (current-buffer)))
     (with-current-buffer (switch-to-buffer (clone-indirect-buffer nil nil))
@@ -241,7 +241,7 @@ If the current buffer is not an indirect buffer, it is `widen'ed."
   "Narrow the buffer to BEG END. If narrowed, widen it."
   (interactive (if (region-active-p)
                    (list (doom-region-beginning) (doom-region-end))
-                 (list (bol) (eol))))
+                 (list (pos-bol) (pos-eol))))
   (if (buffer-narrowed-p)
       (widen)
     (narrow-to-region beg end)))

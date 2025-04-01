@@ -270,7 +270,7 @@ line to beginning of line. Same as `evil-delete-back-to-indentation'."
     (funcall (if (fboundp 'evil-delete)
                  #'evil-delete
                #'delete-region)
-             (point-at-bol) (point))
+             (line-beginning-position) (point))
     (unless empty-line-p
       (indent-according-to-mode))))
 

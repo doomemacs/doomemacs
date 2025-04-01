@@ -34,7 +34,7 @@ body:
         required: true
       - label: >
           The issue can be reproduced on a stable release of Emacs, such as 27,
-          28, or 29. *(Unstable versions end in .50, .60, or .9x)*
+          28, 29, or 30. *(Unstable versions end in .50, .60, or .9x)*
         required: true
 - type: markdown
   attributes:

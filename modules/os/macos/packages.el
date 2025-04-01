@@ -3,4 +3,4 @@
 
 (when (< emacs-major-version 29)
   (package! osx-trash :pin "90f0c99206022fec646206018fcd63d9d2e57325"))
-(package! ns-auto-titlebar :pin "60273e764bf8d95abc40dd2fdc23af87ea9ee33b")
+(package! ns-auto-titlebar :pin "1205ac67b76b58e9eb53d2115b85775533653a80")

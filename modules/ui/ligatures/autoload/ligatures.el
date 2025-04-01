@@ -35,7 +35,7 @@ Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
   (declare (indent defun))
   (if (null (car-safe plist))
       (dolist (mode (ensure-list modes))
-        (delq! mode +ligatures-extra-alist 'assq))
+        (setf (alist-get mode +ligatures-extra-alist nil t) nil))
     (let ((results))
       (while plist
         (let ((key (pop plist)))
@@ -43,7 +43,7 @@ Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
               (push (cons (pop plist) char) results))))
       (dolist (mode (ensure-list modes))
         (setf (alist-get mode +ligatures-extra-alist)
-              (if-let (old-results (alist-get mode +ligatures-extra-alist))
+              (if-let* ((old-results (alist-get mode +ligatures-extra-alist)))
                   (dolist (cell results old-results)
                     (setf (alist-get (car cell) old-results) (cdr cell)))
                 results))))))

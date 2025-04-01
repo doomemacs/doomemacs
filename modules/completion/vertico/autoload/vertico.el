@@ -41,7 +41,7 @@
     ;; Change the split style if the initial query contains the separator.
     (when query
       (cl-destructuring-bind (&key type separator initial _function)
-          (consult--async-split-style)
+          (alist-get consult-async-split-style consult-async-split-styles-alist)
         (pcase type
           (`separator
            (replace-regexp-in-string (regexp-quote (char-to-string separator))
@@ -196,10 +196,14 @@ targets."
       (which-key--show-keymap
        (if (eq (plist-get (car targets) :type) 'embark-become)
            "Become"
-         (format "Act on %s '%s'%s"
+         (if (> (or (plist-get (car targets) :multi) 0) 1)
+             (format "Act on %s '%ss'"
+                 (plist-get (car targets) :multi)
+                 (plist-get (car targets) :type))
+             (format "Act on %s '%s'%s"
                  (plist-get (car targets) :type)
                  (embark--truncate-target (plist-get (car targets) :target))
-                 (if (cdr targets) "…" "")))
+                 (if (cdr targets) "…" ""))))
        (if prefix
            (pcase (lookup-key keymap prefix 'accept-default)
              ((and (pred keymapp) km) km)

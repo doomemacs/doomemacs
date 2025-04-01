@@ -88,7 +88,7 @@ human-readable variant of its associated major mode name."
                          (+eval-repl-known-repls)))
          (founds (mapcar (lambda (fn) (list (+eval-pretty-mode-name-from-fn fn) fn))
                          (+eval-repl-found-repls)))
-         (repls (cl-delete-duplicates (append knowns founds)))
+         (repls (cl-delete-duplicates (append knowns founds) :test #'equal))
          (names (mapcar #'car repls))
          (choice (or (completing-read "Open a REPL for: " names)
                      (user-error "Aborting"))))
@@ -157,8 +157,7 @@ immediately after."
                (delete-region (point-min) (point)))
              (indent-rigidly (point) (point-max)
                              (- (skip-chars-forward " \t")))
-             (concat (string-trim-right (buffer-string))
-                     "\n"))))
+             (string-trim-right (buffer-string)))))
       (with-selected-window (get-buffer-window buffer)
         (with-current-buffer buffer
           (dolist (line (split-string selection "\n"))

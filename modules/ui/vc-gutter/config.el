@@ -93,7 +93,7 @@ Respects `diff-hl-disable-on-remote'."
                 (put 'diff-hl-mode 'last graphic?))))))))
 
   :config
-  (set-popup-rule! "^\\*diff-hl" :select nil :size '+popup-shrink-to-fit)
+  (set-popup-rule! "^\\*diff-hl" :select nil)
 
   (setq diff-hl-global-modes '(not image-mode pdf-view-mode))
   ;; PERF: A slightly faster algorithm for diffing.
@@ -128,7 +128,6 @@ Respects `diff-hl-disable-on-remote'."
                        (diff-hl-update-once))))))
   ;; UX: Update diff-hl when magit alters git state.
   (when (modulep! :tools magit)
-    (add-hook 'magit-pre-refresh-hook  #'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
   ;; FIX: The revert popup consumes 50% of the frame, whether or not you're

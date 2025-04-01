@@ -47,6 +47,6 @@ Returns nil if 'love' executable can't be found."
 (defun +lua/run-love-game ()
   "Run the current project with Love2D."
   (interactive)
-  (if-let (cmd (+lua-love-build-command))
+  (if-let* ((cmd (+lua-love-build-command)))
       (async-shell-command cmd)
     (user-error "Couldn't find love project")))

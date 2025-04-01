@@ -197,7 +197,7 @@ If DISABLE? (universal arg), reveal hidden accounts without prompting."
               (seq-let (beg end) (beancount-find-transaction-extents (point))
                 ;; TODO: Highlight entry (ala org-occur)
                 (if (= beg end)
-                    (setq end (save-excursion (goto-char end) (1+ (eol)))))
+                    (setq end (save-excursion (goto-char end) (1+ (pos-eol)))))
                 (put-text-property start beg 'invisible t)
                 (put-text-property start beg 'display placeholder)
                 (setq start end))))
@@ -228,7 +228,7 @@ Return non-nil if successful."
           ;; Ensures "jump to top of current transaction" behavior that is
           ;; common for jump-to-previous commands like this in other Emacs modes
           ;; (like org-mode).
-          (or (bolp) (goto-char (eol)))
+          (or (bolp) (goto-char (pos-eol)))
           (re-search-backward
            (concat beancount-timestamped-directive-regexp
                    "\\|" beancount-transaction-regexp)))

@@ -6,7 +6,7 @@
   :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
 (package! compat
   :recipe (:host github :repo "emacs-compat/compat")
-  :pin "e9203e164903a6bb7de3e58aa0d653bbcff9d3d1")
+  :pin "c89bba6524501bde03db6266a3ac47b266b81e02")
 (package! gcmh
   :pin "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9")
 
@@ -15,27 +15,27 @@
   :type 'core
   :recipe `(:host github
             :repo "radian-software/straight.el"
-            :branch ,straight-repository-branch
+            :branch "develop"
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "08e197bfa63829f5f5ce42cf1e3c4a4e40003f5a")
+  :pin "483b205efb2eaa6be7c0dc7078b8c9dafcffb318")
 
 ;; doom-ui.el
-(package! nerd-icons :pin "c3d641d8e14bd11b5f98372da34ee5313636e363")
+(package! nerd-icons :pin "6612cc65373b63e85362b6a5d0bbd440b05be58b")
 (package! hide-mode-line :pin "ddd154f1e04d666cd004bf8212ead8684429350d")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f40ece58df8b2f0fb6c8576b527755a552a5e763")
 (package! restart-emacs :pin "1607da2bc657fe05ae01f7fdf26f716eafead02c")
 
 ;; doom-editor.el
-(package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
-(package! dtrt-indent :pin "a8aa356684804c52f26602d4e315f1306c6f3e59")
-(package! smartparens :pin "c7519a1b69f196050a13e2230b7532893b077086")
-(package! ws-butler :pin "e3a38d93e01014cd47bf5af4924459bd145fd7c4")
+(package! better-jumper :pin "b1bf7a3c8cb820d942a0305e0e6412ef369f819c")
+(package! dtrt-indent :pin "22498ca24ac93c051d233abef630aece1ac45dd1")
+(package! smartparens :pin "b0d935c11813bcd40f8d35bae8800e0741334c29")
+(package! ws-butler :pin "d3927f6131f215e9cd3e1f747be5a91e5be8ca9a")
 
 ;; doom-projects.el
-(package! projectile :pin "8cc2ee8937b89f1639304cbd2526e85b17135372")
-(package! project :pin "5c77d78936364e2e6e9641af2091fde0bee729ce")
+(package! projectile :pin "55db082cdf7b849335ccf24b7ba5aa2607d6fe93")
+(package! project :pin "d193442fca61b41803baf6446e4052ed034869a6")
 
 ;; doom-keybinds.el
 (package! general :pin "826bf2b97a0fb4a34c5eb96ec2b172d682fd548f")

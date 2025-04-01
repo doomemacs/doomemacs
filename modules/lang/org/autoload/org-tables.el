@@ -61,7 +61,7 @@ re-align the table if necessary. (Necessary because org-mode has a
     (save-match-data
       (when (and (org-at-table-p)
                  (not (org-region-active-p))
-                 (string-match-p "|" (buffer-substring (point-at-bol) (point)))
+                 (string-match-p "|" (buffer-substring (line-beginning-position) (point)))
                  (looking-at-p ".*?|"))
         (let ((pos (point))
               (noalign (looking-at-p "[^|\n\r]*  |"))

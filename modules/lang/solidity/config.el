@@ -20,4 +20,4 @@
 
   (use-package! company-solidity
     :when (modulep! :completion company)
-    :config (delq! 'company-solidity company-backends)))
+    :config (cl-callf2 delq 'company-solidity company-backends)))

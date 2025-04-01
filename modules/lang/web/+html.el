@@ -62,7 +62,7 @@
                        collect (cons (car pair)
                                      (string-trim-right (cdr pair)
                                                         "\\(?:>\\|]\\|}\\)+\\'")))))
-    (delq! nil web-mode-engines-auto-pairs))
+    (cl-callf2 delq nil web-mode-engines-auto-pairs))
 
   (add-to-list 'web-mode-engines-alist '("elixir" . "\\.eex\\'"))
   (add-to-list 'web-mode-engines-alist '("phoenix" . "\\.[lh]eex\\'"))

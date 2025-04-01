@@ -39,16 +39,18 @@ Only has an effect in GUI Emacs.")
         magit-revision-insert-related-refs nil)
   (add-hook 'magit-process-mode-hook #'goto-address-mode)
 
-  (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
-    :after '(magit-checkout magit-branch-and-checkout)
-    ;; Since the project likely now contains new files, best we undo the
-    ;; projectile cache so it can be regenerated later.
-    (projectile-invalidate-cache nil)
-    ;; Use a more efficient strategy to auto-revert buffers whose git state has
-    ;; changed: refresh the visible buffers immediately...
-    (+magit-mark-stale-buffers-h))
-  ;; ...then refresh the rest only when we switch to them, not all at once.
+  ;; Since the project likely now contains new files, best we undo the
+  ;; projectile cache so it can be regenerated later.
+  (add-hook! 'magit-post-refresh-hook
+    (defun +magit-invalidate-projectile-cache-h ()
+      (projectile-invalidate-cache nil)))
+  ;; Use a more efficient strategy to auto-revert buffers whose git state has
+  ;; changed: refresh the visible buffers immediately...
+  (add-hook 'magit-post-refresh-hook #'+magit-mark-stale-buffers-h)
+  ;; ...then refresh the rest only when we switch to them or refocus the active
+  ;; frame, not all at once.
   (add-hook 'doom-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
+  (add-hook 'focus-in-hook #'+magit-mark-stale-buffers-h)
 
   ;; The default location for git-credential-cache is in
   ;; ~/.cache/git/credential. However, if ~/.git-credential-cache/ exists, then
@@ -83,10 +85,20 @@ Only has an effect in GUI Emacs.")
   ;;    screen are opened as popups.
   ;; 2. The status screen isn't buried when viewing diffs or logs from the
   ;;    status screen.
-  (setq transient-display-buffer-action '(display-buffer-below-selected)
-        magit-display-buffer-function #'+magit-display-buffer-fn
+  (setq magit-display-buffer-function #'+magit-display-buffer-fn
         magit-bury-buffer-function #'magit-mode-quit-window)
+  ;; Pop up transient windows at the bottom of the window where it was invoked.
+  ;; This is more ergonomic for users with large displays or many splits.
+  (setq transient-display-buffer-action
+        '(display-buffer-below-selected
+          (dedicated . t)
+          (inhibit-same-window . t))
+        transient-show-during-minibuffer-read t)
+
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
+
+  ;; The mode-line isn't useful in these popups and take up valuable screen
+  ;; estate, so free it up.
   (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
 
   ;; Add additional switches that seem common enough
@@ -248,7 +260,9 @@ Only has an effect in GUI Emacs.")
   :defer t
   :init
   (defvar evil-collection-magit-section-use-z-for-folds evil-collection-magit-use-z-for-folds)
-  (after! magit-section
+  :config
+  (defadvice! +magit--override-evil-collection-defaults-a (&rest _)
+    :after #'evil-collection-magit-section-setup
     ;; These numbered keys mask the numerical prefix keys. Since they've already
     ;; been replaced with z1, z2, z3, etc (and 0 with g=), there's no need to
     ;; keep them around:

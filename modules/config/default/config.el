@@ -31,44 +31,51 @@
       avy-single-candidate-jump nil)
 
 
-(after! epa
-  ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to prompt
-  ;; for the key passphrase.
-  (set 'epg-pinentry-mode 'loopback)
-  ;; Default to the first enabled and non-expired key in your keyring.
-  (setq-default
-   epa-file-encrypt-to
-   (or (default-value 'epa-file-encrypt-to)
-       (unless (string-empty-p user-full-name)
-         (when-let (context (ignore-errors (epg-make-context)))
-           (cl-loop for key in (epg-list-keys context user-full-name 'public)
-                    for subkey = (car (epg-key-sub-key-list key))
-                    if (not (memq 'disabled (epg-sub-key-capability subkey)))
-                    if (< (or (epg-sub-key-expiration-time subkey) 0)
-                          (time-to-seconds))
-                    collect (epg-sub-key-fingerprint subkey))))
-       user-mail-address))
-   ;; And suppress prompts if epa-file-encrypt-to has a default value (without
-   ;; overwriting file-local values).
-  (defadvice! +default--dont-prompt-for-keys-a (&rest _)
-    :before #'epa-file-write-region
-    (unless (local-variable-p 'epa-file-encrypt-to)
-      (setq-local epa-file-encrypt-to (default-value 'epa-file-encrypt-to)))))
+(when (modulep! +gnupg)
+  ;; By default, Emacs stores `authinfo' in $HOME and in plain-text. Let's not
+  ;; do that, mkay? This file stores usernames, passwords, and other treasures
+  ;; for the aspiring malicious third party. You'll need a GPG setup though.
+  (setq auth-sources (list (file-name-concat doom-profile-state-dir "authinfo.gpg")
+                           "~/.authinfo.gpg"))
+
+  (after! epa
+    ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to
+    ;; prompt for the key passphrase.
+    (set 'epg-pinentry-mode 'loopback)
+    ;; Default to the first enabled and non-expired key in your keyring.
+    (setq-default
+     epa-file-encrypt-to
+     (or (default-value 'epa-file-encrypt-to)
+         (unless (string-empty-p user-full-name)
+           (when-let (context (ignore-errors (epg-make-context)))
+             (cl-loop for key in (epg-list-keys context user-full-name 'public)
+                      for subkey = (car (epg-key-sub-key-list key))
+                      if (not (memq 'disabled (epg-sub-key-capability subkey)))
+                      if (< (or (epg-sub-key-expiration-time subkey) 0)
+                            (time-to-seconds))
+                      collect (epg-sub-key-fingerprint subkey))))
+         user-mail-address))
+    ;; And suppress prompts if epa-file-encrypt-to has a default value (without
+    ;; overwriting file-local values).
+    (defadvice! +default--dont-prompt-for-keys-a (&rest _)
+      :before #'epa-file-write-region
+      (unless (local-variable-p 'epa-file-encrypt-to)
+        (setq-local epa-file-encrypt-to (default-value 'epa-file-encrypt-to))))))
 
 
 (after! woman
   ;; The woman-manpath default value does not necessarily match man. If we have
   ;; man available but aren't using it for performance reasons, we can extract
   ;; its manpath.
-  (let ((manpath (cond
-                  ((executable-find "manpath")
-                   (split-string (cdr (doom-call-process "manpath"))
-                                 path-separator t))
-                  ((executable-find "man")
-                   (split-string (cdr (doom-call-process "man" "--path"))
-                                 path-separator t)))))
-    (when manpath
-      (setq woman-manpath manpath))))
+  (when-let*
+      ((path (cond
+              ((executable-find "manpath")
+               (split-string (cdr (doom-call-process "manpath" "-q"))
+                             path-separator t))
+              ((executable-find "man")
+               (split-string (cdr (doom-call-process "man" "--path"))
+                             path-separator t)))))
+    (setq woman-manpath path)))
 
 
 ;;;###package tramp
@@ -375,8 +382,7 @@ Continues comments if executed from a commented line."
   ;; replaces `apropos-documentation' b/c `apropos' covers this
   "d"    nil
   "db"   #'doom/report-bug
-  "dc"   #'doom/goto-private-config-file
-  "dC"   #'doom/goto-private-init-file
+  "dc"   #'doom/open-private-config
   "dd"   #'doom-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
@@ -386,7 +392,6 @@ Continues comments if executed from a commented line."
   "dn"   #'doom/help-news
   "dN"   #'doom/help-search-news
   "dpc"  #'doom/help-package-config
-  "dpd"  #'doom/goto-private-packages-file
   "dph"  #'doom/help-package-homepage
   "dpp"  #'doom/help-packages
   "ds"   #'doom/help-search-headings

@@ -233,7 +233,9 @@ Activate this advice with:
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
   (require 'vc-git)
-  (require 'doom-packages)
+  (doom-require 'doom-lib 'profiles)
+  (doom-require 'doom-lib 'modules)
+  (doom-require 'doom-lib 'packages)
   (let ((default-directory doom-emacs-dir))
     (letf! ((defun sh (&rest args) (cdr (apply #'doom-call-process args)))
             (defun cat (file &optional limit)
@@ -263,11 +265,7 @@ ready to be pasted in a bug report on github."
                              (format "EMACSDIR=%s" (symlink-path doom-emacs-dir))
                              (format "EMACS=%s" (expand-file-name invocation-name invocation-directory)))))
         (doom . ,(list doom-version
-                       (if doom-profile
-                           (format "PROFILE=%s@%s"
-                                   (car doom-profile)
-                                   (cdr doom-profile))
-                         "PROFILE=_@0")
+                       (format "PROFILE=%s" (doom-profile->id (doom-profile-key doom-profile t)))
                        (if (file-exists-p! ".git" doom-emacs-dir)
                            (sh "git" "log" "-1" "--format=%D %h %ci")
                          "[no repo]")

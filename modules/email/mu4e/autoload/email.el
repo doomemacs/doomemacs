@@ -225,7 +225,7 @@ is tomorrow.  With two prefixes, select the deadline."
           (when (re-search-forward sec nil t)
             (let (org-M-RET-may-split-line
                   (lev (org-outline-level))
-                  (folded-p (invisible-p (point-at-eol)))
+                  (folded-p (invisible-p (line-end-position)))
                   (from (plist-get msg :from)))
               (when (consp (car from)) ; Occurs when using mu4e 1.8+.
                 (setq from (car from)))
@@ -311,7 +311,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
          (progn
            (message "No files marked, aborting.")
            (kill-buffer-and-window))
-       (if-let ((mail-target-buffer (bound-and-true-p dired-mail-buffer)))
+       (if-let* ((mail-target-buffer (bound-and-true-p dired-mail-buffer)))
            (progn (kill-buffer-and-window)
                   (switch-to-buffer mail-target-buffer))
          (if (and (+mu4e-current-buffers)

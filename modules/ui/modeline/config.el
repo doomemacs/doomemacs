@@ -23,8 +23,7 @@
         ;; Only show file encoding if it's non-UTF-8 and different line endings
         ;; than the current OSes preference
         doom-modeline-buffer-encoding 'nondefault
-        doom-modeline-default-eol-type
-        (pcase doom-system ('macos 2) ('windows 1) (_ 0)))
+        doom-modeline-default-eol-type (if (featurep :system 'windows) 1 0))
 
   :config
   ;; Fix an issue where these two variables aren't defined in TTY Emacs on MacOS

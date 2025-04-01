@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(load! "packages")
+(doom-require 'doom-lib 'packages)
 
 
 ;;
@@ -14,7 +14,7 @@
 ;;
 ;;; Commands
 
-(defcli! ((install i))
+(defcli! install
     ((aot?     ("--aot") "Enable ahead-of-time native-compilation (if available)")
      &flags
      (config?  ("--config" :yes)  "Create `$DOOMDIR' or dummy files therein?")
@@ -28,7 +28,7 @@
 This command does the following:
 
   1. Creates `$DOOMDIR' at ~/.config/doom (if it or ~/.doom.d doesn't exist),
-  2. Copies ~/.config/emacs/templates/init.example.el to `$DOOMDIR'/init.el (if
+  2. Copies ~/.config/emacs/static/init.example.el to `$DOOMDIR'/init.el (if
      it doesn't exist),
   3. Creates dummy files for `$DOOMDIR'/{config,packages}.el,
   4. Prompts you to generate an envvar file (same as `$ doom env`),
@@ -70,7 +70,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
                     (print! (item "Creating %s...") (path filename))
                     (with-temp-file filename (insert-file-contents template))
                     (print! (success "Done!")))))
-              (let ((template-dir (doom-path doom-emacs-dir "templates")))
+              (let ((template-dir (doom-path doom-emacs-dir "static/")))
                 `((,doom-module-init-file
                    . ,(file-name-with-extension (doom-path template-dir doom-module-init-file)
                                                 ".example.el"))
@@ -114,17 +114,17 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
         (print! (warn "Not deploying commit-msg and pre-push git hooks, as requested"))
       (print! (start "Deploying commit-msg and pre-push git hooks"))
       (print-group!
-       (condition-case e
-           (call! `(ci deploy-hooks ,@(if yes? '("--force"))))
-         ('user-error
-          (print! (warn "%s") (error-message-string e))))))
+        (condition-case e
+            (call! `(ci deploy-hooks ,@(if yes? '("--force"))))
+          ('user-error
+           (print! (warn "%s") (error-message-string e))))))
 
     (when (file-exists-p "~/.emacs")
       (print! (warn "A ~/.emacs file was detected. This conflicts with Doom and should be deleted!")))
 
     (print! (success "Finished! Doom is ready to go!\n"))
     (with-temp-buffer
-      (insert-file-contents (doom-path doom-emacs-dir "templates/QUICKSTART_INTRO"))
+      (insert-file-contents (doom-path doom-emacs-dir "static/QUICKSTART_INTRO"))
       (print! "%s" (buffer-string)))))
 
 (provide 'doom-cli-install)

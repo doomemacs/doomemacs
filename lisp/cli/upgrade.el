@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(load! "packages")
+(doom-require 'doom-lib 'packages)
 
 
 ;;
@@ -144,10 +144,10 @@ libraries. It is the equivalent of the following shell commands:
                     (ignore (print! (error "Aborted")))
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
-                   (doom-cli-context-put context 'straight-recipe (doom-upgrade--get-straight-recipe))
-                   (or (and (zerop (car (sh! "git" "reset" "--hard" target-remote)))
-                            (equal (cdr (sh! "git" "rev-parse" "HEAD")) new-rev))
-                       (error "Failed to check out %s" (substring new-rev 0 10)))))))))
+                    (doom-cli-context-put context 'straight-recipe (doom-upgrade--get-straight-recipe))
+                    (or (and (zerop (car (sh! "git" "reset" "--hard" target-remote)))
+                             (equal (cdr (sh! "git" "rev-parse" "HEAD")) new-rev))
+                        (error "Failed to check out %s" (substring new-rev 0 10)))))))))
         (ignore-errors
           (sh! "git" "branch" "-D" target-remote)
           (sh! "git" "remote" "remove" doom-upgrade-remote))))))

@@ -144,8 +144,6 @@ See `+corfu-want-minibuffer-completion'."
   (when (modulep! +dabbrev)
     (setq cape-dabbrev-check-other-buffers t)
     ;; Set up `cape-dabbrev' options.
-    (defun +dabbrev-friend-buffer-p (other-buffer)
-      (< (buffer-size other-buffer) +corfu-buffer-scanning-size-limit))
     (add-hook! '(prog-mode-hook
                  text-mode-hook
                  conf-mode-hook
@@ -155,7 +153,7 @@ See `+corfu-want-minibuffer-completion'."
       (defun +corfu-add-cape-dabbrev-h ()
         (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t)))
     (after! dabbrev
-      (setq dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p
+      (setq dabbrev-friend-buffer-function #'+corfu-dabbrev-friend-buffer-p
             dabbrev-ignored-buffer-regexps
             '("\\` "
               "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?")
@@ -173,8 +171,16 @@ See `+corfu-want-minibuffer-completion'."
   ;; From the `cape' readme. Without this, Eshell autocompletion is broken on
   ;; Emacs28.
   (when (< emacs-major-version 29)
-    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
-    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)))
+    (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-silent)
+    (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-purify))
+
+  (when (modulep! :lang latex)
+    ;; Allow file completion on latex directives.
+    (setq-hook! '(tex-mode-local-vars-hook
+                  latex-mode-local-vars-hook
+                  LaTeX-mode-local-vars-hook)
+      cape-file-prefix (if (stringp cape-file-prefix)
+                           "{" (cons "{" cape-file-prefix)))))
 
 (use-package! yasnippet-capf
   :when (modulep! :editor snippets)

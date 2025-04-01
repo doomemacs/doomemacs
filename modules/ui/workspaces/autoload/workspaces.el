@@ -413,10 +413,10 @@ end of the workspace list."
         ('error (+workspace-error ex t))))))
 
 ;;;###autoload
-(defun +workspace/switch-left ()  (interactive) (+workspace/cycle -1))
+(defun +workspace/switch-left (&optional n)  (interactive "p") (+workspace/cycle (- n)))
 
 ;;;###autoload
-(defun +workspace/switch-right () (interactive) (+workspace/cycle +1))
+(defun +workspace/switch-right (&optional n) (interactive "p") (+workspace/cycle n))
 
 ;;;###autoload
 (defun +workspace/close-window-or-workspace ()

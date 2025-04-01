@@ -20,27 +20,42 @@
   (let ((buffer-mode (buffer-local-value 'major-mode buffer)))
     (display-buffer
      buffer (cond
+             ;; Prevent opening multiple status windows for the same project.
              ((and (eq buffer-mode 'magit-status-mode)
                    (get-buffer-window buffer))
               '(display-buffer-reuse-window))
-             ;; Any magit buffers opened from a commit window should open below
-             ;; it. Also open magit process windows below.
-             ((or (bound-and-true-p git-commit-mode)
-                  (eq buffer-mode 'magit-process-mode))
+
+             ((or
+               ;; Any magit buffers opened from a commit window should open
+               ;; below the selected one.
+               (bound-and-true-p git-commit-mode)
+               ;; ...Or process log buffers...
+               (eq buffer-mode 'magit-process-mode)
+               ;; Nothing should replace the log-select buffer (revision buffers
+               ;; during rebasing, in particular).
+               (eq major-mode 'magit-log-select-mode))
               (let ((size (if (eq buffer-mode 'magit-process-mode)
                               0.35
                             0.7)))
                 `(display-buffer-below-selected
                   . ((window-height . ,(truncate (* (window-height) size)))))))
 
-             ;; Everything else should reuse the current window.
-             ((or (not (derived-mode-p 'magit-mode))
-                  (not (memq (with-current-buffer buffer major-mode)
-                             '(magit-process-mode
-                               magit-revision-mode
-                               magit-diff-mode
-                               magit-stash-mode
-                               magit-status-mode))))
+             ((or
+               ;; If triggered from outside of magit, open magit in the current
+               ;; window, rather than a far-away one.
+               (not (derived-mode-p 'magit-mode))
+               ;; If invoking a diff from the status buffer, use that window.
+               (and (eq major-mode 'magit-status-mode)
+                    (memq buffer-mode
+                          '(magit-diff-mode
+                            magit-stash-mode)))
+               ;; These buffers should open in another (but nearby) window,
+               ;; because they compliment the current one being visible.
+               (not (memq buffer-mode
+                          '(magit-process-mode
+                            magit-revision-mode
+                            magit-stash-mode
+                            magit-status-mode))))
               '(display-buffer-same-window))
 
              ('(+magit--display-buffer-in-direction))))))
@@ -53,16 +68,16 @@ window that already exists in that direction. It will split otherwise."
   (let ((direction (or (alist-get 'direction alist)
                        +magit-open-windows-in-direction))
         (origin-window (selected-window)))
-    (if-let (window (window-in-direction direction))
+    (if-let* ((window (window-in-direction direction)))
         (unless magit-display-buffer-noselect
           (select-window window))
-      (if-let (window (and (not (one-window-p))
-                           (window-in-direction
-                            (pcase direction
-                              (`right 'left)
-                              (`left 'right)
-                              ((or `up `above) 'down)
-                              ((or `down `below) 'up)))))
+      (if-let* ((window (and (not (one-window-p))
+                             (window-in-direction
+                              (pcase direction
+                                (`right 'left)
+                                (`left 'right)
+                                ((or `up `above) 'down)
+                                ((or `down `below) 'up))))))
         (unless magit-display-buffer-noselect
           (select-window window))
         (let ((window (split-window nil nil direction)))
@@ -86,12 +101,12 @@ window that already exists in that direction. It will split otherwise."
 (defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
     (kill-local-variable '+magit--stale-p)
-    (when (and buffer-file-name (file-exists-p buffer-file-name))
-      (if (buffer-modified-p (current-buffer))
-          (when (bound-and-true-p vc-mode)
-            (vc-refresh-state)
-            (force-mode-line-update))
-        (revert-buffer t t t)))))
+    (when (magit-auto-revert-repository-buffer-p buffer)
+      (when (bound-and-true-p vc-mode)
+        (vc-refresh-state))
+      (unless (buffer-modified-p buffer)
+        (revert-buffer t t t))
+      (force-mode-line-update))))
 
 ;;;###autoload
 (defun +magit-mark-stale-buffers-h ()

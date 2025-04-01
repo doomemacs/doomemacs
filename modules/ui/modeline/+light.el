@@ -129,7 +129,7 @@ Using optionals attributes FACE, HELP-ECHO and VOFFSET."
   "Set the modeline to NAME.
 If DEFAULT is non-nil, apply to all future buffers. Modelines are defined with
 `def-modeline!'."
-  (if-let (format (assq name +modeline-format-alist))
+  (if-let* ((format (assq name +modeline-format-alist)))
       (cl-destructuring-bind (lhs . rhs) (cdr format)
         (if default
             (setq-default +modeline-format-left lhs
@@ -474,7 +474,7 @@ lines are selected, or the NxM dimensions of a block selection.")
 (defun +modeline-add-selection-segment-h ()
   (add-to-list '+modeline-format-left '+modeline-selection-info 'append))
 (defun +modeline-remove-selection-segment-h ()
-  (delq! '+modeline-selection-info +modeline-format-left))
+  (cl-callf2 delq '+modeline-selection-info +modeline-format-left))
 
 (if (featurep 'evil)
     (progn

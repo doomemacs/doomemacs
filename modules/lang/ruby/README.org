@@ -4,13 +4,9 @@
 #+since:    1.3
 
 * Description :unfold:
-This module add Ruby and optional Ruby on Rails support to Emacs.
-
-- Code completion ([[doom-package:robe]])
-- Syntax checking ([[doom-package:flycheck]])
-- Jump-to-definitions ([[doom-package:robe]])
-- Bundler
-- Rubocop integration ([[doom-package:flycheck]])
+This module add Ruby and optional Ruby on Rails support to Emacs. IDE features
+(like code completion, jump-to-definition, etc) are provided by a supported LSP
+client (recommended: [[https://github.com/Shopify/ruby-lsp][ruby-lsp]] or [[https://github.com/castwide/solargraph][solargraph]]).
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -21,8 +17,8 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 - +chruby ::
   Enable chruby integration.
 - +lsp ::
-  Enable LSP support for ~ruby-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports solargraph).
+  Enable LSP support for ~ruby-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (recommended: [[https://github.com/Shopify/ruby-lsp][ruby-lsp]] or [[https://github.com/castwide/solargraph][solargraph]]).
 - +rails ::
   Enable rails navigational commands, plus server+console integration.
 - +rbenv ::
@@ -41,7 +37,6 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 - [[doom-package:minitest]]
 - [[doom-package:rake]]
 - [[doom-package:rbenv]] if [[doom-module:+rbenv]]
-- [[doom-package:robe]]
 - [[doom-package:rspec-mode]]
 - [[doom-package:rubocop]]
 - [[doom-package:rvm]] if [[doom-module:+rvm]]
@@ -71,7 +66,6 @@ These guides will help you install Ruby:
 Then run ~$ gem install rubocop~ to install rubocop.
 
 ** Formatter
-
 Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
 
 * TODO Usage
@@ -80,12 +74,6 @@ Formatting is handled using the [[doom-module::editor format]] module via [[http
 #+end_quote
 
 ** Commands
-*** robe
-| command              | key / ex command   | description                                                        |
-|----------------------+--------------------+--------------------------------------------------------------------|
-| ~robe-start~         | [[kbd:][<localleader> ']]  | Open ruby lang server for auto-completions and jump to definitions |
-| ~robe-rails-refresh~ | [[kbd:][<localleader> R]]  | Refresh the lang server.                                           |
-
 *** projectile-rails
 The projectile-rails prefix is [[kbd:][<localleader> r]]:
 | command                       | key / ex command  | description                                       |

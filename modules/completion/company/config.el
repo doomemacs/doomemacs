@@ -149,7 +149,7 @@
 
   ;; Don't show documentation in echo area, because company-box displays its own
   ;; in a child frame.
-  (delq! 'company-echo-metadata-frontend company-frontends)
+  (cl-callf2 delq 'company-echo-metadata-frontend company-frontends)
 
   (defun +company-box-icons--elisp-fn (candidate)
     (when (derived-mode-p 'emacs-lisp-mode)

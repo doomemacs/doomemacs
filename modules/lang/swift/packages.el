@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/swift/packages.el
 
-(package! swift-mode :pin "b06c97b909418b5dca3d15351b2ce86a04df32fb")
+(package! swift-mode :pin "2c0b2b72dc908652914b62a1e64b1d30144839ce")
 
 (if (modulep! +lsp)
     (unless (modulep! :tools lsp +eglot)

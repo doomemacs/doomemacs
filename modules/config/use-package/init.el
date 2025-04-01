@@ -109,7 +109,7 @@
                      (dolist (hook (cdr deferral-list))
                        (advice-remove hook #',fn)
                        (remove-hook hook #',fn))
-                     (delq! deferral-list doom--deferred-packages-alist)
+                     (cl-callf2 delq deferral-list doom--deferred-packages-alist)
                      (unintern ',fn nil)))))
          (let (forms)
            (dolist (hook hooks forms)

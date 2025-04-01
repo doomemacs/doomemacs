@@ -5,7 +5,7 @@
 
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
-(delq! 'ispell features)
+(cl-callf2 delq 'ispell features)
 
 (global-set-key [remap ispell-word] #'+spell/correct)
 

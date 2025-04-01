@@ -380,7 +380,7 @@ current project."
 (defun doom/kill-project-buffers (project &optional interactive)
   "Kill buffers for the specified PROJECT."
   (interactive
-   (list (if-let (open-projects (doom-open-projects))
+   (list (if-let* ((open-projects (doom-open-projects)))
              (completing-read
               "Kill buffers for project: " open-projects
               nil t nil nil

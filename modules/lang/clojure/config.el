@@ -125,7 +125,7 @@
   (after! evil
     (if (modulep! :editor evil +everywhere)
         ;; Match evil-collection keybindings to debugging overlay
-        (after! (cider-debug evil-collection-cider)
+        (after! cider-debug
           (mapc
            (lambda (replacement)
              (let* ((from (car replacement))

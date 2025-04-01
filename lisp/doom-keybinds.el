@@ -51,28 +51,35 @@ and Emacs states, and for non-evil users.")
         w32-rwindow-modifier 'super)))
 
 ;; HACK: Emacs can't distinguish C-i from TAB, or C-m from RET, in either GUI or
-;;   TTY frames.  This is a byproduct of its history with the terminal, which
+;;   TTY frames. This is a byproduct of its history with the terminal, which
 ;;   can't distinguish them either, however, Emacs has separate input events for
 ;;   many contentious keys like TAB and RET (like [tab] and [return], aka
 ;;   "<tab>" and "<return>"), which are only triggered in GUI frames, so here, I
 ;;   create one for C-i. Won't work in TTY frames, though. Doom's :os tty module
 ;;   has a workaround for that though.
-(pcase-dolist (`(,key ,fallback . ,events)
-               '(([C-i] [?\C-i] tab kp-tab)
-                 ([C-m] [?\C-m] return kp-return)))
-  (define-key
-   input-decode-map fallback
-   (cmd! (if (when-let ((keys (this-single-command-raw-keys)))
-               (and (display-graphic-p)
-                    (not (cl-loop for event in events
-                                  if (cl-position event keys)
-                                  return t))
-                    ;; Use FALLBACK if nothing is bound to KEY, otherwise we've
-                    ;; broken all pre-existing FALLBACK keybinds.
-                    (key-binding
-                     (vconcat (if (= 0 (length keys)) [] (cl-subseq keys 0 -1))
-                              key) nil t)))
-             key fallback))))
+(defun doom-init-input-decode-map-h ()
+  (pcase-dolist (`(,key ,fallback . ,events)
+                 '(([C-i] [?\C-i] tab kp-tab)
+                   ([C-m] [?\C-m] return kp-return)))
+    (define-key
+     input-decode-map fallback
+     (cmd! (if (when-let ((keys (this-single-command-raw-keys)))
+                 (and (display-graphic-p)
+                      (not (cl-loop for event in events
+                                    if (cl-position event keys)
+                                    return t))
+                      ;; Use FALLBACK if nothing is bound to KEY, otherwise
+                      ;; we've broken all pre-existing FALLBACK keybinds.
+                      (key-binding
+                       (vconcat (if (= 0 (length keys)) [] (cl-subseq keys 0 -1))
+                                key) nil t)))
+               key fallback)))))
+
+;; `input-decode-map' bindings are resolved on first invokation, and are
+;; frame-local, so they must be rebound on every new frame.
+(if (daemonp)
+    (add-hook 'server-after-make-frame-hook #'doom-init-input-decode-map-h)
+  (doom-init-input-decode-map-h))
 
 
 ;;
@@ -153,13 +160,14 @@ all hooks after it are ignored.")
                        ,bdef)
                     forms))
             (when-let (desc (cadr (memq :which-key udef)))
-              (prependq!
-               wkforms `((which-key-add-key-based-replacements
-                           (general--concat t doom-leader-alt-key ,key)
-                           ,desc)
-                         (which-key-add-key-based-replacements
-                           (general--concat t doom-leader-key ,key)
-                           ,desc))))))))
+              (cl-callf2 append
+                  `((which-key-add-key-based-replacements
+                      (general--concat t doom-leader-alt-key ,key)
+                      ,desc)
+                    (which-key-add-key-based-replacements
+                      (general--concat t doom-leader-key ,key)
+                      ,desc))
+                  wkforms))))))
     (macroexp-progn
      (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
              (nreverse forms)))))

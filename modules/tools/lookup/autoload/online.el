@@ -54,7 +54,7 @@ QUERY must be a string, and PROVIDER must be a key of
                    (and (fboundp backend)
                         (funcall backend query))
                  (error
-                  (delq! major-mode +lookup--last-provider 'assq)
+                  (setf (alist-get major-mode +lookup--last-provider nil t) nil)
                   (signal (car e) (cdr e))))
                (throw 'done t)))))))
 

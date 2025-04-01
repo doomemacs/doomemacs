@@ -52,6 +52,7 @@
           "^DKIM-.*:"
           "^DomainKey-.*:"
           "^SPF-.*:"
+          "^SMX-.*:"
           "^Autocrypt:"
           "^ARC-.*:"
           "^Authentication-Results:"
