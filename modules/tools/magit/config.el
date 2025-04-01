@@ -188,7 +188,7 @@ Only has an effect in GUI Emacs.")
         code-review-log-file (concat doom-data-dir "code-review/code-review-error.log")
         code-review-download-dir (concat doom-data-dir "code-review/"))
   :config
-  (transient-append-suffix 'magit-merge "i"
+  (transient-append-suffix 'magit-merge "d"
     '("y" "Review pull request" +magit/start-code-review))
   (after! forge
     (transient-append-suffix 'forge-dispatch "c u"
