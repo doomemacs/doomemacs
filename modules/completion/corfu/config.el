@@ -76,7 +76,7 @@ systems is active, Corfu should not enable its own completion."
     (or (bound-and-true-p mct--active)
         (bound-and-true-p vertico--input)
         (and (featurep 'auth-source)
-             (eq local-map read-passwd-map))
+             (eq (current-local-map) read-passwd-map))
         (and (featurep 'helm-core)
              (helm--alive-p))
         (and (featurep 'ido)
