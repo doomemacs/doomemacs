@@ -2,10 +2,10 @@
 ;;; checkers/syntax/packages.el
 
 (unless (modulep! +flymake)
-  (package! flycheck :pin "86715c0f293738623f632d6f54a7d1be78b1c48f")
+  (package! flycheck :pin "b9db1379dcc3e59238dc1fdd7db368c66e8734ba")
   (package! flycheck-popup-tip :pin "ef86aad907f27ca076859d8d9416f4f7727619c6")
   ;; REVIEW: Remove when purcell/package-lint#285 is dealt with.
-  (package! package-lint :pin "21edc6d0d0eadd2d0a537f422fb9b7b8a3ae6991")
+  (package! package-lint :pin "43012b41ac8d1a0ce6118c432c9b822c0f1a1981")
   (when (modulep! +childframe)
     (package! flycheck-posframe :pin "19896b922c76a0f460bf3fe8d8ebc2f9ac9028d8")))
 

@@ -100,8 +100,12 @@ directives. By default, this only recognizes C directives.")
     (evil-set-cursor-color (get 'cursor 'evil-emacs-color)))
 
   ;; Ensure `evil-shift-width' always matches `tab-width'; evil does not police
-  ;; this itself, so we must.
-  (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
+  ;; this itself, so we must. Except in org-mode, where `tab-width' *must*
+  ;; default to 8, which isn't a sensible default for `evil-shift-width'.
+  (add-hook! 'after-change-major-mode-hook
+    (defun +evil-adjust-shift-width-h ()
+      (unless (derived-mode-p 'org-mode)
+        (setq-local evil-shift-width tab-width))))
 
 
   ;; --- keybind fixes ----------------------
@@ -138,6 +142,12 @@ directives. By default, this only recognizes C directives.")
                    (buffer-name))
                  (count-lines (point-min) (point-max))
                  (buffer-size)))))
+
+  ;; HACK: '=' moves the cursor to the beginning of selection. Disable this,
+  ;;   since it's more disruptive than helpful.
+  (defadvice! +evil--dont-move-cursor-a (fn &rest args)
+    :around #'evil-indent
+    (save-excursion (apply fn args)))
 
   ;; HACK: In vim, registers 2-9 are global. In Evil, they're buffer-local.  so
   ;;   I enforce vim's way.
@@ -316,7 +326,7 @@ don't offer any/enough real value to users.")
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode)
-        evil-escape-key-sequence "jk"
+        evil-escape-key-sequence nil
         evil-escape-delay 0.15)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config

@@ -1,5 +1,5 @@
 #+title:    :completion corfu
-#+subtitle: Complete with cap(f), cape and a flying feather
+#+subtitle: Complete with cap(f), cape, and a flying feather
 #+created:  September 9, 2022
 #+since:    3.0.0 (#7002)
 

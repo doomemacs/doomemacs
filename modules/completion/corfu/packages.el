@@ -7,9 +7,9 @@
   (package! nerd-icons-corfu :pin "13166345b290d6c6a2ac6ba94a8d28ec3bb58c67"))
 (when (and (not (modulep! :completion vertico))
            (modulep! +orderless))
-  ;; enabling +orderless without vertico should be fairly niche enough that to
+  ;; Enabling +orderless without vertico should be fairly niche enough that to
   ;; save contributor headaches we should only pin vertico's orderless and leave
-  ;; this one unpinned
+  ;; this one unpinned.
   (package! orderless))
 (when (modulep! :os tty)
   (package! corfu-terminal :pin "501548c3d51f926c687e8cd838c5865ec45d03cc"))

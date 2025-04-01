@@ -60,30 +60,48 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
                                    'separator t)
         corfu-quit-no-match corfu-quit-at-boundary
         tab-always-indent 'complete)
+
   (add-to-list 'completion-category-overrides `(lsp-capf (styles ,@completion-styles)))
   (add-to-list 'corfu-auto-commands #'lispy-colon)
   (add-to-list 'corfu-continue-commands #'+corfu/move-to-minibuffer)
   (add-to-list 'corfu-continue-commands #'+corfu/smart-sep-toggle-escape)
   (add-hook 'evil-insert-state-exit-hook #'corfu-quit)
 
-  ;; Respect `+corfu-want-minibuffer-completion'
+  (defun +corfu--other-completion-active-p ()
+    "Return non-nil if another completion framework is already active.
+
+This checks for several completion systems such as mct, vertico,
+auth-source’s read-passwd-map, helm, ido, and ivy. When one of these
+systems is active, Corfu should not enable its own completion."
+    (or (bound-and-true-p mct--active)
+        (bound-and-true-p vertico--input)
+        (and (featurep 'auth-source)
+             (eq (current-local-map) read-passwd-map))
+        (and (featurep 'helm-core)
+             (helm--alive-p))
+        (and (featurep 'ido)
+             (ido-active))
+        (where-is-internal 'minibuffer-complete (list (current-local-map)))
+        (memq #'ivy--queue-exhibit post-command-hook)))
+
+  ;; Return non-nil if Corfu should be enabled in the minibuffer.
+  ;; This respects `+corfu-want-minibuffer-completion'.
   (defun +corfu-enable-in-minibuffer-p ()
     "Return non-nil if Corfu should be enabled in the minibuffer.
-See `+corfu-want-minibuffer-completion'."
+
+This function respects the value of `+corfu-want-minibuffer-completion':
+- If set to nil, Corfu is disabled.
+- If set to 'aggressive, enable Corfu when no other completion
+  framework is active.
+- Otherwise, enable Corfu only when there’s a bound completion
+  command in the current local keymap."
     (pcase +corfu-want-minibuffer-completion
       ('nil nil)
-      ('aggressive
-       (not (or (bound-and-true-p mct--active)
-                (bound-and-true-p vertico--input)
-                (and (featurep 'auth-source)
-                     (eq (current-local-map) read-passwd-map))
-                (and (featurep 'helm-core) (helm--alive-p))
-                (and (featurep 'ido) (ido-active))
-                (where-is-internal 'minibuffer-complete
-                                   (list (current-local-map)))
-                (memq #'ivy--queue-exhibit post-command-hook))))
-      (_ (where-is-internal #'completion-at-point
-                            (list (current-local-map))))))
+      ('aggressive (not (+corfu--other-completion-active-p)))
+      (_ (and (where-is-internal #'completion-at-point
+                                 (list (current-local-map)))
+              (not (+corfu--other-completion-active-p))))))
+
   (setq global-corfu-minibuffer #'+corfu-enable-in-minibuffer-p)
 
   ;; HACK: Augments Corfu to respect `+corfu-inhibit-auto-functions'.
@@ -125,11 +143,11 @@ See `+corfu-want-minibuffer-completion'."
     :around #'ispell-completion-at-point
     (condition-case-unless-debug e
         (apply fn args)
-     ('error
-      (message "Error: %s" (error-message-string e))
-      (message "Auto-disabling `text-mode-ispell-word-completion'")
-      (setq text-mode-ispell-word-completion nil)
-      (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t)))))
+      ('error
+       (message "Error: %s" (error-message-string e))
+       (message "Auto-disabling `text-mode-ispell-word-completion'")
+       (setq text-mode-ispell-word-completion nil)
+       (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t)))))
 
 (use-package! cape
   :defer t
@@ -179,8 +197,7 @@ See `+corfu-want-minibuffer-completion'."
     (setq-hook! '(tex-mode-local-vars-hook
                   latex-mode-local-vars-hook
                   LaTeX-mode-local-vars-hook)
-      cape-file-prefix (if (stringp cape-file-prefix)
-                           "{" (cons "{" cape-file-prefix)))))
+      cape-file-prefix "{")))
 
 (use-package! yasnippet-capf
   :when (modulep! :editor snippets)
@@ -192,7 +209,6 @@ See `+corfu-want-minibuffer-completion'."
 
 (use-package! corfu-terminal
   :when (modulep! :os tty)
-  :when (not (display-graphic-p))
   :hook ((corfu-mode . corfu-terminal-mode)))
 
 
@@ -219,11 +235,10 @@ See `+corfu-want-minibuffer-completion'."
 ;; If vertico is not enabled, orderless will be installed but not configured.
 ;; That may break smart separator behavior, so we conditionally configure it.
 (use-package! orderless
-  :when (and (not (modulep! :completion vertico))
-             (modulep! +orderless))
+  :when (not (modulep! :completion vertico))
+  :when (modulep! +orderless)
   :config
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         completion-category-overrides '((file (styles orderless partial-completion)))
-        orderless-component-separator #'orderless-escapable-split-on-space)
-  (set-face-attribute 'completions-first-difference nil :inherit nil))
+        orderless-component-separator #'orderless-escapable-split-on-space))

@@ -7,7 +7,7 @@
 (package! highlight-quoted :pin "24103478158cd19fbcfb4339a3f1fa1f054f1469")
 
 ;; Tools
-(package! helpful :pin "5ad8a9ce57b6c076428286c3d25968b449ab6fd3")
+(package! helpful :pin "6a4d5e0760ba96a24cd13052233c6edfb34d022c")
 (package! macrostep :pin "d0928626b4711dcf9f8f90439d23701118724199")
 (package! overseer :pin "7fdcf1a6fba6b1569a09c1666b4e51bcde266ed9")
 (package! elisp-def :pin "1ad4baccbf3d0d13e7607d332ae6bc60a5dd7360")

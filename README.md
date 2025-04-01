@@ -252,4 +252,4 @@ kind!
 [vim-unimpaired]: https://github.com/tpope/vim-unimpaired
 
 [liberapay]: https://liberapay.com/hlissner/donate
-[paypal]: https://paypal.me/henriklissner/10
+[paypal]: https://paypal.me/hlissner/10

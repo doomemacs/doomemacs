@@ -31,7 +31,15 @@
 (package! better-jumper :pin "b1bf7a3c8cb820d942a0305e0e6412ef369f819c")
 (package! dtrt-indent :pin "22498ca24ac93c051d233abef630aece1ac45dd1")
 (package! smartparens :pin "b0d935c11813bcd40f8d35bae8800e0741334c29")
-(package! ws-butler :pin "d3927f6131f215e9cd3e1f747be5a91e5be8ca9a")
+(package! ws-butler
+  ;; REVIEW: Nongnu elpa serves this package from a branch of the nongnu_elpa
+  ;;   repo; to stop Straight from clobbering a single repo, we must be
+  ;;   explicit.
+  :recipe (:host github
+           :repo "emacsmirror/nongnu_elpa"
+           :branch "elpa/ws-butler"
+           :local-repo "ws-butler")
+  :pin "9ee5a7657a22e836618813c2e2b64a548d27d2ff")
 
 ;; doom-projects.el
 (package! projectile :pin "55db082cdf7b849335ccf24b7ba5aa2607d6fe93")
