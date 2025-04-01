@@ -178,7 +178,7 @@ stored in `persp-save-dir'.")
 
   ;; per-project workspaces, but reuse current workspace if empty
   ;; HACK?? needs review
-  (setq projectile-switch-project-action (lambda () (+workspaces-set-project-action-fn) (+workspaces-switch-to-project-h))
+  (setq projectile-switch-project-action #'+workspaces-switch-to-project-h
         counsel-projectile-switch-project-action
         '(1 ("o" +workspaces-switch-to-project-h "open project in new workspace")
             ("O" counsel-projectile-switch-project-action "jump to a project buffer or file")
