@@ -154,6 +154,7 @@ modules/ui/nav-flash                @doomemacs/ui-nav-flash
 modules/ui/neotree                  @doomemacs/ui-neotree
 modules/ui/ophints                  @doomemacs/ui-ophints
 modules/ui/popup                    @doomemacs/ui-popup
+modules/ui/smooth-scroll            @doomemacs/ui-smooth-scroll
 modules/ui/tabs                     @doomemacs/ui-tabs
 modules/ui/treemacs                 @doomemacs/ui-treemacs
 modules/ui/unicode                  @doomemacs/ui-unicode

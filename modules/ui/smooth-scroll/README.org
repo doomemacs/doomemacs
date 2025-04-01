@@ -1,0 +1,72 @@
+#+title:    :ui smooth-scroll
+#+subtitle: So smooth you won't believe it's not butter
+#+created:  April 1, 2025
+#+since:    25.05.0
+
+* Description :unfold:
+This module activates OS-independent smooth scrolling in Emacs. This primarily
+benefits trackpad and scroll wheel users (not so much those that scroll via
+their keyboards), by utilizing the [[https://github.com/jdtsmith/ultra-scroll][ultra-scroll]] package.
+
+#+begin_quote
+  For optimal performance from this module, it's highly recommended you use
+    Emacs with native-compilation. MacOS users may also have a better experience
+    using the [[https://bitbucket.org/mituharu/emacs-mac][emacs-mac]] fork of Emacs, available via Homebrew.
+#+end_quote
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:ultra-scroll]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* Usage
+This module only needs to be activated to experience its benefits.
+
+* TODO Configuration
+#+begin_quote
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+This module should work on any platform that provides pixel-level scrolling
+information from your input hardware, but if you run into issues, here are some
+things to try:
+
+- Use ~M-x ultra-scroll-check~ to diagnose common issues. Visit [[https://github.com/jdtsmith/ultra-scroll?tab=readme-ov-file#compatibility][ultra-scroll's
+  documentation]] for more on interpreting and acting on its results.
+- Read ultra-scroll's documentation on [[https://github.com/jdtsmith/ultra-scroll?tab=readme-ov-file#Speed][scrolling speed]]; it outlines common
+  factors that may impact it and how to mitigate them.
+- See Doom's "[[https://discourse.doomemacs.org/t/why-is-emacs-doom-slow/83/3][Why is Emacs/Doom slow?]]" write-up, where Doom's author documents
+  common factors that can slow Emacs down in general (not specifically to do
+  with scrolling) and what to do about them.
+
+If all else fails, let us know on [[https://discourse.doomemacs.org][Discourse]] or [[https://doomemacs.org/discord][Discord]]. Only file an issue if
+you have a good idea what's causing the problem or have an explicit error to
+report (performance issues, in general, tend to be the result of *many* factors
+and are the greatest source of false positives on our issue tracker).
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
