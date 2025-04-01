@@ -134,7 +134,6 @@ modules/tools/magit                 @doomemacs/tools-magit
 modules/tools/make                  @doomemacs/tools-make
 modules/tools/pass                  @doomemacs/tools-pass
 modules/tools/pdf                   @doomemacs/tools-pdf
-modules/tools/prodigy               @doomemacs/tools-prodigy
 modules/tools/terraform             @doomemacs/tools-terraform
 modules/tools/tmux                  @doomemacs/tools-tmux
 modules/tools/tree-sitter           @doomemacs/tools-tree-sitter
