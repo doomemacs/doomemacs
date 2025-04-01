@@ -224,7 +224,7 @@
   "Current version of Doom Emacs core.")
 
 ;; DEPRECATED: Remove these when the modules are moved out of core.
-(defconst doom-modules-version "25.04.0-pre"
+(defconst doom-modules-version "25.05.0-pre"
   "Current version of Doom Emacs.")
 
 (defvar doom-init-time nil
