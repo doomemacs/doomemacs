@@ -5,7 +5,7 @@
 
 (if (modulep! +lsp)
     (unless (modulep! :tools lsp +eglot)
-      (package! lsp-sourcekit :pin "63ff1ab638b655089077d17fdd728a48f8906e02"))
+      (package! lsp-sourcekit :pin "3bd9750e7ec97706c0455f41ea4e5cff3391dba8"))
   (when (modulep! :completion company)
     (package! company-sourcekit :pin "a1860ad4dd3a542acd2fa0dfac2a388cbdf4af0c"))
   (when (modulep! :checkers syntax -flymake)

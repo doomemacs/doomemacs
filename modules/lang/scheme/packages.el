@@ -17,7 +17,7 @@
   (when (modulep! +gambit)
     (package! geiser-gambit :pin "381d74ca5059b44fe3d8b5daf42214019c6d1a88"))
   (when (modulep! +gauche)
-    (package! geiser-gauche :pin "8ff743f6416f00751e24aef8b9791501a40f5421"))
+    (package! geiser-gauche :pin "9eb8b35f0c3bf44ae7990be707591ed8498b6fa3"))
   (when (modulep! +guile)
     (package! geiser-guile :pin "a0f111f8dedd31c593c4ed12c0b99745f3c1340f")
     (when (modulep! :checkers syntax -flymake)
