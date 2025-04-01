@@ -193,7 +193,7 @@ This is ignored by ccls.")
     (add-to-list 'project-vc-ignores "^\\.ccls-cache$"))
   ;; DEPRECATED: Remove when projectile is replaced with project.el
   (after! projectile
-    (add-to-list 'projectile-globally-ignored-directories "^.ccls-cache$")
+    (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root")
     (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json"))
   :config

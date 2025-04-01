@@ -2,7 +2,7 @@
 
 (after! projectile
   (pushnew! projectile-project-root-files "package.json")
-  (pushnew! projectile-globally-ignored-directories "^node_modules$" "^flow-typed$"))
+  (pushnew! projectile-globally-ignored-directories "node_modules" "flow-typed"))
 
 
 ;;
