@@ -118,8 +118,9 @@ Respects `diff-hl-disable-on-remote'."
           :n "{" #'diff-hl-show-hunk-previous
           :n "}" #'diff-hl-show-hunk-next
           :n "S" #'diff-hl-show-hunk-stage-hunk))
-  ;; UX: Refresh gutter on ESC or refocusing the Emacs frame.
-  (add-hook! '(doom-escape-hook doom-switch-window-hook) :append
+  ;; UX: Refresh gutter in the selected buffer on ESC, switching windows, or
+  ;;   refocusing the frame.
+  (add-hook! '(doom-escape-hook doom-switch-window-hook doom-switch-frame-hook) :append
     (defun +vc-gutter-update-h (&rest _)
       "Return nil to prevent shadowing other `doom-escape-hook' hooks."
       (ignore (or inhibit-redisplay

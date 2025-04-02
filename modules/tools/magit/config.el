@@ -50,7 +50,7 @@ Only has an effect in GUI Emacs.")
   ;; ...then refresh the rest only when we switch to them or refocus the active
   ;; frame, not all at once.
   (add-hook 'doom-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
-  (add-hook 'focus-in-hook #'+magit-mark-stale-buffers-h)
+  (add-hook 'doom-switch-frame-hook #'+magit-mark-stale-buffers-h)
 
   ;; The default location for git-credential-cache is in
   ;; ~/.cache/git/credential. However, if ~/.git-credential-cache/ exists, then

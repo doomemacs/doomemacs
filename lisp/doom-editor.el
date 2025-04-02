@@ -255,10 +255,10 @@ tell you about it. Very annoying. This prevents that."
 
 (use-package! autorevert
   ;; revert buffers when their files/state have changed
-  :hook (focus-in . doom-auto-revert-buffers-h)
   :hook (after-save . doom-auto-revert-buffers-h)
   :hook (doom-switch-buffer . doom-auto-revert-buffer-h)
   :hook (doom-switch-window . doom-auto-revert-buffer-h)
+  :hook (doom-switch-frame . doom-auto-revert-buffers-h)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
