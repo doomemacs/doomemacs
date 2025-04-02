@@ -65,16 +65,16 @@ Only has an effect in GUI Emacs.")
   ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
   ;; hunks in `magit-status-mode' buffers. It's disorienting, especially on
   ;; larger projects.
-  (defvar +magit--pos nil)
-  (add-hook! 'magit-pre-refresh-hook
-    (defun +magit--set-window-state-h ()
-      (setq-local +magit--pos (list (current-buffer) (point) (window-start)))))
-  (add-hook! 'magit-post-refresh-hook
-    (defun +magit--restore-window-state-h ()
-      (when (and +magit--pos (eq (current-buffer) (car +magit--pos)))
-        (goto-char (cadr +magit--pos))
-        (set-window-start nil (caddr +magit--pos) t)
-        (kill-local-variable '+magit--pos))))
+  (let (magit--pos)
+    (add-hook! 'magit-pre-refresh-hook
+      (defun +magit--set-window-state-h ()
+        (setq-local magit--pos (list (current-buffer) (point) (window-start)))))
+    (add-hook! 'magit-post-refresh-hook
+      (defun +magit--restore-window-state-h ()
+        (when (and magit--pos (eq (current-buffer) (car magit--pos)))
+          (goto-char (cadr magit--pos))
+          (set-window-start nil (caddr magit--pos) t)
+          (kill-local-variable 'magit--pos)))))
 
   ;; Magit uses `magit-display-buffer-traditional' to display windows, by
   ;; default, which is a little primitive. `+magit-display-buffer' marries
