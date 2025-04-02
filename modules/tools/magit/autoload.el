@@ -114,12 +114,15 @@ window that already exists in that direction. It will split otherwise."
 
 Stale buffers are reverted when they are switched to, assuming they haven't been
 modified."
-  (dolist (buffer (buffer-list))
-    (when (buffer-live-p buffer)
-      (if (get-buffer-window buffer)
-          (+magit--revert-buffer buffer)
-        (with-current-buffer buffer
-          (setq-local +magit--stale-p t))))))
+  (let ((visible-buffers (doom-visible-buffers nil t)))
+    (dolist (buffer (buffer-list))
+      (when (buffer-live-p buffer)
+        (if (memq buffer visible-buffers)
+            (progn
+              (+magit--revert-buffer buffer)
+              (cl-callf2 delq buffer visible-buffers)) ; hasten future lookups
+          (with-current-buffer buffer
+            (setq-local +magit--stale-p t)))))))
 
 ;;;###autoload
 (defun +magit-revert-buffer-maybe-h ()
