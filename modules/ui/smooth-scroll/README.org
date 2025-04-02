@@ -9,6 +9,10 @@ benefits trackpad and scroll wheel users (not so much those that scroll via
 their keyboards), by utilizing the [[https://github.com/jdtsmith/ultra-scroll][ultra-scroll]] package.
 
 #+begin_quote
+  This module requires Emacs 29.1 or newer.
+#+end_quote
+
+#+begin_quote
   For optimal performance from this module, it's highly recommended you use
     Emacs with native-compilation. MacOS users may also have a better experience
     using the [[https://bitbucket.org/mituharu/emacs-mac][emacs-mac]] fork of Emacs, available via Homebrew.
