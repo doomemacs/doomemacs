@@ -6,4 +6,8 @@
   :hook (doom-first-file . ultra-scroll-mode)
   :init
   (setq scroll-conservatively 101
-        scroll-margin 0))
+        scroll-margin 0)
+  :config
+  (add-hook 'ultra-scroll-hide-functions #'hl-todo-mode)
+  (add-hook 'ultra-scroll-hide-functions #'diff-hl-flydiff-mode)
+  (add-hook 'ultra-scroll-hide-functions #'jit-lock-mode))
