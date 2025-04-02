@@ -132,7 +132,8 @@ the frame through some other means.")
                          doom-switch-frame-hook-debounce-delay))
               (with-selected-frame fr
                 (unwind-protect
-                    (run-hooks 'doom-switch-frame-hook)
+                    (let ((inhibit-redisplay t))
+                      (run-hooks 'doom-switch-frame-hook))
                   (set-frame-parameter fr '+last-focus (current-time)))))))))))
 
 (let (last-focus-state)
