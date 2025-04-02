@@ -121,7 +121,7 @@ non-interactive code, or the user accidentally (and rapidly) un-and-refocusing
 the frame through some other means.")
 
 (defun doom--run-switch-frame-hooks-fn (_)
-  (remove-hook 'pre-redisplay-functions #'doom--run-switch-frame-hooks)
+  (remove-hook 'pre-redisplay-functions #'doom--run-switch-frame-hooks-fn)
   (let ((gc-cons-threshold most-positive-fixnum))
     (dolist (fr (visible-frame-list))
       (let ((state (frame-focus-state fr)))
@@ -139,12 +139,11 @@ the frame through some other means.")
 (let (last-focus-state)
   (defun doom-run-switch-frame-hooks-fn ()
     "Trigger `doom-switch-frame-hook' once per frame focus change."
-    (let ((inhibit-redisplay t))
-      (or (equal last-focus-state
-                 (setq last-focus-state
-                       (mapcar #'frame-focus-state (frame-list))))
-          ;; Defer until next redisplay
-          (add-hook 'pre-redisplay-functions #'doom--run-switch-frame-hooks-fn)))))
+    (or (equal last-focus-state
+               (setq last-focus-state
+                     (mapcar #'frame-focus-state (frame-list))))
+        ;; Defer until next redisplay
+        (add-hook 'pre-redisplay-functions #'doom--run-switch-frame-hooks-fn))))
 
 (defun doom-protect-fallback-buffer-h ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
