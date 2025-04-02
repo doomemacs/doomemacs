@@ -52,16 +52,6 @@ Only has an effect in GUI Emacs.")
   (add-hook 'doom-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
   (add-hook 'doom-switch-frame-hook #'+magit-mark-stale-buffers-h)
 
-  ;; The default location for git-credential-cache is in
-  ;; ~/.cache/git/credential. However, if ~/.git-credential-cache/ exists, then
-  ;; it is used instead. Magit seems to be hardcoded to use the latter, so here
-  ;; we override it to have more correct behavior.
-  (unless (file-exists-p "~/.git-credential-cache/")
-    (setq magit-credential-cache-daemon-socket
-          (doom-glob (or (getenv "XDG_CACHE_HOME")
-                         "~/.cache/")
-                     "git/credential/socket")))
-
   ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
   ;; hunks in `magit-status-mode' buffers. It's disorienting, especially on
   ;; larger projects.
