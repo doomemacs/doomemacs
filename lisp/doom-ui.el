@@ -81,8 +81,11 @@ want to change your symbol font, use `doom-symbol-font'.")
   "List of hooks to run when the UI has been initialized.")
 
 (defcustom doom-load-theme-hook nil
-  "Hook run after the theme is loaded with `load-theme' or reloaded with
-`doom/reload-theme'.")
+  "Hook run after a color-scheme is loaded.
+
+Triggered by `load-theme', `enable-theme', or reloaded with `doom/reload-theme',
+but only for themes that declare themselves as a :kind color-scheme (which Doom
+treats as the default).")
 
 (defcustom doom-switch-buffer-hook nil
   "A list of hooks run after changing the current buffer.")

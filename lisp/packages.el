@@ -32,9 +32,9 @@
 (package! dtrt-indent :pin "22498ca24ac93c051d233abef630aece1ac45dd1")
 (package! smartparens :pin "b0d935c11813bcd40f8d35bae8800e0741334c29")
 (package! ws-butler
-  ;; REVIEW: Nongnu elpa serves this package from a branch of the nongnu_elpa
-  ;;   repo; to stop Straight from clobbering a single repo, we must be
-  ;;   explicit.
+  ;; REVIEW: emacsmirror/nongnu_elpa serves this package from a branch. To stop
+  ;;   Straight from clobbering a single repo for multiple packages, we must be
+  ;;   explicit to force it to clone it multiple times.
   :recipe (:host github
            :repo "emacsmirror/nongnu_elpa"
            :branch "elpa/ws-butler"
