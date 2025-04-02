@@ -23,8 +23,8 @@
                      (truncate (* (frame-char-height) spacing))
                    spacing)))
            (w (min (frame-parameter nil (intern (format "%s-fringe" diff-hl-side)))
-                   16))
-           (_ (if (zerop w) (setq w 16))))
+                   diff-hl-bmp-max-width))
+           (_ (if (zerop w) (setq w diff-hl-bmp-max-width))))
       (define-fringe-bitmap 'diff-hl-bmp-middle
         (make-vector
          h (string-to-number (let ((half-w (1- (/ w 2))))
