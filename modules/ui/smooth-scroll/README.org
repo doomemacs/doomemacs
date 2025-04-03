@@ -4,18 +4,21 @@
 #+since:    25.05.0
 
 * Description :unfold:
-This module activates OS-independent smooth scrolling in Emacs. This primarily
-benefits trackpad and scroll wheel users (not so much those that scroll via
-their keyboards), by utilizing the [[https://github.com/jdtsmith/ultra-scroll][ultra-scroll]] package.
+This module enables multiple kinds of smooth scrolling in Emacs. Its primary
+function is to make input scrolling (on trackpads and scroll wheels)
+pixel-smooth. With the =+interpolate= flag, it performs interpolated scrolling on
+a growing list of scroll commands that traverse larger distances, smoothly
+scrolling from point A to B on PgUp or PgDown (or [[kbd:][C-d]]/[[kbd:][C-u]] for Evil users).
 
 #+begin_quote
   This module requires Emacs 29.1 or newer.
 #+end_quote
 
 #+begin_quote
-  For optimal performance from this module, it's highly recommended you use
-    Emacs with native-compilation. MacOS users may also have a better experience
-    using the [[https://bitbucket.org/mituharu/emacs-mac][emacs-mac]] fork of Emacs, available via Homebrew.
+  Scroll interpolation support is currently limited to the ~scroll-up~ and
+    ~scroll-down~ commands, and any command that calls them (like ~evil-scroll-down~
+    and ~evil-scroll-up~), so you're likely to find many scroll commands are not
+    interpolated. We welcome PRs to expand its support.
 #+end_quote
 
 ** Maintainers
@@ -24,10 +27,14 @@ their keyboards), by utilizing the [[https://github.com/jdtsmith/ultra-scroll][u
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +interpolate ::
+  Enables scroll interpolation for some larger-step scrolling commands. E.g.
+  PgUp and PgDown (or C-d/C-u for Evil users) will now smoothly scroll to its
+  destination rather than jump to it.
 
 ** Packages
 - [[doom-package:ultra-scroll]]
+- [[doom-package:good-scroll]] if [[doom-module:+interpolate]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -40,6 +47,12 @@ their keyboards), by utilizing the [[https://github.com/jdtsmith/ultra-scroll][u
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
 /This module has no external requirements./
+
+#+begin_quote
+  For optimal performance from this module, it's highly recommended you use
+    Emacs with native-compilation. MacOS users may also have a better experience
+    using the [[https://bitbucket.org/mituharu/emacs-mac][emacs-mac]] fork of Emacs, available via Homebrew.
+#+end_quote
 
 * Usage
 This module only needs to be activated to experience its benefits.
