@@ -85,9 +85,8 @@
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09")
-  (package! org-superstar :pin "54c81c27dde2a6dc461bb064e79a8b2089093a2e")
-  (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
+  (package! org-modern :pin "3cc432dc99f262579d1cc464e7d6d5b9fe77083a")
+  (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
