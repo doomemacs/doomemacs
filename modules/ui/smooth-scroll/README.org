@@ -80,6 +80,27 @@ you have a good idea what's causing the problem or have an explicit error to
 report (performance issues, in general, tend to be the result of *many* factors
 and are the greatest source of false positives on our issue tracker).
 
+** High idle CPU usage with =+interpolate=
+This flag will increase Emacs' idle CPU usage. Some overhead is unavoidable with
+how [[https://github.com/io12/good-scroll.el][good-scroll]] implements scroll interpolation (with a high-rate timer), but
+some builds of and configurations for Emacs are affected worse than others. If
+this affects you, here are some ways to help:
+
+- Use, at least, the [[https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html#Releases][latest stable version of Emacs]]. Later versions are
+  significantly more memory and CPU efficient.
+- Use native compilation. This is a tremendous boon to Emacs performance in
+  general.
+- Increase the values for ~good-scroll-render-rate~ (default: ~0.02~) and/or
+  ~good-scroll-duration~ (default: ~0.15~). Remember to restart ~good-scroll-mode~ if
+  you change these values live. This will decrease the package's poll rate.
+- Some UI features can significantly exacerbate this issue, like line numbers.
+  Try turning them off.
+- PGTK builds seem less affected by this, and MacOS builds seem more affected.
+  Try another build. Your mileage may vary.
+
+If nothing helps, report it [[https://github.com/io12/good-scroll.el/issues/31][upstream]]. Until a workaround is found, you must
+decide whether this trade-off is worth it for you.
+
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
