@@ -63,13 +63,16 @@ This module only needs to be activated to experience its benefits.
 #+end_quote
 
 * Troubleshooting
-This module should work on any platform that provides pixel-level scrolling
-information from your input hardware, but if you run into issues, here are some
-things to try:
+[[doom-report:][Report an issue?]]
+
+** Poor scrolling performance by scroll wheel or trackpad
+This module "smooths" input scrolling (via your trackpad or mouse wheel), and is
+platform agnostic, so long as your OS reports pixel-level scrolling input from
+your input hardware. If you run into issues, here are some things to try:
 
 - Use ~M-x ultra-scroll-check~ to diagnose common issues. Visit [[https://github.com/jdtsmith/ultra-scroll?tab=readme-ov-file#compatibility][ultra-scroll's
   documentation]] for more on interpreting and acting on its results.
-- Read ultra-scroll's documentation on [[https://github.com/jdtsmith/ultra-scroll?tab=readme-ov-file#Speed][scrolling speed]]; it outlines common
+- Read [[https://github.com/jdtsmith/ultra-scroll?tab=readme-ov-file#Speed][ultra-scroll's documentation on scrolling speed]]; it outlines common
   factors that may impact it and how to mitigate them.
 - See Doom's "[[https://discourse.doomemacs.org/t/why-is-emacs-doom-slow/83/3][Why is Emacs/Doom slow?]]" write-up, where Doom's author documents
   common factors that can slow Emacs down in general (not specifically to do
