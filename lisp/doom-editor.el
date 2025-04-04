@@ -307,25 +307,10 @@ tell you about it. Very annoying. This prevents that."
   (setq recentf-auto-cleanup nil     ; Don't. We'll auto-cleanup on shutdown
         recentf-max-saved-items 200) ; default is 20
 
-  (defun doom--recentf-file-truename-fn (file)
-    (if (or (not (file-remote-p file))
-            (equal "sudo" (file-remote-p file 'method)))
-        (abbreviate-file-name (file-truename (tramp-file-name-localname file)))
-      file))
-
-  ;; REVIEW: Use this in lieu of `doom--recentf-file-truename-fn' when we drop
-  ;;   28 support. See emacs-mirror/emacs@32906819addd.
-  ;; (setq recentf-show-abbreviated t)
-
   ;; Anything in runtime folders
   (add-to-list 'recentf-exclude
                (concat "^" (regexp-quote (or (getenv "XDG_RUNTIME_DIR")
                                              "/run"))))
-
-  ;; Resolve symlinks, strip out the /sudo:X@ prefix in local tramp paths, and
-  ;; abbreviate $HOME -> ~ in filepaths (more portable, more readable, & saves
-  ;; space)
-  (add-to-list 'recentf-filename-handlers #'doom--recentf-file-truename-fn)
 
   ;; Text properties inflate the size of recentf's files, and there is
   ;; no purpose in persisting them (Must be first in the list!)
