@@ -312,10 +312,12 @@ tell you about it. Very annoying. This prevents that."
                (concat "^" (regexp-quote (or (getenv "XDG_RUNTIME_DIR")
                                              "/run"))))
 
-  ;; Text properties inflate the size of recentf's files, and there is
-  ;; no purpose in persisting them (Must be first in the list!)
+  ;; PERF: Text properties inflate the size of recentf's files, and there is no
+  ;;   reason to persist them (must be first in `recentf-filename-handlers'!)
   (add-to-list 'recentf-filename-handlers #'substring-no-properties)
 
+  ;; UX: Reorder the recent files list by frecency (i.e. every time you touch a
+  ;;   buffer, bump it to the top of the list).
   (add-hook! '(doom-switch-window-hook write-file-functions)
     (defun doom--recentf-touch-buffer-h ()
       "Bump file in recent file list when it is switched or written to."
@@ -323,7 +325,6 @@ tell you about it. Very annoying. This prevents that."
         (recentf-add-file buffer-file-name))
       ;; Return nil for `write-file-functions'
       nil))
-
   (add-hook! 'dired-mode-hook
     (defun doom--recentf-add-dired-directory-h ()
       "Add dired directories to recentf file list."
