@@ -21,6 +21,10 @@
     :type-definition #'eglot-find-typeDefinition
     :documentation   #'+eglot-lookup-documentation)
 
+  ;; Leave management of flymake to the :checkers syntax module.
+  (when (modulep! :checkers syntax -flymake)
+    (add-to-list 'eglot-stay-out-of 'flymake))
+
   ;; NOTE: This setting disable the eglot-events-buffer enabling more consistent
   ;;   performance on long running emacs instance. Default is 2000000 lines.
   ;;   After each new event the whole buffer is pretty printed which causes
