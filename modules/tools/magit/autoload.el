@@ -104,7 +104,7 @@ window that already exists in that direction. It will split otherwise."
     (when (magit-auto-revert-repository-buffer-p buffer)
       (when (bound-and-true-p vc-mode)
         (vc-refresh-state))
-      (unless (buffer-modified-p buffer)
+      (when (and buffer-file-name (not (buffer-modified-p buffer)))
         (revert-buffer t t t))
       (force-mode-line-update))))
 
