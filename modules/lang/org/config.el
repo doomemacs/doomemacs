@@ -118,7 +118,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-priority-faces
         '((?A . error)
           (?B . warning)
-          (?C . success))
+          (?C . shadow))
         org-startup-indented t
         org-tags-column 0
         org-use-sub-superscripts '{}
