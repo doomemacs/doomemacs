@@ -528,7 +528,7 @@
         :desc "Magit clone"               "C"   #'magit-clone
         :desc "Magit fetch"               "F"   #'magit-fetch
         :desc "Magit buffer log"          "L"   #'magit-log-buffer-file
-        :desc "Git stage this file"       "S"   #'magit-stage-buffer-file
+        :desc "Git stage this file"       "S"   #'magit-file-stage
         :desc "Git unstage this file"     "U"   #'magit-unstage-buffer-file
         (:prefix ("f" . "find")
          :desc "Find file"                 "f"   #'magit-find-file
