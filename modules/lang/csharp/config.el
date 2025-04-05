@@ -4,7 +4,7 @@
   :hook (csharp-mode . rainbow-delimiters-mode)
   :config
   (set-formatter! 'csharpier '("dotnet-csharpier") :modes '(csharp-mode))
-  (set-electric! 'csharp-mode :chars '(?\n ?\}))
+  (set-electric! 'csharp-mode :chars '(?\n ?\{ ?\}))
   (set-rotate-patterns! 'csharp-mode
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
