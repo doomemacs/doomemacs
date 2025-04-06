@@ -31,9 +31,7 @@ package to be installed.")
 (defvar +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
   "A list of enabled LaTeX viewers to use, in this order. If they don't exist,
 they will be ignored. Recognized viewers are skim, evince, sumatrapdf, zathura,
-okular and pdf-tools.
-
-If no viewer is found, `latex-preview-pane-mode' is used.")
+okular and pdf-tools.")
 
 ;;
 (defvar +latex--company-backends nil)
@@ -219,7 +217,8 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
       (dolist (item '("itemize" "enumerate" "description"))
         (setf (alist-get item LaTeX-indent-environment-list nil t #'equal) nil))
-      (apply fn args))))
+      (apply fn args)))
+  )
 
 
 (use-package! preview
