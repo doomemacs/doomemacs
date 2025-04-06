@@ -22,7 +22,7 @@
   ;;   rely on just that.
   (add-hook! 'org-modern-mode-hook
     (defun +org-modern-show-hidden-stars-in-indent-mode-h ()
-      (when org-indent-mode
+      (when (bound-and-true-p org-indent-mode)
         (setq-local org-modern-hide-stars nil))))
 
   ;; Carry over the default values of `org-todo-keyword-faces', `org-tag-faces',
