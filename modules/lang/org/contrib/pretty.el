@@ -10,7 +10,7 @@
 
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
-  :hook (org-agenda-finalize . org-modern-mode)
+  :hook (org-agenda-finalize . org-modern-agenda)
   :hook (org-modern-mode . +org-pretty-mode)
   :config
   ;; HACK: If `org-indent-mode' is active, org-modern's default of hiding
