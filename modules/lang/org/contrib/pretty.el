@@ -11,7 +11,10 @@
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
   :hook (org-agenda-finalize . org-modern-agenda)
-  :hook (org-modern-mode . +org-pretty-mode)
+  :init
+  (after! org
+    (setq org-hide-emphasis-markers t
+          org-pretty-entities t))
   :config
   ;; HACK: If `org-indent-mode' is active, org-modern's default of hiding
   ;;   leading stars makes sub-headings look too sunken into the left margin.
