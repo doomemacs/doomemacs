@@ -130,7 +130,7 @@
   ;; HACK: Disable the emacs-lisp checker in non-project (likely untrusted)
   ;;   buffers to mitigate potential code execution vulnerability during macro
   ;;   expansion. See CVE-2024-53920.
-  (defadvice! +syntax--only-check-elisp-buffers-in-projects-a (fn &rest args)
+  (defadvice! +syntax--only-check-elisp-buffers-in-projects-a (&rest _)
     "Prevent the elisp checker in non-project buffers (for CVE-2024-53920)."
     :before-while #'elisp-flymake-byte-compile
     (doom-project-p)))
