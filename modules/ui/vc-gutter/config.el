@@ -178,8 +178,7 @@ Respects `diff-hl-disable-on-remote'."
   (defvar-local +vc-gutter--diff-hl-thread nil)
   (defadvice! +vc-gutter--debounce-threads-a (&rest _)
     :override #'diff-hl-update
-    (unless (or inhibit-redisplay
-                non-essential
+    (unless (or non-essential
                 delay-mode-hooks
                 (null (buffer-file-name (buffer-base-buffer)))
                 (null (get-buffer-window (current-buffer))))
