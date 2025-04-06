@@ -10,7 +10,7 @@ Provide a helping hand when working with LaTeX documents.
 - Fontification of many popular commands
 - Pretty indentation of wrapped lines using the [[doom-package:adaptive-wrap]] package
 - Spell checking with [[doom-package:flycheck]]
-- Change PDF viewer to Okular or [[doom-package:latex-preview-pane]]
+- Change PDF viewer to Okular or AUCTeX-selected viewer
 - Bibtex editor
 - Autocompletion using [[doom-package:company-mode]]
 - Compile your =.tex= code only once using LatexMk
@@ -36,7 +36,7 @@ Provide a helping hand when working with LaTeX documents.
 - [[doom-package:auctex]]
 - [[doom-package:cdlatex]] if [[doom-module:+cdlatex]]
 - [[doom-package:evil-tex]] if [[doom-module::editor evil +everywhere]]
-- [[doom-package:latex-preview-pane]]
+- [[doom-package:auctex-cont-latexmk]]
 - if [[doom-module::completion company]]
   - [[doom-package:company-auctex]]
   - [[doom-package:company-math]]
@@ -126,10 +126,6 @@ tool, for instance:
 (setq +latex-viewers '(zathura))
 #+end_src
 
-If none of these tools are found, ~latex-preview-pane~ (uses ~DocView~ in Emacs)
-is used as a fallback. You can use this exclusively by setting ~+latex-viewers~
-to ~nil~.
-
 ** Using cdlatex's snippets despite having yasnippet
 [[doom-package:cdlatex]] has a snippet insertion capability which is disabled in favor of
 [[doom-package:yasnippet]] when using [[doom-module::editor snippets]]. If you still wanna use it, simply rebind
@@ -150,7 +146,6 @@ in latex buffers.
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
-* TODO Appendix
-#+begin_quote
- 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
-#+end_quote
+* Appendix
+** Commands
+- ~+latex/live-preview~: Pop up the viewer of choice and display the document compiled live with each save.
