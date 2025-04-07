@@ -120,6 +120,8 @@
       (if (eq major-mode 'eshell-mode)
           (run-hooks 'eshell-mode-hook)
         (eshell-mode))
+      (set-window-fringes nil 0 0)
+      (set-window-margins nil 1 nil)
       (when command
         (+eshell-run-command command buf)))
     buf))
