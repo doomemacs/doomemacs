@@ -30,7 +30,7 @@
   ;; hasn't already modified them.
   (letf! (defun new-spec (spec)
            (if (or (facep (cdr spec))
-                   (not (keyword (car-safe (cdr spec)))))
+                   (not (keywordp (car-safe (cdr spec)))))
                `(:inherit ,(cdr spec))
              (cdr spec)))
     (unless org-modern-tag-faces
