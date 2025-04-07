@@ -16,6 +16,11 @@
     (setq org-hide-emphasis-markers t
           org-pretty-entities t))
   :config
+  ;; HACK: The default unicode symbol for checked boxes often turn out much
+  ;;   larger than the others, so I swap it out with one that's more likely to
+  ;;   be consistent.
+  (setf (alist-get ?X org-modern-checkbox) #("□x" 0 2 (composition ((2)))))
+
   ;; HACK: If `org-indent-mode' is active, org-modern's default of hiding
   ;;   leading stars makes sub-headings look too sunken into the left margin.
   ;;   Those stars are already "hidden" by `org-hide-leading-stars' anyway, so
