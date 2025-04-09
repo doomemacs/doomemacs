@@ -89,61 +89,6 @@
   (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
 
-(use-package! anaconda-mode
-  :defer t
-  :init
-  (setq anaconda-mode-installation-directory (concat doom-data-dir "anaconda/")
-        anaconda-mode-eldoc-as-single-line t)
-
-  (add-hook! 'python-mode-local-vars-hook :append
-    (defun +python-init-anaconda-mode-maybe-h ()
-      "Enable `anaconda-mode' if `lsp-mode' is absent and
-`python-shell-interpreter' is present."
-      (unless (or (bound-and-true-p lsp-mode)
-                  (bound-and-true-p eglot--managed-mode)
-                  (bound-and-true-p lsp--buffer-deferred)
-                  (not (executable-find python-shell-interpreter t)))
-        (anaconda-mode +1))))
-
-  (add-hook! 'eglot-server-initialized-hook
-    (defun +python-disable-anaconda-mode-h (&rest _)
-      "When `eglot' started, disable `anaconda-mode' so they don't interfere."
-      (when (bound-and-true-p anaconda-mode)
-        (anaconda-eldoc-mode -1)
-        (anaconda-mode -1))))
-
-  :config
-  (set-company-backend! 'anaconda-mode '(company-anaconda))
-  (set-lookup-handlers! 'anaconda-mode
-    :definition #'anaconda-mode-find-definitions
-    :references #'anaconda-mode-find-references
-    :documentation #'anaconda-mode-show-doc)
-  (set-popup-rule! "^\\*anaconda-mode" :select nil)
-
-  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
-
-  (defun +python-auto-kill-anaconda-processes-h ()
-    "Kill anaconda processes if this buffer is the last python buffer."
-    (when (and (eq major-mode 'python-mode)
-               (not (delq (current-buffer)
-                          (doom-buffers-in-mode 'python-mode (buffer-list)))))
-      (anaconda-mode-stop)))
-  (add-hook! 'python-mode-hook
-    (add-hook 'kill-buffer-hook #'+python-auto-kill-anaconda-processes-h
-              nil 'local))
-
-  (when (featurep 'evil)
-    (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
-  (map! :localleader
-        :map anaconda-mode-map
-        :prefix ("g" . "conda")
-        "d" #'anaconda-mode-find-definitions
-        "h" #'anaconda-mode-show-doc
-        "a" #'anaconda-mode-find-assignments
-        "f" #'anaconda-mode-find-file
-        "u" #'anaconda-mode-find-references))
-
-
 (use-package! pyimport
   :defer t
   :init
@@ -261,40 +206,7 @@
 (use-package! conda
   :when (modulep! +conda)
   :after python
-  :preface
-  ;; HACK: `conda-anaconda-home's initialization can throw an error if none of
-  ;;   `conda-home-candidates' exist, so unset it early.
-  ;; REVIEW: Fix this upstream.
-  (setq conda-anaconda-home (getenv "ANACONDA_HOME")
-        conda-home-candidates
-        (list "~/.anaconda"
-              "~/.anaconda3"
-              "~/.miniconda"
-              "~/.miniconda3"
-              "~/.miniforge3"
-              "~/anaconda3"
-              "~/miniconda3"
-              "~/miniforge3"
-              "~/opt/miniconda3"
-              "/usr/bin/anaconda3"
-              "/usr/local/anaconda3"
-              "/usr/local/miniconda3"
-              "/usr/local/Caskroom/miniconda/base"
-              "~/.conda"))
   :config
-  ;; The location of your anaconda home will be guessed from a list of common
-  ;; possibilities, starting with `conda-anaconda-home''s default value (which
-  ;; will consult a ANACONDA_HOME envvar, if it exists).
-  ;;
-  ;; If none of these work for you, `conda-anaconda-home' must be set
-  ;; explicitly. Afterwards, run M-x `conda-env-activate' to switch between
-  ;; environments
-  (or (cl-loop for dir in (cons conda-anaconda-home conda-home-candidates)
-               if (and dir (file-directory-p dir))
-               return (setq conda-anaconda-home (expand-file-name dir)
-                            conda-env-home-directory (expand-file-name dir)))
-      (message "Cannot find Anaconda installation"))
-
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))

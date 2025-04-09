@@ -14,11 +14,6 @@
     (when (modulep! +pyright)
       (package! lsp-pyright :pin "b4cee81af46274303f2cb9b75de9fc8ddcba04d9"))))
 
-;; Programming environment
-(package! anaconda-mode :pin "28b3e0088ac7113390aa006bf277c8aa14e561a2")
-(when (modulep! :completion company)
-  (package! company-anaconda :pin "fe6a5290441f713945956adf74c45e369f3cbefa"))
-
 ;; Environment management
 (package! pipenv :pin "3af159749824c03f59176aff7f66ddd6a5785a10")
 (package! pyvenv :pin "31ea715f2164dd611e7fc77b26390ef3ca93509b")

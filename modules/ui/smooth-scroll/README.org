@@ -1,0 +1,113 @@
+#+title:    :ui smooth-scroll
+#+subtitle: So smooth you won't believe it's not butter
+#+created:  April 1, 2025
+#+since:    25.05.0
+
+* Description :unfold:
+This module enables multiple kinds of smooth scrolling in Emacs. Its primary
+function is to make input scrolling (on trackpads and scroll wheels)
+pixel-smooth. With the =+interpolate= flag, it performs interpolated scrolling on
+a growing list of scroll commands that traverse larger distances, smoothly
+scrolling from point A to B on PgUp or PgDown (or [[kbd:][C-d]]/[[kbd:][C-u]] for Evil users).
+
+#+begin_quote
+  This module requires Emacs 29.1 or newer.
+#+end_quote
+
+#+begin_quote
+  Scroll interpolation support is currently limited to the ~scroll-up~ and
+    ~scroll-down~ commands, and any command that calls them (like ~evil-scroll-down~
+    and ~evil-scroll-up~), so you're likely to find many scroll commands are not
+    interpolated. We welcome PRs to expand its support.
+#+end_quote
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +interpolate ::
+  Enables scroll interpolation for some larger-step scrolling commands. E.g.
+  PgUp and PgDown (or C-d/C-u for Evil users) will now smoothly scroll to its
+  destination rather than jump to it.
+
+** Packages
+- [[doom-package:ultra-scroll]]
+- [[doom-package:good-scroll]] if [[doom-module:+interpolate]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+#+begin_quote
+  For optimal performance from this module, it's highly recommended you use
+    Emacs with native-compilation. MacOS users may also have a better experience
+    using the [[https://bitbucket.org/mituharu/emacs-mac][emacs-mac]] fork of Emacs, available via Homebrew.
+#+end_quote
+
+* Usage
+This module only needs to be activated to experience its benefits.
+
+* TODO Configuration
+#+begin_quote
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+[[doom-report:][Report an issue?]]
+
+** Poor scrolling performance by scroll wheel or trackpad
+This module "smooths" input scrolling (via your trackpad or mouse wheel), and is
+platform agnostic, so long as your OS reports pixel-level scrolling input from
+your input hardware. If you run into issues, here are some things to try:
+
+- Use ~M-x ultra-scroll-check~ to diagnose common issues. Visit [[https://github.com/jdtsmith/ultra-scroll?tab=readme-ov-file#compatibility][ultra-scroll's
+  documentation]] for more on interpreting and acting on its results.
+- Read [[https://github.com/jdtsmith/ultra-scroll?tab=readme-ov-file#Speed][ultra-scroll's documentation on scrolling speed]]; it outlines common
+  factors that may impact it and how to mitigate them.
+- See Doom's "[[https://discourse.doomemacs.org/t/why-is-emacs-doom-slow/83/3][Why is Emacs/Doom slow?]]" write-up, where Doom's author documents
+  common factors that can slow Emacs down in general (not specifically to do
+  with scrolling) and what to do about them.
+
+If all else fails, let us know on [[https://discourse.doomemacs.org][Discourse]] or [[https://doomemacs.org/discord][Discord]]. Only file an issue if
+you have a good idea what's causing the problem or have an explicit error to
+report (performance issues, in general, tend to be the result of *many* factors
+and are the greatest source of false positives on our issue tracker).
+
+** High idle CPU usage with =+interpolate=
+This flag will increase Emacs' idle CPU usage. Some overhead is unavoidable with
+how [[https://github.com/io12/good-scroll.el][good-scroll]] implements scroll interpolation (with a high-rate timer), but
+some builds of and configurations for Emacs are affected worse than others. If
+this affects you, here are some ways to help:
+
+- Use, at least, the [[https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html#Releases][latest stable version of Emacs]]. Later versions are
+  significantly more memory and CPU efficient.
+- Use native compilation. This is a tremendous boon to Emacs performance in
+  general.
+- Increase the values for ~good-scroll-render-rate~ (default: ~0.02~) and/or
+  ~good-scroll-duration~ (default: ~0.15~). Remember to restart ~good-scroll-mode~ if
+  you change these values live. This will decrease the package's poll rate.
+- Some UI features can significantly exacerbate this issue, like line numbers.
+  Try turning them off.
+- PGTK builds seem less affected by this, and MacOS builds seem more affected.
+  Try another build. Your mileage may vary.
+
+If nothing helps, report it [[https://github.com/io12/good-scroll.el/issues/31][upstream]]. Until a workaround is found, you must
+decide whether this trade-off is worth it for you.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

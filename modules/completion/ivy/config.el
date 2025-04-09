@@ -326,6 +326,14 @@ workable results ripgrep produces, despite the error."
   (setf (alist-get 'projectile-find-file counsel-projectile-key-bindings)
         #'+ivy/projectile-find-file)
 
+  ;; HACK: Force `counsel-projectile-switch-project' to call
+  ;;   `projectile-relevant-known-projects' and initialize the known projects
+  ;;   list, because otherwise it's trying to read from the
+  ;;   `projectile-known-projects' variable directly instead of calling the
+  ;;   function of the same name.
+  ;; REVIEW: This should be fixed upstream.
+  (setq counsel-projectile-remove-current-project t)
+
   ;; no highlighting visited files; slows down the filtering
   (ivy-set-display-transformer #'counsel-projectile-find-file nil)
 

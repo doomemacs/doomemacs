@@ -4,31 +4,46 @@
   (setq org-highlight-latex-and-related '(native script entities)))
 
 
-(use-package! org-superstar ; "prettier" bullets
-  :hook (org-mode . org-superstar-mode)
-  :config
-  ;; Make leading stars truly invisible, by rendering them as spaces!
-  (setq org-superstar-leading-bullet ?\s
-        org-superstar-leading-fallback ?\s
-        org-hide-leading-stars nil
-        org-superstar-todo-bullet-alist
-        '(("TODO" . 9744)
-          ("[ ]"  . 9744)
-          ("DONE" . 9745)
-          ("[X]"  . 9745))))
-
-
-(use-package! org-fancy-priorities ; priority icons
-  :hook (org-mode . org-fancy-priorities-mode)
-  :hook (org-agenda-mode . org-fancy-priorities-mode)
-  :config
-  (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
-  ;; HACK: Prevent org-fancy-priorities from interfering with org exporters or
-  ;;   other non-interactive Org crawlers/parsers (see #8280).
-  (defadvice! +org--inhibit-org-fancy-in-non-real-buffers-a (&rest _)
-    :before-until #'org-fancy-priorities-mode
-    org-inhibit-startup))
-
-
-(use-package! org-appear ; better markup edit
+(use-package! org-appear
   :hook (org-mode . org-appear-mode))
+
+
+(use-package! org-modern
+  :hook (org-mode . org-modern-mode)
+  :hook (org-agenda-finalize . org-modern-agenda)
+  :init
+  (after! org
+    (setq org-hide-emphasis-markers t
+          org-pretty-entities t))
+  :config
+  ;; HACK: The default unicode symbol for checked boxes often turn out much
+  ;;   larger than the others, so I swap it out with one that's more likely to
+  ;;   be consistent.
+  (setf (alist-get ?X org-modern-checkbox) #("□x" 0 2 (composition ((2)))))
+
+  ;; HACK: If `org-indent-mode' is active, org-modern's default of hiding
+  ;;   leading stars makes sub-headings look too sunken into the left margin.
+  ;;   Those stars are already "hidden" by `org-hide-leading-stars' anyway, so
+  ;;   rely on just that.
+  (add-hook! 'org-modern-mode-hook
+    (defun +org-modern-show-hidden-stars-in-indent-mode-h ()
+      (when (bound-and-true-p org-indent-mode)
+        (setq-local org-modern-hide-stars nil))))
+
+  ;; Carry over the default values of `org-todo-keyword-faces', `org-tag-faces',
+  ;; and `org-priority-faces' as reasonably as possible, but only if the user
+  ;; hasn't already modified them.
+  (letf! (defun new-spec (spec)
+           (if (or (facep (cdr spec))
+                   (not (keywordp (car-safe (cdr spec)))))
+               `(:inherit ,(cdr spec))
+             (cdr spec)))
+    (unless org-modern-tag-faces
+      (dolist (spec org-tag-faces)
+        (add-to-list 'org-modern-tag-faces `(,(car spec) :inverse-video t ,@(new-spec spec)))))
+    (unless org-modern-todo-faces
+      (dolist (spec org-todo-keyword-faces)
+        (add-to-list 'org-modern-todo-faces `(,(car spec) :inverse-video t ,@(new-spec spec)))))
+    (unless org-modern-priority-faces
+      (dolist (spec org-priority-faces)
+        (add-to-list 'org-modern-priority-faces `(,(car spec) :inverse-video t ,@(new-spec spec)))))))

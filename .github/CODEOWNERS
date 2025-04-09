@@ -134,7 +134,6 @@ modules/tools/magit                 @doomemacs/tools-magit
 modules/tools/make                  @doomemacs/tools-make
 modules/tools/pass                  @doomemacs/tools-pass
 modules/tools/pdf                   @doomemacs/tools-pdf
-modules/tools/prodigy               @doomemacs/tools-prodigy
 modules/tools/terraform             @doomemacs/tools-terraform
 modules/tools/tmux                  @doomemacs/tools-tmux
 modules/tools/tree-sitter           @doomemacs/tools-tree-sitter
@@ -154,6 +153,7 @@ modules/ui/nav-flash                @doomemacs/ui-nav-flash
 modules/ui/neotree                  @doomemacs/ui-neotree
 modules/ui/ophints                  @doomemacs/ui-ophints
 modules/ui/popup                    @doomemacs/ui-popup
+modules/ui/smooth-scroll            @doomemacs/ui-smooth-scroll
 modules/ui/tabs                     @doomemacs/ui-tabs
 modules/ui/treemacs                 @doomemacs/ui-treemacs
 modules/ui/unicode                  @doomemacs/ui-unicode

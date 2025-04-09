@@ -118,7 +118,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-priority-faces
         '((?A . error)
           (?B . warning)
-          (?C . success))
+          (?C . shadow))
         org-startup-indented t
         org-tags-column 0
         org-use-sub-superscripts '{}
@@ -1374,15 +1374,6 @@ between the two."
     :documentation #'+org-lookup-documentation-handler)
 
   (add-hook! 'org-mode-hook
-    ;; HACK: Somehow, users/packages still find a way to modify tab-width in
-    ;;   org-mode. Since org-mode treats a non-standerd tab-width as an error
-    ;;   state, I use this hook to makes it much harder to change by accident.
-    (add-hook! 'after-change-major-mode-hook :local
-      ;; The second check is necessary, in case of `org-edit-src-code' which
-      ;; clones a buffer and changes its major-mode.
-      (when (derived-mode-p 'org-mode)
-        (setq tab-width 8)))
-
     ;; HACK: `save-place' can position the cursor in an invisible region. This
     ;;   makes it visible unless `org-inhibit-startup' or
     ;;   `org-inhibit-startup-visibility-stuff' is non-nil.

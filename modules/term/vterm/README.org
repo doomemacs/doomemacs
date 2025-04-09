@@ -155,7 +155,14 @@ The following commands are available to open it:
 #+end_quote
 
 * Troubleshooting
-/There are no known problems with this module./ [[doom-report:][Report one?]]
+[[doom-report:][Report an issue?]]
+
+** Permission errors when compiling vterm on OpenSUSE Tumbleweed
+Emacs on Tumbleweed comes with =emacs-vterm=, which is deployed to a read-only
+directory, but the vterm installations cript depends on that directory being
+writeable in order to compile. You'll need to uninstall =emacs-vterm= via
+zypper, then ~doom sync~ again and you should end up with a proper build of
+vterm.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

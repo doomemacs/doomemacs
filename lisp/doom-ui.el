@@ -81,8 +81,11 @@ want to change your symbol font, use `doom-symbol-font'.")
   "List of hooks to run when the UI has been initialized.")
 
 (defcustom doom-load-theme-hook nil
-  "Hook run after the theme is loaded with `load-theme' or reloaded with
-`doom/reload-theme'.")
+  "Hook run after a color-scheme is loaded.
+
+Triggered by `load-theme', `enable-theme', or reloaded with `doom/reload-theme',
+but only for themes that declare themselves as a :kind color-scheme (which Doom
+treats as the default).")
 
 (defcustom doom-switch-buffer-hook nil
   "A list of hooks run after changing the current buffer.")
@@ -91,21 +94,59 @@ want to change your symbol font, use `doom-symbol-font'.")
   "A list of hooks run after changing the focused windows.")
 
 (defcustom doom-switch-frame-hook nil
-  "A list of hooks run after changing the focused frame.")
+  "A list of hooks run after changing the focused frame.
+
+This also serves as an analog for `focus-in-hook' or
+`after-focus-change-function', but also preforms debouncing (see
+`doom-switch-frame-hook-debounce-delay'). It's possible for this hook to be
+triggered multiple times (because there are edge cases where Emacs can have
+multiple frames focused at once).")
 
 (defun doom-run-switch-buffer-hooks-h (&optional _)
-  (let ((gc-cons-threshold most-positive-fixnum)
-        (inhibit-redisplay t))
+  "Trigger `doom-switch-buffer-hook' when selecting a new buffer."
+  (let ((gc-cons-threshold most-positive-fixnum))
     (run-hooks 'doom-switch-buffer-hook)))
 
-(defun doom-run-switch-window-or-frame-hooks-h (&optional _)
-  (let ((gc-cons-threshold most-positive-fixnum)
-        (inhibit-redisplay t))
-    (unless (equal (old-selected-frame) (selected-frame))
-      (run-hooks 'doom-switch-frame-hook))
-    (unless (or (minibufferp)
-                (equal (old-selected-window) (minibuffer-window)))
+(defun doom-run-switch-window-hooks-h (&optional _)
+  "Trigger `doom-switch-window-hook' when selecting a window in the same frame."
+  (unless (or (minibufferp)
+              (not (equal (old-selected-frame) (selected-frame)))
+              (equal (old-selected-window) (minibuffer-window)))
+    (let ((gc-cons-threshold most-positive-fixnum))
       (run-hooks 'doom-switch-window-hook))))
+
+(defvar doom-switch-frame-hook-debounce-delay 2.0
+  "The delay for which `doom-switch-frame-hook' won't trigger again.
+
+This exists to prevent switch-frame hooks getting triggered too aggressively due
+to misbehaving desktop environments, packages incorrectly frame switching in
+non-interactive code, or the user accidentally (and rapidly) un-and-refocusing
+the frame through some other means.")
+
+(defun doom--run-switch-frame-hooks-fn (_)
+  (remove-hook 'pre-redisplay-functions #'doom--run-switch-frame-hooks-fn)
+  (let ((gc-cons-threshold most-positive-fixnum))
+    (dolist (fr (visible-frame-list))
+      (let ((state (frame-focus-state fr)))
+        (when (and state (not (eq state 'unknown)))
+          (let ((last-update (frame-parameter fr '+last-focus)))
+            (when (or (null last-update)
+                      (> (float-time (time-subtract (current-time) last-update))
+                         doom-switch-frame-hook-debounce-delay))
+              (with-selected-frame fr
+                (unwind-protect
+                    (let ((inhibit-redisplay t))
+                      (run-hooks 'doom-switch-frame-hook))
+                  (set-frame-parameter fr '+last-focus (current-time)))))))))))
+
+(let (last-focus-state)
+  (defun doom-run-switch-frame-hooks-fn ()
+    "Trigger `doom-switch-frame-hook' once per frame focus change."
+    (or (equal last-focus-state
+               (setq last-focus-state
+                     (mapcar #'frame-focus-state (frame-list))))
+        ;; Defer until next redisplay
+        (add-hook 'pre-redisplay-functions #'doom--run-switch-frame-hooks-fn))))
 
 (defun doom-protect-fallback-buffer-h ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
@@ -302,7 +343,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;; Expand the minibuffer to fit multi-line text displayed in the echo-area. This
 ;; doesn't look too great with direnv, however...
-(setq resize-mini-windows 'grow-only)
+(setq resize-mini-windows 'grow-only
+      tooltip-resize-echo-area t)
 
 ;; Typing yes/no is obnoxious when y/n will do
 (if (boundp 'use-short-answers)
@@ -669,9 +711,9 @@ triggering hooks during startup."
   ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
   (push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
 
-  ;; Initialize `doom-switch-window-hook' and `doom-switch-frame-hook'
-  (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h)
-  ;; Initialize `doom-switch-buffer-hook'
+  ;; Initialize `doom-switch-*-hook' hooks.
+  (add-function :after after-focus-change-function #'doom-run-switch-frame-hooks-fn)
+  (add-hook 'window-selection-change-functions #'doom-run-switch-window-hooks-h)
   (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
   ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
   (add-hook 'server-visit-hook #'doom-run-switch-buffer-hooks-h))

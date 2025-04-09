@@ -31,7 +31,7 @@
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                          "(provide 'org-version)\n")))))
-  :pin "07e380f76d8741a499a3ffe66df03615f5b31804")  ; release_9.7.26
+  :pin "74dde3abae74c97ba336a11a1d0efcb79585e32f")  ; release_9.7.27
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
@@ -47,7 +47,7 @@
 (when (modulep! +contacts)
   (package! org-contacts
     :recipe (:host github :repo "doomelpa/org-contacts")
-    :pin "f0a430442b2ae60035dcd74fc6a76299875694f3"))
+    :pin "b06a59736800865b8a7e8d6d45774169cb31528a"))
 
 (when (and (featurep :system 'macos)
            (modulep! :os macos))
@@ -66,9 +66,9 @@
 (when (modulep! :tools pdf)
   (package! org-pdftools :pin "5613b7ae561e0af199f25aacc0a9c34c16638408"))
 (when (modulep! :tools magit)
-  (package! orgit :pin "6ad0dc35c8df54fae4ef27e5145760e22fbbf890")
+  (package! orgit :pin "efd98e5caaac1d08677dae95be40fab65dcda2c8")
   (when (modulep! :tools magit +forge)
-    (package! orgit-forge :pin "2718a6aaf0f64cb52c64c419053fbc80eb358c8d")))
+    (package! orgit-forge :pin "764820769e321a76622aaafe7617b4231985b5f0")))
 (when (modulep! +brain)
   (package! org-brain :pin "2bad7732aae1a3051e2a14de2e30f970bbe43c25"))
 (when (modulep! +dragndrop)
@@ -77,7 +77,7 @@
   (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "db8a9e233a010a61063f34220821ec76157a2d84"))
+  (package! jupyter :pin "3615c2de16988c4dd9d1978bfa10ee3092e85b33"))
 (when (modulep! +journal)
   (package! org-journal :pin "cf721732332d707de5d5af71e6d9a87599cc84a2"))
 (when (modulep! +noter)
@@ -85,9 +85,8 @@
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09")
-  (package! org-superstar :pin "54c81c27dde2a6dc461bb064e79a8b2089093a2e")
-  (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
+  (package! org-modern :pin "3cc432dc99f262579d1cc464e7d6d5b9fe77083a")
+  (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
@@ -97,7 +96,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "5c77e863014d5dfcefe3f3de6cf3f7e33f0acc0d"))
+    :pin "dfc5690c6d6075e0f8a773ec0897d3b0f6001850"))
 (cond
  ((modulep! +roam)
   (package! org-roam
@@ -155,4 +154,4 @@
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
     :pin "e3365cb4e65c1853d8838b863a21546bbd9e0990"))
 (when (modulep! :lang rst)
-  (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
+  (package! ox-rst :pin "b4ba5c7e95bd8e0063157107960fed64e04c00c2"))

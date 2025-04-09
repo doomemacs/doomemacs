@@ -23,8 +23,8 @@
                      (truncate (* (frame-char-height) spacing))
                    spacing)))
            (w (min (frame-parameter nil (intern (format "%s-fringe" diff-hl-side)))
-                   16))
-           (_ (if (zerop w) (setq w 16))))
+                   diff-hl-bmp-max-width))
+           (_ (if (zerop w) (setq w diff-hl-bmp-max-width))))
       (define-fringe-bitmap 'diff-hl-bmp-middle
         (make-vector
          h (string-to-number (let ((half-w (1- (/ w 2))))
@@ -118,14 +118,14 @@ Respects `diff-hl-disable-on-remote'."
           :n "{" #'diff-hl-show-hunk-previous
           :n "}" #'diff-hl-show-hunk-next
           :n "S" #'diff-hl-show-hunk-stage-hunk))
-  ;; UX: Refresh gutter on ESC or refocusing the Emacs frame.
-  (add-hook! '(doom-escape-hook doom-switch-window-hook) :append
+  ;; UX: Refresh gutter in the selected buffer on ESC, switching windows, or
+  ;;   refocusing the frame.
+  (add-hook! '(doom-escape-hook doom-switch-window-hook doom-switch-frame-hook) :append
     (defun +vc-gutter-update-h (&rest _)
       "Return nil to prevent shadowing other `doom-escape-hook' hooks."
-      (ignore (or inhibit-redisplay
-                  (and (or (bound-and-true-p diff-hl-mode)
-                           (bound-and-true-p diff-hl-dir-mode))
-                       (diff-hl-update-once))))))
+      (ignore (and (or (bound-and-true-p diff-hl-mode)
+                       (bound-and-true-p diff-hl-dir-mode))
+                   (diff-hl-update-once)))))
   ;; UX: Update diff-hl when magit alters git state.
   (when (modulep! :tools magit)
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
@@ -178,8 +178,7 @@ Respects `diff-hl-disable-on-remote'."
   (defvar-local +vc-gutter--diff-hl-thread nil)
   (defadvice! +vc-gutter--debounce-threads-a (&rest _)
     :override #'diff-hl-update
-    (unless (or inhibit-redisplay
-                non-essential
+    (unless (or non-essential
                 delay-mode-hooks
                 (null (buffer-file-name (buffer-base-buffer)))
                 (null (get-buffer-window (current-buffer))))

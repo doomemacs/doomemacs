@@ -9,9 +9,8 @@
   (set-lookup-handlers! 'go-mode
     :documentation #'godoc-at-point)
 
-  (if (modulep! +lsp)
-      (add-hook 'go-mode-local-vars-hook #'lsp! 'append)
-    (add-hook 'go-mode-hook #'go-eldoc-setup))
+  (when (modulep! +lsp)
+    (add-hook 'go-mode-local-vars-hook #'lsp! 'append))
 
   (when (modulep! +tree-sitter)
     (add-hook 'go-mode-local-vars-hook #'tree-sitter! 'append))
@@ -50,15 +49,6 @@
 
 (use-package! gorepl-mode
   :commands gorepl-run-load-current-file)
-
-
-(use-package! company-go
-  :when (modulep! :completion company)
-  :unless (modulep! +lsp)
-  :after go-mode
-  :config
-  (set-company-backend! 'go-mode 'company-go)
-  (setq company-go-show-annotation t))
 
 
 (use-package! flycheck-golangci-lint

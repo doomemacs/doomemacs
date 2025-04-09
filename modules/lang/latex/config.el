@@ -31,9 +31,7 @@ package to be installed.")
 (defvar +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
   "A list of enabled LaTeX viewers to use, in this order. If they don't exist,
 they will be ignored. Recognized viewers are skim, evince, sumatrapdf, zathura,
-okular and pdf-tools.
-
-If no viewer is found, `latex-preview-pane-mode' is used.")
+okular and pdf-tools.")
 
 ;;
 (defvar +latex--company-backends nil)
@@ -128,18 +126,7 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
         :desc "View"          "v" #'TeX-view
         :desc "Compile"       "c" #'+latex/compile
         :desc "Run all"       "a" #'TeX-command-run-all
-        :desc "Run a command" "m" #'TeX-command-master)
-
-  ;; HACK: The standard LaTeXMk command uses `TeX-run-format', which doesn't
-  ;;   trigger `TeX-after-compilation-finished-functions', so swap it out for
-  ;;   `TeX-run-TeX', which does.
-  (defadvice! +latex--run-after-compilation-finished-functions-a (&rest args)
-    :after #'TeX-TeX-sentinel
-    (unless (TeX-error-report-has-errors-p)
-      (run-hook-with-args 'TeX-after-compilation-finished-functions
-                          (with-current-buffer TeX-command-buffer
-                            (expand-file-name
-                             (TeX-active-master (TeX-output-extension))))))))
+        :desc "Run a command" "m" #'TeX-command-master))
 
 
 (use-package! tex-fold
@@ -219,7 +206,8 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
       (dolist (item '("itemize" "enumerate" "description"))
         (setf (alist-get item LaTeX-indent-environment-list nil t #'equal) nil))
-      (apply fn args))))
+      (apply fn args)))
+  )
 
 
 (use-package! preview

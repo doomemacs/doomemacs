@@ -1,9 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/magit/packages.el
 
-(package! magit :pin "28d272ce0bcecc2e312d22ed15a48ad4cea564eb") ; 4.3.1
+(package! magit :pin "bf58615a033b8c827bf630962531c67539789215") ; 4.3.2
 (when (modulep! +forge)
-  (package! forge :pin "1c904090dfdcd201d9170997052c43846ddce149") ; 0.4.8
+  (package! forge :pin "9db4d386a1ce32b574e413771996d41d9b2407e8") ; 0.5.0
   (package! code-review
     :recipe (:host github
              :repo "doomelpa/code-review"

@@ -65,3 +65,11 @@ typically insert macros."
   (if +latex-enable-unicode-math
       (company-math-symbols-unicode command arg)
     (company-math-symbols-latex command arg)))
+
+;;;###autoload
+(defun +latex/live-preview ()
+  "Launch the AUCTeX viewer and keep the document live compiled on save."
+  (interactive)
+  (auctex-cont-latexmk-mode)
+  (TeX-command-sequence t t)
+  )

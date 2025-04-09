@@ -256,14 +256,15 @@ Uses `shrink-window-if-larger-than-buffer'."
 (defun +popup-adjust-fringes-h ()
   "Hides the fringe in popup windows, restoring them if `+popup-buffer-mode' is
 disabled."
-  (let ((f (if (bound-and-true-p +popup-buffer-mode) 0)))
-    (set-window-fringes nil f f fringes-outside-margins)))
+  (when (+popup-window-p)
+    (let ((f (if (bound-and-true-p +popup-buffer-mode) 0)))
+      (set-window-fringes nil f f fringes-outside-margins))))
 
 ;;;###autoload
 (defun +popup-adjust-margins-h ()
   "Creates padding for the popup window determined by `+popup-margin-width',
 restoring it if `+popup-buffer-mode' is disabled."
-  (when +popup-margin-width
+  (when (and +popup-margin-width (+popup-window-p))
     (unless (memq (window-parameter nil 'window-side) '(left right))
       (let ((m (if (bound-and-true-p +popup-buffer-mode) +popup-margin-width)))
         (set-window-margins nil m m)))))

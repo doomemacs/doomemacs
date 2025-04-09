@@ -255,10 +255,10 @@ tell you about it. Very annoying. This prevents that."
 
 (use-package! autorevert
   ;; revert buffers when their files/state have changed
-  :hook (focus-in . doom-auto-revert-buffers-h)
   :hook (after-save . doom-auto-revert-buffers-h)
   :hook (doom-switch-buffer . doom-auto-revert-buffer-h)
   :hook (doom-switch-window . doom-auto-revert-buffer-h)
+  :hook (doom-switch-frame . doom-auto-revert-buffers-h)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
@@ -307,30 +307,17 @@ tell you about it. Very annoying. This prevents that."
   (setq recentf-auto-cleanup nil     ; Don't. We'll auto-cleanup on shutdown
         recentf-max-saved-items 200) ; default is 20
 
-  (defun doom--recentf-file-truename-fn (file)
-    (if (or (not (file-remote-p file))
-            (equal "sudo" (file-remote-p file 'method)))
-        (abbreviate-file-name (file-truename (tramp-file-name-localname file)))
-      file))
-
-  ;; REVIEW: Use this in lieu of `doom--recentf-file-truename-fn' when we drop
-  ;;   28 support. See emacs-mirror/emacs@32906819addd.
-  ;; (setq recentf-show-abbreviated t)
-
   ;; Anything in runtime folders
   (add-to-list 'recentf-exclude
                (concat "^" (regexp-quote (or (getenv "XDG_RUNTIME_DIR")
                                              "/run"))))
 
-  ;; Resolve symlinks, strip out the /sudo:X@ prefix in local tramp paths, and
-  ;; abbreviate $HOME -> ~ in filepaths (more portable, more readable, & saves
-  ;; space)
-  (add-to-list 'recentf-filename-handlers #'doom--recentf-file-truename-fn)
-
-  ;; Text properties inflate the size of recentf's files, and there is
-  ;; no purpose in persisting them (Must be first in the list!)
+  ;; PERF: Text properties inflate the size of recentf's files, and there is no
+  ;;   reason to persist them (must be first in `recentf-filename-handlers'!)
   (add-to-list 'recentf-filename-handlers #'substring-no-properties)
 
+  ;; UX: Reorder the recent files list by frecency (i.e. every time you touch a
+  ;;   buffer, bump it to the top of the list).
   (add-hook! '(doom-switch-window-hook write-file-functions)
     (defun doom--recentf-touch-buffer-h ()
       "Bump file in recent file list when it is switched or written to."
@@ -338,7 +325,6 @@ tell you about it. Very annoying. This prevents that."
         (recentf-add-file buffer-file-name))
       ;; Return nil for `write-file-functions'
       nil))
-
   (add-hook! 'dired-mode-hook
     (defun doom--recentf-add-dired-directory-h ()
       "Add dired directories to recentf file list."
