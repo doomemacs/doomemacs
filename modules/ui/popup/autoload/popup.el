@@ -206,7 +206,8 @@ and enables `+popup-buffer-mode'."
         (when-let (popup (cl-loop for func in actions
                                   if (funcall func buffer alist)
                                   return it))
-          (+popup--init popup alist)
+          (with-current-buffer buffer
+            (+popup--init popup alist))
           (+popup--maybe-select-window popup origin)
           popup))))
 
