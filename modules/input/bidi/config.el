@@ -102,10 +102,10 @@ easier."
               (font (symbol-value font-var)))
     (condition-case e
         (let ((scale (symbol-value (intern (format "+bidi-%s-font-scale" name)))))
-          (set-fontset-font t 'hebrew font)
+          (set-fontset-font t name font)
           (set-face-font (intern (format "+bidi-%s-face" name)) font)
           (when (/= scale 1.0)
-            (setf (alist-get (font-get font :family) face-font-rescale-alist nil nil #'equal)
+            (setf (alist-get (symbol-name (font-get font :family)) face-font-rescale-alist nil nil #'equal)
                   scale)))
       ('error
        (if (string-prefix-p "Font not available" (error-message-string e))
