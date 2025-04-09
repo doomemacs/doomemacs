@@ -35,9 +35,9 @@ Returns the vterm buffer."
                                     return buf)
                            (get-buffer-create buffer-name))))
            (with-current-buffer buffer
-             (setq-local +vterm--id buffer-name)
              (unless (eq major-mode 'vterm-mode)
-               (vterm-mode)))
+               (vterm-mode))
+             (setq-local +vterm--id buffer-name))
            (pop-to-buffer buffer)))
        (get-buffer buffer-name)))))
 
