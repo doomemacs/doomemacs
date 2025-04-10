@@ -51,7 +51,7 @@ mode unconditionally, call `+format-with-lsp-mode' instead."
       (funcall callback)
     (funcall callback "LSP server doesn't support formatting")))
 
-(cl-defun +format--with-lsp-mode (beg end &key buffer &allow-other-keys)
+(cl-defun +format--with-lsp-mode (beg end &key buffer callback &allow-other-keys)
   "Format the current buffer or region with any available lsp-mode formatter.
 
 Won't forward the buffer to chained formatters if successful."
