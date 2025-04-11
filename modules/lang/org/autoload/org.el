@@ -472,32 +472,28 @@ Made for `org-tab-first-hook'."
   (when (and (modulep! :editor snippets)
              (require 'yasnippet nil t)
              (bound-and-true-p yas-minor-mode))
-    (and (let ((major-mode (cond ((org-in-src-block-p t)
-                                  (org-src-get-lang-mode (org-eldoc-get-src-lang)))
-                                 ((org-inside-LaTeX-fragment-p)
-                                  'latex-mode)
-                                 (major-mode)))
-               (org-src-tab-acts-natively nil) ; causes breakages
-               ;; Smart indentation doesn't work with yasnippet, and painfully slow
-               ;; in the few cases where it does.
-               (yas-indent-line 'fixed))
-           (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                           (evil-insert-state-p)
-                           (evil-emacs-state-p))
-                       (or (and (bound-and-true-p yas--tables)
-                                (gethash major-mode yas--tables))
-                           (with-memoization (get 'yas-reload-all 'reloaded)
-                             (always (yas-reload-all))))
-                       (yas--templates-for-key-at-point))
-                  (yas-expand)
-                  t)
-                 ((use-region-p)
-                  (yas-insert-snippet)
-                  t)))
-         ;; HACK Yasnippet breaks org-superstar-mode because yasnippets is
-         ;;      overzealous about cleaning up overlays.
-         (when (bound-and-true-p org-superstar-mode)
-           (org-superstar-restart)))))
+    (let ((major-mode (cond ((org-in-src-block-p t)
+                             (org-src-get-lang-mode (org-eldoc-get-src-lang)))
+                            ((org-inside-LaTeX-fragment-p)
+                             'latex-mode)
+                            (major-mode)))
+          (org-src-tab-acts-natively nil) ; causes breakages
+          ;; Smart indentation doesn't work with yasnippet, and painfully slow
+          ;; in the few cases where it does.
+          (yas-indent-line 'fixed))
+      (cond ((and (or (not (bound-and-true-p evil-local-mode))
+                      (evil-insert-state-p)
+                      (evil-emacs-state-p))
+                  (or (and (bound-and-true-p yas--tables)
+                           (gethash major-mode yas--tables))
+                      (with-memoization (get 'yas-reload-all 'reloaded)
+                        (always (yas-reload-all))))
+                  (yas--templates-for-key-at-point))
+             (yas-expand)
+             t)
+            ((use-region-p)
+             (yas-insert-snippet)
+             t)))))
 
 ;;;###autoload
 (defun +org-cycle-only-current-subtree-h (&optional arg)
