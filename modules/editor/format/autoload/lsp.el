@@ -15,7 +15,8 @@ mode won't conflict with pre-existing user config on `+format-with'."
     (setq-local +format-lsp--last +format-with))
   (setq-local +format-with
               (if +format-with-lsp-mode
-                  (cl-remove-duplicates (cons 'lsp +format-with) :test #'eq)
+                  (cl-remove-duplicates (cons 'lsp (ensure-list +format-with))
+                                        :test #'eq)
                 (prog1 (remq 'lsp (ensure-list +format-lsp--last))
                   (kill-local-variable '+format-lsp--last)))))
 
