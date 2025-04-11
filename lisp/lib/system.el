@@ -110,5 +110,25 @@ Tries to be portable. Returns 1 if cannot be determined."
                                 (cdr cpus)))))
                1))))))
 
+;;;###autoload
+(defun doom-system-supports-symlinks-p ()
+  "Return non-nil if this system supports symlinks"
+  (condition-case e
+      (let ((filea (expand-file-name "__doom_testfile1" temporary-file-directory))
+            (fileb (expand-file-name "__doom_testfile2" temporary-file-directory)))
+        (unwind-protect
+            (progn
+              (with-temp-file fileb)
+              (make-symbolic-link fileb filea)
+              (and (file-symlink-p filea)
+                   (file-equal-p filea fileb)))
+          (delete-file filea)
+          (delete-file fileb)))
+    (file-error
+     (if (equal (cons (nth 1 e) (nth 2 e))
+                (cons "Making symbolic link" "Operation not permitted"))
+         nil
+       (signal (car e) (cdr e))))))
+
 (provide 'doom-lib '(system))
 ;;; system.el ends here
