@@ -59,7 +59,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
         (apply fn args))))
 
   :config
-  (add-to-list 'doom-debug-variables 'lsp-log-io)
+  (set-debug-variable! 'lsp-log-io t 2)
 
   (setq lsp-intelephense-storage-path (concat doom-data-dir "lsp-intelephense/")
         lsp-vetur-global-snippets-dir

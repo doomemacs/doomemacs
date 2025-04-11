@@ -48,7 +48,7 @@ FUNCTION
         transient-values-file  (concat doom-data-dir "transient/values")
         transient-history-file (concat doom-data-dir "transient/history"))
   :config
-  (add-to-list 'doom-debug-variables 'magit-refresh-verbose)
+  (set-debug-variable! 'magit-refresh-verbose)
 
   (setq transient-default-level 5
         magit-diff-refine-hunk t ; show granular diffs in selected hunk

@@ -246,7 +246,7 @@ unreadable. Returns the names of envvars that were changed."
 (defun doom-run-hook (hook)
   "Run HOOK (a hook function) with better error handling.
 Meant to be used with `run-hook-wrapped'."
-  (doom-log "hook:%s: run %s" (or doom--hook '*) hook)
+  (doom-log 2 "hook:%s: run %s" (or doom--hook '*) hook)
   (condition-case-unless-debug e
       (funcall hook)
     (error
@@ -313,7 +313,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (with-memoization (get 'doom-compile-function 'timer)
     (run-with-idle-timer
      1.5 t (fn! (when-let (fn (pop fns))
-                  (doom-log "compile-functions: %s" fn)
+                  (doom-log 3 "compile-functions: %s" fn)
                   (or (if (featurep 'native-compile)
                           (or (subr-native-elisp-p (indirect-function fn))
                               (ignore-errors (native-compile fn))))
@@ -1170,7 +1170,7 @@ Never set this variable directly, use `with-doom-module'.")
             (if key
                 (doom-module-context key)
               (make-doom-module-context)))))
-     (doom-log ":context:module: =%s" doom-module-context)
+     (doom-log 2 ":context:module: =%s" doom-module-context)
      ,@body))
 
 (defun doom-module-context (key)

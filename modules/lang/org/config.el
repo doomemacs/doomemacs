@@ -1364,7 +1364,7 @@ between the two."
     (run-hooks 'org-load-hook))
 
   :config
-  (add-to-list 'doom-debug-variables 'org-export-async-debug)
+  (set-debug-variable! 'org-export-async-debug)
 
   (set-company-backend! 'org-mode 'company-capf)
   (set-eval-handler! 'org-mode #'+org-eval-handler)

@@ -42,8 +42,8 @@ This is controlled by `+format-on-save-disabled-modes'."
     (add-hook 'lsp-managed-mode-hook #'+format-with-lsp-toggle-h))
 
   :config
-  (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
-  (add-to-list 'doom-debug-variables '(apheleia-log-debug-info . t))
+  (set-debug-variable! 'apheleia-log-only-errors nil)
+  (set-debug-variable! 'apheleia-log-debug-info t 2)
 
   (defadvice! +format--inhibit-reformat-on-prefix-arg-a (orig-fn &optional arg)
     "Make it so \\[save-buffer] with prefix arg inhibits reformatting."

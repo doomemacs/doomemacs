@@ -32,7 +32,7 @@
   ;;   Emacs GC is put under high pressure.
   (cl-callf plist-put eglot-events-buffer-config :size 0)
 
-  (add-to-list 'doom-debug-variables '(eglot-events-buffer-config :size 2000000 :format full))
+  (set-debug-variable! 'eglot-events-buffer-config '(:size 2000000 :format full))
 
   (defadvice! +lsp--defer-server-shutdown-a (fn &optional server)
     "Defer server shutdown for a few seconds.

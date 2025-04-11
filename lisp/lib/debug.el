@@ -6,85 +6,120 @@
 ;;; Doom's debug mode
 
 ;;;###autoload
-(defvar doom-debug-variables
+(defvar doom-debug--variables
   `(;; Doom variables
     (doom-print-minimum-level . debug)
     (doom-inhibit-log . nil)
-    (doom-log-level . 2)
 
     ;; Emacs variables
-    async-debug
+    (async-debug t 2)
     debug-on-error
-    gcmh-verbose
+    (gcmh-verbose t 3)
     init-file-debug
-    jka-compr-verbose
-    (message-log-max . 16384)
-    (native-comp-async-report-warnings-errors . silent)
-    (native-comp-warning-on-missing-source . t)
+    (jka-compr-verbose t 3)
+    (message-log-max 16384)
+    (native-comp-async-report-warnings-errors silent 2)
+    (native-comp-warning-on-missing-source t 2)
     url-debug
     use-package-verbose
-    (warning-suppress-types . nil))
-  "A list of variable to toggle on `doom-debug-mode'.
+    (warning-suppress-types nil)))
 
-Each entry can be a variable symbol or a cons cell whose CAR is the variable
-symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
+;;;###autoload
+(progn
+  (cl-defun set-debug-variable! (var &optional (debug-val t) (level 1))
+    "Set VAR to DEBUG-VAL (or `t') when `doom-debug-mode' is active at >=LEVEL."
+    (setf (alist-get var doom-debug--variables) (cons debug-val level))))
 
-(defvar doom-debug--unbound-vars nil)
+(defvar doom-debug--unbound-variables nil)
 
 (defun doom-debug--watch-vars-h (&rest _)
-  (when-let (vars (copy-sequence doom-debug--unbound-vars))
-    (setq doom-debug--unbound-vars nil)
+  (when-let* ((vars (copy-sequence doom-debug--unbound-variables)))
+    (setq doom-debug--unbound-variables nil)
     (mapc #'doom-debug--set-var vars)))
 
 (defun doom-debug--set-var (spec)
   (cond ((listp spec)
-         (pcase-let ((`(,var . ,val) spec))
+         (pcase-let ((`(,var ,val ,level) spec))
            (if (boundp var)
                (set-default
-                var (if (not doom-debug-mode)
+                var (if (or (not doom-debug-mode)
+                            (> (or level 1) doom-log-level))
                         (prog1 (get var 'initial-value)
                           (put var 'initial-value nil))
-                      (doom-log "debug:vars: %s = %S" var (default-toplevel-value var))
+                      (doom-log 3 "debug:vars: %s = %S" var (default-toplevel-value var))
                       (put var 'initial-value (default-toplevel-value var))
                       val))
-             (add-to-list 'doom-debug--unbound-vars spec))))
+             (add-to-list 'doom-debug--unbound-variables spec))))
         ((boundp spec)
-         (doom-log "debug:vars: %s = %S" spec doom-debug-mode)
+         (doom-log 3 "debug:vars: %s = %S" spec doom-debug-mode)
          (set-default-toplevel-value spec doom-debug-mode))
-        ((add-to-list 'doom-debug--unbound-vars (cons spec t)))))
+        ((add-to-list 'doom-debug--unbound-variables (cons spec t)))))
+
+(defun doom-debug--timestamped-message-a (format-string &rest _args)
+  "Advice to run before `message' that prepends a timestamp to each message.
+
+Activate this advice with:
+(advice-add 'message :before 'doom-debug--timestamped-message-a)"
+  (when (and (stringp format-string)
+             message-log-max  ; if nil, logging is disabled
+             (not (equal format-string "%s%s"))
+             (not (equal format-string "\n")))
+    (with-current-buffer "*Messages*"
+      (let ((timestamp (format-time-string "[%F %T] " (current-time)))
+            (deactivate-mark nil))
+        (with-silent-modifications
+          (goto-char (point-max))
+          (if (not (bolp))
+              (newline))
+          (insert timestamp))))
+    (let ((window (get-buffer-window "*Messages*")))
+      (when (and window (not (equal (selected-window) window)))
+        (with-current-buffer "*Messages*"
+          (goto-char (point-max))
+          (set-window-point window (point-max)))))))
 
 ;;;###autoload
 (define-minor-mode doom-debug-mode
   "Toggle `debug-on-error' and `init-file-debug' for verbose logging."
   :global t
-  (let ((enabled doom-debug-mode))
-    (doom-log "debug: enabled!")
-    (mapc #'doom-debug--set-var doom-debug-variables)
-    ;; Watch for changes in `doom-debug-variables', or when packages load (and
-    ;; potentially define one of `doom-debug-variables'), in case some of them
-    ;; aren't defined when `doom-debug-mode' is first loaded.
-    (cond (enabled
-           (unless noninteractive
-             (message "Debug mode enabled! (Run 'M-x view-echo-area-messages' to open the log buffer)"))
-           ;; Produce more helpful (and visible) error messages from errors
-           ;; emitted from hooks (particularly mode hooks), that usually go
-           ;; unnoticed otherwise.
-           (advice-add #'run-hooks :override #'doom-run-hooks)
-           ;; Add time stamps to lines in *Messages*
-           (advice-add #'message :before #'doom--timestamped-message-a)
-           ;; The constant debug output from GC is mostly unhelpful. I still
-           ;; want it logged to *Messages*, just out of the echo area.
-           (advice-add #'gcmh-idle-garbage-collect :around #'doom-debug-shut-up-a)
-           (add-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
-           (add-hook 'after-load-functions #'doom-debug--watch-vars-h))
-          (t
-           (advice-remove #'run-hooks #'doom-run-hooks)
-           (advice-remove #'message #'doom--timestamped-message-a)
-           (advice-remove #'gcmh-idle-garbage-collect #'doom-debug-shut-up-a)
-           (remove-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
-           (remove-hook 'after-load-functions #'doom-debug--watch-vars-h)
-           (doom-log "debug: disabled")
-           (message "Debug mode disabled!")))))
+  (when (or doom-debug-mode
+            (and (integerp current-prefix-arg)
+                 (> current-prefix-arg 0)))
+    (setq doom-debug-mode t)
+    (let ((level (max 1 (min 3 (or current-prefix-arg 1)))))
+      (put 'doom-log-level 'initial-value doom-log-level)
+      (setq doom-log-level level)))
+  (doom-log "debug: enabled! (log-level=%d)" doom-log-level)
+  (mapc #'doom-debug--set-var doom-debug--variables)
+  ;; Watch for changes in `doom-debug--variables', or when packages load (and
+  ;; potentially define one of `doom-debug--variables'), in case some of them
+  ;; aren't defined when `doom-debug-mode' is first loaded.
+  (cond (doom-debug-mode
+         (unless noninteractive
+           (message "Debug mode level %d enabled! (Run 'M-x view-echo-area-messages' to open the log buffer)"
+                    doom-log-level))
+         ;; Produce more helpful (and visible) error messages from errors
+         ;; emitted from hooks (particularly mode hooks), that usually go
+         ;; unnoticed otherwise.
+         (advice-add #'run-hooks :override #'doom-run-hooks)
+         ;; Add time stamps to lines in *Messages*
+         (advice-add #'message :before #'doom-debug--timestamped-message-a)
+         ;; The constant debug output from GC is mostly unhelpful. I still
+         ;; want it logged to *Messages*, just out of the echo area.
+         (advice-add #'gcmh-idle-garbage-collect :around #'doom-debug-shut-up-a)
+         (add-variable-watcher 'doom-debug--variables #'doom-debug--watch-vars-h)
+         (add-hook 'after-load-functions #'doom-debug--watch-vars-h))
+        (t
+         (when-let* ((last-level (get 'doom-log-level 'initial-value)))
+           (put 'doom-log-level 'initial-value nil)
+           (setq doom-log-level last-level))
+         (advice-remove #'run-hooks #'doom-run-hooks)
+         (advice-remove #'message #'doom-debug--timestamped-message-a)
+         (advice-remove #'gcmh-idle-garbage-collect #'doom-debug-shut-up-a)
+         (remove-variable-watcher 'doom-debug--variables #'doom-debug--watch-vars-h)
+         (remove-hook 'after-load-functions #'doom-debug--watch-vars-h)
+         (doom-log "debug: disabled")
+         (message "Debug mode disabled!"))))
 
 (defun doom-debug-shut-up-a (fn &rest args)
   "Suppress output from FN, even in debug mode."
@@ -161,33 +196,6 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
                 (terpri))
               backtrace))
       file)))
-
-
-;;
-;;; Time-stamped *Message* logs
-
-(defun doom--timestamped-message-a (format-string &rest _args)
-  "Advice to run before `message' that prepends a timestamp to each message.
-
-Activate this advice with:
-(advice-add 'message :before 'doom--timestamped-message-a)"
-  (when (and (stringp format-string)
-             message-log-max  ; if nil, logging is disabled
-             (not (equal format-string "%s%s"))
-             (not (equal format-string "\n")))
-    (with-current-buffer "*Messages*"
-      (let ((timestamp (format-time-string "[%F %T] " (current-time)))
-            (deactivate-mark nil))
-        (with-silent-modifications
-          (goto-char (point-max))
-          (if (not (bolp))
-              (newline))
-          (insert timestamp))))
-    (let ((window (get-buffer-window "*Messages*")))
-      (when (and window (not (equal (selected-window) window)))
-        (with-current-buffer "*Messages*"
-          (goto-char (point-max))
-          (set-window-point window (point-max)))))))
 
 
 ;;
