@@ -73,9 +73,10 @@ FUNCTION
 
   ;; Since the project likely now contains new files, best we undo the
   ;; projectile cache so it can be regenerated later.
-  (add-hook! 'magit-post-refresh-hook
+  (add-hook! 'magit-refresh-buffer-hook
     (defun +magit-invalidate-projectile-cache-h ()
-      (projectile-invalidate-cache nil)))
+      (let (projectile-require-project-root)
+        (projectile-invalidate-cache nil))))
   ;; Use a more efficient strategy to auto-revert buffers whose git state has
   ;; changed: refresh the visible buffers immediately...
   (add-hook 'magit-post-refresh-hook #'+magit-mark-stale-buffers-h)
