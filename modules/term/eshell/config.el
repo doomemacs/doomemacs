@@ -218,7 +218,27 @@ Emacs versions < 29."
 
 (use-package! esh-help
   :after eshell
-  :config (setup-esh-help-eldoc))
+  :config
+  (setup-esh-help-eldoc)
+  ;; HACK: Fixes tom-tan/esh-help#7.
+  (defadvice! +eshell-esh-help-eldoc-man-minibuffer-string-a (cmd)
+    "Return minibuffer help string for the shell command CMD.
+Return nil if there is none."
+    :override #'esh-help-eldoc-man-minibuffer-string
+    (if-let* ((cache-result (gethash cmd esh-help-man-cache)))
+        (unless (eql 'none cache-result)
+          cache-result)
+      (let ((str (split-string (esh-help-man-string cmd) "\n")))
+        (if (equal (concat "No manual entry for " cmd) (car str))
+            (ignore (puthash cmd 'none esh-help-man-cache))
+          (puthash cmd
+                   (-some->> str
+                     (--drop-while (not (string-match-p "^SYNOPSIS$" it)))
+                     (nth 1)
+                     (funcall (lambda (s)
+                                (let ((idx (string-match "[^\s\t]" s)))
+                                  (substring s idx)))))
+                   esh-help-man-cache))))))
 
 
 (use-package! eshell-did-you-mean
