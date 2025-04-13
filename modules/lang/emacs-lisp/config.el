@@ -137,6 +137,7 @@ See `+emacs-lisp-non-package-mode' for details.")
 
   (map! :localleader
         :map (emacs-lisp-mode-map lisp-interaction-mode-map)
+        :desc "Set working buffer" "b" #'+emacs-lisp/change-working-buffer
         :desc "Expand macro" "m" #'macrostep-expand
         (:prefix ("d" . "debug")
           "f" #'+emacs-lisp/edebug-instrument-defun-on

@@ -3,29 +3,38 @@
 ;;
 ;;; Library
 
+(defvar +emacs-lisp-eval-working-buffer nil)
+
 ;;;###autoload
 (defun +emacs-lisp-eval (beg end)
   "Evaluate a region and print it to the echo area (if one line long), otherwise
-to a pop up buffer."
+to a pop up buffer.
+
+Meant as an eval handler for Doom's :tools eval module."
   (+eval-display-results
    (string-trim-right
     (let ((buffer (generate-new-buffer " *+eval-output*"))
+          (working-buffer (or +emacs-lisp-eval-working-buffer (current-buffer)))
           (debug-on-error t))
-      (unwind-protect
-          (condition-case-unless-debug e
-              (with-doom-module
-                  (doom-module-from-path
-                   (or (buffer-file-name (buffer-base-buffer))
-                       default-directory))
-                (with-doom-context 'eval
-                  (eval-region beg end buffer load-read-function))
-                (with-current-buffer buffer
-                  (let ((pp-max-width nil))
-                    (require 'pp)
-                    (pp-buffer)
-                    (replace-regexp-in-string "\\\\n" "\n" (string-trim-left (buffer-string))))))
-            (error (format "ERROR: %s" e)))
-        (kill-buffer buffer))))
+      (unless (buffer-live-p working-buffer)
+        (setq +emacs-lisp-eval-working-buffer nil
+              working-buffer (current-buffer)))
+      (with-current-buffer working-buffer
+        (unwind-protect
+            (condition-case-unless-debug e
+                (with-doom-module
+                    (doom-module-from-path
+                     (or (buffer-file-name (buffer-base-buffer))
+                         default-directory))
+                  (with-doom-context 'eval
+                    (eval-region beg end buffer load-read-function))
+                  (with-current-buffer buffer
+                    (let ((pp-max-width nil))
+                      (require 'pp)
+                      (pp-buffer)
+                      (replace-regexp-in-string "\\\\n" "\n" (string-trim-left (buffer-string))))))
+              (error (format "ERROR: %s" e)))
+          (kill-buffer buffer)))))
    (current-buffer)))
 
 ;;;###autoload
@@ -146,6 +155,19 @@ if it's callable, `apropos' otherwise."
 
 ;;
 ;;; Commands
+
+;;;###autoload
+(defun +emacs-lisp/change-working-buffer (buffer &optional clear?)
+  "Change what buffer to run `+emacs-lisp-eval' in.
+
+If given the prefix arg (CLEAR?), clears the current working buffer."
+  (interactive
+   (list (read-buffer "Set working buffer to: ")
+         current-prefix-arg))
+  (let ((buffer (get-buffer buffer)))
+    (if (and buffer (buffer-live-p buffer))
+        (setq +emacs-lisp-eval-working-buffer buffer)
+      (user-error "No such buffer: %S" buf))))
 
 ;;;###autoload
 (defun +emacs-lisp/open-repl ()
