@@ -261,7 +261,29 @@ Return nil if there is none."
 
 (use-package eshell-syntax-highlighting
   :hook (eshell-mode . eshell-syntax-highlighting-mode)
-  :init
+  :config
+  (defadvice! +eshell-filter-history-from-highlighting-a (&rest _)
+    "Selectively inhibit `eshell-syntax-highlighting-mode'.
+So that mathces from history show up with highlighting."
+    :before-until #'eshell-syntax-highlighting--enable-highlighting
+    (memq this-command '(eshell-previous-matching-input-from-input
+                         eshell-next-matching-input-from-input)))
+
+  (defun +eshell-syntax-highlight-maybe-h ()
+    "Hook added to `pre-command-hook' to restore syntax highlighting
+when inhibited to show history matches."
+    (when (and eshell-syntax-highlighting-mode
+               (memq last-command '(eshell-previous-matching-input-from-input
+                                    eshell-next-matching-input-from-input)))
+      (eshell-syntax-highlighting--enable-highlighting)))
+
+  (add-hook! 'eshell-syntax-highlighting-elisp-buffer-setup-hook
+    (defun +eshell-syntax-highlighting-mode-h ()
+      "Hook to enable `+eshell-syntax-highlight-maybe-h'."
+      (if eshell-syntax-highlighting-mode
+          (add-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h nil t)
+        (remove-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h t))))
+
   (add-hook 'eshell-syntax-highlighting-elisp-buffer-setup-hook #'highlight-quoted-mode))
 
 
