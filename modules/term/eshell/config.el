@@ -55,6 +55,9 @@ You should use `set-eshell-alias!' to change this.")
 ;;; Packages
 
 (after! eshell ; built-in
+  (set-lookup-handlers! 'eshell-mode
+    :documentation #'+eshell-lookup-documentation)
+
   (setq eshell-banner-message
         '(format "%s %s\n"
                  (propertize (format " %s " (string-trim (buffer-name)))
