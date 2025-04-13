@@ -149,14 +149,20 @@ if it's callable, `apropos' otherwise."
 
 ;;;###autoload
 (defun +emacs-lisp/open-repl ()
-  "Open the Emacs Lisp REPL (`ielm')."
+  "Open the Emacs Lisp REPL (`ielm').
+
+If the repl isn't already open, sets ielm's working buffer to the buffer
+selected before this command was invoked."
   (interactive)
   (pop-to-buffer
    (or (get-buffer "*ielm*")
-       (progn (ielm)
-              (let ((buf (get-buffer "*ielm*")))
-                (bury-buffer buf)
-                buf)))))
+       (let ((original-buffer (current-buffer)))
+         (ielm)
+         (when (buffer-live-p original-buffer)
+           (ielm-change-working-buffer original-buffer))
+         (let ((buf (get-buffer "*ielm*")))
+           (bury-buffer buf)
+           buf)))))
 
 ;;;###autoload
 (defun +emacs-lisp/buttercup-run-file ()
