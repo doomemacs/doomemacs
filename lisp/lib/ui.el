@@ -19,7 +19,14 @@ If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
 Returns t if it is safe to kill this session. Does not prompt if no real buffers
 are open."
   (or (not (ignore-errors (doom-real-buffer-list)))
-      (yes-or-no-p (format "%s" (or prompt "Really quit Emacs?")))
+      (if (use-dialog-box-p)
+          (pcase (x-popup-dialog
+                  t `("Really quit Emacs?"
+                      ("Quit anyway" . t)
+                      ("Cancel" . nil)))
+            ('quit-anyway t)
+            ('cancel nil))
+        (yes-or-no-p (format "%s" (or prompt "Really quit Emacs?"))))
       (ignore (message "Aborted"))))
 
 
