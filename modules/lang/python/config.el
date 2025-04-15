@@ -21,6 +21,10 @@
         python-indent-guess-indent-offset-verbose nil)
 
   (when (modulep! +lsp)
+    (when (modulep! +tree-sitter)
+      ;; Append the lsp! entrypoint to to python-ts-mode
+      (add-hook 'python-ts-mode-local-vars-hook #'lsp! 'append))
+
     (add-hook 'python-mode-local-vars-hook #'lsp! 'append)
     ;; Use "mspyls" in eglot if in PATH
     (when (executable-find "Microsoft.Python.LanguageServer")
@@ -186,6 +190,9 @@
     (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline-clear-env-in-all-windows-h))
   :config
   (add-hook 'python-mode-local-vars-hook #'pyvenv-track-virtualenv)
+
+  (when (modulep! +tree-sitter)
+    (add-hook 'python-ts-mode-local-vars-hook #'pyvenv-track-virtualenv))
   (add-to-list 'global-mode-string
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
                'append))
@@ -200,6 +207,8 @@
     (pyenv-mode +1)
     (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
   (add-hook 'python-mode-local-vars-hook #'+python-pyenv-mode-set-auto-h)
+  (when (modulep! +tree-sitter)
+    (add-hook 'python-ts-mode-local-vars-hook #'+python-pyenv-mode-set-auto-h))
   (add-hook 'doom-switch-buffer-hook #'+python-pyenv-mode-set-auto-h))
 
 
