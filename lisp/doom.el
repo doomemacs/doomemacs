@@ -665,6 +665,12 @@ to `doom-profile-cache-dir' instead, so it can be safely cleaned up as part of
 ;; still aliases them fine regardless.
 (setq warning-suppress-types '((defvaralias) (lexical-binding)))
 
+;; As some point in 31+, Emacs began spamming the user with warnings about
+;; missing `lexical-binding' cookies in elisp files that you are unlikely to
+;; have any direct control over (e.g. package files, data lisp files, and elisp
+;; shell scripts). This shuts it up.
+(setq warning-inhibit-types '((files missing-lexbind-cookie)))
+
 ;; Reduce debug output unless we've asked for it.
 (setq debug-on-error init-file-debug
       jka-compr-verbose init-file-debug)
@@ -879,12 +885,6 @@ appropriately against `noninteractive' or the `cli' context."
     ;; A last ditch opportunity to undo hacks or do extra configuration before
     ;; the session is complicated by user config and packages.
     (doom-run-hooks 'doom-before-init-hook)
-
-    ;; HACK: Later versions of Emacs 30 emit warnings about missing
-    ;;   lexical-bindings directives at the top of loaded files. This is a good
-    ;;   thing, but it inundates users with unactionable warnings (from old
-    ;;   packages or internal subdirs.el files), which aren't useful.
-    (cl-callf2 assq-delete-all 'lexical-binding delayed-warnings-list)
 
     ;; HACK: Ensure OS checks are as fast as possible (given their ubiquity).
     (setq features (cons :system (delq :system features)))

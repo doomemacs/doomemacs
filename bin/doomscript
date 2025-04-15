@@ -38,7 +38,7 @@ esac
 # directory from `load-path', which would prevent Doom from manually loading the
 # site files later. These are important on some systems or deployment methods
 # (like Snap or NixOS).
-emacs="$EMACS -q --no-site-file --batch"
+emacs="$EMACS -q --no-site-file --batch --eval \"(setq warning-inhibit-types '((files missing-lexbind-cookie)))\""
 
 # Doom respects $EMACSDIR to tell it where Doom lives. If it fails, then this is
 # either isn't bash, or it's a posix shell being directly sourced with sh, which
