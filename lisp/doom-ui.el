@@ -313,7 +313,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; UX: GUIs are inconsistent across systems, desktop environments, and themes,
 ;;   but more annoying than that are the inconsistent shortcut keys tied to
 ;;   them, so use Emacs instead of GUI popups.
-(setq use-dialog-box (not (featurep :system 'android))) ; Android dialogs are better UX
+(setq use-dialog-box (featurep :system 'android)) ; Android dialogs are better UX
 (when (bound-and-true-p tooltip-mode)
   (tooltip-mode -1))
 
