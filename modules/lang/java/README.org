@@ -12,10 +12,8 @@ This module adds [[https://www.java.com][Java]] support to Doom Emacs, including
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~java-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports eclipse.jdt.ls). *Incompatible with [[doom-module:+meghanada]].*
-- +meghanada ::
-  Enable [[doom-package:meghanada-mode]]. *Incompatible with [[doom-module:+lsp]].*
+  Enable LSP support for ~java-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (supports eclipse.jdt.ls).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
@@ -23,10 +21,6 @@ This module adds [[https://www.java.com][Java]] support to Doom Emacs, including
 ** Packages
 - [[doom-package:android-mode]]
 - [[doom-package:groovy-mode]]
-- [[doom-package:meghanada]] if [[doom-module:+meghanada]]
-- if [[doom-module:+eclim]]
-  - [[doom-package:eclim]]
-  - [[doom-package:company-emacs-eclim]] if [[doom-module::completion company]]
 - if [[doom-module:+lsp]] and not [[doom-module::tools lsp +eglot]]
   - [[doom-package:lsp-java]]
 
@@ -99,7 +93,6 @@ And then run ~$ direnv allow .~ in the project directory. The [[doom-module::too
 module will automatically source this environment before activating LSP servers.
 
 ** Formatter
-
 [[doom-module::editor format]] uses [[https://github.com/google/google-java-format][google-java-format]] to handle formatting.
 
 To install, grab the latest =all-deps.jar= release from the above, put it
@@ -133,24 +126,6 @@ According to [[https://github.com/emacs-lsp/lsp-java]], you get:
 - Test runner ([[doom-package:dap-mode]])
 - Project explorer integration ([[doom-package:treemacs]])
 - Integration with [[https://start.spring.io/][Spring Initializr]]
-
-** =+meghanada= features
-According to [[https://github.com/mopemope/meghanada-emacs/]], you get:
-- Auto-update server module
-- [[https://gradle.org/][Gradle]] and [[http://maven.apache.org/][Maven]] and Eclipse project support
-- No need build tool's plugin
-- Run build tool task
-- Compile your project
-- Syntax check and analyze java source ([[doom-package:flycheck-meghanada]])
-- Support =Generic Types=
-- Code completion with [[doom-package:company-mode]] ([[doom-package:company-meghanada]])
-- Optimize import and sort
-- Jump declaration
-- Run [[http://www.junit.org/][JUnit]] test (include test runner)
-- Diagnostic reporting with [[doom-package:flycheck]] ([[doom-package:flycheck-meghanada]])
-- Show symbol's type info with [[doom-package:eldoc]]
-- Search references
-- Full-featured text search
 
 * TODO Configuration
 #+begin_quote
