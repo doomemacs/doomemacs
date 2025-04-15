@@ -201,8 +201,10 @@ the value of the last one, or nil if there are none."
             (cons 'progn body)
           nil)
       (macroexp-warn-and-return (format-message "`static-when' with empty body")
-                                (list 'progn nil nil) '(empty-body static-when) t)))
+                                (list 'progn nil nil) '(empty-body static-when) t))))
 
+;;; From Emacs 31+
+(unless (fboundp 'static-unless)
   (defmacro static-unless (condition &rest body)
     "A conditional compilation macro.
 Evaluate CONDITION at macro-expansion time.  If it is nil,
