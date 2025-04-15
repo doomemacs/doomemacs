@@ -207,8 +207,7 @@
 
 ;;; Load Doom's stdlib
 (add-to-list 'load-path (file-name-directory load-file-name))
-(when (< emacs-major-version 31)
-  (require 'doom-compat)) ; backport niceties from later versions of Emacs
+(require 'doom-compat) ; backport niceties from later versions of Emacs
 (require 'doom-lib)
 
 
