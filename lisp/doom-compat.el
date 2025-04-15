@@ -175,5 +175,47 @@ The functions in the hook are called with one parameter -- the
              enable-local-variables)))
       (funcall fn variables dir-name))))
 
+;; Introduced in 30.1
+(unless (fboundp 'static-if)
+  (defmacro static-if (condition then-form &rest else-forms)
+    "A conditional compilation macro.
+Evaluate CONDITION at macro-expansion time.  If it is non-nil,
+expand the macro to THEN-FORM.  Otherwise expand it to ELSE-FORMS
+enclosed in a `progn' form.  ELSE-FORMS may be empty."
+    (declare (indent 2)
+             (debug (sexp sexp &rest sexp)))
+    (if (eval condition lexical-binding)
+        then-form
+      (cons 'progn else-forms))))
+
+
+;;; From Emacs 31+
+(unless (fboundp 'static-when)
+  (defmacro static-when (condition &rest body)
+    "A conditional compilation macro.
+Evaluate CONDITION at macro-expansion time.  If it is non-nil,
+expand the macro to evaluate all BODY forms sequentially and return
+the value of the last one, or nil if there are none."
+    (declare (indent 1) (debug t))
+    (if body
+        (if (eval condition lexical-binding)
+            (cons 'progn body)
+          nil)
+      (macroexp-warn-and-return (format-message "`static-when' with empty body")
+                                (list 'progn nil nil) '(empty-body static-when) t)))
+
+  (defmacro static-unless (condition &rest body)
+    "A conditional compilation macro.
+Evaluate CONDITION at macro-expansion time.  If it is nil,
+expand the macro to evaluate all BODY forms sequentially and return
+the value of the last one, or nil if there are none."
+    (declare (indent 1) (debug t))
+    (if body
+        (if (eval condition lexical-binding)
+            nil
+          (cons 'progn body))
+      (macroexp-warn-and-return (format-message "`static-unless' with empty body")
+                                (list 'progn nil nil) '(empty-body static-unless) t))))
+
 (provide 'doom-compat)
 ;;; doom-compat.el ends here

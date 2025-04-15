@@ -486,22 +486,8 @@ echo-area, but not to *Messages*."
                (save-silently t))
            (prog1 ,@forms (message ""))))))
 
-(defmacro eval-if! (cond then &rest body)
-  "Expands to THEN if COND is non-nil, to BODY otherwise.
-COND is checked at compile/expansion time, allowing BODY to be omitted entirely
-when the elisp is byte-compiled. Use this for forms that contain expensive
-macros that could safely be removed at compile time."
-  (declare (indent 2))
-  (if (eval cond)
-      then
-    (macroexp-progn body)))
-
-(defmacro eval-when! (cond &rest body)
-  "Expands to BODY if CONDITION is non-nil at compile/expansion time.
-See `eval-if!' for details on this macro's purpose."
-  (declare (indent 1))
-  (when (eval cond)
-    (macroexp-progn body)))
+(define-obsolete-function-alias 'eval-if! 'static-if "3.0.0")
+(define-obsolete-function-alias 'eval-when! 'static-when "3.0.0")
 
 (defmacro versionp! (v1 comp v2 &rest comps)
   "Perform compound version checks.
