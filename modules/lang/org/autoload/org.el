@@ -472,11 +472,9 @@ Made for `org-tab-first-hook'."
   (when (and (modulep! :editor snippets)
              (require 'yasnippet nil t)
              (bound-and-true-p yas-minor-mode))
-    (let ((major-mode (cond ((org-in-src-block-p t)
-                             (org-src-get-lang-mode (org-eldoc-get-src-lang)))
-                            ((org-inside-LaTeX-fragment-p)
-                             'latex-mode)
-                            (major-mode)))
+    (let ((major-mode (if (org-in-src-block-p t)
+                          (org-src-get-lang-mode (org-eldoc-get-src-lang))
+                        major-mode))
           (org-src-tab-acts-natively nil) ; causes breakages
           ;; Smart indentation doesn't work with yasnippet, and painfully slow
           ;; in the few cases where it does.
