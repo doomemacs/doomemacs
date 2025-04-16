@@ -234,14 +234,11 @@ Return nil if there is none."
       (let ((str (split-string (esh-help-man-string cmd) "\n")))
         (if (equal (concat "No manual entry for " cmd) (car str))
             (ignore (puthash cmd 'none esh-help-man-cache))
-          (puthash cmd
-                   (-some->> str
-                     (--drop-while (not (string-match-p "^SYNOPSIS$" it)))
-                     (nth 1)
-                     (funcall (lambda (s)
-                                (let ((idx (string-match "[^\s\t]" s)))
-                                  (substring s idx)))))
-                   esh-help-man-cache))))))
+          (puthash
+           cmd (when-let* ((str (seq-drop-while (fn! (not (string-match-p "^SYNOPSIS$" %))) str))
+                           (str (nth 1 str)))
+                 (substring str (string-match-p "[^\s\t]" str)))
+           esh-help-man-cache))))))
 
 
 (use-package! eshell-did-you-mean
