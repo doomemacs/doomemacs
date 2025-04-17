@@ -11,7 +11,7 @@
   :commands stata SAS
   :init
   (unless (modulep! :lang julia)
-    (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
+    (add-to-list 'auto-mode-alist '("\\.[jJ][lL]\\'" . ess-julia-mode)))
   :config
   (setq ess-offset-continued 'straight
         ess-use-flymake (or (not (modulep! :checkers syntax))
