@@ -318,9 +318,20 @@ current buffer."
   ;; Open help:* links with helpful-* instead of describe-*
   (advice-add #'org-link--open-help :around #'doom-use-helpful-a)
 
+  ;; Keep a record of buffers so our next/previous commands work.
+  (advice-add #'helpful--buffer :filter-return #'+emacs-lisp-record-new-buffers-a)
+
   (map! :map helpful-mode-map
         :ng "o"  #'link-hint-open-link
-        :n  "gr" #'helpful-update))
+        :n  "gr" #'helpful-update
+        :n "C-o" #'+emacs-lisp/helpful-previous
+        :n [C-i] #'+emacs-lisp/helpful-next
+        :n "<" #'+emacs-lisp/helpful-previous
+        :n ">" #'+emacs-lisp/helpful-next
+        "C-c C-b" #'+emacs-lisp/helpful-previous
+        "C-c C-f" #'+emacs-lisp/helpful-next
+        "l" #'+emacs-lisp/helpful-previous
+        "r" #'+emacs-lisp/helpful-next))
 
 
 ;;

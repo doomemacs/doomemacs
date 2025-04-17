@@ -1,4 +1,4 @@
-;;; lang/emacs-lisp/autoload.el -*- lexical-binding: t; -*-
+;;; lang/emacs-lisp/autoload/emacs-lisp.el -*- lexical-binding: t; -*-
 
 ;;
 ;;; Library
