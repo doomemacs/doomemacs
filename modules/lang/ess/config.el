@@ -36,7 +36,7 @@
   (set-eval-handler! 'ess-help-mode #'ess-eval-region-and-go)
   (set-eval-handler! 'ess-r-help-mode #'ess-eval-region-and-go)
 
-  (set-company-backend! 'ess-r-mode
+  (set-company-backend! '(ess-r-mode inferior-ess-r-mode)
     '(company-R-args company-R-objects company-dabbrev-code :separate))
 
   (setq-hook! 'ess-r-mode-hook
