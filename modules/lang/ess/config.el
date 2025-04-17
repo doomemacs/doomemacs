@@ -95,8 +95,7 @@
           :m "[[" #'ess-skip-to-previous-section)
          (:map ess-doc-map
           "h"    #'ess-display-help-on-object
-          "p"    #'ess-R-dv-pprint
-          "t"    #'ess-R-dv-ctable
+          "p"    #'ess-view-data-print
           [up]   #'comint-next-input
           [down] #'comint-previous-input
           [C-return] #'ess-eval-line))
