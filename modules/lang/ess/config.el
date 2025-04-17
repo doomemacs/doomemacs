@@ -50,27 +50,7 @@
     comint-scroll-to-bottom-on-output t
     comint-move-point-for-output t)
 
-  (map! (:after ess-help
-          (:map ess-help-mode-map
-            :n "q"  #'kill-current-buffer
-            :n "Q"  #'ess-kill-buffer-and-go
-            :n "K"  #'ess-display-help-on-object
-            :n "go" #'ess-display-help-in-browser
-            :n "gO" #'ess-display-help-apropos
-            :n "gv" #'ess-display-vignettes
-            :m "]]" #'ess-skip-to-next-section
-            :m "[[" #'ess-skip-to-previous-section)
-          (:map ess-doc-map
-            "h"    #'ess-display-help-on-object
-            "p"    #'ess-R-dv-pprint
-            "t"    #'ess-R-dv-ctable
-            [up]   #'comint-next-input
-            [down] #'comint-previous-input
-            [C-return] #'ess-eval-line))
-        (:map ess-roxy-mode-map
-         :i "RET" #'ess-indent-new-comment-line)
-
-        :map ess-mode-map
+  (map! :map ess-mode-map
         :n [C-return] #'ess-eval-line
         :localleader
         "," #'ess-eval-region-or-function-or-paragraph-and-step
@@ -100,7 +80,29 @@
         "d" #'ess-eval-chunk-and-step
         "m" #'ess-noweb-mark-chunk
         "p" #'ess-noweb-previous-chunk
-        "n" #'ess-noweb-next-chunk))
+        "n" #'ess-noweb-next-chunk)
+
+  :init
+  (map! (:after ess-help
+         (:map ess-help-mode-map
+          :n "q"  #'kill-current-buffer
+          :n "Q"  #'ess-kill-buffer-and-go
+          :n "K"  #'ess-display-help-on-object
+          :n "go" #'ess-display-help-in-browser
+          :n "gO" #'ess-display-help-apropos
+          :n "gv" #'ess-display-vignettes
+          :m "]]" #'ess-skip-to-next-section
+          :m "[[" #'ess-skip-to-previous-section)
+         (:map ess-doc-map
+          "h"    #'ess-display-help-on-object
+          "p"    #'ess-R-dv-pprint
+          "t"    #'ess-R-dv-ctable
+          [up]   #'comint-next-input
+          [down] #'comint-previous-input
+          [C-return] #'ess-eval-line))
+        (:after ess-roxy
+         :map ess-roxy-mode-map
+         :i "RET" #'ess-indent-new-comment-line)))
 
 
 (use-package! stan-mode
