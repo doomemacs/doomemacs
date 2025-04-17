@@ -27,8 +27,8 @@
   (when (modulep! +tree-sitter)
     (add-hook 'ess-r-mode-local-vars-hook #'tree-sitter! 'append))
 
-  (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
-  (set-repl-handler! 'ess-julia-mode #'+ess/open-julia-repl)
+  (set-repl-handler! 'ess-r-mode #'run-ess-r)
+  (set-repl-handler! 'ess-julia-mode #'run-ess-julia)
   (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
     :documentation #'ess-display-help-on-object)
 
