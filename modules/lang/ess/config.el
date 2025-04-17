@@ -8,7 +8,7 @@
 ;;; Packages
 
 (use-package! ess
-  :commands stata SAS
+  :defer t
   :init
   (unless (modulep! :lang julia)
     (add-to-list 'auto-mode-alist '("\\.[jJ][lL]\\'" . ess-julia-mode)))
