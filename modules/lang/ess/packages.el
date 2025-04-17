@@ -14,3 +14,7 @@
     (package! company-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581"))
   (when (modulep! :checkers syntax -flymake)
     (package! flycheck-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581")))
+
+(when (< emacs-major-version 29)
+  ;; See emacs-ess/ESS#1193
+  (package! xterm-color :pin "2ad407c651e90fff2ea85d17bf074cee2c022912"))

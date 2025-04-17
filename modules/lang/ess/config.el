@@ -121,3 +121,15 @@
 
 (use-package! quarto-mode
   :mode (("\\.[qQ][mM][dD]" . poly-quarto-mode)))
+
+
+;; See emacs-ess/ESS#1193
+(use-package! xterm-color
+  :when (< emacs-major-version 29)
+  :defer t
+  :init
+  (add-hook! 'inferior-ess-mode-hook
+    (setq-local ansi-color-for-comint-mode nil)
+    (add-hook 'comint-preoutput-filter-functions #'xterm-color-filter nil t))
+  :config
+  (setq xterm-color-use-bold t))
