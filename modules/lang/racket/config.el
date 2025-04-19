@@ -4,6 +4,8 @@
 (after! projectile
   (add-to-list 'projectile-project-root-files "info.rkt"))
 
+(defvar +racket-enable-smart-brackets t
+  "If non-nil, without parinfer and lispy, enable racket smart bracket mode.")
 
 ;;
 ;;; Packages
@@ -59,14 +61,15 @@
             (cl-pushnew 'racket flycheck-disabled-checkers)))))
 
     (unless (or (modulep! :editor parinfer)
-                (modulep! :editor lispy))
+                (modulep! :editor lispy)
+                (not +racket-enable-smart-brackets))
       (add-hook mode-hook #'racket-smart-open-bracket-mode))
 
     (map! (:map racket-xp-mode-map
-           [remap racket-doc]              #'racket-xp-documentation
-           [remap racket-visit-definition] #'racket-xp-visit-definition
-           [remap next-error]              #'racket-xp-next-error
-           [remap previous-error]          #'racket-xp-previous-error)
+                [remap racket-doc]              #'racket-xp-documentation
+                [remap racket-visit-definition] #'racket-xp-visit-definition
+                [remap next-error]              #'racket-xp-next-error
+                [remap previous-error]          #'racket-xp-previous-error)
           (:localleader
            :map ,mode-map
            "a" #'racket-align
@@ -84,30 +87,30 @@
            "u" #'racket-backward-up-list
            "y" #'racket-insert-lambda
            (:prefix ("m" . "macros")
-            "d" #'racket-expand-definition
-            "e" #'racket-expand-last-sexp
-            "r" #'racket-expand-region
-            "a" #'racket-expand-again)
+                    "d" #'racket-expand-definition
+                    "e" #'racket-expand-last-sexp
+                    "r" #'racket-expand-region
+                    "a" #'racket-expand-again)
            (:prefix ("g" . "goto")
-            "b" #'racket-unvisit
-            "d" #'racket-visit-definition
-            "m" #'racket-visit-module
-            "r" #'racket-open-require-path)
+                    "b" #'racket-unvisit
+                    "d" #'racket-visit-definition
+                    "m" #'racket-visit-module
+                    "r" #'racket-open-require-path)
            (:prefix ("s" . "send")
-            "d" #'racket-send-definition
-            "e" #'racket-send-last-sexp
-            "r" #'racket-send-region)
+                    "d" #'racket-send-definition
+                    "e" #'racket-send-last-sexp
+                    "r" #'racket-send-region)
            :map racket-repl-mode-map
            "l" #'racket-logger
            "h" #'racket-repl-documentation
            "y" #'racket-insert-lambda
            "u" #'racket-backward-up-list
            (:prefix ("m" . "macros")
-            "d" #'racket-expand-definition
-            "e" #'racket-expand-last-sexp
-            "f" #'racket-expand-file
-            "r" #'racket-expand-region)
+                    "d" #'racket-expand-definition
+                    "e" #'racket-expand-last-sexp
+                    "f" #'racket-expand-file
+                    "r" #'racket-expand-region)
            (:prefix ("g" . "goto")
-            "b" #'racket-unvisit
-            "m" #'racket-visit-module
-            "d" #'racket-repl-visit-definition)))))
+                    "b" #'racket-unvisit
+                    "m" #'racket-visit-module
+                    "d" #'racket-repl-visit-definition)))))
