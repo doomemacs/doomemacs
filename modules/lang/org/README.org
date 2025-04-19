@@ -102,6 +102,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - [[doom-module:+gnuplot]]
   - [[doom-package:gnuplot]]
   - [[doom-package:gnuplot-mode]]
+- [[doom-module:+hnreader]]
+  - [[doom-package:emacs-hnreader]]
 - [[doom-module:+hugo]]
   - [[doom-package:ox-hugo]]
 - [[doom-module:+jupyter]]

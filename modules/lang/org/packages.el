@@ -155,3 +155,7 @@
     :pin "e3365cb4e65c1853d8838b863a21546bbd9e0990"))
 (when (modulep! :lang rst)
   (package! ox-rst :pin "b4ba5c7e95bd8e0063157107960fed64e04c00c2"))
+
+;;; HN Reader
+(when (modulep! +hnreader)
+  (package! hnreader :pin "b422628a272d7672cc2c7dfcef1c8bf06371afd5"))
