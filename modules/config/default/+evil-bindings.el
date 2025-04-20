@@ -56,7 +56,8 @@
                '(((bound-and-true-p company-mode)
                   #'company-indent-or-complete-common)))
            ,@(when (modulep! :completion corfu)
-               '(((bound-and-true-p corfu-mode)
+               '(((and (bound-and-true-p corfu-mode)
+                       corfu--candidates)
                   (if (derived-mode-p 'eshell-mode 'comint-mode)
                       #'completion-at-point
                     #'indent-for-tab-command)))))))

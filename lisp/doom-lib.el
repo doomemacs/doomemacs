@@ -246,7 +246,7 @@ unreadable. Returns the names of envvars that were changed."
 (defun doom-run-hook (hook)
   "Run HOOK (a hook function) with better error handling.
 Meant to be used with `run-hook-wrapped'."
-  (doom-log "hook:%s: run %s" (or doom--hook '*) hook)
+  (doom-log 2 "hook:%s: run %s" (or doom--hook '*) hook)
   (condition-case-unless-debug e
       (funcall hook)
     (error
@@ -313,7 +313,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (with-memoization (get 'doom-compile-function 'timer)
     (run-with-idle-timer
      1.5 t (fn! (when-let (fn (pop fns))
-                  (doom-log "compile-functions: %s" fn)
+                  (doom-log 3 "compile-functions: %s" fn)
                   (or (if (featurep 'native-compile)
                           (or (subr-native-elisp-p (indirect-function fn))
                               (ignore-errors (native-compile fn))))
@@ -486,22 +486,8 @@ echo-area, but not to *Messages*."
                (save-silently t))
            (prog1 ,@forms (message ""))))))
 
-(defmacro eval-if! (cond then &rest body)
-  "Expands to THEN if COND is non-nil, to BODY otherwise.
-COND is checked at compile/expansion time, allowing BODY to be omitted entirely
-when the elisp is byte-compiled. Use this for forms that contain expensive
-macros that could safely be removed at compile time."
-  (declare (indent 2))
-  (if (eval cond)
-      then
-    (macroexp-progn body)))
-
-(defmacro eval-when! (cond &rest body)
-  "Expands to BODY if CONDITION is non-nil at compile/expansion time.
-See `eval-if!' for details on this macro's purpose."
-  (declare (indent 1))
-  (when (eval cond)
-    (macroexp-progn body)))
+(define-obsolete-function-alias 'eval-if! 'static-if "3.0.0")
+(define-obsolete-function-alias 'eval-when! 'static-when "3.0.0")
 
 (defmacro versionp! (v1 comp v2 &rest comps)
   "Perform compound version checks.
@@ -1170,7 +1156,7 @@ Never set this variable directly, use `with-doom-module'.")
             (if key
                 (doom-module-context key)
               (make-doom-module-context)))))
-     (doom-log ":context:module: =%s" doom-module-context)
+     (doom-log 2 ":context:module: =%s" doom-module-context)
      ,@body))
 
 (defun doom-module-context (key)

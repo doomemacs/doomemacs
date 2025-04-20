@@ -12,6 +12,28 @@ left and right fringe.
 
 Only has an effect in GUI Emacs.")
 
+(defvar +magit-auto-revert 'local
+  "If non-nil, revert associated buffers after Git operations with side-effects.
+
+These buffers are auto-reverted immediately if they're visible or reverted next
+time they're switched to. This is intended to be a much more efficient
+replacement for `magit-auto-revert-mode' and `global-auto-revert-mode', and
+should not be used together with them! Set this to `nil' if you plan to use the
+above.
+
+Accepts one of three values OR a predicate function:
+
+t
+  Revert any associated buffers.
+local
+  Same as `t', except remote (TRAMP) buffers are ignored.
+nil
+  Don't do any auto-reverting at all.
+FUNCTION
+  If given a function, it will be passed a buffer associated with the current
+  Magit session and must return non-nil to signal this is buffer is safe to
+  revert (now or later, when switched to).")
+
 
 ;;
 ;;; Packages
@@ -26,7 +48,7 @@ Only has an effect in GUI Emacs.")
         transient-values-file  (concat doom-data-dir "transient/values")
         transient-history-file (concat doom-data-dir "transient/history"))
   :config
-  (add-to-list 'doom-debug-variables 'magit-refresh-verbose)
+  (set-debug-variable! 'magit-refresh-verbose)
 
   (setq transient-default-level 5
         magit-diff-refine-hunk t ; show granular diffs in selected hunk
@@ -49,11 +71,18 @@ Only has an effect in GUI Emacs.")
   ;; Turn ref links into clickable buttons.
   (add-hook 'magit-process-mode-hook #'goto-address-mode)
 
-  ;; Since the project likely now contains new files, best we undo the
-  ;; projectile cache so it can be regenerated later.
-  (add-hook! 'magit-post-refresh-hook
+  ;; Since the project likely now contains new files, purge the projectile cache
+  ;; so `projectile-find-file' et all don't produce an stale file list.
+  (add-hook! 'magit-refresh-buffer-hook
     (defun +magit-invalidate-projectile-cache-h ()
-      (projectile-invalidate-cache nil)))
+      ;; Only invalidate the hot cache and nothing else (everything else is
+      ;; expensive busy work, and we don't want to slow down magit's
+      ;; refreshing).
+      (let (projectile-require-project-root
+            projectile-enable-caching
+            projectile-verbose)
+        (letf! ((#'recentf-cleanup #'ignore))
+          (projectile-invalidate-cache nil)))))
   ;; Use a more efficient strategy to auto-revert buffers whose git state has
   ;; changed: refresh the visible buffers immediately...
   (add-hook 'magit-post-refresh-hook #'+magit-mark-stale-buffers-h)
@@ -163,6 +192,11 @@ Only has an effect in GUI Emacs.")
   :preface
   (setq forge-database-file (concat doom-data-dir "forge/forge-database.sqlite"))
   (setq forge-add-default-bindings (not (modulep! :editor evil +everywhere)))
+  :init
+  (after! ghub-graphql
+    ;; Killing recreating the status buffer prevents progress updates from being
+    ;; relayed through the modeline. Use `message' instead.
+    (setq ghub-graphql-message-progress t))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)

@@ -15,7 +15,8 @@ mode won't conflict with pre-existing user config on `+format-with'."
     (setq-local +format-lsp--last +format-with))
   (setq-local +format-with
               (if +format-with-lsp-mode
-                  (cl-remove-duplicates (cons 'lsp +format-with) :test #'eq)
+                  (cl-remove-duplicates (cons 'lsp (ensure-list +format-with))
+                                        :test #'eq)
                 (prog1 (remq 'lsp (ensure-list +format-lsp--last))
                   (kill-local-variable '+format-lsp--last)))))
 
@@ -51,7 +52,7 @@ mode unconditionally, call `+format-with-lsp-mode' instead."
       (funcall callback)
     (funcall callback "LSP server doesn't support formatting")))
 
-(cl-defun +format--with-lsp-mode (beg end &key buffer &allow-other-keys)
+(cl-defun +format--with-lsp-mode (beg end &key buffer callback &allow-other-keys)
   "Format the current buffer or region with any available lsp-mode formatter.
 
 Won't forward the buffer to chained formatters if successful."

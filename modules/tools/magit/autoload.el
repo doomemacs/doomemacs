@@ -98,6 +98,17 @@ window that already exists in that direction. It will split otherwise."
 
 (defvar +magit--stale-p nil)
 
+(defun +magit--revertable-buffer-p (buffer)
+  (when (buffer-live-p buffer)
+    (pcase +magit-auto-revert
+      (`t t)
+      (`local
+       (not (file-remote-p
+             (or (buffer-file-name buffer)
+                 (buffer-local-value 'default-directory buffer)))))
+      ((pred functionp)
+       (funcall +magit-auto-revert buffer)))))
+
 (defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
     (kill-local-variable '+magit--stale-p)
@@ -114,15 +125,16 @@ window that already exists in that direction. It will split otherwise."
 
 Stale buffers are reverted when they are switched to, assuming they haven't been
 modified."
-  (let ((visible-buffers (doom-visible-buffers nil t)))
-    (dolist (buffer (buffer-list))
-      (when (buffer-live-p buffer)
-        (if (memq buffer visible-buffers)
-            (progn
-              (+magit--revert-buffer buffer)
-              (cl-callf2 delq buffer visible-buffers)) ; hasten future lookups
-          (with-current-buffer buffer
-            (setq-local +magit--stale-p t)))))))
+  (when +magit-auto-revert
+    (let ((visible-buffers (doom-visible-buffers nil t)))
+      (dolist (buffer (buffer-list))
+        (when (+magit--revertable-buffer-p buffer)
+          (if (memq buffer visible-buffers)
+              (progn
+                (+magit--revert-buffer buffer)
+                (cl-callf2 delq buffer visible-buffers)) ; hasten future lookups
+            (with-current-buffer buffer
+              (setq-local +magit--stale-p t))))))))
 
 ;;;###autoload
 (defun +magit-revert-buffer-maybe-h ()

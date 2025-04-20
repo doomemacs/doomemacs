@@ -26,9 +26,9 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 
 (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
-(cond ((modulep! +meghanada) (load! "+meghanada"))
-      ((modulep! :tools lsp +eglot))
-      ((modulep! +lsp)       (load! "+lsp")))
+(when (and (modulep! +lsp)
+           (modulep! :tools lsp -eglot))
+  (load! "+lsp"))
 
 (when (modulep! +tree-sitter)
   (add-hook 'java-mode-local-vars-hook #'tree-sitter! 'append))

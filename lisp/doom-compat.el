@@ -7,12 +7,12 @@
 ;;
 ;;; Code:
 
-;;; From Emacs 28+
+;;; From Emacs >= 28
 ;; `format-spec' wasn't autoloaded until 28.1
 (unless (fboundp 'format-spec)
   (autoload 'format-spec "format-spec"))
 
-;; Introduced in Emacs 28.1
+;; Introduced in 28.1
 (unless (fboundp 'ensure-list)
   (defun ensure-list (object)
     "Return OBJECT as a list.
@@ -21,7 +21,7 @@ one-element list containing OBJECT."
     (declare (pure t) (side-effect-free t))
     (if (listp object) object (list object))))
 
-;; Introduced in Emacs 28.1
+;; Introduced in 28.1
 (unless (fboundp 'always)
   (defun always (&rest _args)
     "Do nothing and return t.
@@ -29,7 +29,7 @@ This function accepts any number of ARGUMENTS, but ignores them.  Also see
 `ignore'."
     t))
 
-;; Introduced in Emacs 28.1
+;; Introduced in 28.1
 (unless (fboundp 'file-name-concat)
   (defun file-name-concat (directory &rest components)
     "Append COMPONENTS to DIRECTORY and return the resulting string.
@@ -48,7 +48,7 @@ inserted before contatenating."
               collect it)
      "/")))
 
-;; Introduced in Emacs 28.1
+;; Introduced in 28.1
 (unless (fboundp 'with-environment-variables)
   (defmacro with-environment-variables (variables &rest body)
     "Set VARIABLES in the environment and execute BODY.
@@ -65,7 +65,7 @@ The previous values will be restored upon exit."
                   collect `(setenv ,(car var) ,(cadr var)))
        ,@body)))
 
-;; Introduced in Emacs 28.1
+;; Introduced in 28.1
 (unless (fboundp 'file-name-with-extension)
   (defun file-name-with-extension (filename extension)
     "Return FILENAME modified to have the specified EXTENSION.
@@ -90,8 +90,8 @@ See also `file-name-sans-extension'."
             ((concat (file-name-sans-extension filename) "." extn))))))
 
 
-;;; From Emacs 29+
-;; Introduced in Emacs 29+
+;;; From Emacs >= 29
+;; Introduced in Emacs 29.1
 (unless (fboundp 'with-memoization)
   (defmacro with-memoization (place &rest code)
     "Return the value of CODE and stash it in PLACE.
@@ -105,12 +105,11 @@ and return the value found in PLACE instead."
                  ,(funcall setter val)
                  ,val))))))
 
-;; Introduced in emacs-mirror/emacs@f117b5df4dc6, renamed to pos-* in
-;; emacs-mirror/emacs@2614e5321639
+;; Introduced in 29.1
 (unless (fboundp 'pos-bol) (defalias 'pos-bol #'line-beginning-position))
 (unless (fboundp 'pos-eol) (defalias 'pos-eol #'line-end-position))
 
-;; Introduced in Emacs 29+
+;; Introduced in 29.1
 (unless (boundp 'major-mode-remap-alist)
   (defvar major-mode-remap-alist nil)
   (defvar-local set-auto-mode--last nil)
@@ -127,7 +126,7 @@ and return the value found in PLACE instead."
           (setq set-auto-mode--last (cons mode major-mode)))
         mode))))
 
-;; Introduced in Emacs 29.1
+;; Introduced in 29.1
 (unless (boundp 'enable-theme-functions)
   (defcustom enable-theme-functions nil
     "Abnormal hook that is run after a theme has been enabled.
@@ -151,8 +150,8 @@ The functions in the hook are called with one parameter -- the
       (run-hook-with-args 'enable-theme-functions theme))))
 
 
-;;; From Emacs 30+
-;; Introduced in Emacs 30+
+;;; From Emacs >= 30
+;; Introduced in 30.1
 (unless (fboundp 'major-mode-remap)
   (defvar major-mode-remap-defaults nil)
   (defun major-mode-remap (mode)
@@ -161,7 +160,7 @@ The functions in the hook are called with one parameter -- the
                  (assq mode major-mode-remap-defaults)))
         mode)))
 
-;; Introduced in Emacs 30+
+;; Introduced in 30.1
 (unless (boundp 'safe-local-variable-directories)
   (defvar safe-local-variable-directories ())
   (define-advice hack-local-variables-filter
@@ -174,6 +173,50 @@ The functions in the hook are called with one parameter -- the
                :all
              enable-local-variables)))
       (funcall fn variables dir-name))))
+
+;; Introduced in 30.1
+(unless (fboundp 'static-if)
+  (defmacro static-if (condition then-form &rest else-forms)
+    "A conditional compilation macro.
+Evaluate CONDITION at macro-expansion time.  If it is non-nil,
+expand the macro to THEN-FORM.  Otherwise expand it to ELSE-FORMS
+enclosed in a `progn' form.  ELSE-FORMS may be empty."
+    (declare (indent 2)
+             (debug (sexp sexp &rest sexp)))
+    (if (eval condition lexical-binding)
+        then-form
+      (cons 'progn else-forms))))
+
+
+;;; From Emacs 31+
+(unless (fboundp 'static-when)
+  (defmacro static-when (condition &rest body)
+    "A conditional compilation macro.
+Evaluate CONDITION at macro-expansion time.  If it is non-nil,
+expand the macro to evaluate all BODY forms sequentially and return
+the value of the last one, or nil if there are none."
+    (declare (indent 1) (debug t))
+    (if body
+        (if (eval condition lexical-binding)
+            (cons 'progn body)
+          nil)
+      (macroexp-warn-and-return (format-message "`static-when' with empty body")
+                                (list 'progn nil nil) '(empty-body static-when) t))))
+
+;;; From Emacs 31+
+(unless (fboundp 'static-unless)
+  (defmacro static-unless (condition &rest body)
+    "A conditional compilation macro.
+Evaluate CONDITION at macro-expansion time.  If it is nil,
+expand the macro to evaluate all BODY forms sequentially and return
+the value of the last one, or nil if there are none."
+    (declare (indent 1) (debug t))
+    (if body
+        (if (eval condition lexical-binding)
+            nil
+          (cons 'progn body))
+      (macroexp-warn-and-return (format-message "`static-unless' with empty body")
+                                (list 'progn nil nil) '(empty-body static-unless) t))))
 
 (provide 'doom-compat)
 ;;; doom-compat.el ends here

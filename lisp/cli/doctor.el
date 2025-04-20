@@ -184,35 +184,22 @@ in."
                 (format "  (setq-default vterm-shell \"%s\")\n" shell-file-name)
                 (format "  (setq-default explicit-shell-file-name \"%s\")\n" shell-file-name)))
 
-    (condition-case e
-        (when (featurep :system 'windows)
-          (let ((filea (expand-file-name "__testfile1" temporary-file-directory))
-                (fileb (expand-file-name "__testfile2" temporary-file-directory)))
-            (unwind-protect
-                (progn
-                  (with-temp-file fileb)
-                  (make-symbolic-link fileb filea)
-                  (not (file-symlink-p filea)))
-              (delete-file filea)
-              (delete-file fileb))))
-      ('file-error
-       (when (equal (cons (nth 1 e) (nth 2 e))
-                    (cons "Making symbolic link" "Operation not permitted"))
-         (print! (warn "Symlinks are not enabled on this operating system"))
-         (explain! "In the near future, Doom will make extensive use of symlinks to save space "
-                   "and simplify package and profile management. Without symlinks, much of it "
-                   "won't be functional. To get around this, you have three options:"
-                   "\n\n"
-                   "  - Enabling 'Developer Mode' in the Windows settings (search for 'Developer "
-                   "    Settings' in the start menu). This will warn you about its effect on system "
-                   "    security, but this can be ignored. If it bothers you, consider another option "
-                   "    below.\n"
-                   "  - Running your shell (cmd or powershell) in administrator mode anytime you "
-                   "    need to use the 'doom' script. Also, the `doom/reload' command won't work "
-                   "    unless Emacs itself is launched in administrator mode.\n"
-                   "  - Install Emacs in WSL 1/2; the native Linux environment it creates supports "
-                   "    symlinks out of the box and is the best option (as Emacs is generally more "
-                   "    stable, predictable, and faster there).\n\n")))))
+    (unless (doom-system-supports-symlinks-p)
+      (print! (warn "Symlinks are not enabled on this operating system"))
+      (explain! "In the near future, Doom will make extensive use of symlinks to save space "
+                "and simplify package and profile management. Without symlinks, much of it "
+                "won't be functional. To get around this, you have three options:"
+                "\n\n"
+                "  - Enabling 'Developer Mode' in the Windows settings (search for 'Developer "
+                "    Settings' in the start menu). This will warn you about its effect on system "
+                "    security, but this can be ignored. If it bothers you, consider another option "
+                "    below.\n"
+                "  - Running your shell (cmd or powershell) in administrator mode anytime you "
+                "    need to use the 'doom' script. Also, the `doom/reload' command won't work "
+                "    unless Emacs itself is launched in administrator mode.\n"
+                "  - Install Emacs in WSL 1/2; the native Linux environment it creates supports "
+                "    symlinks out of the box and is the best option (as Emacs is generally more "
+                "    stable, predictable, and faster there).\n\n")))
 
   (print! (start "Checking for stale elc files..."))
   (elc-check-dir doom-core-dir)

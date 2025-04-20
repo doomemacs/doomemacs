@@ -42,8 +42,8 @@ This is controlled by `+format-on-save-disabled-modes'."
     (add-hook 'lsp-managed-mode-hook #'+format-with-lsp-toggle-h))
 
   :config
-  (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
-  (add-to-list 'doom-debug-variables '(apheleia-log-debug-info . t))
+  (set-debug-variable! 'apheleia-log-only-errors nil)
+  (set-debug-variable! 'apheleia-log-debug-info t 2)
 
   (defadvice! +format--inhibit-reformat-on-prefix-arg-a (orig-fn &optional arg)
     "Make it so \\[save-buffer] with prefix arg inhibits reformatting."
@@ -78,6 +78,12 @@ This is controlled by `+format-on-save-disabled-modes'."
   ;; must manually set `+format-with' to `lsp' to use it, or activate
   ;; `+format-with-lsp-mode' in the appropriate modes.
   (add-to-list 'apheleia-formatters '(lsp . +format-lsp-buffer))
+
+  ;; Use clang-format for cuda and protobuf files.
+  (add-to-list 'apheleia-mode-alist '(cuda-mode . clang-format))
+  (add-to-list 'apheleia-mode-alist '(protobuf-mode . clang-format))
+  (add-to-list 'apheleia-formatters-mode-extension-assoc '(cuda-mode . ".cu"))
+  (add-to-list 'apheleia-formatters-mode-extension-assoc '(protobuf-mode . ".proto"))
 
   ;; Apheleia's default clang-format config doesn't respect `c-basic-offset', so
   ;; force it to in the absence of a .clang-format file.

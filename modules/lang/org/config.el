@@ -433,7 +433,10 @@ I like:
 
   ;; Fix #462: when refiling from org-capture, Emacs prompts to kill the
   ;; underlying, modified buffer. This fixes that.
-  (add-hook 'org-after-refile-insert-hook #'save-buffer)
+  (add-hook! 'org-after-refile-insert-hook
+    (defun +org-save-buffer-after-capture-h ()
+      (when (bound-and-true-p org-capture-is-refiling)
+        (save-buffer))))
 
   ;; HACK Doom doesn't support `customize'. Best not to advertise it as an
   ;;      option in `org-capture's menu.
@@ -1364,7 +1367,7 @@ between the two."
     (run-hooks 'org-load-hook))
 
   :config
-  (add-to-list 'doom-debug-variables 'org-export-async-debug)
+  (set-debug-variable! 'org-export-async-debug)
 
   (set-company-backend! 'org-mode 'company-capf)
   (set-eval-handler! 'org-mode #'+org-eval-handler)

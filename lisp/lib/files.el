@@ -596,7 +596,7 @@ which case it will save it without prompting."
 
 ;; Introduced in Emacs 29.
 ;;;###autoload
-(eval-when! (not (fboundp 'find-sibling-file))
+(static-unless (fboundp 'find-sibling-file)
   (defvar find-sibling-rules nil)
 
   (defun find-sibling-file (file)

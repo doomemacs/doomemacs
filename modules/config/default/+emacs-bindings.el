@@ -305,8 +305,8 @@
        :desc "Delete frame"                 "f" #'delete-frame
        :desc "Clear current frame"          "F" #'doom/kill-all-buffers
        :desc "Kill Emacs (and daemon)"      "K" #'save-buffers-kill-emacs
-       :desc "Quit Emacs"                   "q" #'kill-emacs
-       :desc "Save and quit Emacs"          "Q" #'save-buffers-kill-terminal
+       :desc "Quit Emacs"                   "q" #'save-buffers-kill-terminal
+       :desc "Quit Emacs without saving"    "Q" #'kill-emacs
        :desc "Quick save current session"   "s" #'doom/quicksave-session
        :desc "Restore last session"         "l" #'doom/quickload-session
        :desc "Save session to file"         "S" #'doom/save-session
