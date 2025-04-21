@@ -144,7 +144,6 @@ modules/ui/doom-dashboard           @doomemacs/ui-doom-dashboard
 modules/ui/doom-quit                @doomemacs/ui-doom-quit
 modules/ui/emoji                    @doomemacs/ui-emoji
 modules/ui/hl-todo                  @doomemacs/ui-hl-todo
-modules/ui/hydra                    @doomemacs/ui-hydra
 modules/ui/indent-guides            @doomemacs/ui-indent-guides
 modules/ui/ligatures                @doomemacs/ui-ligatures
 modules/ui/minimap                  @doomemacs/ui-minimap

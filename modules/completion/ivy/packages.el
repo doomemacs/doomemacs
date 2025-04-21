@@ -3,7 +3,6 @@
 
 (package! swiper :pin "e33b028ed4b1258a211c87fd5fe801bed25de429")
 (package! ivy)
-(package! ivy-hydra)
 (package! ivy-avy)
 (package! counsel)
 

@@ -534,11 +534,6 @@
         "C-p"        #'company-search-repeat-backward
         "C-s"        (cmd! (company-search-abort) (company-filter-candidates))))
 
-      ;;; ein notebooks
-      (:after ein:notebook-multilang
-        :map ein:notebook-multilang-mode-map
-        "C-c h" #'+ein/hydra/body)
-
       ;;; expand-region
       "C-="  #'er/expand-region
 
