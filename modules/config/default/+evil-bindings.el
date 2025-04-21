@@ -482,6 +482,34 @@
        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
        :desc "List errors"                           "x"   #'+default/diagnostics)
 
+      ;;; <leader> d --- debugger
+      (:when (modulep! :tools debugger)
+        (:prefix-map ("d" . "debugger")
+         "d" #'dape
+         "p" #'dape-pause
+         "c" #'dape-continue
+         "n" #'dape-next
+         "s" #'dape-step-in
+         "o" #'dape-step-out
+         "r" #'dape-restart
+         "i" #'dape-info
+         "R" #'dape-repl
+         "m" #'dape-memory
+         "M" #'dape-disassemble
+         "l" #'dape-breakpoint-log
+         "e" #'dape-breakpoint-expression
+         "h" #'dape-breakpoint-hits
+         "b" #'dape-breakpoint-toggle
+         "B" #'dape-breakpoint-remove-all
+         "t" #'dape-select-thread
+         "S" #'dape-select-stack
+         ">" #'dape-stack-select-down
+         "<" #'dape-stack-select-up
+         "x" #'dape-evaluate-expression
+         "w" #'dape-watch-dwim
+         "D" #'dape-disconnect-quit
+         "q" #'dape-quit))
+
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
        :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
@@ -687,7 +715,7 @@
         :desc "Tags search"    "m"  #'org-tags-view
         :desc "View search"    "v"  #'org-search-view)
        :desc "Default browser"    "b"  #'browse-url-of-file
-       :desc "Start debugger"     "d"  #'+debugger/start
+       :desc "Start a debugger"   "d"  #'+debugger/start
        :desc "New frame"          "f"  #'make-frame
        :desc "Select frame"       "F"  #'select-frame-by-name
        :desc "REPL"               "r"  #'+eval/open-repl-other-window
