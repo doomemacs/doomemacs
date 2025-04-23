@@ -35,7 +35,8 @@ killing and opening many LSP/eglot-powered buffers.")
       ;;        so we modify its variables rather than `gc-cons-threshold'
       ;;        directly.
       (setq-default gcmh-high-cons-threshold (* 2 +lsp--default-gcmh-high-cons-threshold))
-      (gcmh-set-high-threshold)
+      (when (bound-and-true-p gcmh-mode)
+        (gcmh-set-high-threshold))
       (setq +lsp--optimization-init-p t))))
 
 
