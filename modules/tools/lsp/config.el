@@ -1,4 +1,5 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
+(require 'gcmh)
 
 (defvar +lsp-defer-shutdown 3
   "If non-nil, defer shutdown of LSP servers for this many seconds after last
