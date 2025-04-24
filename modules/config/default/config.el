@@ -369,7 +369,7 @@ Continues comments if executed from a commented line."
 ;; universal.
 (define-key! help-map
   ;; new keybinds
-  "'"    #'describe-char
+  "'"    #'doom/describe-char
   "u"    #'doom/help-autodefs
   "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
