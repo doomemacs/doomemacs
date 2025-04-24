@@ -87,6 +87,15 @@
     ;; https://github.com/cpitclaudel/company-coq/issues/42
     (add-to-list 'company-coq-disabled-features 'company))
 
+  ;; HACK: Doom treats the use of package.el and its API as user error unless
+  ;;   they've called `package-initialize' themselves (in which case, it is
+  ;;   assumed you know what you're doing).
+  (defadvice! +coq--noop-upgrade-elpa-packages-a (fn &rest args)
+    :override #'proof-upgrade-elpa-packages
+    (if (and (featurep 'package) package--initialized)
+        (apply fn args)
+      (user-error "Doom doesn't support this command (update packages through `package!' statements!)")))
+
   (map! :map coq-mode-map
         :localleader
         "ao" #'company-coq-occur
