@@ -25,6 +25,7 @@
             ("DuckDuckGo"        +lookup--online-backend-duckduckgo "https://duckduckgo.com/?q=%s")
             ("DevDocs.io"        "https://devdocs.io/#q=%s")
             ("StackOverflow"     "https://stackoverflow.com/search?q=%s")
+            ("StackExchange"     "https://stackexchange.com/search?q=%s")
             ("Github"            "https://github.com/search?ref=simplesearch&q=%s")
             ("Youtube"           "https://youtube.com/results?aq=f&oq=&search_query=%s")
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")

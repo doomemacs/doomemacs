@@ -282,7 +282,11 @@ tell you about it. Very annoying. This prevents that."
   ;;   single frame?).
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
-    (unless (or auto-revert-mode (active-minibuffer-window))
+    (unless (or auto-revert-mode
+                (active-minibuffer-window)
+                (and buffer-file-name
+                     auto-revert-remote-files
+                     (file-remote-p buffer-file-name nil t)))
       (let ((auto-revert-mode t))
         (auto-revert-handler))))
 

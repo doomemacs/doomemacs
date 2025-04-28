@@ -102,6 +102,24 @@ selection of all minor-modes, active or not."
     (funcall (or (command-remapping fn) fn)
              symbol)))
 
+(defun doom/describe-char (event)
+  "Like `describe-char', but will operate at mouse point if given prefix arg."
+  (interactive
+   (list (if current-prefix-arg
+             (save-window-excursion
+               (message "Click what to describe...")
+               (or (when-let ((evt (read--potential-mouse-event)))
+                     ;; Discard mouse release event
+                     (read--potential-mouse-event)
+                     (cadr evt))
+                   (user-error "Aborted")))
+           (point))))
+  (if (integerp event)
+      (describe-char event)
+    (when event
+      (with-selected-window (posn-window event)
+        (describe-char (posn-point event))))))
+
 
 ;;
 ;;; Documentation commands
