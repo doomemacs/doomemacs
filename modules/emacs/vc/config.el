@@ -98,8 +98,8 @@ file in your browser at the visited revision."
                 (file-relative-name
                  buffer-file-name (expand-file-name (vc-git-root buffer-file-name))))
                (target-repo (browse-at-remote--get-url-from-remote remote))
-               (remote-type (browse-at-remote--get-remote-type target-repo))
-               (repo-url (cdr target-repo))
+               (remote-type (browse-at-remote--get-remote-type (plist-get target-repo :unresolved-host)))
+               (repo-url (plist-get target-repo :url))
                (url-formatter (browse-at-remote--get-formatter 'region-url remote-type)))
           (unless url-formatter
             (error (format "Origin repo parsing failed: %s" repo-url)))
