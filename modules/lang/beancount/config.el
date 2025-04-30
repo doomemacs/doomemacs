@@ -35,7 +35,7 @@
         :localleader
         "b" #'+beancount/balance
         "c" #'beancount-check
-        "s" #'+beancount/occur
+        "S" #'+beancount/occur
         "l" #'beancount-linked
         "q" #'beancount-query
         "x" #'beancount-context
@@ -44,4 +44,7 @@
          "C" #'+beancount/clone-this-transaction
          "a" #'beancount-insert-account
          "p" #'beancount-insert-prices
-         "d" #'beancount-insert-date)))
+         "d" #'beancount-insert-date)
+        (:prefix ("s" . "sort")
+         "r" #'+beancount/sort-region
+         "b" #'+beancount/sort-buffer)))
