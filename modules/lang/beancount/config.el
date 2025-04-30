@@ -18,16 +18,13 @@
   (when (modulep! +lsp)
     (add-hook 'beancount-mode-local-vars-hook #'lsp! 'append))
 
-  ;; HACK: The intro message changed in newer versions of Fava, plus, the output
-  ;;   could contain ANSI codes, causing the `beancount-fava' command to not
-  ;;   open the server in the browser after the server has started.
+  ;; HACK: The intro message could contain ANSI color codes, causing the regexp
+  ;;   in `beancount--fava-filter' to fail to match it (and thus the browser
+  ;;   isn't automatically opened after executing `beancount-fava').
   ;; REVIEW: PR this upstream!
-  (defadvice! +beancount--open-in-browser-after-starting-fix-a (_process output)
-    :override #'beancount--fava-filter
-    (save-match-data
-      (let ((output (ansi-color-filter-apply output)))
-        (when-let ((url (string-match "\\(?:Starting\\|Running\\) Fava on \\(http://.+:[0-9]+\\)\n" output)))
-          (browse-url (match-string 1 output))))))
+  (defadvice! +beancount--open-in-browser-after-starting-fix-a (fn process output)
+    :around #'beancount--fava-filter
+    (funcall fn process (ansi-color-filter-apply output)))
 
   (map! :map beancount-mode-map
         :m "[[" #'+beancount/previous-transaction
