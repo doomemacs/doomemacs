@@ -2,6 +2,7 @@
 
 (use-package! beancount
   :hook (beancount-mode . outline-minor-mode)
+  :hook (beancount-mode . flymake-bean-check-enable) ; FIXME: add proper flycheck support
   :init
   (after! nerd-icons
     (add-to-list 'nerd-icons-extension-icon-alist
