@@ -11,6 +11,8 @@
                  '(beancount-mode nerd-icons-faicon "nf-fa-money" :face nerd-icons-lblue)))
 
   :config
+  (set-eval-handler! 'beancount-mode #'beancount-region-default)
+
   (setq beancount-electric-currency t)
 
   (when (modulep! +lsp)
