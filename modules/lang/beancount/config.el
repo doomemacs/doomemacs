@@ -28,9 +28,6 @@
           (browse-url (match-string 1 output))))))
 
   (map! :map beancount-mode-map
-        "TAB" (cmds! (and outline-minor-mode (outline-on-heading-p))
-                     #'beancount-outline-cycle
-                     #'indent-according-to-mode)
         :m "[[" #'+beancount/previous-transaction
         :m "]]" #'+beancount/next-transaction
         :localleader
