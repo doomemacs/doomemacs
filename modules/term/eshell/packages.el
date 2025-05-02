@@ -10,4 +10,4 @@
 
 (unless (featurep :system 'windows)
   (package! fish-completion :pin "1256f137a2039805d4e87f8e6c11a162ed019587")
-  (package! bash-completion :pin "a4c8fbc90221b01d5376ad068d3640350d9130a8"))
+  (package! bash-completion :pin "d0637428fd0592ef56baa0255673300129f98c48"))

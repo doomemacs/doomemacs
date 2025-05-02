@@ -16,7 +16,7 @@
 
 (package! wanderlust
   :recipe (:host github :repo "wanderlust/wanderlust")
-  :pin "6a0605415d6661703e69fa2f860e179342b31e6f")
+  :pin "d6dcbad228cd5cf39a918181da7c4c4ed934bd81")
 
 (when (modulep! +xface)
   (package! x-face-e21

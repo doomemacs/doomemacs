@@ -17,7 +17,7 @@
                             "??")))
                       (cdr (doom-call-process "git" "rev-parse" "HEAD")))
               t t)))
-  :pin "dfc800c26e7bee1e42a8d96c300508ed9d5a109b")
+  :pin "d8ebc9cf80b6d10e72a01d7b0afa42aab6b31264")
 
 (when (modulep! +org)
   (package! org-mime :pin "9571c148eed5e86fdd54eb6bf2814947c2c745a6"))

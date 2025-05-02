@@ -43,7 +43,7 @@
 
 ;; doom-projects.el
 (package! projectile :pin "4dd84b02c9cd7b04616dc2d01ba7bc87f0d15be8")
-(package! project :pin "369ac661c8005349da1f79d3ed4fe72e5db7a9e4")
+(package! project :pin "27c6b049145e5d382579bcf1e3e2ea96c6abd3c9")
 
 ;; doom-keybinds.el
 (package! general :pin "826bf2b97a0fb4a34c5eb96ec2b172d682fd548f")

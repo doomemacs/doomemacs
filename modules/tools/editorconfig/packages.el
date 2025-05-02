@@ -3,4 +3,4 @@
 
 (package! editorconfig
   :recipe (:nonrecursive t)
-  :pin "1a9942746cf5b10daae8962f380b5f2a459086f3")
+  :pin "d2beb3ec2e7f84505818594124a7202d5d6d0185")
