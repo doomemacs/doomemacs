@@ -102,6 +102,7 @@ selection of all minor-modes, active or not."
     (funcall (or (command-remapping fn) fn)
              symbol)))
 
+;;;###autoload
 (defun doom/describe-char (event)
   "Like `describe-char', but will operate at mouse point if given prefix arg."
   (interactive
