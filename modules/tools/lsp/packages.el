@@ -3,7 +3,7 @@
 
 (if (modulep! +eglot)
     (progn
-      (package! eglot :pin "928c216af52cfdd5a029e0d48907131c9a51934d")
+      (package! eglot :pin "6a9e0c76b9a7a4bf03a7fc91a02b826df507e3ce")
       (when (modulep! :completion vertico)
         (package! consult-eglot :pin "b71499f4b93bfea4e2005564c25c5bb0f9e73199"))
       (when (modulep! :checkers syntax -flymake)
