@@ -74,16 +74,6 @@ Docsets can be searched directly via `+lookup/in-docsets'."
 ;;
 ;;; Commands
 
-(defun +lookup--consult-search (sync cb)
-  (lambda (action)
-    (pcase action
-      ((pred stringp)
-       (when-let (cands (with-current-buffer cb
-                          (dash-docs-search action)))
-         (funcall sync 'flush)
-         (funcall sync cands)))
-      (_ (funcall sync action)))))
-
 ;;;###autoload
 (defun +lookup/in-docsets (arg &optional query docsets)
   "Lookup QUERY in dash DOCSETS.
@@ -103,22 +93,7 @@ installed with `dash-docs-install-docset'."
         (query (doom-thing-at-point-or-region query)))
     (doom-log "Searching docsets %s" dash-docs-docsets)
     (cond ((modulep! :completion vertico)
-           (require 'consult)
-           (dash-docs-initialize-debugging-buffer)
-           (dash-docs-create-buffer-connections)
-           (dash-docs-create-common-connections)
-           (let* ((sink
-                   (thread-first (consult--async-sink)
-                     (consult--async-refresh-immediate)
-                     (+lookup--consult-search (current-buffer))
-                     (consult--async-throttle)))
-                  (result
-                   (or (consult--read sink
-                                      :prompt "Documentation for: "
-                                      :category 'dash
-                                      :initial query)
-                       (user-error "Aborted"))))
-             (dash-docs-browse-url (cdr (assoc result (funcall sink nil))))))
+           (consult-dash query))
           ((modulep! :completion ivy)
            (counsel-dash query))
           ((modulep! :completion helm)
