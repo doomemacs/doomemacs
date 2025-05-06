@@ -346,9 +346,9 @@ Continues comments if executed from a commented line."
         "s-x" #'execute-extended-command
         :v "s-x" #'kill-region
         ;; Buffer-local font scaling
-        "s-+" #'doom/reset-font-size
-        "s-=" #'doom/increase-font-size
-        "s--" #'doom/decrease-font-size
+        "C-s-=" #'doom/reset-font-size
+        "s-+"   #'doom/increase-font-size
+        "s--"   #'doom/decrease-font-size
         ;; Conventional text-editing keys & motions
         "s-a" #'mark-whole-buffer
         "s-/" (cmd! (save-excursion (comment-line 1)))
