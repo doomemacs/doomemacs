@@ -27,9 +27,11 @@ It includes:
 /This module has no flags./
 
 ** Packages
-- [[doom-package:evil-textobj-tree-sitter]] if [[doom-module::editor evil +everywhere]]
-- [[doom-package:tree-sitter]]
-- [[doom-package:tree-sitter-langs]]
+- if [[doom-module:+compat]]
+  - [[doom-package:evil-textobj-tree-sitter]] if [[doom-module::editor evil +everywhere]]
+  - [[doom-package:tree-sitter]]
+  - [[doom-package:tree-sitter-indent]]
+  - [[doom-package:tree-sitter-langs]]
 
 ** Hacks
 /No hacks documented for this module./

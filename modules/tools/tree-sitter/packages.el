@@ -1,10 +1,18 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/tree-sitter/packages.el
 
-(package! tree-sitter :recipe (:branch "master") :pin "1c455b0953da06c40fcf1f21f1ac0c6e179b46d0")
-(package! tree-sitter-langs :pin "becd29c756a3272bc91d09de642df99a0fca6cee")
-(package! tree-sitter-indent :pin "4ef246db3e4ff99f672fe5e4b416c890f885c09e")
-
-(when (modulep! :editor evil +everywhere)
-  (package! evil-textobj-tree-sitter
-    :pin "bce236e5d2cc2fa4eae7d284ffd19ad18d46349a"))
+(package! treesit :built-in t)
+(when (> emacs-major-version 28)
+  ;; (package! combobulate
+  ;;   :recipe '(;; If pulled from emacsmirror, this would otherwise pull in test
+  ;;             ;; repos that users don't need.
+  ;;             :nonrecursive t
+  ;;             ;; HACK: This package has terrible autoload ettiquette, eagerly
+  ;;             ;;   loading a number of expensive packages at startup, so
+  ;;             ;;   autoloads are handled manually in config.el
+  ;;             :build (:not autoloads))
+  ;;   :pin "59b64d66d66eb84da6a2cedd152b1692378af674")
+  ;; (when (modulep! :editor evil +everywhere)
+  ;;   (package! evil-textobj-tree-sitter
+  ;;     :pin "bce236e5d2cc2fa4eae7d284ffd19ad18d46349a"))
+  )

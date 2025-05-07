@@ -1,77 +1,135 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
-(defvar +tree-sitter-hl-enabled-modes '(not web-mode typescript-tsx-mode)
-  "A list of major modes which should be highlighted by tree-sitter.
-
-If this list begins with `not', then it negates the list.
-If it is t, it is enabled in all modes.
-If nil, it is disabled in all modes")
-
 ;;
 ;;; Packages
 
-(use-package! tree-sitter
+(use-package! treesit
+  :when (fboundp 'treesit-available-p)
+  :when (treesit-available-p)
   :defer t
   :config
-  (require 'tree-sitter-langs)
-  ;; This makes every node a link to a section of code
-  (setq tree-sitter-debug-jump-buttons t
-        ;; and this highlights the entire sub tree in your code
-        tree-sitter-debug-highlight-jump-region t))
+  ;; HACK: treesit lacks any way to dictate where to install grammars.
+  (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
+    "Write grammars to `doom-profile-data-dir'."
+    :around #'treesit-install-language-grammar
+    :around #'treesit--build-grammar
+    (let ((user-emacs-directory doom-profile-data-dir))
+      (apply fn args)))
+
+  ;; TODO: Move most of these out to modules
+  (dolist (map '((awk "https://github.com/Beaglefoot/tree-sitter-awk" nil nil nil nil)
+                 (bibtex "https://github.com/latex-lsp/tree-sitter-bibtex" nil nil nil nil)
+                 (blueprint "https://github.com/huanie/tree-sitter-blueprint" nil nil nil nil)
+                 (c "https://github.com/tree-sitter/tree-sitter-c" nil nil nil nil)
+                 (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp" nil nil nil nil)
+                 (clojure "https://github.com/sogaiu/tree-sitter-clojure" nil nil nil nil)
+                 (cmake "https://github.com/uyha/tree-sitter-cmake" nil nil nil nil)
+                 (commonlisp "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp" nil nil nil nil)
+                 (cpp "https://github.com/tree-sitter/tree-sitter-cpp" nil nil nil nil)
+                 (css "https://github.com/tree-sitter/tree-sitter-css" nil nil nil nil)
+                 (dart "https://github.com/ast-grep/tree-sitter-dart" nil nil nil nil)
+                 (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" nil nil nil nil)
+                 (elixir "https://github.com/elixir-lang/tree-sitter-elixir" nil nil nil nil)
+                 (glsl "https://github.com/tree-sitter-grammars/tree-sitter-glsl" nil nil nil nil)
+                 (go "https://github.com/tree-sitter/tree-sitter-go" nil nil nil nil)
+                 (gomod "https://github.com/camdencheek/tree-sitter-go-mod" nil nil nil nil)
+                 (heex "https://github.com/phoenixframework/tree-sitter-heex" nil nil nil nil)
+                 (html "https://github.com/tree-sitter/tree-sitter-html" nil nil nil nil)
+                 (java "https://github.com/tree-sitter/tree-sitter-java" nil nil nil nil)
+                 (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src" nil nil)
+                 (json "https://github.com/tree-sitter/tree-sitter-json" nil nil nil nil)
+                 (julia "https://github.com/tree-sitter/tree-sitter-julia" nil nil nil nil)
+                 (kotlin "https://github.com/fwcd/tree-sitter-kotlin" nil nil nil nil)
+                 (latex "https://github.com/latex-lsp/tree-sitter-latex" nil nil nil nil)
+                 (lua "https://github.com/tree-sitter-grammars/tree-sitter-lua" nil nil nil nil)
+                 (make "https://github.com/tree-sitter-grammars/tree-sitter-make" nil nil nil nil)
+                 (nix "https://github.com/nix-community/tree-sitter-nix" nil nil nil nil)
+                 (nu "https://github.com/nushell/tree-sitter-nu" nil nil nil nil)
+                 (org "https://github.com/milisims/tree-sitter-org" nil nil nil nil)
+                 (perl "https://github.com/ganezdragon/tree-sitter-perl" nil nil nil nil)
+                 (proto "https://github.com/mitchellh/tree-sitter-proto" nil nil nil nil)
+                 (python "https://github.com/tree-sitter/tree-sitter-python" nil nil nil nil)
+                 (r "https://github.com/r-lib/tree-sitter-r" nil nil nil nil)
+                 (ruby "https://github.com/tree-sitter/tree-sitter-ruby" nil nil nil nil)
+                 (rust "https://github.com/tree-sitter/tree-sitter-rust" nil nil nil nil)
+                 (scala "https://github.com/tree-sitter/tree-sitter-scala" nil nil nil nil)
+                 (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages" nil nil nil)
+                 (surface "https://github.com/connorlay/tree-sitter-surface" nil nil nil nil)
+                 (toml "https://github.com/tree-sitter/tree-sitter-toml" nil nil nil nil)
+                 (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src" nil nil)
+                 (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src" nil nil)
+                 (typst "https://github.com/uben0/tree-sitter-typst" "master" "src" nil nil)
+                 (verilog "https://github.com/gmlarumbe/tree-sitter-verilog" nil nil nil nil)
+                 (vhdl "https://github.com/alemuller/tree-sitter-vhdl" nil nil nil nil)
+                 (vue "https://github.com/tree-sitter-grammars/tree-sitter-vue" nil nil nil nil)
+                 (wast "https://github.com/wasm-lsp/tree-sitter-wasm" nil "wast/src" nil nil)
+                 (wat "https://github.com/wasm-lsp/tree-sitter-wasm" nil "wat/src" nil nil)
+                 (wgsl "https://github.com/mehmetoguzderin/tree-sitter-wgsl" nil nil nil nil)
+                 (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" nil nil nil nil)))
+    (cl-pushnew map treesit-language-source-alist :test #'eq :key #'car)))
 
 
-(use-package! evil-textobj-tree-sitter
-  :when (modulep! :editor evil +everywhere)
-  :defer t
-  :init (after! tree-sitter (require 'evil-textobj-tree-sitter))
-  :config
-  (defvar +tree-sitter-inner-text-objects-map (make-sparse-keymap))
-  (defvar +tree-sitter-outer-text-objects-map (make-sparse-keymap))
-  (defvar +tree-sitter-goto-previous-map (make-sparse-keymap))
-  (defvar +tree-sitter-goto-next-map (make-sparse-keymap))
+;; TODO: combobulate or evil-textobj-tree-sitter
 
-  (evil-define-key '(visual operator) 'tree-sitter-mode
-    "i" +tree-sitter-inner-text-objects-map
-    "a" +tree-sitter-outer-text-objects-map)
-  (evil-define-key 'normal 'tree-sitter-mode
-    "[g" +tree-sitter-goto-previous-map
-    "]g" +tree-sitter-goto-next-map)
 
-  (map! (:map +tree-sitter-inner-text-objects-map
-         "A" (+tree-sitter-get-textobj '("parameter.inner" "call.inner"))
-         "f" (+tree-sitter-get-textobj "function.inner")
-         "F" (+tree-sitter-get-textobj "call.inner")
-         "C" (+tree-sitter-get-textobj "class.inner")
-         "v" (+tree-sitter-get-textobj "conditional.inner")
-         "l" (+tree-sitter-get-textobj "loop.inner"))
-        (:map +tree-sitter-outer-text-objects-map
-         "A" (+tree-sitter-get-textobj '("parameter.outer" "call.outer"))
-         "f" (+tree-sitter-get-textobj "function.outer")
-         "F" (+tree-sitter-get-textobj "call.outer")
-         "C" (+tree-sitter-get-textobj "class.outer")
-         "c" (+tree-sitter-get-textobj "comment.outer")
-         "v" (+tree-sitter-get-textobj "conditional.outer")
-         "l" (+tree-sitter-get-textobj "loop.outer"))
+;; (use-package! combobulate
+;;   :commands combobulate-query-builder
+;;   :hook (prog-mode . combobulate-mode))
 
-        (:map +tree-sitter-goto-previous-map
-         "a" (+tree-sitter-goto-textobj "parameter.outer" t)
-         "f" (+tree-sitter-goto-textobj "function.outer" t)
-         "F" (+tree-sitter-goto-textobj "call.outer" t)
-         "C" (+tree-sitter-goto-textobj "class.outer" t)
-         "c" (+tree-sitter-goto-textobj "comment.outer" t)
-         "v" (+tree-sitter-goto-textobj "conditional.outer" t)
-         "l" (+tree-sitter-goto-textobj "loop.outer" t))
-        (:map +tree-sitter-goto-next-map
-         "a" (+tree-sitter-goto-textobj "parameter.outer")
-         "f" (+tree-sitter-goto-textobj "function.outer")
-         "F" (+tree-sitter-goto-textobj "call.outer")
-         "C" (+tree-sitter-goto-textobj "class.outer")
-         "c" (+tree-sitter-goto-textobj "comment.outer")
-         "v" (+tree-sitter-goto-textobj "conditional.outer")
-         "l" (+tree-sitter-goto-textobj "loop.outer")))
 
-  (after! which-key
-    (setq which-key-allow-multiple-replacements t)
-    (pushnew!
-     which-key-replacement-alist
-     '(("" . "\\`+?evil-textobj-tree-sitter-function--\\(.*\\)\\(?:.inner\\|.outer\\)") . (nil . "\\1")))))
+;; (use-package! evil-textobj-tree-sitter
+;;   :when (modulep! :editor evil +everywhere)
+;;   :defer t
+;;   :init (after! tree-sitter (require 'evil-textobj-tree-sitter))
+;;   :after-call doom-first-input-hook
+;;   :config
+;;   (defvar +tree-sitter-inner-text-objects-map (make-sparse-keymap))
+;;   (defvar +tree-sitter-outer-text-objects-map (make-sparse-keymap))
+;;   (defvar +tree-sitter-goto-previous-map (make-sparse-keymap))
+;;   (defvar +tree-sitter-goto-next-map (make-sparse-keymap))
+
+;;   (evil-define-key '(visual operator) 'tree-sitter-mode
+;;     "i" +tree-sitter-inner-text-objects-map
+;;     "a" +tree-sitter-outer-text-objects-map)
+;;   (evil-define-key 'normal 'tree-sitter-mode
+;;     "[g" +tree-sitter-goto-previous-map
+;;     "]g" +tree-sitter-goto-next-map)
+
+;;   (map! (:map +tree-sitter-inner-text-objects-map
+;;          "A" (+tree-sitter-get-textobj '("parameter.inner" "call.inner"))
+;;          "f" (+tree-sitter-get-textobj "function.inner")
+;;          "F" (+tree-sitter-get-textobj "call.inner")
+;;          "C" (+tree-sitter-get-textobj "class.inner")
+;;          "v" (+tree-sitter-get-textobj "conditional.inner")
+;;          "l" (+tree-sitter-get-textobj "loop.inner"))
+;;         (:map +tree-sitter-outer-text-objects-map
+;;          "A" (+tree-sitter-get-textobj '("parameter.outer" "call.outer"))
+;;          "f" (+tree-sitter-get-textobj "function.outer")
+;;          "F" (+tree-sitter-get-textobj "call.outer")
+;;          "C" (+tree-sitter-get-textobj "class.outer")
+;;          "c" (+tree-sitter-get-textobj "comment.outer")
+;;          "v" (+tree-sitter-get-textobj "conditional.outer")
+;;          "l" (+tree-sitter-get-textobj "loop.outer"))
+
+;;         (:map +tree-sitter-goto-previous-map
+;;          "a" (+tree-sitter-goto-textobj "parameter.outer" t)
+;;          "f" (+tree-sitter-goto-textobj "function.outer" t)
+;;          "F" (+tree-sitter-goto-textobj "call.outer" t)
+;;          "C" (+tree-sitter-goto-textobj "class.outer" t)
+;;          "c" (+tree-sitter-goto-textobj "comment.outer" t)
+;;          "v" (+tree-sitter-goto-textobj "conditional.outer" t)
+;;          "l" (+tree-sitter-goto-textobj "loop.outer" t))
+;;         (:map +tree-sitter-goto-next-map
+;;          "a" (+tree-sitter-goto-textobj "parameter.outer")
+;;          "f" (+tree-sitter-goto-textobj "function.outer")
+;;          "F" (+tree-sitter-goto-textobj "call.outer")
+;;          "C" (+tree-sitter-goto-textobj "class.outer")
+;;          "c" (+tree-sitter-goto-textobj "comment.outer")
+;;          "v" (+tree-sitter-goto-textobj "conditional.outer")
+;;          "l" (+tree-sitter-goto-textobj "loop.outer")))
+
+;;   (after! which-key
+;;     (setq which-key-allow-multiple-replacements t)
+;;     (pushnew!
+;;      which-key-replacement-alist
+;;      '(("" . "\\`+?evil-textobj-tree-sitter-function--\\(.*\\)\\(?:.inner\\|.outer\\)") . (nil . "\\1")))))
