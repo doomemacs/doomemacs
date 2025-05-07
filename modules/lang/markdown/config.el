@@ -126,6 +126,23 @@ capture, the end position, and the output buffer.")
          :desc "GFM checkbox"      "x" #'markdown-toggle-gfm-checkbox)))
 
 
+(use-package! markdown-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'markdown-ts-mode)
+  :defer t
+  :init
+  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode
+    '((markdown :url "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+                :rev "v0.4.1"
+                :source-dir "tree-sitter-markdown-inline/src")
+      (markdown-inline :url "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+                       :rev "v0.4.1"
+                       :source-dir "tree-sitter-markdown-inline/src")))
+
+  :config
+  (cl-callf2 delete '("\\.md\\'" . markdown-ts-mode) auto-mode-alist))
+
+
 (use-package! evil-markdown
   :when (modulep! :editor evil +everywhere)
   :hook (markdown-mode . evil-markdown-mode)
