@@ -7,7 +7,7 @@
 ;;;###autoload
 (defun +python-pyenv-mode-set-auto-h ()
   "Set pyenv-mode version from buffer-local variable."
-  (when (eq major-mode 'python-mode)
+  (when (memq major-mode '(python-mode python-ts-mode))
     (when (not (local-variable-p '+pyenv--version))
       (make-local-variable '+pyenv--version)
       (setq +pyenv--version (+python-pyenv-read-version-from-file)))

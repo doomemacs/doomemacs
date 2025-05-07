@@ -48,7 +48,6 @@
                  (org "https://github.com/milisims/tree-sitter-org" nil nil nil nil)
                  (perl "https://github.com/ganezdragon/tree-sitter-perl" nil nil nil nil)
                  (proto "https://github.com/mitchellh/tree-sitter-proto" nil nil nil nil)
-                 (python "https://github.com/tree-sitter/tree-sitter-python" nil nil nil nil)
                  (r "https://github.com/r-lib/tree-sitter-r" nil nil nil nil)
                  (ruby "https://github.com/tree-sitter/tree-sitter-ruby" nil nil nil nil)
                  (rust "https://github.com/tree-sitter/tree-sitter-rust" nil nil nil nil)
