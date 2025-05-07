@@ -209,7 +209,7 @@
   :config
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
-  (after! eshell (conda-env-initialize-eshell))
+  (add-hook 'eshell-load-hook #'conda-env-initialize-eshell)
 
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
