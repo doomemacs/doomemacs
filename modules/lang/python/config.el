@@ -226,7 +226,7 @@
 
 (use-package! cython-mode
   :when (modulep! +cython)
-  :mode "\\.p\\(yx\\|x[di]\\)\\'"
+  :defer t
   :config
   (setq cython-default-compile-format "cython -a %s")
   (map! :map cython-mode-map
