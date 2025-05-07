@@ -219,9 +219,8 @@
 (use-package! poetry
   :when (modulep! +poetry)
   :after python
-  :init
-  (setq poetry-tracking-strategy 'switch-buffer)
-  (add-hook 'python-mode-hook #'poetry-tracking-mode))
+  :hook (doom-first-buffer . poetry-tracking-mode)
+  :init (setq poetry-tracking-strategy 'switch-buffer))
 
 
 (use-package! cython-mode
