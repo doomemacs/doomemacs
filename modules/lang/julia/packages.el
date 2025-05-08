@@ -4,6 +4,9 @@
 (package! julia-mode :pin "5c940c4ba357d8361534f11169f3d40b2d7833fc")
 (package! julia-repl :pin "317d56021889a336b4be241604ba71e46dc80581")
 
+(when (modulep! +tree-sitter)
+  (package! julia-ts-mode :pin "d693c6b35d3aed986b2700a3b5f910de12d6c53c"))
+
 (when (modulep! +lsp)
   (if (modulep! :tools lsp +eglot)
       (package! eglot-jl :pin "7c968cc61fb64016ebe6dc8ff83fd05923db4374")
