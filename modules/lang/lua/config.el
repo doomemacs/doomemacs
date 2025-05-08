@@ -8,10 +8,11 @@
 ;;; Major modes
 
 (use-package! lua-mode
-  :defer t
+  :interpreter "\\<lua\\(?:jit\\)?"
   :init
   ;; lua-indent-level defaults to 3 otherwise. Madness.
   (setq lua-indent-level 2)
+
   :config
   (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-mode :words '("else" "end"))
@@ -20,31 +21,32 @@
 
   (when (modulep! +lsp)
     (add-hook 'lua-mode-local-vars-hook #'lsp! 'append)
-
     (when (modulep! :tools lsp +eglot)
-      (defvar +lua-lsp-dir (concat doom-data-dir "lsp/lua-language-server/")
-        "Absolute path to the directory of sumneko's lua-language-server.
+      (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command)))))
 
-This directory MUST contain the 'main.lua' file and be the in-source build of
-lua-language-server.")
 
-      (defun +lua-generate-lsp-server-command ()
-        ;; The absolute path to lua-language-server binary is necessary because
-        ;; the bundled dependencies aren't found otherwise. The only reason this
-        ;; is a function is to dynamically change when/if `+lua-lsp-dir' does
-        (list (or (executable-find "lua-language-server")
-                  (doom-path +lua-lsp-dir
-                             (cond ((featurep :system 'macos)   "bin/macOS")
-                                   ((featurep :system 'linux)   "bin/Linux")
-                                   ((featurep :system 'windows) "bin/Windows"))
-                             "lua-language-server"))
-              "-E" "-e" "LANG=en"
-              (doom-path +lua-lsp-dir "main.lua")))
+(use-package! lua-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'lua-ts-mode) ; 30.1+ only
+  :defer t
+  :init
+  (set-tree-sitter! 'lua-mode 'lua-ts-mode
+    '((lua :url "https://github.com/tree-sitter-grammars/tree-sitter-lua"
+           :rev "v0.3.0")))
+  :config
+  (set-lookup-handlers! 'lua-ts-mode :documentation 'lua-search-documentation)
+  (set-electric! 'lua-ts-mode :words '("else" "end"))
+  (set-repl-handler! 'lua-ts-mode #'+lua/open-repl)
+  (set-company-backend! 'lua-ts-mode '(company-lua company-yasnippet))
 
-      (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command)))
+  (when (modulep! +lsp)
+    (add-hook 'lua-ts-mode-local-vars-hook #'lsp! 'append)
+    (when (modulep! :tools lsp +eglot)
+      (set-eglot-client! 'lua-ts-mode (+lua-generate-lsp-server-command))))
 
-    (when (modulep! +tree-sitter)
-      (add-hook 'lua-mode-local-vars-hook #'tree-sitter! 'append))))
+  ;; HACK: Get rid of redundancies, rely on `major-mode-remap-defaults'
+  (cl-callf2 delete '("\\.lua\\'" . lua-ts-mode) auto-mode-alist)
+  (cl-callf2 delete '("\\<lua\\(?:jit\\)?" . lua-ts-mode) interpreter-mode-alist))
 
 
 (use-package! moonscript
@@ -60,6 +62,7 @@ lua-language-server.")
     (require 'flycheck-moonscript nil t)))
 
 
+;; TODO: fennel-ts-mode
 (use-package! fennel-mode
   :when (modulep! +fennel)
   :mode "\\.fenneldoc\\'"
@@ -75,17 +78,14 @@ lua-language-server.")
     tab-width 2
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp "[ \t]*;;;;* [^ \t\n]")
-
-  (when (modulep! +tree-sitter)
-    (add-hook! 'fennel-mode-local-vars-hook 'tree-sitter! 'append)))
+    outline-regexp "[ \t]*;;;;* [^ \t\n]"))
 
 
 ;;
 ;;; Frameworks
 
 (def-project-mode! +lua-love-mode
-  :modes '(moonscript-mode lua-mode markdown-mode json-mode)
+  :modes '(moonscript-mode lua-mode lua-ts-mode markdown-mode json-mode)
   :when (+lua-love-project-root)
   :on-load
   (progn
