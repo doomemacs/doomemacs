@@ -1213,9 +1213,7 @@ between the two."
             :n CSup       #'org-shiftup
             :n CSdown     #'org-shiftdown
             ;; more intuitive RET keybinds
-            :m [return]   #'+org/dwim-at-point
             :m "RET"      #'+org/dwim-at-point
-            :i [return]   #'+org/return
             :i "RET"      #'+org/return
             :i [S-return] #'+org/shift-return
             :i "S-RET"    #'+org/shift-return
