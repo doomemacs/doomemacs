@@ -297,20 +297,7 @@
        :g "M-7"   #'+workspace/switch-to-6
        :g "M-8"   #'+workspace/switch-to-7
        :g "M-9"   #'+workspace/switch-to-8
-       :g "M-0"   #'+workspace/switch-to-final
-       (:when (featurep :system 'macos)
-        :g "s-t"   #'+workspace/new
-        :g "s-T"   #'+workspace/display
-        :n "s-1"   #'+workspace/switch-to-0
-        :n "s-2"   #'+workspace/switch-to-1
-        :n "s-3"   #'+workspace/switch-to-2
-        :n "s-4"   #'+workspace/switch-to-3
-        :n "s-5"   #'+workspace/switch-to-4
-        :n "s-6"   #'+workspace/switch-to-5
-        :n "s-7"   #'+workspace/switch-to-6
-        :n "s-8"   #'+workspace/switch-to-7
-        :n "s-9"   #'+workspace/switch-to-8
-        :n "s-0"   #'+workspace/switch-to-final)))
+       :g "M-0"   #'+workspace/switch-to-final))
 
 ;;; :editor
 (map! (:when (modulep! :editor format)

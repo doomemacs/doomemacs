@@ -345,10 +345,12 @@ Continues comments if executed from a commented line."
         "s-s" #'save-buffer
         "s-x" #'execute-extended-command
         :v "s-x" #'kill-region
-        ;; Buffer-local font scaling
-        "C-s-=" #'doom/reset-font-size
-        "s-+"   #'doom/increase-font-size
-        "s--"   #'doom/decrease-font-size
+        "s-0" #'doom/reset-font-size
+        ;; Global font scaling
+        "s-=" #'doom/increase-font-size
+        "s-+" #'doom/increase-font-size
+        "s--" #'doom/decrease-font-size
+        "s-_" #'doom/decrease-font-size
         ;; Conventional text-editing keys & motions
         "s-a" #'mark-whole-buffer
         "s-/" (cmd! (save-excursion (comment-line 1)))
@@ -359,7 +361,19 @@ Continues comments if executed from a commented line."
         :gi  [s-right]     #'doom/forward-to-last-non-comment-or-eol
         :gi  [M-backspace] #'backward-kill-word
         :gi  [M-left]      #'backward-word
-        :gi  [M-right]     #'forward-word))
+        :gi  [M-right]     #'forward-word
+        (:when (modulep! :ui workspaces)
+         :g "s-t"   #'+workspace/new
+         :g "s-T"   #'+workspace/display
+         :n "s-1"   #'+workspace/switch-to-0
+         :n "s-2"   #'+workspace/switch-to-1
+         :n "s-3"   #'+workspace/switch-to-2
+         :n "s-4"   #'+workspace/switch-to-3
+         :n "s-5"   #'+workspace/switch-to-4
+         :n "s-6"   #'+workspace/switch-to-5
+         :n "s-7"   #'+workspace/switch-to-6
+         :n "s-8"   #'+workspace/switch-to-7
+         :n "s-9"   #'+workspace/switch-to-final)))
 
 
 ;;
