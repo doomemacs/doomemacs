@@ -250,30 +250,6 @@ stored in `persp-save-dir'.")
    :load-function (lambda (savelist &rest _)
                     (cl-destructuring-bind (buffer-name vars &rest _rest) (cdr savelist)
                       (magit-status (alist-get 'default-directory vars)))))
-  ;; Restore indirect buffers
-  (defvar +workspaces--indirect-buffers-to-restore nil)
-  (persp-def-buffer-save/load
-   :tag-symbol 'def-indirect-buffer
-   :predicate #'buffer-base-buffer
-   :save-function (lambda (buf tag vars)
-                    (list tag (buffer-name buf) vars
-                          (buffer-name (buffer-base-buffer buf))))
-   :load-function (lambda (savelist &rest _rest)
-                    (cl-destructuring-bind (buf-name _vars base-buf-name &rest _)
-                        (cdr savelist)
-                      (push (cons buf-name base-buf-name)
-                            +workspaces--indirect-buffers-to-restore)
-                      nil)))
-  (add-hook! 'persp-after-load-state-functions
-    (defun +workspaces-reload-indirect-buffers-h (&rest _)
-      (dolist (ibc +workspaces--indirect-buffers-to-restore)
-        (cl-destructuring-bind (buffer-name . base-buffer-name) ibc
-          (let ((base-buffer (get-buffer base-buffer-name)))
-            (when (buffer-live-p base-buffer)
-              (when (get-buffer buffer-name)
-                (setq buffer-name (generate-new-buffer-name buffer-name)))
-              (make-indirect-buffer base-buffer buffer-name t)))))
-      (setq +workspaces--indirect-buffers-to-restore nil)))
 
 ;;; tab-bar
   (add-hook! 'tab-bar-mode-hook

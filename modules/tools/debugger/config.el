@@ -35,7 +35,14 @@
   ;; Persist breakpoints after closing DAPE.
   (dape-breakpoint-global-mode +1)
   (add-hook 'dape-start-hook #'dape-breakpoint-load 0)
-  (add-hook 'dape-stopped-hook #'dape-breakpoint-save 'append))
+  (add-hook 'dape-stopped-hook #'dape-breakpoint-save 'append)
+
+  ;; HACK: Otherwise, if `dape-default-breakpoints-file's parent directory
+  ;;   doesn't exist, `dape-breakpoint-save' will throw an error.
+  ;; REVIEW: This should be upstreamed.
+  (defadvice! +debugger--make-directory-a (file)
+    :before #'dape-breakpoint-save
+    (make-directory (file-name-directory (or file dape-default-breakpoints-file)) t)))
 
 
 ;; DEPRECATED

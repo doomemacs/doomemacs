@@ -79,13 +79,34 @@
 
   (setq company-coq-disabled-features '(hello company-defaults spinner))
 
-  (if (modulep! :completion company)
-      (define-key coq-mode-map [remap company-complete-common]
-        #'company-indent-or-complete-common)
-    ;; `company-coq''s company defaults impose idle-completion on folks, so
-    ;; we'll set up company ourselves. See
-    ;; https://github.com/cpitclaudel/company-coq/issues/42
-    (add-to-list 'company-coq-disabled-features 'company))
+  (cond ((modulep! :completion corfu)
+         ;; HACK: company-coq activates `company-mode', though it's not really
+         ;;   needed when we're relying on Corfu, hence these hacks:
+         (add-hook! 'coq-mode-local-vars-hook
+           (defun +coq-init-capf-completion-h ()
+             (when (bound-and-true-p company-mode)
+               (company-mode -1))
+             (add-hook 'completion-at-point-functions
+                       (cape-company-to-capf 'company-coq)
+                       nil t)))
+         (defadvice! +coq--proof-goto-point-advice (&rest _)
+           :override #'company-coq--proof-goto-point-advice
+           (when (bound-and-true-p company-candidates)
+             (company-abort))))
+
+        ;; DEPRECATED: The company module is deprecated.
+        ((modulep! :completion company)
+         (define-key coq-mode-map [remap company-complete-common]
+                     #'company-indent-or-complete-common)))
+
+  ;; HACK: Doom treats the use of package.el and its API as user error unless
+  ;;   they've called `package-initialize' themselves (in which case, it is
+  ;;   assumed you know what you're doing).
+  (defadvice! +coq--noop-upgrade-elpa-packages-a (fn &rest args)
+    :override #'proof-upgrade-elpa-packages
+    (if (and (featurep 'package) package--initialized)
+        (apply fn args)
+      (user-error "Doom doesn't support this command (update packages through `package!' statements!)")))
 
   (map! :map coq-mode-map
         :localleader

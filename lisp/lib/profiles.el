@@ -50,13 +50,13 @@ Can be changed externally by setting $DOOMPROFILELOADFILE.")
 Can be changed externally by setting $DOOMPROFILELOADFILE.")
 
 (defvar doom-profile-env-file-name "init.env.el"
-  "TODO")
+  "The filename for a Doom profile's envvar file.")
 
 (defvar doom-profile-init-dir-name (format "init.%d.d" emacs-major-version)
   "The subdirectory of `doom-profile-dir'")
 
 (defvar doom-profile-rcfile ".doomprofile"
-  "TODO")
+  "The filename for local user configuration of a Doom profile.")
 
 ;;; Profile storage variables
 (defvar doom-profile-generators

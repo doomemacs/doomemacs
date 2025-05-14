@@ -123,10 +123,13 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
 (defun +beancount/balance (&optional all-accounts)
   "Display a balance report with bean-report (bean-report bal)."
   (interactive "P")
-  (let ((args (unless all-accounts '("-e" "Assets|Liabilities")))
-        compilation-read-command
+  (let (compilation-read-command
         current-prefix-arg)
-    (apply #'beancount--run "bean-report" buffer-file-name "balances" args)))
+    (beancount--run "bean-query"
+                    buffer-file-name
+                    (format "balances WHERE NOT close_date(account)%s"
+                            (if all-accounts
+                                "" (format " AND account ~ \"^(Assets|Liabilities)\"" ))))))
 
 ;;;###autoload
 (defun +beancount/clone-transaction ()

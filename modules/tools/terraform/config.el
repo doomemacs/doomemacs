@@ -3,13 +3,18 @@
 (defvar +terraform-runner (if (executable-find "terragrunt") "terragrunt" "terraform")
   "The default runner - terraform or terragrunt")
 
-(when (modulep! +lsp)
-  (add-hook 'terraform-mode-local-vars-hook #'lsp! 'append))
 
-(after! terraform-mode
+;;
+;;; Packages
+
+(use-package! terraform-mode
+  :defer t
+  :config
   (set-docsets! 'terraform-mode "Terraform")
-
   (setq-hook! 'terraform-mode-hook compile-command +terraform-runner)
+
+  (when (modulep! +lsp)
+    (add-hook 'terraform-mode-local-vars-hook #'lsp! 'append))
 
   (map! :map terraform-mode-map
         :localleader
@@ -18,7 +23,8 @@
         :desc "plan"     "p" (cmd! (compile (format "%s plan" +terraform-runner)))
         :desc "validate" "v" (cmd! (compile (format "%s validate" +terraform-runner)))
         :desc "fmt"      "f" (cmd! (compile (format "%s fmt" +terraform-runner)))
-        :desc "destroy"  "f" (cmd! (compile (format "%s destroy" +terraform-runner)))))
+        :desc "destroy"  "d" (cmd! (compile (format "%s destroy" +terraform-runner)))))
+
 
 (use-package! company-terraform
   :when (modulep! :completion company)

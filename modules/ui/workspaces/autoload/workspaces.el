@@ -583,7 +583,9 @@ This be hooked to `projectile-after-switch-project-hook'."
                                                           proot))))
                            (push (pop pre) post))
                          (unless pre ws))))
-                 (ws (or ws (+workspace-new pname))))
+                 (ws (or ws
+                         (+workspace-get pname t)
+                         (+workspace-new pname))))
             (set-persp-parameter ws-param proot ws)
             (+workspace-switch pname)
             (with-current-buffer (doom-fallback-buffer)

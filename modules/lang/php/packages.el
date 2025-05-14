@@ -1,14 +1,14 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/php/packages.el
 
-(package! psysh :pin "ae15a36301a49e5ae03118ff815a6a511603ae13")
+(package! psysh :pin "223bf55975d148f65f66bb8980c14c1230f067ff")
 (package! php-extras
   :recipe (:host github :repo "arnested/php-extras")
   :pin "d410c5af663c30c01d461ac476d1cbfbacb49367")
-(package! php-mode :pin "5b6cc1c068ba759dcf30067ad1e048b3693a40d7")
+(package! php-mode :pin "462b62248f7b3c6550ceea1b44760ddd951ab7ab")
 (package! php-refactor-mode :pin "7a794b0618df2882b1bd586fdd698dba0bc5130d")
 (package! phpunit :pin "650a50898de1fa4eeb47360b12aeb1126b2448c2")
-(package! composer :pin "6c7e19256ff964546cea682edd21446c465a663c")
+(package! composer :pin "eba6b953a4a68bc22b957d59eb3159c6d5cff39d")
 
 (when (modulep! +hack)
   (package! hack-mode

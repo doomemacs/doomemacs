@@ -10,4 +10,4 @@
     :recipe (:host github :repo "emacsmirror/undo-fu-session")
     :pin "d90d42ddba8fa42ef5dc109196545caeabb42b75")
   (when (> emacs-major-version 27)  ; unsupported in 27
-    (package! vundo :pin "c32481ab489e769324300d7b1a4781cd7091fa65")))
+    (package! vundo :pin "5a666b34e4f609cca77b4a07b97b38581deb7e7e")))

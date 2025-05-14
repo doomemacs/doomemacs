@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/julia/packages.el
 
-(package! julia-mode :pin "0f4d74f9049df28e2f522733141bfc5b7a0f69a3")
+(package! julia-mode :pin "5c940c4ba357d8361534f11169f3d40b2d7833fc")
 (package! julia-repl :pin "317d56021889a336b4be241604ba71e46dc80581")
 
 (when (modulep! +lsp)

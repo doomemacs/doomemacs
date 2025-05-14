@@ -48,7 +48,7 @@
 
 ;; `cider-mode' is used instead of the typical `cider' package due to the main
 ;; library being loaded only when is absolutely needed, which is too late for
-;; our purposes
+;; reconfiguration in many cases.
 (use-package! cider-mode
   ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
   :hook (clojure-mode-local-vars . cider-mode)
@@ -141,12 +141,12 @@
              (?l (?L "locals" "Locals"))))
 
           ;; Prevent evil-snipe from overriding evil-collection
-          (add-hook! cider--debug-mode
-                     'turn-off-evil-snipe-mode
-                     'turn-off-evil-snipe-override-mode))
+          (add-hook! 'cider--debug-mode-hook
+                     #'turn-off-evil-snipe-mode
+                     #'turn-off-evil-snipe-override-mode))
 
       ;; When in cider-debug-mode, override evil keys to not interfere with debug keys
-      (add-hook! cider--debug-mode
+      (add-hook! 'cider--debug-mode-hook
         (defun +clojure--cider-setup-debug ()
           "Setup cider debug to override evil keys cleanly"
           (evil-make-overriding-map cider--debug-mode-map 'normal)
@@ -175,17 +175,17 @@
                (label (if connected "Cider connected" "Cider disconnected")))
           (+clojure--cider-set-modeline face label))))
 
-    (add-hook! '(cider-before-eval-hook)
+    (add-hook! 'cider-before-eval-hook
       (defun +clojure--cider-before-eval-hook-update-modeline ()
         "Update modeline with cider state before eval."
         (+clojure--cider-set-modeline 'warning "Cider evaluating")))
 
-    (add-hook! '(cider-after-eval-done-hook)
+    (add-hook! 'cider-after-eval-done-hook
       (defun +clojure--cider-after-eval-done-hook-update-modeline ()
         "Update modeline with cider state after eval."
         (+clojure--cider-set-modeline 'success "Cider syncronized")))
 
-    (add-hook! '(cider-file-loaded-hook)
+    (add-hook! 'cider-file-loaded-hook
       (defun +clojure--cider-file-loaded-update-modeline ()
         "Update modeline with cider file loaded state."
         (+clojure--cider-set-modeline 'success "Cider syncronized"))))

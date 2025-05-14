@@ -1,0 +1,84 @@
+#+title:     :tools llm
+#+subtitle:  When I said you needed friends, I didn't mean...
+#+created:   May 06, 2025
+#+since:     25.06.0
+
+* Description :unfold:
+This module integrates LLMs into Emacs for analyzing or generating code and
+text, powered by the [[https://github.com/karthink/gptel][gptel]] package. Out of the box, ChatGPT is the default
+backend, but it can talk to other LLMs given [[*Configuration][some configuration]].
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:gptel]]
+- [[doom-package:gptel-quick]]
+- [[doom-package:gptel-magit]] if [[doom-module::tools magit]]
+
+** Hacks
+#+begin_quote
+󱌣 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+An OpenAI API key, paid account, and enough credits to use it is required (if
+you use the OpenAI backend). To use this module with other LLMs, visit [[*Configuration][the
+Configuration section]].
+
+* Usage
+#+begin_quote
+󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+Check out gptel's [[https://github.com/karthink/gptel?tab=readme-ov-file#usage][usage documentation]] for details on how to use the package.
+
+Doom exposes these keybinds for gptel's commands:
+
+| Keybind        | Command                      | Description                                      |
+|----------------+------------------------------+--------------------------------------------------|
+| [[kbd:][<leader> o l a]] | [[cmd:gptel-add]]                | Add text to LLM context                          |
+| [[kbd:][<leader> o l e]] | [[cmd:gptel-quick]]              | Explain item or selection                        |
+| [[kbd:][<leader> o l f]] | [[cmd:gptel-add-file]]           | Add file to LLM context                          |
+| [[kbd:][<leader> o l l]] | [[cmd:gptel]]                    | Open gptel chat buffer                           |
+| [[kbd:][<leader> o l s]] | [[cmd:gptel-send]]               | Send text before ~(point)~ (or selection)          |
+| [[kbd:][<leader> o l m]] | [[cmd:gptel-menu]]               | Open configuration menu for gptel                |
+| [[kbd:][<leader> o l r]] | [[cmd:gptel-rewrite]]            | Rewrite, refactor, or change the selected region |
+| [[kbd:][<leader> o l o]] | [[cmd:gptel-org-set-topic]]      | Limit context to Org heading                     |
+| [[kbd:][<leader> o l O]] | [[cmd:gptel-org-set-properties]] | Store gptel config as org properties             |
+
+This module also adds a "pre-generated message" option to magit-commit's
+transient menu. Alternatively, press [[kbd:][M-g]] to generate a message in a commit
+buffer.
+
+* Configuration
+#+begin_quote
+󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+To use this module with only ChatGPT, you only need to set ~gptel-api-key~ to your
+OpenAI key. For other LLMs you'll need to call one of the ~gptel-make-*~ functions
+in an ~(after! gptel ...)~ block. Examples of these calls can be found [[https://github.com/karthink/gptel?tab=readme-ov-file#other-llm-backends][in gptel's
+readme]].
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

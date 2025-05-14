@@ -11,7 +11,7 @@
       :pin "fcb99e5efcf31db05f236f02eaa575986a57172d")))
 
 (when (modulep! +fennel)
-  (package! fennel-mode :pin "811f39de12216646bac8f370325288e7c9fc3fd2"))
+  (package! fennel-mode :pin "df8e83d6e2bb1e447dc1b426348883f3dc87cd35"))
 
 (when (modulep! :completion company)
   (package! company-lua :pin "29f6819de4d691e5fd0b62893a9f4fbc1c6fcb52"))

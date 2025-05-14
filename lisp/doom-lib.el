@@ -945,12 +945,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   (declare (indent 1))
   (macroexp-progn
    (cl-loop for (var val hook fn) in (doom--setq-hook-fns hooks var-vals)
-            collect `(defun ,fn (&rest _)
-                       ,(format "%s = %s" var
-                                (let ((print-level nil)
-                                      (print-length nil))
-                                  (prin1-to-string val)))
-                       (setq-local ,var ,val))
+            collect `(defun ,fn (&rest _) (setq-local ,var ,val))
             collect `(add-hook ',hook #',fn -90))))
 
 (defmacro unsetq-hook! (hooks &rest vars)
@@ -1077,7 +1072,7 @@ All valid contexts:
 (put 'doom-context 'risky-local-variable t)
 
 (defun doom-context-p (contexts)
-  "Return t if all CONTEXTS are active, nil otherwise.
+  "Return non-nil if all CONTEXTS are active.
 
 See `doom-context' for possible values for CONTEXT."
   (declare (side-effect-free t))
@@ -1089,12 +1084,12 @@ See `doom-context' for possible values for CONTEXT."
           (throw 'result nil))))))
 
 (defun doom-context-valid-p (context)
-  "Return non-nil if CONTEXT is a valid `doom-context'."
+  "Return non-nil if CONTEXT (a symbol) is a valid `doom-context'."
   (declare (pure t) (side-effect-free error-free))
   (memq context (get 'doom-context 'valid)))
 
 (defun doom-context-push (contexts)
-  "Add CONTEXTS to `doom-context', if not present.
+  "Add CONTEXTS (a symbol or list thereof) to `doom-context', if not present.
 
 Return list of successfully added contexts. Throws a `doom-context-error' if
 CONTEXTS contains invalid contexts."
@@ -1115,7 +1110,7 @@ CONTEXTS contains invalid contexts."
           added)))))
 
 (defun doom-context-pop (contexts)
-  "Remove CONTEXTS from `doom-context'.
+  "Remove CONTEXTS (a symbol or list thereof) from `doom-context'.
 
 Return list of removed contexts if successful. Throws `doom-context-error' if
 one of CONTEXTS isn't active."

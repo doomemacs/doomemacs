@@ -12,4 +12,4 @@
 (when (modulep! +unity)
   (package! shader-mode :pin "fe5a1982ba69e4a98b834141a46a1908f132df15"))
 (when (modulep! +dotnet)
-  (package! sharper :pin "496e90e337cb09329d85a6d171c0953a85e918fe"))
+  (package! sharper :pin "5049795848609e6508e4c9718a9f97ee481bf36c"))

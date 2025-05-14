@@ -12,13 +12,13 @@
 (when (modulep! +lsp)
   (unless (modulep! :tools lsp +eglot)
     (when (modulep! +pyright)
-      (package! lsp-pyright :pin "b4cee81af46274303f2cb9b75de9fc8ddcba04d9"))))
+      (package! lsp-pyright :pin "73377169beff8fe22cc6d52d65099db88bf49679"))))
 
 ;; Environment management
 (package! pipenv :pin "3af159749824c03f59176aff7f66ddd6a5785a10")
 (package! pyvenv :pin "31ea715f2164dd611e7fc77b26390ef3ca93509b")
 (when (modulep! +pyenv)
-  (package! pyenv-mode :pin "7faed57eb7709cc98838ee4bea2eea1fa3e7589f"))
+  (package! pyenv-mode :pin "ba1a8c7bd7d03c006f8411c856990c083c814c9c"))
 (when (modulep! +conda)
   (package! conda :pin "05de0c8f0cf336d90c044446aaa066ee13001b83"))
 (when (modulep! +poetry)
