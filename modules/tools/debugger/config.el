@@ -40,7 +40,7 @@
   ;; HACK: Otherwise, if `dape-default-breakpoints-file's parent directory
   ;;   doesn't exist, `dape-breakpoint-save' will throw an error.
   ;; REVIEW: This should be upstreamed.
-  (defadvice! +debugger--make-directory-a (file)
+  (defadvice! +debugger--make-directory-a (&optional file)
     :before #'dape-breakpoint-save
     (make-directory (file-name-directory (or file dape-default-breakpoints-file)) t)))
 
