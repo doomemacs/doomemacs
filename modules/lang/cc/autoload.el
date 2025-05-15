@@ -54,32 +54,34 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
 This is meant to replace `c-or-c++-mode' (introduced in Emacs 26.1), which
 doesn't support specification of the fallback mode and whose heuristics are
 simpler."
-  (let ((base (file-name-sans-extension (buffer-file-name (buffer-base-buffer)))))
-    (cond ((file-exists-p! (or (concat base ".cpp")
-                               (concat base ".cc")))
-           (c++-mode))
-          ((or (file-exists-p! (or (concat base ".m")
-                                   (concat base ".mm")))
-               (+cc--re-search-for
-                (concat "^[ \t\r]*\\(?:"
-                        "@\\(?:class\\|interface\\|property\\|end\\)\\_>"
-                        "\\|#import +<Foundation/Foundation.h>"
-                        "\\|[-+] ([a-zA-Z0-9_]+)"
+  (funcall
+   (major-mode-remap
+    (let ((base (file-name-sans-extension (buffer-file-name (buffer-base-buffer)))))
+      (cond ((file-exists-p! (or (concat base ".cpp")
+                                 (concat base ".cc")))
+             'c++-mode)
+            ((or (file-exists-p! (or (concat base ".m")
+                                     (concat base ".mm")))
+                 (+cc--re-search-for
+                  (concat "^[ \t\r]*\\(?:"
+                          "@\\(?:class\\|interface\\|property\\|end\\)\\_>"
+                          "\\|#import +<Foundation/Foundation.h>"
+                          "\\|[-+] ([a-zA-Z0-9_]+)"
+                          "\\)")))
+             'objc-mode)
+            ((+cc--re-search-for
+              (let ((id "[a-zA-Z0-9_]+") (ws "[ \t\r]+") (ws-maybe "[ \t\r]*"))
+                (concat "^" ws-maybe "\\(?:"
+                        "using" ws "\\(?:namespace" ws "std;\\|std::\\)"
+                        "\\|" "namespace" "\\(?:" ws id "\\)?" ws-maybe "{"
+                        "\\|" "class"     ws id ws-maybe "[:{\n]"
+                        "\\|" "template"  ws-maybe "<.*>"
+                        "\\|" "#include"  ws-maybe "<\\(?:string\\|iostream\\|map\\)>"
                         "\\)")))
-           (objc-mode))
-          ((+cc--re-search-for
-            (let ((id "[a-zA-Z0-9_]+") (ws "[ \t\r]+") (ws-maybe "[ \t\r]*"))
-              (concat "^" ws-maybe "\\(?:"
-                      "using" ws "\\(?:namespace" ws "std;\\|std::\\)"
-                      "\\|" "namespace" "\\(?:" ws id "\\)?" ws-maybe "{"
-                      "\\|" "class"     ws id ws-maybe "[:{\n]"
-                      "\\|" "template"  ws-maybe "<.*>"
-                      "\\|" "#include"  ws-maybe "<\\(?:string\\|iostream\\|map\\)>"
-                      "\\)")))
-           (c++-mode))
-          ((functionp +cc-default-header-file-mode)
-           (funcall +cc-default-header-file-mode))
-          ((c-mode)))))
+             'c++-mode)
+            ((functionp +cc-default-header-file-mode)
+             +cc-default-header-file-mode)
+            ('c-mode))))))
 
 (defun +cc-resolve-include-paths ()
   (cl-loop with path = (or buffer-file-name default-directory)
@@ -136,15 +138,6 @@ the children of class at point."
 
 ;;
 ;; Hooks
-
-;;;###autoload
-(defun +cc-fontify-constants-h ()
-  "Better fontification for preprocessor constants"
-  (when (memq major-mode '(c-mode c++-mode))
-    (font-lock-add-keywords
-     nil '(("\\<[A-Z]*_[0-9A-Z_]+\\>" . font-lock-constant-face)
-           ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face))
-     t)))
 
 (defvar +cc--project-includes-alist nil)
 ;;;###autoload
