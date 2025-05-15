@@ -24,8 +24,8 @@ This module adds Lua support to Doom Emacs.
   (supports EmmyLua, lua-language-server, and lua-lsp).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]]. Has support for both Lua and
-  Fennel.
+  editing. Requires Emacs 30.1+ and [[doom-module::tools tree-sitter]]. Only
+  supports Lua at the moment.
 - +moonscript ::
   Enable support for the Moonscript language.
 

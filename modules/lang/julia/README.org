@@ -19,7 +19,7 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
   langserver (supports LanguageServer.jl).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires Emacs >=29 and [[doom-module::tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 - +snail ::
   Use Snail, a development environment and REPL interaction package for Julia in
   the spirit of Common Lisp’s SLIME and Clojure’s CIDER. It enables convenient
