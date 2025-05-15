@@ -41,7 +41,7 @@ This is ignored by ccls.")
   (set-electric! '(c-mode c++-mode objc-mode java-mode
                    c-ts-mode c++-ts-mode java-ts-mode)
                  :chars '(?\n ?\} ?\{))
-  (set-rotate-patterns! 'c++-mode
+  (set-rotate-patterns! '(c++-mode c++-ts-mode)
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
   (set-ligatures! '(c-mode c-ts-mode c++-mode c++-ts-mode)
@@ -70,7 +70,9 @@ This is ignored by ccls.")
   (dolist (mode '((c++-mode . c++-ts-mode)
                   (c-mode . c-ts-mode)
                   (c-or-c++-mode . c-or-c++-ts-mode)))
-    (cl-callf2 delete mode major-mode-remap-defaults))
+    (cl-callf2 delete mode major-mode-remap-defaults)
+    (cl-callf2 delete (list (car mode)) major-mode-remap-defaults)
+    (cl-callf2 rassq-delete-all (cdr mode) auto-mode-alist))
 
   ;; HACK Suppress 'Args out of range' error in when multiple modifications are
   ;;      performed at once in a `c++-mode' buffer, e.g. with `iedit' or
@@ -142,7 +144,7 @@ This is ignored by ccls.")
 (use-package! glsl-mode
   :defer t
   :init
-  (when (modulep! +tree-sitter) ; 29+ only
+  (when (modulep! +tree-sitter)
     (set-tree-sitter! 'glsl-mode 'glsl-ts-mode
       '((glsl :url "https://github.com/tree-sitter-grammars/tree-sitter-glsl"))))
   :config
