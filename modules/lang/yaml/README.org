@@ -11,8 +11,8 @@ This module provides support for the [[https://yaml.org/][YAML file format]] to 
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~yaml-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports [[https://github.com/redhat-developer/yaml-language-server][yaml-language-server]]).
+  Enable LSP support for ~yaml-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (supports [[https://github.com/redhat-developer/yaml-language-server][yaml-language-server]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
