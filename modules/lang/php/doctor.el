@@ -9,6 +9,10 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(assert! (or (not (modulep! +tree-sitter))
+             (fboundp 'php-ts-mode))
+         "Can't find `php-ts-mode'; Emacs 30.1+ is required")
+
 (unless (executable-find "php")
   (warn! "Couldn't find php in your PATH"))
 
