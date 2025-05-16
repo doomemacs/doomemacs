@@ -127,9 +127,12 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
         current-prefix-arg)
     (beancount--run "bean-query"
                     buffer-file-name
-                    (format "balances WHERE NOT close_date(account)%s"
+                    (format (concat "SELECT account, sum(position) as balance %s "
+                                    "GROUP BY account "
+                                    "HAVING not empty(sum(position)) "
+                                    "ORDER BY account")
                             (if all-accounts
-                                "" (format " AND account ~ \"^(Assets|Liabilities)\"" ))))))
+                                "" (format "WHERE account ~ \"^(Assets|Liabilities)\"" ))))))
 
 ;;;###autoload
 (defun +beancount/clone-transaction ()
