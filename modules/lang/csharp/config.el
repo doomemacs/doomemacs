@@ -50,6 +50,14 @@ on for `csharp-mode' font lock breaks after an interpolated string
 or terminating simple string."
     :around #'csharp-disable-clear-string-fences
     (unless (eq major-mode 'csharp-mode)
+      (apply fn args)))
+
+  ;; HACK: `csharp-ts-mode' changes `auto-mode-alist' every time the mode is
+  ;;   activated, which runs the risk of overwriting user (or Doom) entries.
+  ;; REVIEW: Should be addressed upstream.
+  (defadvice! +csharp--undo-ts-side-effects-a (fn &rest args)
+    :around #'csharp-ts-mode
+    (let (auto-mode-alist)
       (apply fn args))))
 
 
