@@ -176,22 +176,37 @@ Use `winner-undo' to undo this. Alternatively, use
     (while (ignore-errors (windmove-down)) (delete-window))))
 
 ;;;###autoload
-(defun doom/set-frame-opacity (opacity)
-  "Interactively change the current frame's opacity.
+(defun doom/set-frame-opacity (opacity &optional all-frames?)
+  "Interactively change the current and all new frames' opacity.
 
-OPACITY is an integer between 0 to 100, inclusive."
+OPACITY is an integer between 0 to 100, inclusive. If nil, prompt user
+for value and if it should be applied to future frames.
+
+ALL-FRAMES? is an optional that if non-nil defines sets OPACITY to all
+future frames."
   (interactive '(interactive))
+  (setq prompt-user? (eq opacity 'interactive))
   (let* ((parameter
           (if (eq window-system 'pgtk)
               'alpha-background
             'alpha))
          (opacity
-          (if (eq opacity 'interactive)
+          (if prompt-user?
               (read-number "Opacity (0-100): "
                            (or (frame-parameter nil parameter)
                                100))
             opacity)))
-    (set-frame-parameter nil parameter opacity)))
+
+    ;; current frame
+    (set-frame-parameter nil parameter opacity)
+
+    (if prompt-user?
+        (setq all-frames? (y-or-n-p (format "Apply opacity %d to all future frames? " opacity))))
+
+    ;; future frames
+    (if all-frames?
+        (setf (alist-get parameter default-frame-alist) opacity)
+      (modify-all-frames-parameters `((,parameter . ,opacity))))))
 
 (defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
