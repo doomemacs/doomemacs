@@ -26,9 +26,12 @@
     :around #'beancount--fava-filter
     (funcall fn process (ansi-color-filter-apply output)))
 
-  (defadvice! +beancount--widen-before-flymake-bean-check--run-a (fn &rest args)
-    :around #'flymake-bean-check--run
-    (save-restriction (widen) (apply fn args)))
+  ;; HACK: Widens the buffer so flymake never operates on partial buffer
+  ;;   contents. Also replaces any relative file paths in include and document
+  ;;   directives with an absolute path, so bean-check doesn't throw false
+  ;;   positives due to flymake-bean's implementation.
+  (advice-add #'flymake-bean-check--run :override #'+beancount--flymake-bean-check--run-a)
+
 
   (map! :map beancount-mode-map
         :m "[[" #'+beancount/previous-transaction
