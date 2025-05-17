@@ -26,6 +26,10 @@
     :around #'beancount--fava-filter
     (funcall fn process (ansi-color-filter-apply output)))
 
+  (defadvice! +beancount--widen-before-flymake-bean-check--run-a (fn &rest args)
+    :around #'flymake-bean-check--run
+    (save-restriction (widen) (apply fn args)))
+
   (map! :map beancount-mode-map
         :m "[[" #'+beancount/previous-transaction
         :m "]]" #'+beancount/next-transaction
