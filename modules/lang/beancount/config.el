@@ -1,5 +1,23 @@
 ;;; lang/beancount/config.el -*- lexical-binding: t; -*-
 
+(defvar +beancount-files 'auto
+  "A list of beancount files to factor into completion & linting.
+
+Order is important!
+
+Can also be set to `auto' to automatically (and recursively) crawl include
+statements to build this file list dynamically (which is cached on a per-buffer
+basis). The first time this happens it can be very slow in large file
+hierarchies or with massive beancount files.
+
+If set to `nil', only the current buffer is considered (the original
+behavior).")
+(put '+beancount-files 'safe-local-variable #'stringp)
+
+
+;;
+;;; Packages
+
 (use-package! beancount
   :mode ("\\.bean\\'" . beancount-mode)
   :hook (beancount-mode . outline-minor-mode)
@@ -47,6 +65,21 @@
   ;; REVIEW: PR features 1 and 2 upstream! 3 needs discussing.
   (advice-add #'flymake-bean-check--run :override #'+beancount--flymake-bean-check--run-a)
 
+  ;; HACK: This enhances completion for beancount-mode in the following ways:
+  ;;
+  ;;   1. Adds completion for:
+  ;;      - Event directives and values,
+  ;;      - The payee field in transactions,
+  ;;      - Currencies and commodities,
+  ;;   2. Fixes completion for #tag and ^links not working at the end of a
+  ;;      transaction's heading.
+  ;;   3. Completion now scans not only the current file, but any included files
+  ;;      (recursively) for candidates. See `+beancount-files' to configure
+  ;;      this. This applies not only to completion-at-point functions, but also
+  ;;      interactive commands like `beancount-insert-account'.
+  ;; REVIEW: PR this upstream!
+  (advice-add #'beancount-completion-at-point :override #'+beancount-completion-at-point-a)
+  (advice-add #'beancount-get-account-names :override #'+beancount-get-account-names-a)
 
   (map! :map beancount-mode-map
         :m "[[" #'+beancount/previous-transaction
