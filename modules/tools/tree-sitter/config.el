@@ -54,8 +54,7 @@
                  (vue "https://github.com/tree-sitter-grammars/tree-sitter-vue" nil nil nil nil)
                  (wast "https://github.com/wasm-lsp/tree-sitter-wasm" nil "wast/src" nil nil)
                  (wat "https://github.com/wasm-lsp/tree-sitter-wasm" nil "wat/src" nil nil)
-                 (wgsl "https://github.com/mehmetoguzderin/tree-sitter-wgsl" nil nil nil nil)
-                 (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" nil nil nil nil)))
+                 (wgsl "https://github.com/mehmetoguzderin/tree-sitter-wgsl" nil nil nil nil)))
     (cl-pushnew map treesit-language-source-alist :test #'eq :key #'car)))
 
 
