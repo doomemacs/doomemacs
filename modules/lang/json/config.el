@@ -2,15 +2,11 @@
 
 (use-package! json-mode
   :mode "\\.js\\(?:on\\|[hl]int\\(?:rc\\)?\\)\\'"
-  :init
-  (when (modulep! +lsp)
-    (add-hook 'json-mode-local-vars-hook #'lsp! 'append))
-  (when (modulep! +tree-sitter)
-    (add-hook! '(json-mode-local-vars-hook
-                 jsonc-mode-local-vars-hook)
-               :append #'tree-sitter!))
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?}))
+
+  (when (modulep! +lsp)
+    (add-hook 'json-mode-local-vars-hook #'lsp! 'append))
 
   (map! :after json-mode
         :map json-mode-map
@@ -23,6 +19,21 @@
         "-" #'json-decrement-number-at-point
         "f" #'json-mode-beautify))
 
+
+(use-package! json-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'json-ts-mode) ; 29.1+ only
+  :defer t
+  :init
+  (set-tree-sitter! 'json-mode 'json-ts-mode
+    '((json :url "https://github.com/tree-sitter/tree-sitter-json"
+            :rev "v0.24.8")))
+  :config
+  ;; HACK: Rely on `major-mode-remap-defaults'.
+  (cl-callf2 assq-delete-all 'json-ts-mode auto-mode-alist)
+
+  (when (modulep! +lsp)
+    (add-hook 'json-ts-mode-local-vars-hook #'lsp! 'append)))
 
 
 (use-package! counsel-jq

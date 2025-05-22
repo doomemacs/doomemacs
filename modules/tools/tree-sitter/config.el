@@ -31,7 +31,6 @@
                  (html "https://github.com/tree-sitter/tree-sitter-html" nil nil nil nil)
                  (java "https://github.com/tree-sitter/tree-sitter-java" nil nil nil nil)
                  (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src" nil nil)
-                 (json "https://github.com/tree-sitter/tree-sitter-json" nil nil nil nil)
                  (latex "https://github.com/latex-lsp/tree-sitter-latex" nil nil nil nil)
                  (make "https://github.com/tree-sitter-grammars/tree-sitter-make" nil nil nil nil)
                  (nix "https://github.com/nix-community/tree-sitter-nix" nil nil nil nil)
