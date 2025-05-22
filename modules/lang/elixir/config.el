@@ -8,14 +8,8 @@
 ;;
 ;;; Packages
 
-(use-package! elixir-mode
-  :defer t
-  :init
-  ;; Disable default smartparens config. There are too many pairs; we only want
-  ;; a subset of them (defined below).
-  (provide 'smartparens-elixir)
-  :config
-  (set-ligatures! 'elixir-mode
+(defun +elixir-common-config (mode)
+  (set-ligatures! mode
     ;; Functional
     :def "def"
     :lambda "fn"
@@ -29,7 +23,7 @@
     :return "return" :yield "use")
 
   ;; ...and only complete the basics
-  (sp-with-modes 'elixir-mode
+  (sp-with-modes mode
     (sp-local-pair "do" "end"
                    :when '(("RET" "<evil-ret>"))
                    :unless '(sp-in-comment-p sp-in-string-p)
@@ -37,21 +31,50 @@
     (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
-  (when (modulep! +lsp +tree-sitter)
-    (add-hook 'elixir-ts-mode-local-vars-hook #'lsp! 'append))
+  (when (modulep! +lsp)
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append)))
+
+
+(use-package! elixir-mode
+  :defer t
+  :init
+  ;; Disable default smartparens config. There are too many pairs; we only want
+  ;; a subset of them (defined below).
+  (provide 'smartparens-elixir)
 
   (when (modulep! +lsp)
-    (add-hook 'elixir-mode-local-vars-hook #'lsp! 'append)
     (after! lsp-mode
       (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]_build\\'")))
-
-  (when (modulep! +tree-sitter)
-    (add-hook 'elixir-mode-local-vars-hook #'tree-sitter! 'append))
+  :config
+  (+elixir-common-config 'elixir-mode)
 
   (after! highlight-numbers
     (puthash 'elixir-mode
              "\\_<-?[[:digit:]]+\\(?:_[[:digit:]]\\{3\\}\\)*\\_>"
              highlight-numbers-modelist)))
+
+
+(use-package! elixir-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'elixir-ts-mode) ; 30.1+ only
+  :defer t
+  :init
+  (set-tree-sitter! 'elixir-mode 'elixir-ts-mode
+    '((elixir :url "https://github.com/elixir-lang/tree-sitter-elixir"
+              :rev "v0.3.3")
+      (heex :url "https://github.com/phoenixframework/tree-sitter-heex"
+            :rev "v0.7.0")))
+  :config
+  ;; HACK: Rely on `major-mode-remap-defaults'.
+  (cl-callf2 rassq-delete-all 'php-ts-mode auto-mode-alist)
+
+  (+elixir-common-config 'elixir-ts-mode))
+
+
+(use-package! heex-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'heex-ts-mode) ; 30.1+ only
+  :mode "\\.[hl]?eex\\'")
 
 
 (use-package! flycheck-credo
