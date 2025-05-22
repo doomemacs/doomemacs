@@ -42,7 +42,6 @@
                  (proto "https://github.com/mitchellh/tree-sitter-proto" nil nil nil nil)
                  (r "https://github.com/r-lib/tree-sitter-r" nil nil nil nil)
                  (rust "https://github.com/tree-sitter/tree-sitter-rust" nil nil nil nil)
-                 (scala "https://github.com/tree-sitter/tree-sitter-scala" nil nil nil nil)
                  (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages" nil nil nil)
                  (surface "https://github.com/connorlay/tree-sitter-surface" nil nil nil nil)
                  (toml "https://github.com/tree-sitter/tree-sitter-toml" nil nil nil nil)

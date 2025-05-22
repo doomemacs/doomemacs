@@ -30,11 +30,12 @@ Through the power of [[https://scalameta.org/metals/docs/editors/overview.html][
   (supports metals).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
+  editing. Requires Emacs 29.1+ and [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:sbt-mode]]
 - [[doom-package:scala-mode]]
+- [[doom-package:scala-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:lsp-metals]] if [[doom-module:+lsp]]
 
 ** Hacks

@@ -8,6 +8,10 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(assert! (or (not (modulep! +tree-sitter))
+             (version< emacs-version "29.1"))
+         "Emacs 29.1+ is required for tree-sitter support")
+
 (if (and (modulep! +lsp)
          (not (executable-find "metals")))
     (warn! "metals isn't installed"))
