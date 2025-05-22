@@ -134,23 +134,54 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
                             (if all-accounts
                                 "" (format "WHERE account ~ \"^(Assets|Liabilities)\"" ))))))
 
-;;;###autoload
-(defun +beancount/clone-transaction ()
-  "Clones a transaction from (and to the bottom of) the current ledger buffer.
+(defun +beancount-transaction-at-point ()
+  (let ((transaction
+         (buffer-substring-no-properties
+          (save-excursion
+            (beancount-goto-transaction-begin)
+            (re-search-forward " " nil t)
+            (match-beginning 0))
+          (save-excursion
+            (beancount-goto-transaction-end)
+            (point)))))
+    (goto-char (point-max))
+    (delete-blank-lines)
+    (beancount-insert-date)
+    transaction))
 
-Updates the date to today."
-  (interactive)
+;;;###autoload
+(defun +beancount/clone-transaction (&optional arg)
+  "Clones a transaction from this or included file after transaction at point.
+
+Updates the date to today. If the prefix ARG is given, clones to the bottom of
+the current ledger buffer instead."
+  (interactive "P")
   (save-restriction
     (widen)
-    (when-let (transaction
-               (completing-read
-                "Clone transaction: "
-                (string-lines (buffer-string))
-                (doom-partial #'string-match-p "^[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} [*!] ")
-                t))
-      (goto-char (point-min))
-      (re-search-forward (concat "^" (regexp-quote transaction)))
-      (+beancount/clone-this-transaction t))))
+    (when-let*
+        ((transaction
+          (completing-read
+           "Clone transaction: "
+           (+beancount-completion-table beancount-transaction-regexp 0 'transactions #'string>)
+           nil t)))
+      (if-let* ((tr (gethash transaction (alist-get 'transactions +beancount--completion-cache))))
+          (cl-destructuring-bind (&key file point) tr
+            (if (not arg)
+                (when (beancount-inside-transaction-p)
+                  (beancount-goto-transaction-end))
+              (goto-char (point-max))
+              (when (save-excursion
+                      (skip-chars-backward " \t" (pos-bol))
+                      (not (bolp)))
+                (insert "\n")))
+            (save-excursion
+              (beancount-insert-date)
+              (insert
+               (with-temp-buffer
+                 (insert-file-contents file)
+                 (goto-char point)
+                 (+beancount-transaction-at-point)))))
+        'none))))
 
 ;;;###autoload
 (defun +beancount/clone-this-transaction (&optional arg)
@@ -158,23 +189,11 @@ Updates the date to today."
 
 Updates the date to today."
   (interactive "P")
-  (if (and (not arg) (looking-at-p "^$"))
+  (if (or arg (not (beancount-inside-transaction-p)))
       (call-interactively #'+beancount/clone-transaction)
     (save-restriction
       (widen)
-      (let ((transaction
-             (buffer-substring-no-properties
-              (save-excursion
-                (beancount-goto-transaction-begin)
-                (re-search-forward " " nil t)
-                (point))
-              (save-excursion
-                (beancount-goto-transaction-end)
-                (point)))))
-        (goto-char (point-max))
-        (delete-blank-lines)
-        (beancount-insert-date)
-        (insert transaction)))))
+      (insert (+beancount-transaction-at-point)))))
 
 ;;;###autoload
 (defun +beancount/occur (account &optional disable?)
