@@ -1,6 +1,7 @@
 ;;; lang/beancount/config.el -*- lexical-binding: t; -*-
 
 (use-package! beancount
+  :mode ("\\.bean\\'" . beancount-mode)
   :hook (beancount-mode . outline-minor-mode)
   :hook (beancount-mode . flymake-bean-check-enable) ; FIXME: add proper flycheck support
   :init
