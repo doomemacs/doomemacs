@@ -13,10 +13,14 @@ This module adds [[https://kotlinlang.org/][Kotlin]] support to Doom Emacs.
 - +lsp ::
   Enable LSP support for ~kotlin-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/emacs-lsp/lsp-mode][kotlin-language-server]]).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires Emacs 29.1+ and [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:flycheck-kotlin]] if [[doom-module::checkers syntax]]
 - [[doom-package:kotlin-mode]]
+- [[doom-package:kotlin-ts-mode]]
 
 ** Hacks
 /No hacks documented for this module./

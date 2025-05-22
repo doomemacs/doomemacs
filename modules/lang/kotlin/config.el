@@ -1,10 +1,11 @@
 ;;; lang/kotlin/config.el -*- lexical-binding: t; -*-
 
 (after! kotlin-mode
-  (when (modulep! +lsp)
-    (add-hook 'kotlin-mode-local-vars-hook #'lsp! 'append))
   (set-docsets! 'kotlin-mode "Kotlin")
   (set-repl-handler! 'kotlin-mode #'kotlin-repl)
+
+  (when (modulep! +lsp)
+    (add-hook 'kotlin-mode-local-vars-hook #'lsp! 'append))
 
   (map! :map kotlin-mode-map
         :localleader
@@ -17,3 +18,15 @@
 (use-package! flycheck-kotlin
   :when (modulep! :checkers syntax -flymake)
   :hook (kotlin-mode . flycheck-kotlin-setup))
+
+
+(use-package! kotlin-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'treesit-available-p)
+  :defer t
+  :init
+  (set-tree-sitter! 'kotlin-mode 'kotlin-ts-mode
+    '((kotlin :url "https://github.com/fwcd/tree-sitter-kotlin")))
+  :config
+  (when (modulep! +lsp)
+    (add-hook 'kotlin-ts-mode-local-vars-hook #'lsp! 'append)))
