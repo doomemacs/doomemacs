@@ -44,18 +44,23 @@
        (widen)
        (with-temp-buffer
          (save-excursion (insert-buffer-substring source))
-         (while (re-search-forward (rx bol
-                                       (or (seq (= 4 num) "-" (= 2 num) "-" (= 2 num) (+ " ")
-                                                "document" (+ " ")
-                                                (+ (or alnum ":" "_" "-")))
-                                           "include"
-                                           (seq "option" (+ " ") "\"documents\""))
-                                       (+ " ") "\""
-                                       (group (+ (not "\""))))
-                                   nil t)
-           (replace-match (expand-file-name
-                           (match-string-no-properties 1))
-                          t t nil 1))
+         (save-excursion
+           (while (re-search-forward "^;+# " nil t)
+             (replace-match "" t t)))
+         (while (re-search-forward
+                 (rx bol
+                     (or (seq (= 4 num) "-" (= 2 num) "-" (= 2 num) (+ " ")
+                              "document" (+ " ")
+                              (+ (or alnum ":" "_" "-")))
+                         "include"
+                         (seq "option" (+ " ") "\"documents\""))
+                     (+ " ") "\""
+                     (group (+ (not "\""))))
+                 nil t)
+           (unless (file-name-absolute-p (match-string-no-properties 1))
+             (replace-match (expand-file-name
+                             (match-string-no-properties 1))
+                            t t nil 1)))
          (buffer-substring-no-properties (point-min) (point-max)))))
     (process-send-eof flymake-bean-check-process)))
 
