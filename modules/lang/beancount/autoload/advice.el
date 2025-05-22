@@ -182,7 +182,24 @@ will theirs, recursively)."
           (list (match-beginning 1) (match-end 1)
                 (+beancount-completion-table
                  (concat " \\(" (match-string-no-properties 2) "[" beancount-tag-chars "]+\\)")
-                 1 (if (equal (match-string-no-properties 2) "#") 'tags 'links)))))))))
+                 1 (if (equal (match-string-no-properties 2) "#") 'tags 'links))))
+
+         ((progn
+            (goto-char pos)
+            (and (looking-back (concat "\\s-" beancount-number-regexp
+                                       "\\s-+\\(\\(?:" beancount-currency-regexp
+                                       "\\)?\\)")
+                               (pos-bol))
+                 (>= pos (match-beginning 1))
+                 (<= pos (match-end 1))))
+          (list (match-beginning 1) (match-end 1)
+                (+beancount-completion-table
+                 (concat "^\\(?:" beancount-date-regexp
+                         "\\s-+commodity\\s-+\\|"
+                         beancount-date-regexp "\\s-+price\\s-+\\|"
+                         "option\\s-+\"operating_currency\"\\s-+\""
+                         "\\)\\(" beancount-currency-regexp "\\)")
+                 1 'commodities))))))))
 
 ;;;###autoload
 (defun +beancount-get-account-names-a (&rest _)
