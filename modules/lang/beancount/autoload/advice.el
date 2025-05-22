@@ -63,8 +63,9 @@ will theirs, recursively)."
       (with-current-buffer (let ((win (minibuffer-selected-window)))
                              (if (window-live-p win) (window-buffer win)
                                (current-buffer)))
-        (with-memoization (alist-get context +beancount--completion-cache)
-          (+beancount--collect-unique-recursive regexp n context))
+        (unless (assq context +beancount--completion-cache)
+          (with-memoization (alist-get context +beancount--completion-cache)
+            (+beancount--collect-unique-recursive regexp n context)))
         (complete-with-action
          action (sort (hash-table-keys
                        (alist-get context +beancount--completion-cache))
