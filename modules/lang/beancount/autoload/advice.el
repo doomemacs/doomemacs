@@ -197,7 +197,6 @@ will theirs, recursively)."
                 (+beancount-completion-table
                  (concat "^\\(?:" beancount-date-regexp
                          "\\s-+commodity\\s-+\\|"
-                         beancount-date-regexp "\\s-+price\\s-+\\|"
                          "option\\s-+\"operating_currency\"\\s-+\""
                          "\\)\\(" beancount-currency-regexp "\\)")
                  1 'commodities))))))))
