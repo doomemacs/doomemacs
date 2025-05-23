@@ -52,7 +52,7 @@ mode unconditionally, call `+format-with-lsp-mode' instead."
       (funcall callback)
     (funcall callback "LSP server doesn't support formatting")))
 
-(cl-defun +format--with-lsp-mode (beg end &key buffer callback &allow-other-keys)
+(cl-defun +format--with-lsp-mode (beg end &key buffer scratch callback &allow-other-keys)
   "Format the current buffer or region with any available lsp-mode formatter.
 
 Won't forward the buffer to chained formatters if successful."
@@ -68,7 +68,8 @@ Won't forward the buffer to chained formatters if successful."
                  ;; try next chained formatter(s)
                  ((cl-return (ignore (funcall callback)))))))
       (unless (seq-empty-p edits)
-        (lsp--apply-text-edits edits 'format))
+        (with-current-buffer scratch
+          (lsp--apply-text-edits edits 'format)))
       t)))
 
 (cl-defun +format--with-eglot (beg end &key buffer callback &allow-other-keys)
