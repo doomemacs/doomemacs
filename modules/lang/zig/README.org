@@ -22,10 +22,11 @@ This module adds [[https://ziglang.org/][Zig]] support, with optional (but recom
   this.
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
+  editing. Requires Emacs 29.1+ and [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:zig-mode]]
+- [[doom-package:zig-ts-mode]] if [[doom-module:+tree-sitter]]
 
 ** Hacks
 /No hacks documented for this module./
