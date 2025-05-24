@@ -12,7 +12,7 @@ will theirs, recursively)."
         (widen)
         (goto-char (point-min))
         (while (re-search-forward
-                (concat "^" (unless nested? "\\(?:;;;# \\)?")
+                (concat "^" (unless nested? "\\(?:;+# \\)?")
                         (rx "include" (+ " ") "\"" (group (+ (not "\"")))))
                 nil t)
           (when-let* ((path (match-string-no-properties 1)))
