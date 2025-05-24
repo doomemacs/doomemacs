@@ -72,14 +72,36 @@ Won't forward the buffer to chained formatters if successful."
           (lsp--apply-text-edits edits 'format)))
       t)))
 
-(cl-defun +format--with-eglot (beg end &key buffer callback &allow-other-keys)
+(cl-defun +format--with-eglot (beg end &key scratch buffer callback &allow-other-keys)
   "Format the current buffer or region with any available eglot formatter.
 
 Won't forward the buffer to chained formatters if successful."
-  (with-current-buffer buffer
-    (or (with-demoted-errors "%s"
-          (always (eglot-format beg end)))
-        ;; try next chained formatter(s)
-        (ignore (funcall callback)))))
+  (let ((edits
+         (with-current-buffer buffer
+           (pcase-let
+               ((`(,method ,args)
+                 (cond ((and (not beg) (eglot-server-capable :documentFormattingProvider))
+                        '(:textDocument/formatting nil))
+                       ((eglot-server-capable :documentRangeFormattingProvider)
+                        `(:textDocument/rangeFormatting
+                          (:range ,(list :start (eglot--pos-to-lsp-position (or beg (point-min)))
+                                         :end   (eglot--pos-to-lsp-position (or end (point-max)))))))
+                       ;; try next chained formatter(s)
+                       ((cl-return (ignore (funcall callback)))))))
+             (eglot--request
+              (eglot--current-server-or-lose)
+              method
+              (cl-list*
+               :textDocument (eglot--TextDocumentIdentifier)
+               :options (list :tabSize tab-width
+                              :insertSpaces (if indent-tabs-mode :json-false t)
+                              :insertFinalNewline (if require-final-newline t :json-false)
+                              :trimFinalNewlines (if delete-trailing-lines t :json-false))
+               args))))))
+    (unless (seq-empty-p edits)
+      (with-current-buffer scratch
+        (with-demoted-errors "%s"
+          (eglot--apply-text-edits edits))))
+    t))
 
 ;;; lsp.el ends here
