@@ -25,7 +25,6 @@
                  (commonlisp "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp" nil nil nil nil)
                  (css "https://github.com/tree-sitter/tree-sitter-css" nil nil nil nil)
                  (dart "https://github.com/ast-grep/tree-sitter-dart" nil nil nil nil)
-                 (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" nil nil nil nil)
                  (go "https://github.com/tree-sitter/tree-sitter-go" nil nil nil nil)
                  (gomod "https://github.com/camdencheek/tree-sitter-go-mod" nil nil nil nil)
                  (html "https://github.com/tree-sitter/tree-sitter-html" nil nil nil nil)
