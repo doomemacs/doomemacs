@@ -34,6 +34,14 @@ behavior).")
 
   (setq beancount-electric-currency t)
 
+  ;; Fontify custom directives.
+  ;; REVIEW: PR this upstream.
+  (add-to-list 'beancount-font-lock-keywords
+               `(,(concat "^\\(" beancount-date-regexp "\\) +"
+                          "\\(" (regexp-opt '("custom")) "\\) +")
+                 (1 'beancount-date)
+                 (2 'beancount-directive)))
+
   (when (modulep! +lsp)
     (add-hook 'beancount-mode-local-vars-hook #'lsp! 'append))
 
