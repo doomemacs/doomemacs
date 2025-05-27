@@ -149,7 +149,15 @@ will theirs, recursively)."
          ((beancount-looking-at
            (concat "^" beancount-date-regexp
                    "\\s-+" (regexp-opt beancount-account-directive-names)
-                   "\\s-+\\([" beancount-account-chars "]*\\)") 1 pos)
+                   "\\s-+\\([" beancount-account-chars "]*\\)")
+           1 pos)
+          (list (match-beginning 1) (match-end 1) (+beancount-account-completion-table)))
+
+         ;; budget directive followed by an account
+         ((beancount-looking-at
+           (concat "^" beancount-date-regexp "\\s-+"
+                   "custom\\s-+\"budget\"\\s-+\\([" beancount-account-chars "]*\\)")
+           1 pos)
           (list (match-beginning 1) (match-end 1) (+beancount-account-completion-table)))
 
          ;; pad directive followed by two accounts
