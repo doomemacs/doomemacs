@@ -42,9 +42,10 @@ loaded last*, before =:config= modules.
 Modules that provide new interfaces or frameworks for completion, including code
 completion.
 
-+ [[file:../modules/completion/company/README.org][company]] =+childframe +tng= - The ultimate code completion backend
-+ helm =+fuzzy +childframe= - *Another* search engine for love and life
-+ ido - The /other/ *other* search engine for love and life
++ [[file:../modules/completion/corfu/README.org][corfu]] - The lightweight, customizable code completion backend
++ [[file:../modules/completion/company/README.org][company]] =+childframe +tng= - The ultimate code completion backend (deprecated)
++ [[file:../modules/completion/helm/README.org][helm]] =+fuzzy +childframe= - *Another* search engine for love and life
++ [[file:../modules/completion/ido/README.org][ido]] - The /other/ *other* search engine for love and life
 + [[file:../modules/completion/ivy/README.org][ivy]] =+fuzzy +prescient +childframe +icons= - /The/ search engine for love and life
 + [[file:../modules/completion/vertico/README.org][vertico]] =+icons= - The search engine of the future
 
