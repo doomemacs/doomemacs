@@ -263,7 +263,7 @@ will theirs, recursively)."
      (save-restriction
        (widen)
        (with-temp-buffer
-         (save-excursion (insert-buffer-substring source))
+         (save-excursion (insert-buffer-substring-no-properties source))
          (save-excursion
            (while (re-search-forward "^;+# " nil t)
              (replace-match "" t t)))
