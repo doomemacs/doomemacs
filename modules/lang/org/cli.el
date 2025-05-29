@@ -52,7 +52,16 @@ EXAMPLES:
                   (let* ((tags (org-get-tags-at))
                          (info (org-babel-get-src-block-info 'no-eval))
                          (src-lang (nth 0 info))
-                         (src-tfile (cdr (assq :tangle (nth 2 info)))))
+                         (src-tfile (cdr (assq :tangle (nth 2 info))))
+                         (src-noweb-ref (or (nth 4 info)
+                                            (cdr (assq :noweb-ref (nth 2 info))))))
+                    ;; a block which can be referenced via noweb may need to be
+                    ;; evaluated even if it will not be tangled per se
+                    (when-let* ((src-noweb-ref)
+                             (ob-library-name (concat "ob-" src-lang))
+                             ((locate-library ob-library-name)))
+                        (require (intern ob-library-name)))
+
                     (cond ((member "notangle" tags))
 
                           ((let* ((tags (seq-group-by (fn! (equal (car %) "--or")) tags))
