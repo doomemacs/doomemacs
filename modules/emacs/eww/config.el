@@ -6,7 +6,7 @@
   (map! :map eww-mode-map
         [remap text-scale-increase] #'+eww/increase-font-size
         [remap text-scale-decrease] #'+eww/decrease-font-size
-        [remap imenu] #'+eww/jump-to-url-on-page
+        [remap imenu] #'+eww/jump-to-heading-on-page
         [remap quit-window] #'+eww/quit
         :ni [C-return] #'+eww/open-in-other-window
         :n "yy" #'+eww/copy-current-url
@@ -16,6 +16,7 @@
         (:localleader
          :desc "external browser" "e" #'eww-browse-with-external-browser
          :desc "buffers" "b" #'eww-switch-to-buffer
+         :desc "jump to link" "l" #'+eww/jump-to-url-on-page
 
          (:prefix ("t" . "toggle")
           :desc "readable" "r" #'eww-readable
