@@ -16,6 +16,7 @@
         (:localleader
          :desc "external browser" "e" #'eww-browse-with-external-browser
          :desc "buffers" "b" #'eww-switch-to-buffer
+         :desc "jump to heading" "." #'+eww/jump-to-heading-on-page
 
          (:prefix ("t" . "toggle")
           :desc "readable" "r" #'eww-readable
