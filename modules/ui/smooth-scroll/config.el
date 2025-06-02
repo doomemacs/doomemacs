@@ -35,7 +35,7 @@
   ;;   Cue the errors.
   ;; REVIEW: This shold be fixed upstream.
   (defadvice! +smooth-scroll--fix-out-of-bounds-error-a ()
-    :override #'good-scroll--point-at-top-fix-a
+    :override #'good-scroll--point-at-top-p
     (save-restriction
       (widen)
       (<= (line-number-at-pos (max (point) (point-min)) t)
