@@ -1283,7 +1283,8 @@ Must be run from a magit diff buffer."
 (defun doom-packages--purge-eln ()
   (if-let* ((dirs
              (cl-delete (expand-file-name comp-native-version-dir doom-packages--eln-output-path)
-                        (directory-files doom-packages--eln-output-path t "^[^.]" t)
+                        (when (file-directory-p doom-packages--eln-output-path)
+                          (directory-files doom-packages--eln-output-path t "^[^.]" t))
                         :test #'file-equal-p)))
       (progn
         (print! (start "Purging old native bytecode..."))

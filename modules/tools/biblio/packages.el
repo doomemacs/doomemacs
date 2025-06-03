@@ -8,8 +8,8 @@
   (package! bibtex-completion :pin "6064e8625b2958f34d6d40312903a85c173b5261")
   (package! helm-bibtex :pin "6064e8625b2958f34d6d40312903a85c173b5261"))
 (when (modulep! :completion vertico)
-  (package! citar :pin "ce5e9644ed02cc1ed4a905e0436a1be8f8ccab57")
-  (package! citar-embark :pin "ce5e9644ed02cc1ed4a905e0436a1be8f8ccab57")
+  (package! citar :pin "5ef097beba280cb0a7e7496a6f6a3b7f612c2fe2")
+  (package! citar-embark :pin "5ef097beba280cb0a7e7496a6f6a3b7f612c2fe2")
   (when (modulep! :lang org +roam2)
     (package! citar-org-roam :pin "9750cfbbf330ab3d5b15066b65bd0a0fe7c296fb")))
 

@@ -85,6 +85,16 @@ You should use `set-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'+eshell-init-h)
   (add-hook 'eshell-exit-hook #'+eshell-cleanup-h)
 
+  ;; UX: Temporarily disable undo history between command executions. Undo can
+  ;;   destroy output while it's being printed to stdout.
+  (let (old-undo-list)
+    (add-hook! 'eshell-pre-command-hook
+      (setq old-undo-list buffer-undo-list
+            buffer-undo-list nil))
+    (add-hook! 'eshell-post-command-hook
+      (setq buffer-undo-list old-undo-list)
+      (clrhash undo-equiv-table)))
+
   ;; Enable autopairing in eshell
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 

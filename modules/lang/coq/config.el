@@ -87,7 +87,7 @@
              (when (bound-and-true-p company-mode)
                (company-mode -1))
              (add-hook 'completion-at-point-functions
-                       (cape-company-to-capf 'company-coq)
+                       (cape-company-to-capf 'company-coq-master-backend)
                        nil t)))
          (defadvice! +coq--proof-goto-point-advice (&rest _)
            :override #'company-coq--proof-goto-point-advice

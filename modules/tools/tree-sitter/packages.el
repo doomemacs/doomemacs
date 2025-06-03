@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/tree-sitter/packages.el
 
-(package! tree-sitter :recipe (:branch "master") :pin "12f92ef3992c1d317574e968707a9550bd1fc89f")
-(package! tree-sitter-langs :pin "4eb4989d1a708e81639a7ef7dbff43a34894caee")
+(package! tree-sitter :recipe (:branch "master") :pin "1c455b0953da06c40fcf1f21f1ac0c6e179b46d0")
+(package! tree-sitter-langs :pin "becd29c756a3272bc91d09de642df99a0fca6cee")
 (package! tree-sitter-indent :pin "4ef246db3e4ff99f672fe5e4b416c890f885c09e")
 
 (when (modulep! :editor evil +everywhere)

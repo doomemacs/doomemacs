@@ -8,7 +8,7 @@
         (package! consult-eglot :pin "b71499f4b93bfea4e2005564c25c5bb0f9e73199"))
       (when (modulep! :checkers syntax -flymake)
         (package! flycheck-eglot :pin "18d0c9869585e6a9ea5c40678f266cf7f5bb2d2e")))
-  (package! lsp-mode :pin "54251da4ffcf1e604296352bb78ff6ce0377351b")
+  (package! lsp-mode :pin "c77ba141063916ae5f36f84cb23230e1783b4f09")
   (package! lsp-ui :pin "a0dde8b52b4411cbac2eb053ef1515635ea0b7ed")
   (when (modulep! :completion ivy)
     (package! lsp-ivy :pin "3ee14a24bb0f3fd2aabec0773e43796690ef3a74"))
