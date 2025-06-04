@@ -2,7 +2,8 @@
 ;;; lang/ocaml/packages.el
 
 (package! tuareg :pin "1d53723e39f22ab4ab76d31f2b188a2879305092")
-(package! opam-switch-mode :pin "1069e56a662f23ea09d4e05611bdedeb99257012")
+(unless (modulep! +no-opam)
+  (package! opam-switch-mode :pin "1069e56a662f23ea09d4e05611bdedeb99257012"))
 (package! ocp-indent :pin "f38578c25d62701847b1bcb45099a9020e2032fe")
 (package! dune
   :recipe (:host github :repo "ocaml/dune" :files ("editor-integration/emacs/*.el"))

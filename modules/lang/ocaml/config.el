@@ -111,28 +111,28 @@
   (remove-hook 'caml-mode-hook #'ocp-indent-caml-mode-setup))
 
 
-(use-package! opam-switch-mode
-  :hook (tuareg-mode-local-vars . opam-switch-mode)
-  :preface
-  (map! :after tuareg
-        :localleader
-        :map tuareg-mode-map
-        "w" #'opam-switch-set-switch)
-  :init
-  (defadvice! +ocaml--init-opam-switch-mode-maybe-h (fn &rest args)
-    "Activate `opam-switch-mode' if the opam executable exists."
-    :around #'opam-switch-mode
-    (when (executable-find opam-switch-program-name)
-      (apply fn args)))
-  :config
-  (after! tuareg
-    ;; Use opam to set environment
-    (setq tuareg-opam-insinuate t)
-    (opam-switch-set-switch (tuareg-opam-current-compiler))))
+(unless (modulep! +no-opam)
+  (use-package! opam-switch-mode
+    :hook (tuareg-mode-local-vars . opam-switch-mode)
+    :preface
+    (map! :after tuareg
+          :localleader
+          :map tuareg-mode-map
+          "w" #'opam-switch-set-switch)
+    :init
+    (defadvice! +ocaml--init-opam-switch-mode-maybe-h (fn &rest args)
+      "Activate `opam-switch-mode' if the opam executable exists."
+      :around #'opam-switch-mode
+      (when (executable-find opam-switch-program-name)
+        (apply fn args)))
+    :config
+    (after! tuareg
+      ;; Use opam to set environment
+      (setq tuareg-opam-insinuate t)
+      (opam-switch-set-switch (tuareg-opam-current-compiler)))))
 
 (when (modulep! +tree-sitter)
   (add-hook 'tuareg-mode-local-vars-hook #'tree-sitter!))
-
 
 (use-package! dune
   :defer t
