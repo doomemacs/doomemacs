@@ -118,3 +118,18 @@
           "e" #'company-coq-document-error
           "E" #'company-coq-browse-error-messages
           "h" #'company-coq-doc)))
+
+(unless (modulep! +no-opam)
+  (use-package! opam-switch-mode
+    :hook (coq-mode . opam-switch-mode)
+    :preface
+    (map! :after coq
+          :localleader
+          :map coq-mode-map
+          "w" #'opam-switch-set-switch)
+    :init
+    (defadvice! +coq--init-opam-switch-mode-maybe-h (fn &rest args)
+      "Activate `opam-switch-mode' if the opam executable exists."
+      :around #'opam-switch-mode
+      (when (executable-find opam-switch-program-name)
+        (apply fn args)))))
