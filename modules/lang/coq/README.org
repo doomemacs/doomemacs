@@ -13,14 +13,13 @@ This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://pro
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-- +opam-switch ::
-  Enable ~opam-switch-mode~ integration. Allows for switching OPAM switch.
-  Requires OPAM to be installed.
+- +no-opam ::
+  Disable features depending on OPAM. As of now, it only disables ~opam-switch-mode~ integration.
 
 ** Packages
 - [[doom-package:proof-general]]
 - [[doom-package:company-coq]]
-- [[doom-package:opam-switch-mode]] if [[doom-module:+opam-switch]]
+- [[doom-package:opam-switch-mode]] unless [[doom-module:+no-opam]]
 
 
 ** Hacks
