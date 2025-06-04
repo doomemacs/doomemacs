@@ -26,13 +26,15 @@ This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
+- +no-opam ::
+  Disable features depending on OPAM. As of now, it only disables ~opam-switch-mode~ integration.
 
 ** Packages
 - [[doom-package:dune]]
 - [[doom-package:ocamlformat]] if [[doom-module::editor format]]
 - [[doom-package:ocp-indent]]
 - [[doom-package:tuareg]]
-- [[doom-package:opam-switch-mode]]
+- [[doom-package:opam-switch-mode]] unless [[doom-module::+no-opam]]
 - [[doom-package:utop]] if [[doom-module::tools eval]]
 - unless [[doom-module:+lsp]]
   - [[doom-package:flycheck-ocaml]] if [[doom-module::checkers syntax]]
