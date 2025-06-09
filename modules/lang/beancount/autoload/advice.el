@@ -191,7 +191,7 @@ will theirs, recursively)."
                  (<= pos (match-end 1))))
           (list (match-beginning 1) (match-end 1)
                 (+beancount-completion-table
-                 (concat " \\(" (match-string-no-properties 2) "[" beancount-tag-chars "]+\\)")
+                 (concat " \\(" (regexp-quote (match-string-no-properties 2)) "[" beancount-tag-chars "]+\\)")
                  1 (if (equal (match-string-no-properties 2) "#") 'tags 'links))))
 
          ((progn
