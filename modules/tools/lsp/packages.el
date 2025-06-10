@@ -5,10 +5,10 @@
     (progn
       (package! eglot :pin "6a9e0c76b9a7a4bf03a7fc91a02b826df507e3ce")
       (when (modulep! :completion vertico)
-        (package! consult-eglot :pin "b71499f4b93bfea4e2005564c25c5bb0f9e73199"))
+        (package! consult-eglot :pin "2816f8aad7d6a1e6d5e5b4a5e04c1d74b82b26b8"))
       (when (modulep! :checkers syntax -flymake)
         (package! flycheck-eglot :pin "18d0c9869585e6a9ea5c40678f266cf7f5bb2d2e")))
-  (package! lsp-mode :pin "c77ba141063916ae5f36f84cb23230e1783b4f09")
+  (package! lsp-mode :pin "3a96df0dd7ca8e53c5ed6f72edbd64fa1f0d9d2c")
   (package! lsp-ui :pin "a0dde8b52b4411cbac2eb053ef1515635ea0b7ed")
   (when (modulep! :completion ivy)
     (package! lsp-ivy :pin "3ee14a24bb0f3fd2aabec0773e43796690ef3a74"))
