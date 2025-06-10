@@ -164,16 +164,6 @@ FUNCTION
                    (right (or (cdr-safe +magit-fringe-size) +magit-fringe-size)))
                (set-window-fringes nil left right))))))
 
-  ;; An optimization that particularly affects macOS and Windows users: by
-  ;; resolving `magit-git-executable' Emacs does less work to find the
-  ;; executable in your PATH, which is great because it is called so frequently.
-  ;; However, absolute paths will break magit in TRAMP/remote projects if the
-  ;; git executable isn't in the exact same location.
-  (add-hook! 'magit-status-mode-hook
-    (defun +magit-optimize-process-calls-h ()
-      (when-let (path (executable-find magit-git-executable t))
-        (setq-local magit-git-executable path))))
-
   (add-hook! 'magit-diff-visit-file-hook
     (defun +magit-reveal-point-if-invisible-h ()
       "Reveal the point if in an invisible region."
