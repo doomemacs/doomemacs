@@ -12,4 +12,4 @@
 ;;      on evil (anymore).
 (package! evil-terminal-cursor-changer :pin "2358f3e27d89128361cf80fcfa092fdfe5b52fd8")
 
-(package! kkp :pin "ad23d961c3a5dce83b1c9a6b4c65b48809c7af9a")
+(package! kkp :pin "1a7b4f395aa4e1e04afc45fe2dbd6a045871803b")
