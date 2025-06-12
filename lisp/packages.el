@@ -6,7 +6,7 @@
   :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
 (package! compat
   :recipe (:host github :repo "emacs-compat/compat")
-  :pin "7179960b7c82a7cca6bac60d79dd7fe09ae390a0")
+  :pin "2577cc74d996620766adf1c9ec8f44ecbac32e79")
 (package! gcmh
   :pin "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9")
 
@@ -18,10 +18,10 @@
             :branch "develop"
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "d157afbec4ec8659ad2026f57354d58d849a7c94")
+  :pin "4128d423998696d03cca2acb6b8828e907e8e0d9")
 
 ;; doom-ui.el
-(package! nerd-icons :pin "14f7278dd7eb5eca762a6ff32467c72c661c0aae")
+(package! nerd-icons :pin "d972dee349395ffae8fceae790d22fedc8fe08e8")
 (package! hide-mode-line :pin "ddd154f1e04d666cd004bf8212ead8684429350d")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f40ece58df8b2f0fb6c8576b527755a552a5e763")
@@ -30,7 +30,7 @@
 ;; doom-editor.el
 (package! better-jumper :pin "b1bf7a3c8cb820d942a0305e0e6412ef369f819c")
 (package! dtrt-indent :pin "015b26d6d6af9465c1dc48ef721db119ecd78437")
-(package! smartparens :pin "b0d935c11813bcd40f8d35bae8800e0741334c29")
+(package! smartparens :pin "b629b4e893ba21ba5a381f6c0054bb72f8e96df2")
 (package! ws-butler
   ;; REVIEW: emacsmirror/nongnu_elpa serves this package from a branch. To stop
   ;;   Straight from clobbering a single repo for multiple packages, we must be
@@ -42,9 +42,9 @@
   :pin "9ee5a7657a22e836618813c2e2b64a548d27d2ff")
 
 ;; doom-projects.el
-(package! projectile :pin "4dd84b02c9cd7b04616dc2d01ba7bc87f0d15be8")
-(package! project :pin "27c6b049145e5d382579bcf1e3e2ea96c6abd3c9")
+(package! projectile :pin "0da59734fbc23fc26222a7d03f6671b3116b0b77")
+(package! project :pin "de0deb8dbfb65eae6eaaf45aea77f12aa9a25f89")
 
 ;; doom-keybinds.el
-(package! general :pin "826bf2b97a0fb4a34c5eb96ec2b172d682fd548f")
+(package! general :pin "74d4541781d3a01933dda298eb932c06e67413f9")
 (package! which-key :pin "38d4308d1143b61e4004b6e7a940686784e51500")
