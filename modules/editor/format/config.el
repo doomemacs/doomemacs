@@ -47,8 +47,8 @@ This is controlled by `+format-on-save-disabled-modes'."
 
   (defadvice! +format--inhibit-reformat-on-prefix-arg-a (orig-fn &optional arg)
     "Make it so \\[save-buffer] with prefix arg inhibits reformatting."
-    :around #'save-buffer
-    (let ((apheleia-mode (and apheleia-mode (memq arg '(nil 1)))))
+    :around #'basic-save-buffer
+    (let ((apheleia-inhibit (or apheleia-inhibit current-prefix-arg)))
       (funcall orig-fn)))
 
   ;; HACK: Apheleia suppresses notifications that the current buffer has
