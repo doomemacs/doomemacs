@@ -24,7 +24,7 @@ try {
     if (-not $env:__DOOMGEOM) {
         $cols = (Get-Host).UI.RawUI.WindowSize.Width
         $lines = (Get-Host).UI.RawUI.WindowSize.Height
-        $env:__DOOMGEOM = "$cols`x$lines"
+        $env:__DOOMGEOM = "$($cols)x$($lines)"
     }
     # $env:__DOOMGPIPE = if (-not $env:__DOOMGPIPE) { $env:__DOOMPIPE } else { $env:__DOOMGPIPE }
     # $env:__DOOMPIPE = ""
