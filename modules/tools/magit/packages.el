@@ -8,6 +8,10 @@
     :pin "a31859547a1ea5e2acbab67b6b64f90134e2a156" ; 0.5.3
     ;; forge depends on ghub, which requires Emacs 29.1+
     :disable (version< emacs-version "29.1"))
+  (package! ghub
+    :pin "97a07691efad6fc16bc000a35be80d4f8dae251a" ; 4.3.2
+    ;; ghub requires Emacs 29.1+
+    :disable (version< emacs-version "29.1"))
   (package! code-review
     :recipe (:host github
              :repo "doomelpa/code-review"
