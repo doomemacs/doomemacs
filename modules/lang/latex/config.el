@@ -59,8 +59,6 @@ okular and pdf-tools.")
       TeX-source-correlate-method 'synctex
       ;; Don't start the Emacs server when correlating sources.
       TeX-source-correlate-start-server nil
-      ;; Automatically insert braces after sub/superscript in `LaTeX-math-mode'.
-      TeX-electric-sub-and-superscript t
       ;; Just save, don't ask before each compilation.
       TeX-save-query nil)
 
