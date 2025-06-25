@@ -8,7 +8,7 @@ function Executable-Find {
             if ($path) { return $path.Path; }
         }
     }
-    throw "Could not find in $PATH: $($args -join ', ')"
+    throw "Could not find in PATH: $($args -join ', ')"
 }
 
 $emacs = if ($env:EMACS) { $env:EMACS } else { Executable-Find "emacs.exe" }
