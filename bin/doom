@@ -167,11 +167,9 @@ EXIT CODES:
 SEE ALSO:
   https://doomemacs.org               Homepage
   https://docs.doomemacs.org          Official documentation
-  https://discourse.doomemacs.org     Discourse (discussion & support forum)
-  https://doomemacs.org/discord       Discord chat server
-  https://doomemacs.org/roadmap       Development roadmap
-  https://git.doomemacs.org           Shortcut to Github org
-  https://git.doomemacs.org/todo      Global issue tracker"
+  https://wiki.doomemacs.org          Community wiki
+  https://doomemacs.org/discuss       Github discussions & user support board
+  https://doomemacs.org/discord       Discord chat server"
   :partial t)
 
 (defcli! :before
