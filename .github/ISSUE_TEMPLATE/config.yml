@@ -1,14 +1,21 @@
 blank_issues_enabled: false
 contact_links:
+  - name: 📝 Suggest or request a new feature
+    url: https://github.com/orgs/doomemacs/discussions/new?category=ideas
+  - name: 📝 Ask for help from the community
+    url: https://doomemacs.org/discuss/new?category=questions
+  - name: 📝 Request a pinned package be bumped
+    url: https://github.com/orgs/doomemacs/discussions/new?category=re-modules&title=[Bump Request] &body=%23%23%23%20Packages%20to%20bump%0A%0A-%20PackageA%0A-%20PackageB%0A-%20PackageB%0A%0A%23%23%23%20Why%20should%20they%20be%20bumped%20outside%20of%20the%20typical%20bump%20schedule%3F%0A%0ABecause%20...%3F
+  - name: 📣 Project news & announcements
+    url: https://github.com/doomemacs/community/discussions/categories/announcements
   - name: Official Documentation
-    url: https://github.com/doomemacs/doomemacs/blob/master/docs/index.org
-    about: "Walks you through how to use, abuse, or confuse Doom Emacs. Also available from within Doom: `M-x doom/help`"
-  - name: Visit our Discourse
-    url: https://discourse.doomemacs.org
-    about: "A repository of official learning resources and discussion forum for Emacs and Doom"
-  - name: Visit our Discord
+    url: https://docs.doomemacs.org
+    about: "Also available from within Doom: `M-x doom/help`"
+  # - name: Community Wiki
+  #   url: https://wiki.doomemacs.org
+  - name: Visit our Discussions board
+    url: https://doomemacs.org/discuss
+  - name: Visit our Discord server
     url: https://doomemacs.org/discord
-    about: "A place to chat, get to know the community, and get help quick"
-  - name: See third-party resources
-    url: https://discourse.doomemacs.org/c/guides/resources
-    about: "A curated collection of non-official resources to help you learn Emacs and Doom"
+  - name: All community resources
+    url: https://github.com/doomemacs/?view_as=public
