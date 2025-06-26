@@ -160,7 +160,8 @@
                " " (buffer-name (or (buffer-base-buffer)
                                     (current-buffer)))))
     (setq-local doom-inhibit-local-var-hooks t)
-    (doom-run-hooks (intern-soft (format "%s-local-vars-hook" major-mode)))))
+    (dolist (mode (derived-mode-all-parents major-mode))
+      (doom-run-hooks (intern-soft (format "%s-local-vars-hook" mode))))))
 
 ;; If the user has disabled `enable-local-variables', then
 ;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
