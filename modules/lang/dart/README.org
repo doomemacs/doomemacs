@@ -23,9 +23,13 @@ This module wraps ~dart-mode~, with [[https://microsoft.github.io/language-serve
 - +lsp ::
   Enable LSP support for ~dart-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports flutter).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:dart-mode]]
+- [[doom-package:dart-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:flutter.el]]
 - [[doom-package:hover.el]]
 

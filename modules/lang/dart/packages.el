@@ -3,6 +3,12 @@
 
 (package! dart-mode :pin "f82ff052309125b93d19bdd3f619266f908f43ce")
 
+(when (modulep! +tree-sitter)
+  (package! dart-ts-mode
+    :recipe (:host github
+             :repo "50ways2sayhard/dart-ts-mode")
+    :pin "ab87873f25f7e0cc8d22daa2501aae141dbe98ad"))
+
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
   (package! lsp-dart :pin "34e2a1191f723792d5f366b314cd6b07de4f1566"))
