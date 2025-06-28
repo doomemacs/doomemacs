@@ -1,13 +1,18 @@
 ;;; lang/swift/config.el -*- lexical-binding: t; -*-
 
-(after! swift-mode
+(use-package! swift-mode
+  :defer t
+  :init
+  (when (modulep! +tree-sitter)
+    (set-tree-sitter! 'swift-mode 'swift-ts-mode
+      '((swift :url "https://github.com/alex-pinkus/tree-sitter-swift"))))
+
+  :config
   (set-repl-handler! 'swift-mode #'run-swift)
   (set-eglot-client! 'swift-mode '("sourcekit-lsp"))
 
   (when (modulep! +lsp)
-    (add-hook 'swift-mode-local-vars-hook #'lsp! 'append))
-  (when (modulep! +tree-sitter)
-    (add-hook 'swift-mode-local-vars-hook #'tree-sitter! 'append)))
+    (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)))
 
 
 (use-package! flycheck-swift

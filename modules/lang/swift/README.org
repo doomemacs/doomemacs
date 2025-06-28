@@ -19,6 +19,7 @@ This module adds support for the [[https://developer.apple.com/swift/][Swift pro
 
 ** Packages
 - [[doom-package:swift-mode]]
+- [[doom-package:swift-ts-mode]] if [[doom-module:+tree-sitter]]
 - if [[doom-module:+lsp]]
   - [[doom-package:lsp-sourcekit]]
 - else
