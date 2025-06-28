@@ -63,17 +63,6 @@ This is ignored by ccls.")
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.c\\(c\\|pp\\)?\\'" "\\1.h\\(h\\|pp\\)?\\'"))
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.h\\(h\\|pp\\)?\\'" "\\1.c\\(c\\|pp\\)?\\'"))
 
-  ;; Delete all the default remappings created by the cc-mode package. We define
-  ;; better ones with `set-tree-sitter!' further below, otherwise there should
-  ;; be no remapping if the user hasn't explicitly asked for tree-sitter
-  ;; integration.
-  (dolist (mode '((c++-mode . c++-ts-mode)
-                  (c-mode . c-ts-mode)
-                  (c-or-c++-mode . c-or-c++-ts-mode)))
-    (cl-callf2 delete mode major-mode-remap-defaults)
-    (cl-callf2 delete (list (car mode)) major-mode-remap-defaults)
-    (cl-callf2 rassq-delete-all (cdr mode) auto-mode-alist))
-
   ;; HACK Suppress 'Args out of range' error in when multiple modifications are
   ;;      performed at once in a `c++-mode' buffer, e.g. with `iedit' or
   ;;      multiple cursors.

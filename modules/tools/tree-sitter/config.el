@@ -1,5 +1,8 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
+(defvar +tree-sitter--major-mode-remaps-alist nil)
+
+
 ;;
 ;;; Packages
 
@@ -16,6 +19,20 @@
     :around #'treesit--build-grammar
     (let ((user-emacs-directory doom-profile-data-dir))
       (apply fn args)))
+
+  ;; HACK: Some *-ts-mode packages modify `major-mode-remap-defaults'
+  ;;   inconsistently. Playing whack-a-mole to undo those changes is more hassle
+  ;;   then simply ignoring them (by overriding `major-mode-remap-defaults' for
+  ;;   any modes remapped with `set-tree-sitter!'). The user shouldn't touch
+  ;;   `major-mode-remap-defaults' anyway; `major-mode-remap-alist' will always
+  ;;   have precedence.
+  (defadvice! +tree-sitter--ignore-default-major-mode-remaps-a (fn mode)
+    :around #'major-mode-remap
+    (let ((major-mode-remap-defaults
+           (if-let* ((m (assq mode +tree-sitter--major-mode-remaps-alist)))
+               +tree-sitter--major-mode-remaps-alist
+             major-mode-remap-defaults)))
+      (funcall fn mode)))
 
   ;; TODO: Move most of these out to modules
   (dolist (map '((awk "https://github.com/Beaglefoot/tree-sitter-awk" nil nil nil nil)

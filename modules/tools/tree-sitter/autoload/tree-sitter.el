@@ -22,7 +22,7 @@ Note that COMMIT is only available in Emacs >=31."
   (setq recipes (ensure-list recipes))
   (dolist (m (ensure-list mode))
     (add-to-list
-     'major-mode-remap-defaults
+     '+tree-sitter--major-mode-remaps-alist
      (cons
       m (let (ensured?)
           (lambda ()
