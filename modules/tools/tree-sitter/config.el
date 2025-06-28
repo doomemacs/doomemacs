@@ -42,7 +42,6 @@
                  (clojure "https://github.com/sogaiu/tree-sitter-clojure" nil nil nil nil)
                  (commonlisp "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp" nil nil nil nil)
                  (css "https://github.com/tree-sitter/tree-sitter-css" nil nil nil nil)
-                 (dart "https://github.com/ast-grep/tree-sitter-dart" nil nil nil nil)
                  (html "https://github.com/tree-sitter/tree-sitter-html" nil nil nil nil)
                  (java "https://github.com/tree-sitter/tree-sitter-java" nil nil nil nil)
                  (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src" nil nil)
