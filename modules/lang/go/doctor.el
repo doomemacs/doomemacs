@@ -9,6 +9,10 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(assert! (or (not (modulep! +tree-sitter))
+             (fboundp 'go-ts-mode))
+         "Can't find `go-ts-mode'; Emacs 31.1+ is required")
+
 (unless (executable-find "gore")
   (warn! "Couldn't find gore. REPL will not work"))
 

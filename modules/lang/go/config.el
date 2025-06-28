@@ -3,19 +3,16 @@
 ;;
 ;;; Packages
 
-(after! go-mode
-  (set-docsets! 'go-mode "Go")
-  (set-repl-handler! 'go-mode #'gorepl-run)
-  (set-lookup-handlers! 'go-mode
+(defun +go-common-config (mode)
+  (set-docsets! mode "Go")
+  (set-repl-handler! mode #'gorepl-run)
+  (set-lookup-handlers! mode
     :documentation #'godoc-at-point)
 
   (when (modulep! +lsp)
-    (add-hook 'go-mode-local-vars-hook #'lsp! 'append))
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
-  (when (modulep! +tree-sitter)
-    (add-hook 'go-mode-local-vars-hook #'tree-sitter! 'append))
-
-  (map! :map go-mode-map
+  (map! :map ,(symbol-value (intern (format "%s-map" mode)))
         :localleader
         "a" #'go-tag-add
         "d" #'go-tag-remove
@@ -47,10 +44,28 @@
             "a" #'+go/bench-all))))
 
 
+(after! go-mode
+  (+go-common-config 'go-mode))
+
+
+(use-package! go-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'go-ts-mode) ; 31.1+ only
+  :defer t
+  :init
+  (set-tree-sitter! 'go-mode 'go-ts-mode
+    '((go :url "https://github.com/tree-sitter/tree-sitter-go" :ref "v0.23.4")
+      (gomod :url "https://github.com/camdencheek/tree-sitter-go-mod" :ref "v1.1.0")
+      (gowork :url "https://github.com/omertuc/tree-sitter-go-work")))
+  :config
+  (+go-common-config 'go-ts-mode))
+
+
 (use-package! gorepl-mode
   :commands gorepl-run-load-current-file)
 
 
 (use-package! flycheck-golangci-lint
   :when (modulep! :checkers syntax -flymake)
-  :hook (go-mode . flycheck-golangci-lint-setup))
+  :hook (go-mode . flycheck-golangci-lint-setup)
+  :hook (go-ts-mode . flycheck-golangci-lint-setup))
