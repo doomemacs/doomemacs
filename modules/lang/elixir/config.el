@@ -65,8 +65,9 @@
       (heex :url "https://github.com/phoenixframework/tree-sitter-heex"
             :rev "v0.7.0")))
   :config
-  ;; HACK: Rely on `major-mode-remap-defaults'.
-  (cl-callf2 rassq-delete-all 'php-ts-mode auto-mode-alist)
+  ;; HACK: Rely on `major-mode-remap-defaults' (and elixir-mode's autoloaded
+  ;;   auto-mode-alist entries).
+  (cl-callf2 rassq-delete-all 'elixir-ts-mode auto-mode-alist)
 
   (+elixir-common-config 'elixir-ts-mode))
 
