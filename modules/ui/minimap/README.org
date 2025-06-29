@@ -8,15 +8,13 @@ This module displays a minimap of the buffer in a sidebar, similar to the
 feature found in many other editors.
 
 ** Maintainers
-- [[doom-user:][@rushsteve1]]
-
-[[doom-contrib-maintainer:][Become a maintainer?]]
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
 /This module has no flags./
 
 ** Packages
-- [[doom-package:minimap]]
+- [[doom-package:demap]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -43,12 +41,7 @@ There are a number of options provided by the =minimap.el= package this module
 is based on. The easiest way to see all of them is [[kbd:][SPC h v minimap]].
 
 * Troubleshooting
-[[doom-report:][Report an issue?]]
-
-** Scrolling is slow/laggy
-Disable the minimap using [[kbd:][SPC t m]].
-
-** TODO Minimap doesn't close when disabled
+/There are no known problems with this module./ [[doom-report:][Report one?]]
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/minimap/packages.el
 
-(package! minimap :pin "5aa0df40bc0d587dffd23adf2e0873d671b0bebf")
+(package! demap :pin "c42ec4752544f80ca7c172ff65e705a56089bc96")
