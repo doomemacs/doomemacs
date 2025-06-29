@@ -18,5 +18,7 @@
                     cmd))))))
 
 (when (modulep! +grip)
-  (unless (executable-find "grip")
-    (warn! "Couldn't find grip. grip-mode will not work")))
+  (unless (or (executable-find "mdopen")
+              (executable-find "go-grip")
+              (executable-find "grip"))
+    (warn! "Couldn't find the mdopen, go-grip or grip binaries. grip-mode will not work")))
