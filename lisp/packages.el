@@ -23,7 +23,6 @@
 ;; doom-ui.el
 (package! nerd-icons :pin "d972dee349395ffae8fceae790d22fedc8fe08e8")
 (package! hide-mode-line :pin "ddd154f1e04d666cd004bf8212ead8684429350d")
-(package! rainbow-delimiters :pin "f40ece58df8b2f0fb6c8576b527755a552a5e763")
 (package! restart-emacs :pin "1607da2bc657fe05ae01f7fdf26f716eafead02c")
 
 ;; doom-editor.el

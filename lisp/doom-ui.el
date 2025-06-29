@@ -482,13 +482,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;;###package image
 (setq image-animate-loop t)
 
-;;;###package rainbow-delimiters
-;; Helps us distinguish stacked delimiter pairs, especially in parentheses-drunk
-;; languages like Lisp. I reduce it from it's default of 9 to reduce the
-;; complexity of the font-lock keyword and hopefully buy us a few ms of
-;; performance.
-(setq rainbow-delimiters-max-face-count 4)
-
 
 ;;
 ;;; Line numbers

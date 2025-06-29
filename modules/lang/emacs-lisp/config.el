@@ -86,8 +86,6 @@ See `+emacs-lisp-non-package-mode' for details.")
   (add-hook! '(emacs-lisp-mode-hook lisp-data-mode-local-vars-hook)
              ;; Allow folding of outlines in comments
              #'outline-minor-mode
-             ;; Make parenthesis depth easier to distinguish at a glance
-             #'rainbow-delimiters-mode
              ;; Make quoted symbols easier to distinguish from free variables
              #'highlight-quoted-mode
              ;; Extend imenu support to Doom constructs

@@ -26,7 +26,6 @@ This is ignored by ccls.")
   ;; these only run in their respective major modes, and not derived modes.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-ffap-integration-h)
   ;;; Improve fontification in C/C++ (also see `modern-cpp-font-lock')
-  :hook (c-mode-common . rainbow-delimiters-mode)
   :hook ((c-mode c++-mode) . +cc-fontify-constants-h)
   :config
   (set-docsets! 'c-mode "C")

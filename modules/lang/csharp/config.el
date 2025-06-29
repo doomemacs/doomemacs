@@ -1,7 +1,7 @@
 ;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
 (use-package! csharp-mode
-  :hook (csharp-mode . rainbow-delimiters-mode)
+  :defer t
   :config
   (set-formatter! 'csharpier '("csharpier" "format" "--write-stdout")
     :modes '(csharp-mode))

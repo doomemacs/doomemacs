@@ -1,7 +1,7 @@
 ;;; lang/dart/config.el -*- lexical-binding: t; -*-
 
 (use-package! dart-mode
-  :hook (dart-mode . rainbow-delimiters-mode)
+  :defer t
   :config
   (when (modulep! +lsp)
     (add-hook 'dart-mode-local-vars-hook #'lsp! 'append))
