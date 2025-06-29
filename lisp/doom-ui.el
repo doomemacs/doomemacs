@@ -479,11 +479,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (add-hook! '(completion-list-mode-hook Man-mode-hook)
            #'hide-mode-line-mode)
 
-;; Many major modes do no highlighting of number literals, so we do it for them
-(use-package! highlight-numbers
-  :hook ((prog-mode conf-mode) . highlight-numbers-mode)
-  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
-
 ;;;###package image
 (setq image-animate-loop t)
 

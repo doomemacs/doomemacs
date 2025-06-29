@@ -46,12 +46,7 @@
       (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]_build\\'")))
 
   (when (modulep! +tree-sitter)
-    (add-hook 'elixir-mode-local-vars-hook #'tree-sitter! 'append))
-
-  (after! highlight-numbers
-    (puthash 'elixir-mode
-             "\\_<-?[[:digit:]]+\\(?:_[[:digit:]]\\{3\\}\\)*\\_>"
-             highlight-numbers-modelist)))
+    (add-hook 'elixir-mode-local-vars-hook #'tree-sitter! 'append)))
 
 
 (use-package! flycheck-credo

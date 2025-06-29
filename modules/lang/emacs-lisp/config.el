@@ -166,8 +166,6 @@ See `+emacs-lisp-non-package-mode' for details.")
         (append '(("\\(^\\*\\*\\*[^*]+\\*\\*\\*\\)\\(.*$\\)"
                    (1 font-lock-comment-face)
                    (2 font-lock-constant-face)))
-                (when (require 'highlight-numbers nil t)
-                  (highlight-numbers--get-regexp-for-mode 'emacs-lisp-mode))
                 (cl-loop for (matcher . match-highlights)
                          in (append lisp-el-font-lock-keywords-2
                                     lisp-cl-font-lock-keywords-2)
