@@ -43,18 +43,6 @@
   :hook ruby-mode)
 
 
-(use-package! rubocop
-  :hook (ruby-mode . rubocop-mode)
-  :config
-  (set-popup-rule! "^\\*RuboCop" :select t)
-  (map! :localleader
-        :map rubocop-mode-map
-        "f" #'rubocop-check-current-file
-        "F" #'rubocop-autocorrect-current-file
-        "p" #'rubocop-check-project
-        "P" #'rubocop-autocorrect-project))
-
-
 (use-package! ruby-json-to-hash
   :defer t
   :init

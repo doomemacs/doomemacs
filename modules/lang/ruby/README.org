@@ -38,7 +38,6 @@ client (recommended: [[https://github.com/Shopify/ruby-lsp][ruby-lsp]] or [[http
 - [[doom-package:rake]]
 - [[doom-package:rbenv]] if [[doom-module:+rbenv]]
 - [[doom-package:rspec-mode]]
-- [[doom-package:rubocop]]
 - [[doom-package:rvm]] if [[doom-module:+rvm]]
 - if [[doom-module:+rails]]
   - [[doom-package:inflections]]
@@ -55,15 +54,13 @@ client (recommended: [[https://github.com/Shopify/ruby-lsp][ruby-lsp]] or [[http
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module requires Ruby and the Rubocop gem. It is recommended you install
-both with some version manager (RVM or Rbenv).
+This module requires Ruby. It is recommended you install it with some version
+manager (e.g. RVM or Rbenv).
 
 These guides will help you install Ruby:
 - [[https://gorails.com/setup/ubuntu/18.04][Ubuntu]]
 - [[https://gorails.com/setup/osx/10.15-catalina][MacOS]]
 - [[https://gorails.com/setup/windows/10][Windows]]
-
-Then run ~$ gem install rubocop~ to install rubocop.
 
 ** Formatter
 Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
