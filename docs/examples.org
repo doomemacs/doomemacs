@@ -127,8 +127,8 @@ complete example in [[id:f9bce7da-d155-4727-9b6f-b566b5b8d824][the previous sect
  (var :directive values...))
 #+end_src
 
-*** TODO =.doomrc=
-*** TODO =.doomproject=
+*** TODO =.doom=
+*** TODO =.doom.el=
 *** TODO =.doommodule=
 ** TODO Templates
 *** TODO User configuration
