@@ -85,15 +85,14 @@ You should use `set-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'+eshell-init-h)
   (add-hook 'eshell-exit-hook #'+eshell-cleanup-h)
 
-  ;; UX: Temporarily disable undo history between command executions. Undo can
-  ;;   destroy output while it's being printed to stdout.
-  (let (old-undo-list)
-    (add-hook! 'eshell-pre-command-hook
-      (setq old-undo-list buffer-undo-list
-            buffer-undo-list nil))
-    (add-hook! 'eshell-post-command-hook
-      (setq buffer-undo-list old-undo-list)
-      (clrhash undo-equiv-table)))
+  ;; UX: Temporarily disable undo history between command executions. Otherwise,
+  ;;   undo could destroy output while it's being printed or delete buffer
+  ;;   contents past the boundaries of the current prompt.
+  (add-hook 'eshell-pre-command-hook #'buffer-disable-undo)
+  (add-hook! 'eshell-post-command-hook
+    (defun +eshell--enable-undo-h ()
+      (buffer-enable-undo (current-buffer))
+      (setq buffer-undo-list nil)))
 
   ;; UX: Prior output in eshell buffers should be read-only. Otherwise, it's
   ;;   trivial to make edits in visual modes (like evil's or term's

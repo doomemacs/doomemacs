@@ -350,6 +350,20 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (after! comint
   (setq-default comint-buffer-maximum-size 2048)  ; double the default
 
+  ;; UX: Temporarily disable undo history between command executions. Otherwise,
+  ;;   undo could destroy output while it's being printed or delete buffer
+  ;;   contents past the boundaries of the current prompt.
+  (add-hook 'comint-exec-hook #'buffer-disable-undo)
+  (defadvice! doom--comint-enable-undo-a (process _string)
+    :after #'comint-output-filter
+    (let ((start-marker comint-last-output-start))
+      (when (and (< start-marker
+                    (or (if process (process-mark process))
+                        (point-max-marker)))
+                 (eq (char-before start-marker) ?\n)) ;; Account for some of the IELM’s wilderness.
+        (buffer-enable-undo)
+        (setq buffer-undo-list nil))))
+
   ;; Protect prompts from accidental modifications.
   (setq-default comint-prompt-read-only t)
 
