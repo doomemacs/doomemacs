@@ -12,7 +12,7 @@
   :defer t
   :config
   ;; HACK: treesit lacks any way to dictate where to install grammars.
-  (add-to-list 'treesit-extra-load-path doom-profile-data-dir)
+  (add-to-list 'treesit-extra-load-path (concat doom-profile-data-dir "tree-sitter"))
   (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
     "Write grammars to `doom-profile-data-dir'."
     :around #'treesit-install-language-grammar
