@@ -1,6 +1,10 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; lang/clojure/doctor.el
 
+(assert! (or (not (modulep! +tree-sitter))
+             (modulep! :tools tree-sitter))
+         "This module requires (:tools tree-sitter)")
+
 (when (and (modulep! :checkers syntax)
            (modulep! -lsp))
   (unless (executable-find "clj-kondo")

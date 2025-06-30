@@ -27,7 +27,11 @@ This module adds support for the Clojure(Script) language.
 ** Packages
 - [[doom-package:cider]]
 - [[doom-package:clj-refactor]]
+- [[doom-package:clojure-mode]]
+- [[doom-package:clojure-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:flycheck-clj-kondo]] if [[doom-module::checkers syntax]]
+- [[doom-package:jet]]
+- [[doom-package:neil]]
 
 ** Hacks
 - Error messages emitted from CIDER are piped into the REPL buffer when it is

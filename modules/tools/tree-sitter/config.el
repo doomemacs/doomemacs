@@ -36,7 +36,6 @@
                  (bibtex "https://github.com/latex-lsp/tree-sitter-bibtex" nil nil nil nil)
                  (blueprint "https://github.com/huanie/tree-sitter-blueprint" nil nil nil nil)
                  (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp" nil nil nil nil)
-                 (clojure "https://github.com/sogaiu/tree-sitter-clojure" nil nil nil nil)
                  (commonlisp "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp" nil nil nil nil)
                  (css "https://github.com/tree-sitter/tree-sitter-css" nil nil nil nil)
                  (html "https://github.com/tree-sitter/tree-sitter-html" nil nil nil nil)
