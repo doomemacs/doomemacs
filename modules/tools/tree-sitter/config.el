@@ -1,8 +1,5 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
-(defvar +tree-sitter--major-mode-remaps-alist nil)
-
-
 ;;
 ;;; Packages
 

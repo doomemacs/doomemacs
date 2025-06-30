@@ -1,5 +1,8 @@
 ;;; tools/tree-sitter/autoload/tree-sitter.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defvar +tree-sitter--major-mode-remaps-alist nil)
+
 ;;;###autodef (fset 'tree-sitter! #'ignore)
 (defun tree-sitter! ()
   (message "Old tree-sitter.el support is deprecated!"))
