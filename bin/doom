@@ -298,13 +298,13 @@ SEE ALSO:
             (defcli-group! :prefix (if (cdr key) (format "+%s" (cdr key)))
               (doom-load (file-name-sans-extension path))))))))
 
-  ;; Allow per-project Doom settings in .doom files.
+  ;; Execute arbitrary CLI configuration in a local .doom.el file
   (let (doomrc)
     (cond
      ((setq doomrc (getenv "DOOMRC"))
       (load! doomrc default-directory))
-     ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
-      (load! ".doomrc" doomrc)))))
+     ((setq doomrc (locate-dominating-file default-directory ".doom.el"))
+      (load! ".doom.el" doomrc)))))
 
 
 ;;

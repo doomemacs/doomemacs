@@ -18,7 +18,6 @@
 (add-to-list 'safe-local-variable-directories doom-user-dir)
 
 ;;; Support for Doom-specific file extensions
-(add-to-list 'auto-mode-alist '("/\\.doom\\(?:project\\|module\\|profile\\)?\\'" . lisp-data-mode))
-(add-to-list 'auto-mode-alist '("/\\.doomrc\\'" . emacs-lisp-mode))
+(add-to-list 'auto-mode-alist '("/\\.doom\\(?:module\\|profile\\)?\\'" . lisp-data-mode))
 
 ;;; init.el ends here
