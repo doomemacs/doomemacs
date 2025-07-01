@@ -154,12 +154,13 @@ ENVIRONMENT VARIABLES:
 
 EXIT CODES:
   0        Successful run
-  1        General internal error
-  2        Error with Emacs/Doom install or execution context
-  3        Unrecognized user input error
-  4        Command not found, or is incorrect/deprecated
-  5        Invalid, missing, or extra options/arguments
-  6-15     Reserved for Doom
+  1        No error occurred, but the command couldn't complete
+  2        General internal error
+  3        Error with Emacs/Doom install or execution context
+  4        Unrecognized user input error
+  5        Command not found, or is incorrect/deprecated
+  6        Invalid, missing, or extra options/arguments
+  7-15     Reserved for Doom
   16-192   Reserved for the user's extensions
   254      Successful run (then execute the dynamically generated after-script)
   255      Uncaught critical errors
