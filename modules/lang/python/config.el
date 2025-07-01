@@ -265,7 +265,4 @@
   :when (modulep! +lsp)
   :when (modulep! +pyright)
   :when (modulep! :tools lsp -eglot)
-  :defer t
-  :init
-  (when (executable-find "basedpyright")
-    (setq lsp-pyright-langserver-command "basedpyright")))
+  :defer t)
