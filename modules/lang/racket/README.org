@@ -70,6 +70,7 @@ Formatting is handled using the [[doom-module::editor format]] module via [[http
   (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
 #+end_src
 
+You can manually turn off smart bracket mode by setting the variable ~+racket-enable-smart-brackets~ to nil.
 ** Unicode Input
 The optional ~racket-unicode~ input method lets you type unicode characters such
 as λ or π. To enable unicode input for a single buffer, run
@@ -91,6 +92,5 @@ Once enabled, unicode input can be toggled by pressing C-\ or running
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
 * TODO Appendix
-#+begin_quote
- 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
-#+end_quote
+** Variables
+- ~+racket-enable-smart-brackets~: Enable smart bracket mode unless parinfer or lispy are enabled. Default is true.
