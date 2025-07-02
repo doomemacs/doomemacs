@@ -13,7 +13,7 @@
                               (dired-get-file-for-visit)
                             (buffer-file-name)))
                  nil t)))
-         (command (format "open %s"
+         (command (format "/usr/bin/open %s"
                           (if app-name
                               (format "-a %s '%s'" (shell-quote-argument app-name) path)
                             (format "'%s'" path)))))
