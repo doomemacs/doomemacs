@@ -390,7 +390,20 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
           ;; Protect fence (newline of input, just before output).
           (when (eq (char-before start-marker) ?\n)
             (remove-text-properties (1- start-marker) start-marker '(rear-nonsticky))
-            (add-text-properties    (1- start-marker) start-marker '(read-only t))))))))
+            (add-text-properties    (1- start-marker) start-marker '(read-only t)))))))
+
+  ;; UX: If the user is anywhere but the last prompt, typing should move them
+  ;;   there instead of unhelpfully spew read-only errors at them.
+  (defun doom--comint-move-cursor-to-prompt-h ()
+    (and (eq this-command 'self-insert-command)
+         comint-last-prompt
+         (> (cdr comint-last-prompt) (point))
+         (goto-char (cdr comint-last-prompt))))
+
+  (add-hook! 'comint-mode-hook
+    (defun doom--comint-init-move-cursor-to-prompt-h ()
+      (add-hook 'pre-command-hook #'doom--comint-move-cursor-to-prompt-h
+                nil t))))
 
 
 (after! compile
