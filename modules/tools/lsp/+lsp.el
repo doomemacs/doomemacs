@@ -97,7 +97,11 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
           (setq-local flycheck-checker old-checker))
       (apply fn args)))
 
-  (add-hook 'lsp-mode-hook #'+lsp-optimization-mode)
+  (add-hook 'lsp-before-initialize-hook #'+lsp-optimization-mode)
+  (add-hook! 'lsp-after-uninitialized-functions
+    (defun +lsp--disable-optimization-mode-if-no-workspaces-h (_workspace)
+      (unless (lsp--session-workspaces lsp--session)
+        (+lsp-optimization-mode -1))))
 
   (when (modulep! :completion company)
     (add-hook! 'lsp-completion-mode-hook
@@ -119,20 +123,20 @@ server getting expensively restarted when reverting buffers."
             restart
             (null +lsp-defer-shutdown)
             (= +lsp-defer-shutdown 0))
-        (prog1 (funcall fn restart)
-          (+lsp-optimization-mode -1))
+        (funcall fn restart)
       (when (timerp +lsp--deferred-shutdown-timer)
         (cancel-timer +lsp--deferred-shutdown-timer))
       (setq +lsp--deferred-shutdown-timer
             (run-at-time
              (if (numberp +lsp-defer-shutdown) +lsp-defer-shutdown 3)
-             nil (lambda (workspace)
-                   (with-lsp-workspace workspace
-                     (unless (lsp--workspace-buffers workspace)
-                       (let ((lsp-restart 'ignore))
-                         (funcall fn))
-                       (+lsp-optimization-mode -1))))
-             lsp--cur-workspace))))
+             nil (lambda (workspaces)
+                   (dolist (ws workspaces)
+                     (or (cl-some #'lsp-buffer-live-p
+                                  (lsp--workspace-buffers ws))
+                         (with-lsp-workspace ws
+                           (let ((lsp-restart 'ignore))
+                             (funcall fn))))))
+             lsp--buffer-workspaces))))
 
   (when (modulep! :ui modeline +light)
     (defvar-local lsp-modeline-icon nil)

@@ -21,10 +21,13 @@ killing and opening many LSP/eglot-powered buffers.")
   :global t
   :init-value nil
   (if (not +lsp-optimization-mode)
-      (setq-default read-process-output-max +lsp--default-read-process-output-max
-                    gcmh-high-cons-threshold +lsp--default-gcmh-high-cons-threshold
-                    +lsp--optimization-init-p nil)
-    ;; Only apply these settings once!
+      ;; Only apply these settings once! A minor mode's body is triggered each
+      ;; time it is called, even if it's already in the desired state.
+      (when +lsp--optimization-init-p
+        (setq-default read-process-output-max +lsp--default-read-process-output-max
+                      gcmh-high-cons-threshold +lsp--default-gcmh-high-cons-threshold
+                      +lsp--optimization-init-p nil))
+    ;; See above.
     (unless +lsp--optimization-init-p
       (setq +lsp--default-read-process-output-max (default-value 'read-process-output-max)
             +lsp--default-gcmh-high-cons-threshold (default-value 'gcmh-high-cons-threshold))
