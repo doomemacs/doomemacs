@@ -14,6 +14,7 @@
     ;; Emacs variables
     (async-debug t 2)
     debug-on-error
+    epg-debug
     (gcmh-verbose t 3)
     init-file-debug
     (jka-compr-verbose t 3)
