@@ -356,13 +356,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (add-hook 'comint-exec-hook #'buffer-disable-undo)
   (defadvice! doom--comint-enable-undo-a (process _string)
     :after #'comint-output-filter
-    (let ((start-marker comint-last-output-start))
-      (when (and (< start-marker
-                    (or (if process (process-mark process))
-                        (point-max-marker)))
-                 (eq (char-before start-marker) ?\n)) ;; Account for some of the IELM’s wilderness.
-        (buffer-enable-undo)
-        (setq buffer-undo-list nil))))
+    (with-current-buffer (process-buffer process)
+      (let ((start-marker comint-last-output-start))
+        (when (and (< start-marker
+                      (or (if process (process-mark process))
+                          (point-max-marker)))
+                   (eq (char-before start-marker) ?\n)) ;; Account for some of the IELM’s wilderness.
+          (buffer-enable-undo)
+          (setq buffer-undo-list nil)))))
 
   ;; Protect prompts from accidental modifications.
   (setq-default comint-prompt-read-only t)
@@ -375,22 +376,23 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (defadvice! doom--comint-protect-output-in-visual-modes-a (process _string)
     :after #'comint-output-filter
     ;; Adapted from https://github.com/michalrus/dotfiles/blob/c4421e361400c4184ea90a021254766372a1f301/.emacs.d/init.d/040-terminal.el.symlink#L33-L49
-    (let* ((start-marker comint-last-output-start)
-           (end-marker (or (if process (process-mark process))
-                           (point-max-marker))))
-      (when (< start-marker end-marker) ;; Account for some of the IELM’s wilderness.
-        (let ((inhibit-read-only t))
-          ;; Make all past output read-only (disallow buffer modifications)
-          (add-text-properties comint-last-input-start (1- end-marker) '(read-only t))
-          ;; Disallow interleaving.
-          (remove-text-properties start-marker (1- end-marker) '(rear-nonsticky))
-          ;; Make sure that at `max-point' you can always append. Important for
-          ;; bad REPLs that keep writing after giving us prompt (e.g. sbt).
-          (add-text-properties (1- end-marker) end-marker '(rear-nonsticky t))
-          ;; Protect fence (newline of input, just before output).
-          (when (eq (char-before start-marker) ?\n)
-            (remove-text-properties (1- start-marker) start-marker '(rear-nonsticky))
-            (add-text-properties    (1- start-marker) start-marker '(read-only t)))))))
+    (with-current-buffer (process-buffer process)
+      (let* ((start-marker comint-last-output-start)
+             (end-marker (or (if process (process-mark process))
+                             (point-max-marker))))
+        (when (< start-marker end-marker) ;; Account for some of the IELM’s wilderness.
+          (let ((inhibit-read-only t))
+            ;; Make all past output read-only (disallow buffer modifications)
+            (add-text-properties comint-last-input-start (1- end-marker) '(read-only t))
+            ;; Disallow interleaving.
+            (remove-text-properties start-marker (1- end-marker) '(rear-nonsticky))
+            ;; Make sure that at `max-point' you can always append. Important for
+            ;; bad REPLs that keep writing after giving us prompt (e.g. sbt).
+            (add-text-properties (1- end-marker) end-marker '(rear-nonsticky t))
+            ;; Protect fence (newline of input, just before output).
+            (when (eq (char-before start-marker) ?\n)
+              (remove-text-properties (1- start-marker) start-marker '(rear-nonsticky))
+              (add-text-properties (1- start-marker) start-marker '(read-only t))))))))
 
   ;; UX: If the user is anywhere but the last prompt, typing should move them
   ;;   there instead of unhelpfully spew read-only errors at them.
