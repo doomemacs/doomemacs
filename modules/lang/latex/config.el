@@ -87,14 +87,16 @@ okular and pdf-tools.")
     ;; We have to use lower case modes here, because `smartparens-mode' uses
     ;; the same during configuration.
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
-      ;; All these excess pairs dramatically slow down typing in LaTeX buffers,
-      ;; so we remove them. Let snippets do their job.
-      (dolist (open '("\\left(" "\\left[" "\\left\\{" "\\left|"
-                      "\\bigl(" "\\biggl(" "\\Bigl(" "\\Biggl(" "\\bigl["
-                      "\\biggl[" "\\Bigl[" "\\Biggl[" "\\bigl\\{" "\\biggl\\{"
-                      "\\Bigl\\{" "\\Biggl\\{"
+      (dolist (open '(
+                      ;; All these pairs dramatically slow down typing in LaTeX
+                      ;; buffers, so remove them. Let snippets do their job.
+                      "\\left(" "\\left[" "\\left\\{" "\\left|"
+                      "\\bigl("   "\\biggl("   "\\Bigl("   "\\Biggl("
+                      "\\bigl["   "\\biggl["   "\\Bigl["   "\\Biggl["
+                      "\\bigl\\{" "\\biggl\\{" "\\Bigl\\{" "\\Biggl\\{"
                       "\\lfloor" "\\lceil" "\\langle"
-                      "\\lVert" "\\lvert" "`"))
+                      "\\lVert" "\\lvert"
+                      "`"))
         (sp-local-pair modes open nil :actions :rem))
       ;; And tweak these so that users can decide whether they want use LaTeX
       ;; quotes or not, via `+latex-enable-plain-double-quotes'.
