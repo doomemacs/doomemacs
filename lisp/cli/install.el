@@ -105,7 +105,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
 
     (when (doom-profiles-bootloadable-p)
       (print! (start "Initializing profile bootstrapper..."))
-      (call! '(profiles sync "--reload")))
+      (call! '(profile sync "--all" "--reload")))
 
     (print! (start "Synchronizing default profile..."))
     (print-group! (doom-profile-generate))
