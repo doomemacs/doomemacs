@@ -137,7 +137,7 @@ ENVIRONMENT VARIABLES:
     also sets this variable.
 
   `$DOOMPROFILELOADFILE'
-    Doom generates a profile loader script on 'doom sync' or 'doom profiles
+    Doom generates a profile loader script on 'doom sync' or 'doom profile
     sync'. By default, this file is written to and loaded from
     $EMACSDIR/profiles/load.el. Set this envvar to change that. Note that this
     envvar must be in scope for both interactive and non-interactive sessions
