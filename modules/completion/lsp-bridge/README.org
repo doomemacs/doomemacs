@@ -10,22 +10,24 @@ philosophy to save you time and effort, because time is money.
 
 Advantages of lsp-bridge:
 
-Blazingly fast: Offload LSP request and data analysis to an external process,
+- Blazingly fast: Offload LSP request and data analysis to an external process,
 preventing Emacs from getting stuck due to delays or large data triggering
 garbage collection
-Remote Completion: Built-in support for remote server code completion, with
+- Remote Completion: Built-in support for remote server code completion, with
 various login methods such as passwords and public keys, supports tramp protocol
 and jump server, supports Docker
-Plug and play: Can be used immediately after installation, requires no additional
+- Plug and play: Can be used immediately after installation, requires no additional
 configuration, no need to manually set up frontend completion, backend completion,
 or multi-backend integration configurations, code completion also works in
 org-mode src blocks
-Multi-server fusion: A simple JSON is all you need to combine multiple LSP Servers
+- Multi-server fusion: A simple JSON is all you need to combine multiple LSP Servers
 into one file that provides services for example Python which offers code
 completion with Pyright and diagnostic and formatting capabilities with Ruff
-Flexible Customization: Customizing LSP server options is as simple as using a
+- Flexible Customization: Customizing LSP server options is as simple as using a
 JSON file, allowing different projects to have different JSON configurations
 with just a few lines of rules
+
+[[https://github.com/manateelazycat/lsp-bridge][GitHub website of lsp-bridge]]
 
 ** Maintainers
 - [[doom-user:][@Joxos]]
