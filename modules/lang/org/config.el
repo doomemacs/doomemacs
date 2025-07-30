@@ -631,29 +631,6 @@ relative to `org-directory', unless it is an absolute path."
                (find-file (doom-path doom-docs-dir "changelog.org"))
                (org-match-sparse-tree nil link))))
 
-  ;; TODO PR this upstream
-  (defadvice! +org--follow-search-string-a (fn link &optional arg)
-    "Support ::SEARCH syntax for id: links."
-    :around #'org-id-open
-    :around #'org-roam-id-open
-    (save-match-data
-      (cl-destructuring-bind (id &optional search)
-          (split-string link "::")
-        (prog1 (funcall fn id arg)
-          (cond ((null search))
-                ((string-match-p "\\`[0-9]+\\'" search)
-                 ;; Move N lines after the ID (in case it's a heading), instead
-                 ;; of the start of the buffer.
-                 (forward-line (string-to-number option)))
-                ((string-match "^/\\([^/]+\\)/$" search)
-                 (let ((match (match-string 1 search)))
-                   (save-excursion (org-link-search search))
-                   ;; `org-link-search' only reveals matches. Moving the point
-                   ;; to the first match after point is a sensible change.
-                   (when (re-search-forward match)
-                     (goto-char (match-beginning 0)))))
-                ((org-link-search search)))))))
-
   ;; Add "lookup" links for packages and keystrings; useful for Emacs
   ;; documentation -- especially Doom's!
 

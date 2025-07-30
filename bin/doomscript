@@ -24,7 +24,8 @@ case "$EMACS" in
     *term*) EMACS=emacs ;;   # in {ansi-,v}term
     *\ *) ;;
     *) EMACS="${EMACS:-emacs}"
-       # Only sanity-check $EMACS if it's a path or executable
+       # Only sanity-check $EMACS if it's a path or executable, beacuse it might
+       # be a full command.
        if ! type "$EMACS" >/dev/null 2>&1; then
            echo "Error: failed to run Emacs with command '$EMACS'"
            echo
@@ -34,9 +35,9 @@ case "$EMACS" in
        ;;
 esac
 
-# Careful not to use -Q! It implies --no-site-lisp, which omits the site-lisp
-# directory from `load-path', which would prevent Doom from manually loading the
-# site files later. These are important on some systems or deployment methods
+# Careful not to use -Q! It implies --no-site-lisp; it omits the site-lisp
+# directory from `load-path' which prevent Doom from manually loading the site
+# files later. Site files are important on some systems or deployment methods
 # (like Snap or NixOS).
 emacs="$EMACS -q --no-site-file --batch"
 
@@ -45,16 +46,16 @@ emacs="$EMACS -q --no-site-file --batch"
 # is unsupported.
 export EMACSDIR="${EMACSDIR:-$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE:-$0}")/.." && pwd)}"
 if [ ! -f "$EMACSDIR/early-init.el" ]; then
-    echo "Error: cannot load $EMACSDIR/early-init.el."
+    echo "Error: failed to load $EMACSDIR/early-init.el."
     echo
     echo "Either the file doesn't exist (indicating a broken or missing Doom install)"
-    echo "or that doomscript is being source directly (which is unsupported)."
+    echo "or that this script is being sourced directly (which is unsupported)."
     echo
     echo "Set \$EMACSDIR to the path of an existing Doom installation."
     exit 1
 fi >&2
-# Some state that Doom's CLI framework needs to know about the terminal. Read
-# the comments at the top of bin/doom for explanations.
+# Inform Doom's CLI about the characteristics of the current terminal and how
+# bin/doom's been invoked. Read the shebang of bin/doom for explanations.
 export __DOOMSH="${__DOOMSH:-sh}"
 export __DOOMPID="${__DOOMPID:-$$}"
 export __DOOMSTEP="${__DOOMSTEP:-0}"
@@ -74,19 +75,19 @@ $emacs --load "$EMACSDIR/early-init" \
        -- "$@"
 exit=$?
 
-# To simulate execve syscalls (which replaces the running process), Doom
-# generates a temporary exit-script if a Doomscript returns a 254 exit code.
+# bin/doom can request the caller emulate an execve syscall by returning a 254
+# exit code and generating a (temporary) exit script to be executed afterwards.
 if [ "${exit:-0}" -eq 254 ]; then
     # $TMPDIR (or $TEMP and $TMP on Windows) aren't guaranteed to have values,
     # and mktemp isn't available on all systems, but you know what is? Emacs! So
     # I rely on it to provide TMPDIR.
     export TMPDIR="${TMPDIR:-${TMP:-${TEMP:-$($emacs -Q --eval '(princ (temporary-file-directory))' 2>/dev/null)}}}"
 
-    # The user may have a noexec flag set on /tmp, so the exit-script should be
-    # passed to /bin/sh rather than executed directly.
+    # /tmp may be mounted with the noexec flag, so the exit-script can't be
+    # executed directly.
     sh "${TMPDIR}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@"
     exit="$?"
 fi
 exit $exit
 
-# doomscript ends here... Unless?
+# doomscript ends here... Unless...?

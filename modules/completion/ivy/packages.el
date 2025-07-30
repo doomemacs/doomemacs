@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/ivy/packages.el
 
-(package! swiper :pin "2529a23f9f510a94efa6c088bd14217aa764dafb")
+(package! swiper :pin "2257a9d0519e18f5ce7a7fafda8a1a8e5023628e")
 (package! ivy)
 (package! ivy-avy)
 (package! counsel)

@@ -59,8 +59,6 @@ okular and pdf-tools.")
       TeX-source-correlate-method 'synctex
       ;; Don't start the Emacs server when correlating sources.
       TeX-source-correlate-start-server nil
-      ;; Automatically insert braces after sub/superscript in `LaTeX-math-mode'.
-      TeX-electric-sub-and-superscript t
       ;; Just save, don't ask before each compilation.
       TeX-save-query nil)
 
@@ -81,8 +79,6 @@ okular and pdf-tools.")
     fill-nobreak-predicate (cons #'texmathp fill-nobreak-predicate))
   ;; Enable word wrapping.
   (add-hook 'TeX-mode-hook #'visual-line-mode)
-  ;; Enable `rainbow-mode' after applying styles to the buffer.
-  (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   ;; Display output of LaTeX commands in a popup.
   (set-popup-rules! '((" output\\*$" :size 15)
                       ("^\\*TeX \\(?:Help\\|errors\\)"

@@ -56,8 +56,8 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
             (prin1-to-string val))
            ((stringp val)
             (propertize (format "%S" val) 'face 'font-lock-string-face))
-           ((numberp val)
-            (propertize (format "%s" val) 'face 'highlight-numbers-number))
+           ((and (numberp val) (facep 'font-lock-number-face)) ; introduced in 29.1+
+            (propertize (format "%s" val) 'face 'font-lock-number-face))
            ((format "%s" val)))
      t)))
 

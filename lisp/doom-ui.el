@@ -348,8 +348,62 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 
 (after! comint
-  (setq comint-prompt-read-only t
-        comint-buffer-maximum-size 2048)) ; double the default
+  (setq-default comint-buffer-maximum-size 2048)  ; double the default
+
+  ;; UX: Temporarily disable undo history between command executions. Otherwise,
+  ;;   undo could destroy output while it's being printed or delete buffer
+  ;;   contents past the boundaries of the current prompt.
+  (add-hook 'comint-exec-hook #'buffer-disable-undo)
+  (defadvice! doom--comint-enable-undo-a (process _string)
+    :after #'comint-output-filter
+    (let ((start-marker comint-last-output-start))
+      (when (and (< start-marker
+                    (or (if process (process-mark process))
+                        (point-max-marker)))
+                 (eq (char-before start-marker) ?\n)) ;; Account for some of the IELM’s wilderness.
+        (buffer-enable-undo)
+        (setq buffer-undo-list nil))))
+
+  ;; Protect prompts from accidental modifications.
+  (setq-default comint-prompt-read-only t)
+
+  ;; UX: Prior output in shell and comint shells (like ielm) should be
+  ;;   read-only. Otherwise, it's trivial to make edits in visual modes (like
+  ;;   evil's or term's term-line-mode) and leave the buffer in a half-broken
+  ;;   state (which you have to flush out with a couple RETs, which may execute
+  ;;   the broken text in the buffer),
+  (defadvice! doom--comint-protect-output-in-visual-modes-a (process _string)
+    :after #'comint-output-filter
+    ;; Adapted from https://github.com/michalrus/dotfiles/blob/c4421e361400c4184ea90a021254766372a1f301/.emacs.d/init.d/040-terminal.el.symlink#L33-L49
+    (let* ((start-marker comint-last-output-start)
+           (end-marker (or (if process (process-mark process))
+                           (point-max-marker))))
+      (when (< start-marker end-marker) ;; Account for some of the IELM’s wilderness.
+        (let ((inhibit-read-only t))
+          ;; Make all past output read-only (disallow buffer modifications)
+          (add-text-properties comint-last-input-start (1- end-marker) '(read-only t))
+          ;; Disallow interleaving.
+          (remove-text-properties start-marker (1- end-marker) '(rear-nonsticky))
+          ;; Make sure that at `max-point' you can always append. Important for
+          ;; bad REPLs that keep writing after giving us prompt (e.g. sbt).
+          (add-text-properties (1- end-marker) end-marker '(rear-nonsticky t))
+          ;; Protect fence (newline of input, just before output).
+          (when (eq (char-before start-marker) ?\n)
+            (remove-text-properties (1- start-marker) start-marker '(rear-nonsticky))
+            (add-text-properties    (1- start-marker) start-marker '(read-only t)))))))
+
+  ;; UX: If the user is anywhere but the last prompt, typing should move them
+  ;;   there instead of unhelpfully spew read-only errors at them.
+  (defun doom--comint-move-cursor-to-prompt-h ()
+    (and (eq this-command 'self-insert-command)
+         comint-last-prompt
+         (> (cdr comint-last-prompt) (point))
+         (goto-char (cdr comint-last-prompt))))
+
+  (add-hook! 'comint-mode-hook
+    (defun doom--comint-init-move-cursor-to-prompt-h ()
+      (add-hook 'pre-command-hook #'doom--comint-move-cursor-to-prompt-h
+                nil t))))
 
 
 (after! compile
@@ -479,20 +533,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (add-hook! '(completion-list-mode-hook Man-mode-hook)
            #'hide-mode-line-mode)
 
-;; Many major modes do no highlighting of number literals, so we do it for them
-(use-package! highlight-numbers
-  :hook ((prog-mode conf-mode) . highlight-numbers-mode)
-  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
-
 ;;;###package image
 (setq image-animate-loop t)
-
-;;;###package rainbow-delimiters
-;; Helps us distinguish stacked delimiter pairs, especially in parentheses-drunk
-;; languages like Lisp. I reduce it from it's default of 9 to reduce the
-;; complexity of the font-lock keyword and hopefully buy us a few ms of
-;; performance.
-(setq rainbow-delimiters-max-face-count 4)
 
 
 ;;

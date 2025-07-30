@@ -646,7 +646,6 @@ on."
   (cl-callf append so-long-minor-modes
     '(spell-fu-mode
       eldoc-mode
-      highlight-numbers-mode
       better-jumper-local-mode
       ws-butler-mode
       auto-composition-mode

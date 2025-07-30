@@ -10,9 +10,6 @@
 (when (modulep! :completion company)
   (package! company-inf-ruby :pin "fe3e4863bc971fbb81edad447efad5795ead1b17"))
 
-;; Programming environment
-(package! rubocop :pin "f5fd18aa810c3d3269188cbbd731ddc09006f8f5")
-
 ;; Project tools
 (package! bundler :pin "43efb6be4ed118b06d787ce7fbcffd68a31732a7")
 (package! rake :pin "452ea0caca33376487103c64177c295ed2960cca")

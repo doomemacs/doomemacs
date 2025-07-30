@@ -1,5 +1,26 @@
 ;;; lang/org/contrib/jupyter.el -*- lexical-binding: t; -*-
 ;;;###if (modulep! +jupyter)
+;; TODO: Move to :tools jupyter
+
+(use-package! jupyter-repl
+  :defer t
+  :config
+  ;; HACK: If the user is anywhere but the last prompt, typing should move them
+  ;;   there instead of unhelpfully spewing read-only errors at them.
+  ;; REVIEW: Upstream this (maybe?)
+  (defun +jupyter--move-cursor-to-prompt-h ()
+    (and (eq this-command 'self-insert-command)
+         (> (save-excursion
+              (goto-char (point-max))
+              (jupyter-repl-cell-code-beginning-position))
+            (point))
+         (goto-char (point-max))))
+
+  (add-hook! 'jupyter-repl-mode-hook
+    (defun +jupyter--init-move-cursor-to-prompt-h ()
+      (add-hook 'pre-command-hook #'+jupyter--move-cursor-to-prompt-h
+                nil t))))
+
 
 (use-package! ob-jupyter
   :defer t

@@ -4,9 +4,6 @@
   :when (fboundp 'pixel-scroll-precision-mode)
   :hook (doom-first-input . ultra-scroll-mode)
   :hook (doom-first-file . ultra-scroll-mode)
-  :init
-  (setq scroll-conservatively 101
-        scroll-margin 0)
   :config
   (add-hook 'ultra-scroll-hide-functions #'hl-todo-mode)
   (add-hook 'ultra-scroll-hide-functions #'diff-hl-flydiff-mode)
@@ -26,6 +23,20 @@
       (if good-scroll-mode
           (setq mwheel-scroll-up-function #'scroll-up
                 mwheel-scroll-down-function #'scroll-down))))
+
+  ;; HACK: good-scroll advises interactive motion commands to trigger
+  ;;   interpolated scrolling. It expects these commands to only be called
+  ;;   interactively, but there are cases (like in `ledger-mode') where they (in
+  ;;   this case, `move-end-of-line') are called programmatically where the
+  ;;   selected window's boundaries may be out of bounds for the target buffer.
+  ;;   Cue the errors.
+  ;; REVIEW: This shold be fixed upstream.
+  (defadvice! +smooth-scroll--fix-out-of-bounds-error-a ()
+    :override #'good-scroll--point-at-top-p
+    (save-restriction
+      (widen)
+      (<= (line-number-at-pos (max (point) (point-min)) t)
+          (1+ (line-number-at-pos (min (window-start) (point-max)) t)))))
 
   (defun good-scroll--convert-line-to-step (line)
     (cond ((integerp line) (* line (line-pixel-height)))

@@ -69,7 +69,7 @@
 
 
 (use-package! php-mode
-  :hook (php-mode . rainbow-delimiters-mode)
+  :mode "\\.inc\\'"
   :config
   (+php-common-config 'php-mode)
 

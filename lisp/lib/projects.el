@@ -163,7 +163,7 @@ If DIR is not a project, it will be indexed (but not cached)."
           ((when-let* ((project-current-directory-override dir)
                        (pr (project-current t dir)))
              (condition-case _
-                 (project-find-file-in nil nil pr)
+                 (project-find-file-in nil (list dir) pr t)
                ;; FIX: project.el throws errors if DIR is an empty directory,
                ;;   which is poor UX.
                (wrong-type-argument
