@@ -63,6 +63,25 @@ Note that COMMIT is only available in Emacs >=31."
                               'many)
                           (list commit))))))))
 
+;;;###autodef (fset 'tree-sitter-ensure-installed! #'ignore)
+(defun tree-sitter-ensure-installed! (langs)
+  "Ensure that language grammars are installed for each language in LANGS
+
+LANGS is a list of symbols, e.g. \='(typescript javascript tsx). Each
+lang is passed to treesit-install-language grammar. For a language
+symbol to work with this function, it needs to have a recipe in
+treesit-language-source-alist."
+  (let* ((unready-langs (cl-loop for lang in langs
+                                 unless (treesit-ready-p lang t)
+                                 collect lang)))
+    (when (and unready-langs
+               (or (eq treesit-auto-install-grammar 'always)
+                   (and (eq treesit-auto-install-grammar 'ask)
+                        (y-or-n-p (format "Tree-sitter grammar for %s is missing; install it?" (mapconcat #'symbol-name unready-langs ", "))))))
+      (dolist (lang unready-langs)
+        (treesit-install-language-grammar lang (concat doom-profile-data-dir "tree-sitter"))))))
+
+
 ;; ;; HACK: Remove and refactor when `use-package' eager macro expansion is solved or `use-package!' is removed
 ;; ;;;###autoload
 ;; (defun +tree-sitter-get-textobj (group &optional query)

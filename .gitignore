@@ -54,3 +54,4 @@ flycheck_*.el
 /tramp
 /transient/
 /var/
+.aider*

@@ -11,11 +11,18 @@
   ;; HACK: treesit lacks any way to dictate where to install grammars.
   (add-to-list 'treesit-extra-load-path (concat doom-profile-data-dir "tree-sitter"))
   (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
-    "Write grammars to `doom-profile-data-dir'."
-    :around #'treesit-install-language-grammar
-    :around #'treesit--build-grammar
-    (let ((user-emacs-directory doom-profile-data-dir))
-      (apply fn args)))
+  "Write grammars to `doom-profile-data-dir'."
+  :around #'treesit-install-language-grammar
+  :around #'treesit--build-grammar
+  (let* ((lang (car args))
+         (out-dir (cadr args))
+         (default-out-dir (concat doom-profile-data-dir "tree-sitter")))
+    (if (eq out-dir 'interactive)
+        ;; Handle interactive case - provide our directory instead of prompting
+        (funcall fn lang default-out-dir)
+      ;; Handle non-interactive case
+      (let ((user-emacs-directory doom-profile-data-dir))
+        (apply fn args)))))
 
   ;; HACK: Some *-ts-mode packages modify `major-mode-remap-defaults'
   ;;   inconsistently. Playing whack-a-mole to undo those changes is more hassle
@@ -40,7 +47,6 @@
                  (css "https://github.com/tree-sitter/tree-sitter-css" nil nil nil nil)
                  (html "https://github.com/tree-sitter/tree-sitter-html" nil nil nil nil)
                  (java "https://github.com/tree-sitter/tree-sitter-java" nil nil nil nil)
-                 (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src" nil nil)
                  (latex "https://github.com/latex-lsp/tree-sitter-latex" nil nil nil nil)
                  (make "https://github.com/tree-sitter-grammars/tree-sitter-make" nil nil nil nil)
                  (nu "https://github.com/nushell/tree-sitter-nu" nil nil nil nil)
@@ -52,8 +58,6 @@
                  (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages" nil nil nil)
                  (surface "https://github.com/connorlay/tree-sitter-surface" nil nil nil nil)
                  (toml "https://github.com/tree-sitter/tree-sitter-toml" nil nil nil nil)
-                 (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src" nil nil)
-                 (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src" nil nil)
                  (typst "https://github.com/uben0/tree-sitter-typst" "master" "src" nil nil)
                  (verilog "https://github.com/gmlarumbe/tree-sitter-verilog" nil nil nil nil)
                  (vhdl "https://github.com/alemuller/tree-sitter-vhdl" nil nil nil nil)
@@ -62,7 +66,6 @@
                  (wat "https://github.com/wasm-lsp/tree-sitter-wasm" nil "wat/src" nil nil)
                  (wgsl "https://github.com/mehmetoguzderin/tree-sitter-wgsl" nil nil nil nil)))
     (cl-pushnew map treesit-language-source-alist :test #'eq :key #'car)))
-
 
 ;; TODO: combobulate or evil-textobj-tree-sitter
 
