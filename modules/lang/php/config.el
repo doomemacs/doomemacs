@@ -25,26 +25,26 @@
   (set-repl-handler! mode #'+php/open-repl)
   (set-lookup-handlers! mode :documentation #'php-search-documentation)
   (set-ligatures! mode
-    ;; Functional
-    :lambda "function()" :lambda "fn"
-    :def "function"
-    ;; Types
-    :null "null"
-    :true "true" :false "false"
-    :int "int" :float "float"
-    :str "string"
-    :bool "list"
-    ;; Flow
-    :not "!"
-    :and "&&" :and "and"
-    :or "||" :or "or"
-    :for "for"
-    :return "return"
-    :yield "use")
+                  ;; Functional
+                  :lambda "function()" :lambda "fn"
+                  :def "function"
+                  ;; Types
+                  :null "null"
+                  :true "true" :false "false"
+                  :int "int" :float "float"
+                  :str "string"
+                  :bool "list"
+                  ;; Flow
+                  :not "!"
+                  :and "&&" :and "and"
+                  :or "||" :or "or"
+                  :for "for"
+                  :return "return"
+                  :yield "use")
 
   (let ((mode-hook (intern (format "%s-hook" mode)))
         (mode-vars-hook (intern (format "%s-local-vars-hook" mode)))
-        (mode-map (symbol-value (intern (format "%s-map" mode)))))
+        (mode-map (intern (format "%s-map" mode))))
     (sp-with-modes (ensure-list mode)
       (sp-local-pair "<?"    "?>" :post-handlers '(("| " "SPC" "=") ("||\n[i]" "RET") ("[d2]" "p")))
       (sp-local-pair "<?php" "?>" :post-handlers '(("| " "SPC") ("||\n[i]" "RET"))))
@@ -54,18 +54,17 @@
         ;; `company-dabbrev-code', in that order.
         (when +php--company-backends
           (set-company-backend! mode
-            (cons :separate +php--company-backends)
-            'company-dabbrev-code))
+                                (cons :separate +php--company-backends)
+                                'company-dabbrev-code))
       (when (executable-find "php-language-server.php")
         (setq lsp-clients-php-server-command "php-language-server.php"))
       (add-hook mode-vars-hook #'lsp! 'append))
-
-    (map! :localleader
-          :map ,mode-map
-          :prefix ("t" . "test")
-          "r" #'phpunit-current-project
-          "a" #'phpunit-current-class
-          "s" #'phpunit-current-test)))
+    (eval `(map! :localleader
+           :map ,mode-map
+           :prefix ("t" . "test")
+           "r" #'phpunit-current-project
+           "a" #'phpunit-current-class
+           "s" #'phpunit-current-test))))
 
 
 (use-package! php-mode
