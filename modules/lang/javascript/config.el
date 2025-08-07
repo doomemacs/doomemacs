@@ -67,7 +67,7 @@
     '((javascript :url "https://github.com/tree-sitter/tree-sitter-javascript"
        :rev "master"
        :source-dir "src")))
-  (+javascript-common-config 'js-ts-mode))
+  (+javascript-common-config 'js-ts-mode '(javascript)))
 
 (use-package! typescript-ts-mode
   :defer t
