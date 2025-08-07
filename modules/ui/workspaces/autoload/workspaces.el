@@ -532,16 +532,16 @@ created."
 (defun +workspaces-associate-frame-fn (frame &optional _new-frame-p)
   "Create a blank, new perspective and associate it with FRAME."
   (when persp-mode
-    (if (not (persp-frame-list-without-daemon))
-        (+workspace-switch +workspaces-main t)
-      (with-selected-frame frame
-        (+workspace-switch (format "#%s" (+workspace--generate-id)) t)
-        (unless (doom-real-buffer-p (current-buffer))
-          (switch-to-buffer (doom-fallback-buffer)))
-        (set-frame-parameter frame 'workspace (+workspace-current-name))
-        ;; ensure every buffer has a buffer-predicate
-        (persp-set-frame-buffer-predicate frame))
-      (run-at-time 0.1 nil #'+workspace/display))))
+    (with-selected-frame frame
+      (if (not (cdr-safe (persp-frame-list-without-daemon)))
+          (+workspace-switch +workspaces-main t)
+        (+workspace-switch (format "#%s" (+workspace--generate-id)) t))
+      (unless (doom-real-buffer-p (current-buffer))
+        (switch-to-buffer (doom-fallback-buffer)))
+      (set-frame-parameter frame 'workspace (+workspace-current-name))
+      ;; ensure every buffer has a buffer-predicate
+      (persp-set-frame-buffer-predicate frame))
+    (run-at-time 0.1 nil #'+workspace/display)))
 
 ;;;###autoload
 (defun +workspaces-switch-to-project-h (&optional dir)

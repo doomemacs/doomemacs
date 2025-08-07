@@ -1,11 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/llm/packages.el
 
-(package! gptel :pin "e1050ef6e5ecbbe31bc35abfa293a5dee75e9647")
+(package! gptel :pin "0a7744610814da90a27cb8f6a090915f61bde4b8")
 
 (package! gptel-quick
   :recipe (:host github :repo "karthink/gptel-quick")
-  :pin "34acd437a7af8a387c14428bd1abdb3cd9e95d9d")
+  :pin "495b5e0b5348dbced1448bd12cbf8847e30b5175")
 
 (when (modulep! :tools magit)
-  (package! gptel-magit :pin "7f586943040bbb6885adafaf3e61fb5137c64558"))
+  (package! gptel-magit :pin "f27c01821b67ed99ddf705c2b995f78b71394d8b"))

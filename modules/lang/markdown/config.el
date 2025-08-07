@@ -45,7 +45,12 @@ capture, the end position, and the output buffer.")
                 "<style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style>"
                 "<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>"
                 "<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>"
-                "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>"))
+                "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>")
+        ;; Disabled to prevent accidentally clicking links while focusing Emacs
+        ;; or a markdown buffer. We prefer keyboard-centric workflows anyway and
+        ;; already have ffap or lookup commands for opening links at point (e.g.
+        ;; gf or pressing RET on a link).
+        markdown-mouse-follow-link nil)
 
   :config
   (set-flyspell-predicate! '(markdown-mode gfm-mode)

@@ -2490,11 +2490,16 @@ OPTIONS:
                               " or ")))))))))
 
 (defcli! (:root :version)
-    ((simple? ("--simple"))
-     &context context)
-  "Show installed versions of Doom, Doom modules, and Emacs."
-  (doom/version)
-  (unless simple?
+    ((verbose? ("-v" "--verbose"))
+     &context _)
+  "Show installed versions of Doom core.
+
+OPTIONS:
+  -v, --verbose
+    Also show version (and git info) for GNU Emacs and installed module sources."
+  (if (not verbose?)
+      (print! "%s" doom-version)
+    (doom/version)
     (terpri)
     (with-temp-buffer
       (insert-file-contents (doom-path doom-emacs-dir "LICENSE"))

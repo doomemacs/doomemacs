@@ -1,12 +1,19 @@
 # bin/doom.ps1
+# TODO: Use magic shebang (polyglot)?
 
-if (!(Get-Command -Erroraction silentlycontinue emacs.exe)) {
-    echo "Couldn't find emacs.exe in your PATH."
-    exit 1
+function Executable-Find {
+    foreach ($exe in $args) {
+        if ($exe) {
+            $path = Get-Command $exe -ErrorAction SilentlyContinue
+            if ($path) { return $path.Path; }
+        }
+    }
+    throw "Could not find in PATH: $($args -join ', ')"
 }
 
+$emacs = if ($env:EMACS) { $env:EMACS } else { Executable-Find "emacs.exe" }
+$pwsh = Executable-Find "pwsh.exe" "powershell.exe"
 $doom = "$PSScriptRoot/doom"
-$emacs = if ($env:EMACS) { $env:EMACS } else { (Get-Command emacs.exe).Path }
 $oldemacsdir = $env:EMACSDIR
 
 try {
@@ -17,14 +24,15 @@ try {
     if (-not $env:__DOOMGEOM) {
         $cols = (Get-Host).UI.RawUI.WindowSize.Width
         $lines = (Get-Host).UI.RawUI.WindowSize.Height
-        $env:__DOOMGEOM = "$cols`x$lines"
+        $env:__DOOMGEOM = "$($cols)x$($lines)"
     }
     # $env:__DOOMGPIPE = if (-not $env:__DOOMGPIPE) { $env:__DOOMPIPE } else { $env:__DOOMGPIPE }
     # $env:__DOOMPIPE = ""
 
     & $emacs -q --no-site-file --batch --load "$doom" -- --no-color $args
     if ($LASTEXITCODE -eq 254) {
-        & pwsh "$($env:temp)\doom.$($env:__DOOMPID).$($env:__DOOMSTEP).ps1" $PSCommandPath $args
+        # TODO: Use Invoke-Command instead?
+        & $pwsh "$($env:temp)\doom.$($env:__DOOMPID).$($env:__DOOMSTEP).ps1" $PSCommandPath $args
         $exit = $LASTEXITCODE
     }
     exit $exit

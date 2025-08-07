@@ -260,6 +260,7 @@ selected before this command was invoked."
   (let* ((file-path (buffer-file-name (buffer-base-buffer)))
          (file-base (if file-path (file-name-base file-path))))
     (and (derived-mode-p 'emacs-lisp-mode)
+         (not (bound-and-true-p org-src-mode))
          (or (null file-base)
              (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))
              (save-excursion

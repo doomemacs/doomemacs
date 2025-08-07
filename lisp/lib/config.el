@@ -28,37 +28,41 @@
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  `(let* ((doom-bin "doom")
-          (doom-bin-dir (expand-file-name "bin/" doom-emacs-dir))
-          (default-directory doom-emacs-dir)
-          (exec-path (cons doom-bin-dir exec-path)))
+  `(let* ((default-directory doom-emacs-dir)
+          (doom-bin "doom")
+          (doom-bin-dir (expand-file-name "bin/"))
+          (emacs-bin (doom-path invocation-directory invocation-name))
+          (exec-path (cons doom-bin-dir exec-path))
+          (shell-file-name shell-file-name))
      (when (and (featurep :system 'windows)
                 (string-match-p "cmdproxy.exe$" shell-file-name))
-       (unless (executable-find "pwsh")
-         (user-error "Powershell 3.0+ is required, but pwsh.exe was not found in your $PATH"))
-       (setq doom-bin "doom.ps1"))
-     ;; Ensure the bin/doom operates with the same environment as this
-     ;; running session.
-     (with-environment-variables
-         (("PATH" (string-join exec-path path-separator))
-          ("EMACS" (doom-path invocation-directory invocation-name))
-          ("EMACSDIR" doom-emacs-dir)
-          ("DOOMDIR" doom-user-dir)
-          ("DOOMLOCALDIR" doom-local-dir)
-          ("DEBUG" (if doom-debug-mode (number-to-string doom-log-level))))
-       (with-current-buffer
-           (compile (format ,command (expand-file-name doom-bin doom-bin-dir)) t)
-         (let ((w (get-buffer-window (current-buffer))))
-           (select-window w)
-           (add-hook
-            'compilation-finish-functions
-            (lambda (_buf status)
-              (if (equal status "finished\n")
-                  (progn
-                    (delete-window w)
-                    ,on-success)
-                ,on-failure))
-            nil 'local))))))
+       (if-let* ((pwsh (or (executable-find "pwsh")
+                           (executable-find "powershell"))))
+           (setq doom-bin "doom.ps1"
+                 shell-file-name pwsh)
+         (user-error "Powershell 3.0+ is required for `doom/reload', but no pwsh.exe or powershell.exe found in your $PATH")))
+     ;; Ensure the bin/doom operates with the same environment as this running
+     ;; session.
+     (with-current-buffer
+         (with-environment-variables
+             (("PATH" (string-join exec-path path-separator))
+              ("EMACS" emacs-bin)
+              ("EMACSDIR" doom-emacs-dir)
+              ("DOOMDIR" doom-user-dir)
+              ("DOOMLOCALDIR" doom-local-dir)
+              ("DEBUG" (if doom-debug-mode (number-to-string doom-log-level))))
+           (compile (format ,command (file-name-concat "bin" doom-bin)) t))
+       (let ((w (get-buffer-window (current-buffer))))
+         (select-window w)
+         (add-hook
+          'compilation-finish-functions
+          (lambda (_buf status)
+            (if (equal status "finished\n")
+                (progn
+                  (delete-window w)
+                  ,on-success)
+              ,on-failure))
+          nil 'local)))))
 
 (defvar doom-reload-command
   (format "%s sync -B -e"

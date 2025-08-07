@@ -168,6 +168,9 @@ original state.")
 
 (defadvice! doom-straight--no-compute-prefixes-a (fn &rest args)
   :around #'straight--build-autoloads
+  (eval-when-compile
+    (or (require 'loaddefs-gen nil 'noerror)
+        (require 'autoload)))
   (let (autoload-compute-prefixes)
     (apply fn args)))
 

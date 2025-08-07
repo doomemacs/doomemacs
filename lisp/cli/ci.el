@@ -118,23 +118,24 @@ Each element of this list can be one of:
           (unless (equal scopes (sort (copy-sequence scopes) #'string-lessp))
             (fail! "Scopes are not in lexicographical order")))
 
-        (lambda! (&key type body)
+        (lambda! (&key _type body)
           "Enforce 72 character line width for BODY"
           (catch 'result
             (with-temp-buffer
               (save-excursion (insert body))
               (while (re-search-forward "^[^\n]\\{73,\\}" nil t)
                 (save-excursion
-                  (or
-                   ;; Long bump lines are acceptable
-                   (let ((bump-re "\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
-                     (re-search-backward (format "^%s -> %s$" bump-re bump-re) nil t))
-                   ;; Long URLs are acceptable
-                   (re-search-backward "https?://[^ ]+\\{73,\\}" nil t)
-                   ;; Lines that start with # or whitespace are comment or
-                   ;; code blocks.
-                   (re-search-backward "^\\(?:#\\| +\\)" nil t)
-                   (throw 'result (fail! "Line(s) in commit body exceed 72 characters"))))))))
+                  (let ((bol (match-beginning 0)))
+                    (or
+                     ;; Long bump lines are acceptable
+                     (let ((bump-re "\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
+                       (re-search-backward (format "^%s -> %s$" bump-re bump-re) bol t))
+                     ;; Long URLs are acceptable
+                     (re-search-backward "https?://[^ \n]+" bol t)
+                     ;; Lines that start with # or whitespace are comment or
+                     ;; code blocks.
+                     (re-search-backward "^\\(?:#\\| +\\)" bol t)
+                     (throw 'result (fail! "Line(s) in commit body exceed 72 characters")))))))))
 
         (lambda! (&key bang body type)
           "Ensure ! is accompanied by a 'BREAKING CHANGE:' in BODY"

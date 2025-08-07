@@ -14,7 +14,6 @@
 
 ;;;###package lisp-mode
 (defvar inferior-lisp-program "sbcl")
-(add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
 
 (use-package! sly

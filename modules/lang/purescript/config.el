@@ -4,9 +4,7 @@
   (when (modulep! +lsp)
     (add-hook 'purescript-mode-local-vars-hook #'lsp! 'append))
 
-  (add-hook! 'purescript-mode-hook
-             #'purescript-indentation-mode
-             #'rainbow-delimiters-mode)
+  (add-hook 'purescript-mode-hook #'purescript-indentation-mode)
 
   (set-formatter! 'purs-tidy '("purs-tidy" "format") :modes '(purescript-mode))
 

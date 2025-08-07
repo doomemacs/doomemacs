@@ -1,0 +1,11 @@
+$0`doom-version`
+((name :group module)
+ ;; (alias :group2 module2)
+ (version . "0.0.1")
+ ;; (depth 0)
+ (since . "`doom-modules-version`")
+ (flags)
+ (features)
+ (packages)
+ (requires)
+ (checks))

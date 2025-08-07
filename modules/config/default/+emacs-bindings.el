@@ -352,7 +352,7 @@
        (:when (modulep! :ui indent-guides)
         :desc "Indent guides"              "i" #'indent-bars-mode)
        (:when (modulep! :ui minimap)
-        :desc "Minimap mode"               "m" #'minimap-mode)
+        :desc "Minimap mode"               "m" #'demap-toggle)
        (:when (modulep! :lang org +present)
         :desc "org-tree-slide mode"        "p" #'org-tree-slide-mode)
        :desc "Read-only mode"               "r" #'read-only-mode

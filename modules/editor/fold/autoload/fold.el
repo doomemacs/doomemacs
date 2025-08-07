@@ -35,8 +35,8 @@ Return non-nil if successful in doing so."
   (when (+fold--ensure-hideshow-mode)
     (save-excursion
       (ignore-errors
-        (or (hs-looking-at-block-start-p)
-            (hs-find-block-beginning)
+        (or (funcall hs-looking-at-block-start-p-func)
+            (funcall hs-find-block-beginning-func)
             (unless (eolp)
               (end-of-line)
               (+fold--hideshow-fold-p)))))))

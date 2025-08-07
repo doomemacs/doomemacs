@@ -4,17 +4,15 @@
 ;;   dotfiles. See https://protesilaos.com/codelog/2021-03-25-emacs-eww
 
 ;; Adapted from `prot-eww-jump-to-url-on-page'
-(defun eww--capture-url-on-page (&optional position)
+(defun eww--capture-urls-on-page (&optional position)
   "Capture all the links on the current web page.
 
-Return a list of strings. Strings are in the form LABEL @ URL.
+Return a list of strings. Strings are in the form \"LABEL @ URL\".
 When optional argument POSITION is non-nil, include position info in the strings
-too, so strings take the form: LABEL @ URL ~ POSITION."
+too, so strings take the form: \"POSITION ~ LABEL @ URL\"."
   (let (links match)
     (save-excursion
       (goto-char (point-max))
-      ;; NOTE 2021-07-25: The first clause in the `or' is meant to address a bug
-      ;; where if a URL is in `point-min' it does not get captured.
       (while (setq match (text-property-search-backward 'shr-url))
         (let* ((raw-url (prop-match-value match))
                (start-point-prop (prop-match-beginning match))
@@ -37,6 +35,48 @@ too, so strings take the form: LABEL @ URL ~ POSITION."
                     (format "%s  @ %s" label url))
                   links)))))
     links))
+
+(defun eww--capture-headings-on-page ()
+  "Return an alist in the form \"LABEL . POINT\" for the current buffer."
+  (let ((heading-stack '())
+        headings match)
+    (save-excursion
+      (goto-char (point-min))
+      (while (setq match (text-property-search-forward 'outline-level))
+        (let* ((level (prop-match-value match))
+               (start-point-prop (prop-match-beginning match))
+               (end-point-prop (prop-match-end match))
+               (text (replace-regexp-in-string
+                      "\n" " "      ; NOTE 2021-07-25: newlines break completion
+                      (buffer-substring-no-properties
+                       start-point-prop end-point-prop))))
+          (cond
+           ((= level (length heading-stack))
+            (pop heading-stack)
+            (push text heading-stack))
+           ((< level (length heading-stack))
+            ;; There's an upward gap between headings (for example: h5, then h2)
+            (dotimes (_ (1+ (- (length heading-stack) level)))
+              (pop heading-stack))
+            (push text heading-stack))
+           ((> level (length heading-stack))
+            ;; There's a downward gap between headings (for example: h2, then h5)
+            (dotimes (_ (1- (- level (length heading-stack))))
+              (push nil heading-stack))
+            (push text heading-stack)))
+          (push (cons
+                 (concat
+                  (let ((preceeding-heading-stack (remove nil (cdr heading-stack))))
+                    (when preceeding-heading-stack
+                      (propertize
+                       (concat
+                        (string-join (reverse preceeding-heading-stack) "/")
+                        "/")
+                       'face 'shadow)))
+                  (car heading-stack))
+                 start-point-prop)
+                headings))))
+    headings))
 
 ;; Adapted from `prot-eww--rename-buffer'
 (defun +eww-page-title-or-url (&rest _)
@@ -75,12 +115,12 @@ consider whole buffer."
     (user-error "Not in an eww buffer!"))
   (let* ((links
           (if arg
-              (eww--capture-url-on-page t)
+              (eww--capture-urls-on-page t)
             (save-restriction
               (if (use-region-p)
                   (narrow-to-region (region-beginning) (region-end))
                 (narrow-to-region (window-start) (window-end)))
-              (eww--capture-url-on-page t))))
+              (eww--capture-urls-on-page t))))
          (prompt-scope (if arg
                            (propertize "URL on the page" 'face 'warning)
                          "visible URL"))
@@ -89,6 +129,18 @@ consider whole buffer."
          (position (replace-regexp-in-string "^.*(\\([0-9]+\\))[\s\t]+~" "\\1" selection))
          (point (string-to-number position)))
     (goto-char point)
+    (recenter)))
+
+;; Adapted from `prot-eww-jump-to-url-on-page'
+;;;###autoload
+(defun +eww/jump-to-heading-on-page ()
+  "Jump to heading position on the page (whole buffer) using completion."
+  (interactive nil 'eww-mode)
+  (unless (derived-mode-p 'eww-mode)
+    (user-error "Not in an eww buffer!"))
+  (let* ((headings (eww--capture-headings-on-page))
+         (selection (completing-read "Jump to heading: " headings nil t)))
+    (goto-char (alist-get selection headings nil nil #'string=))
     (recenter)))
 
 ;; Adapted from `prot-eww-open-in-other-window'

@@ -154,12 +154,13 @@ ENVIRONMENT VARIABLES:
 
 EXIT CODES:
   0        Successful run
-  1        General internal error
-  2        Error with Emacs/Doom install or execution context
-  3        Unrecognized user input error
-  4        Command not found, or is incorrect/deprecated
-  5        Invalid, missing, or extra options/arguments
-  6-15     Reserved for Doom
+  1        No error occurred, but the command couldn't complete
+  2        General internal error
+  3        Error with Emacs/Doom install or execution context
+  4        Unrecognized user input error
+  5        Command not found, or is incorrect/deprecated
+  6        Invalid, missing, or extra options/arguments
+  7-15     Reserved for Doom
   16-192   Reserved for the user's extensions
   254      Successful run (then execute the dynamically generated after-script)
   255      Uncaught critical errors
@@ -167,11 +168,9 @@ EXIT CODES:
 SEE ALSO:
   https://doomemacs.org               Homepage
   https://docs.doomemacs.org          Official documentation
-  https://discourse.doomemacs.org     Discourse (discussion & support forum)
-  https://doomemacs.org/discord       Discord chat server
-  https://doomemacs.org/roadmap       Development roadmap
-  https://git.doomemacs.org           Shortcut to Github org
-  https://git.doomemacs.org/todo      Global issue tracker"
+  https://wiki.doomemacs.org          Community wiki
+  https://doomemacs.org/discuss       Github discussions & user support board
+  https://doomemacs.org/discord       Discord chat server"
   :partial t)
 
 (defcli! :before
@@ -286,7 +285,8 @@ SEE ALSO:
     :docs "Commands for developing or launching Doom."
     (defcli-autoload! (ci))
     (defcli-autoload! (make))
-    (defcli-autoload! (run))
+    (defcli-autoload! (emacs))
+    (defcli-obsolete! (run) (emacs) "3.0.0")
 
     ;; TODO Post-3.0 commands
     (defcli-stub! test))
@@ -299,13 +299,13 @@ SEE ALSO:
             (defcli-group! :prefix (if (cdr key) (format "+%s" (cdr key)))
               (doom-load (file-name-sans-extension path))))))))
 
-  ;; Allow per-project Doom settings in .doom files.
+  ;; Execute arbitrary CLI configuration in a local .doom.el file
   (let (doomrc)
     (cond
      ((setq doomrc (getenv "DOOMRC"))
       (load! doomrc default-directory))
-     ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
-      (load! ".doomrc" doomrc)))))
+     ((setq doomrc (locate-dominating-file default-directory ".doom.el"))
+      (load! ".doom.el" doomrc)))))
 
 
 ;;

@@ -43,7 +43,6 @@
     (set-rotate-patterns! mode :symbols '(("#true" "#false")))
     (set-formatter! 'raco-fmt '("raco" "fmt") :modes (list mode))
 
-    (add-hook mode-hook #'rainbow-delimiters-mode)
     (add-hook mode-hook #'highlight-quoted-mode)
 
     (when (modulep! +lsp)

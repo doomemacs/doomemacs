@@ -373,7 +373,8 @@ editorconfig or dtrt-indent installed."
            ;; A built-in `editorconfig' package was added in Emacs 30.x, but
            ;; with a different API. Since it's built in, prefer it over the
            ;; upstream one, but we still need to adapt:
-           (require 'editorconfig nil t))
+           (if (require 'editorconfig nil t)
+               (fboundp #'editorconfig--default-indent-size-function)))
          (pcase-dolist (`(,var . ,val) (editorconfig--default-indent-size-function width))
            (set (make-local-variable var) val)))
         ((require 'editorconfig nil t)

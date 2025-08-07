@@ -56,7 +56,6 @@ occur in code comments:
 |---------+----------------------------------|
 | [[kbd:][]t]]      | go to next TODO item             |
 | [[kbd:][[t]]      | go to previous TODO item         |
-| [[kbd:][SPC p t]] | show all TODO items in a project |
 | [[kbd:][SPC s p]] | search project for a string      |
 | [[kbd:][SPC s b]] | search buffer for string         |
 

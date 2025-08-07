@@ -18,6 +18,11 @@
 ;; Enable the mouse in terminal Emacs
 (add-hook 'tty-setup-hook #'xterm-mouse-mode)
 
+;; Support for child frames in terminal frames was added in 31. Enable it, if it
+;; is available.
+(when (featurep 'tty-child-frames)
+  (add-hook 'tty-setup-hook #'tty-tip-mode))
+
 ;; Windows terminals don't support what I'm about to do, but best not to wrap
 ;; this in an OS check, in case you're using WSL or Cygwin, which *might*
 ;; support it.

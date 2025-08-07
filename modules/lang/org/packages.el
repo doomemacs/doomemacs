@@ -31,7 +31,7 @@
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                          "(provide 'org-version)\n")))))
-  :pin "79781bac69896150fd617e5fde65905fa4822b72")  ; release_9.7.29
+  :pin "4e6d38d1a60d2fa48a1ab42a24cce0862b778e2c")  ; release_9.7.31
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
@@ -66,9 +66,9 @@
 (when (modulep! :tools pdf)
   (package! org-pdftools :pin "5613b7ae561e0af199f25aacc0a9c34c16638408"))
 (when (modulep! :tools magit)
-  (package! orgit :pin "efd98e5caaac1d08677dae95be40fab65dcda2c8")
+  (package! orgit :pin "224350397df0987f8cdc770eb7f4618eca34a727")
   (when (modulep! :tools magit +forge)
-    (package! orgit-forge :pin "764820769e321a76622aaafe7617b4231985b5f0")))
+    (package! orgit-forge :pin "050590fbc79bc3acd0ab87c0257f6719bff1e33a")))
 (when (modulep! +brain)
   (package! org-brain :pin "2bad7732aae1a3051e2a14de2e30f970bbe43c25"))
 (when (modulep! +dragndrop)
@@ -79,20 +79,20 @@
 (when (modulep! +jupyter)
   (package! jupyter :pin "3615c2de16988c4dd9d1978bfa10ee3092e85b33"))
 (when (modulep! +journal)
-  (package! org-journal :pin "e581bf5530054a40f933fdcc41e65aa0eedbd7da"))
+  (package! org-journal :pin "c72d7c75f8a05d1032250e307d35797ceee7e578"))
 (when (modulep! +noter)
   (package! org-noter :pin "a28f61238a572dd9f0073c2ee15a951ffe6aaebc"))
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-modern :pin "6158d3d0070694bfc5ff09235dec4661b8ba28dd")
+  (package! org-modern :pin "1723689710715da9134e62ae7e6d41891031813c")
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
-  (package! org-re-reveal :pin "89ed240450fd6ebfa7ea2da8de15e1f445d1579f")
+  (package! org-re-reveal :pin "da7e1feba964cd5542515c1ca354a407e70bd06a")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
@@ -107,7 +107,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "046822b512ffecdee7d110f73dd3a511802ca590")
+    :pin "c17295134510c8759baad0e8a9f151029d5e5fe1")
   (when (< emacs-major-version 29)
     ;; HACK: Needed until org-roam/org-roam#2485 is resolved.
     (package! emacsql :pin "491105a01f58bf0b346cbc0254766c6800b229a2"))))

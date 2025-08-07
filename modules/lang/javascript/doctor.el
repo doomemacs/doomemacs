@@ -8,3 +8,6 @@
 (assert! (or (not (modulep! +tree-sitter))
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
+
+(when (not (modulep! +tree-sitter))
+  (warn! "You are using the JavaScript module without tree sitter. You should enable tree sitter for much better support, including TypeScript and JSX."))

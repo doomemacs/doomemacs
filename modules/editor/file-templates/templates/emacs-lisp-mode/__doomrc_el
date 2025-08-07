@@ -1,0 +1,8 @@
+;;; .doomrc --- doom runtime config -*- mode: emacs-lisp; lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
+(require 'doom) ; be silent, byte-compiler
+
+$0`%`
+
+;;; .doomrc ends here

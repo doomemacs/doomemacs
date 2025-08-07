@@ -13,12 +13,11 @@
                               (dired-get-file-for-visit)
                             (buffer-file-name)))
                  nil t)))
-         (command (format "open %s"
-                          (if app-name
-                              (format "-a %s '%s'" (shell-quote-argument app-name) path)
-                            (format "'%s'" path)))))
-    (message "Running: %s" command)
-    (shell-command command)))
+         (args (cons "open"
+                     (append (if app-name (list "-a" app-name))
+                             (list path)))))
+    (message "Running: %S" args)
+    (apply #'doom-call-process args)))
 
 (defmacro +macos--open-with (id &optional app dir)
   `(defun ,(intern (format "+macos/%s" id)) ()

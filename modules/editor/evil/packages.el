@@ -13,7 +13,7 @@
 (package! evil-lion :pin "5a0bca151466960e090d1803c4c5ded88875f90a")
 (package! evil-nerd-commenter :pin "ae52c5070a48793e2c24474c9c8dbf20175d18a0")
 (package! evil-numbers :pin "f4bbb729eebeef26966fae17bd414a7b49f82275")
-(package! evil-snipe :pin "c2108d3932fcd2f75ac3e48250d6badd668f5b4f")
+(package! evil-snipe :pin "16317d7e54313490a0fe8642ed9a1a72498e7ad2")
 (package! evil-surround :pin "da05c60b0621cf33161bb4335153f75ff5c29d91")
 (package! evil-textobj-anyblock
   :recipe (:host github
@@ -35,4 +35,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "fca81ddb2ca1ac3838aa7e8969b2313712807a45"))
+  (package! evil-collection :pin "4748cfb78488fce96812130e0b53aae6d042ca6d"))

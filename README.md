@@ -8,8 +8,8 @@
 ![Supports Emacs 27.1–30.1](https://img.shields.io/badge/Supports-Emacs_27.1–30.1-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
 ![Latest commit](https://img.shields.io/github/last-commit/doomemacs/doomemacs?style=flat-square)
 <!-- ![Build status: master](https://img.shields.io/github/workflow/status/doomemacs/doomemacs/CI/master?style=flat-square) -->
-[![Discord Server](https://img.shields.io/discord/406534637242810369?color=738adb&label=Discord&logo=discord&logoColor=white&style=flat-square)][Discord]
-[![Discourse server](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.doomemacs.org&logo=discourse&label=Discourse&style=flat-square&color=9cf)][Discourse]
+[![Discord Server](https://img.shields.io/discord/406534637242810369?color=738adb&label=Discord&logo=discord&logoColor=white&style=flat-square)][discord]
+[![Discussions board](https://img.shields.io/github/discussions/doomemacs/community?label=Discussions&logo=github&style=flat-square)][discuss]
 
 ![Doom Emacs Screenshot](https://raw.githubusercontent.com/doomemacs/doomemacs/screenshots/main.png)
 
@@ -145,9 +145,8 @@ Doom is an active and ongoing project. To make that development more
 transparent, its roadmap (and other concerns) are published across three github
 project boards and a newsletter:
 
-+ [Development Roadmap](https://discourse.doomemacs.org/t/development-roadmap/42):
-  roughly outlines our goals between release milestones and their progress.
-+ [Plugins under review](https://github.com/orgs/doomemacs/projects/5):
+- [Development Roadmap](https://doomemacs.org/roadmap)
+- [Packages under review](https://doomemacs.org/packages-under-review):
   lists plugins we are watching and considering for inclusion, and what their
   status for inclusion is. Please consult this list before requesting new
   packages/features.
@@ -182,10 +181,10 @@ mysterious errors. When you do, here are some places you can look for help:
   + To search available keybinds: <kbd>SPC h b b</kbd> or <kbd>C-h b b</kbd>
 + Run `bin/doom doctor` to detect common issues with your development
   environment and private config.
-+ Check out the [FAQ] or [Discourse FAQs][discourse-faq], in case your question
++ Check out the [FAQ] or [Community FAQs][community-faq], in case your question
   has already been answered.
-+ Search [Doom's issue tracker](https://github.com/doomemacs/doomemacs/issues) in case your issue was already
-  reported.
++ Search [Doom's issue tracker](https://github.com/doomemacs/doomemacs/issues)
+  in case your issue was already reported.
 + Hop on [our Discord server][discord]; it's active and friendly! Keep an eye on
   the #announcements channel, where I announce breaking updates and releases.
 
@@ -205,7 +204,7 @@ kind!
 + Don't hesitate to [tell me my Elisp-fu
   sucks](https://github.com/doomemacs/doomemacs/issues/new/choose), but please
   tell me why.
-+ Hop on [our Discord server][Discord] and say hi! Help others, hang out or talk
++ Hop on [our Discord server][discord] and say hi! Help others, hang out or talk
   to me about Emacs, gamedev, programming, physics, pixel art, anime, gaming --
   anything you like. Nourish this lonely soul.
 + If you'd like to support my work financially, buy me a drink through
@@ -216,8 +215,8 @@ kind!
 
 [contribute]: docs/contributing.org
 [discord]: https://doomemacs.org/discord
-[discourse]: https://discourse.doomemacs.org
-[discourse-faq]: https://discourse.doomemacs.org/tag/faq
+[discuss]: https://doomemacs.org/discuss
+[community-faq]: https://github.com/doomemacs/community?tab=readme-ov-file#frequently-asked-questions
 [documentation]: docs/index.org
 [faq]: https://github.com/hlissner/doom-emacs/blob/master/docs/faq.org
 [getting-started]: docs/getting_started.org

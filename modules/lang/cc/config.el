@@ -27,7 +27,7 @@ This is ignored by ccls.")
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-ffap-integration-h)
   :hook ((c-ts-mode-local-vars c++-ts-mode-local-vars) . +cc-init-ffap-integration-h)
   ;;; Improve fontification in C/C++ (also see `modern-cpp-font-lock')
-  :hook (c-mode-common . rainbow-delimiters-mode)
+  :hook ((c-mode c++-mode) . +cc-fontify-constants-h)
   :init
   (when (modulep! +tree-sitter)
     (set-tree-sitter! 'c-mode 'c-ts-mode

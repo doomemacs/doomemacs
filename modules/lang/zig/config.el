@@ -32,7 +32,7 @@
 
 
 (use-package! zig-mode
-  :hook (zig-mode . rainbow-delimiters-mode)
+  :defer t
   :config
   (setq zig-format-on-save nil) ; rely on :editor format instead
   (+zig-common-config 'zig-mode))
