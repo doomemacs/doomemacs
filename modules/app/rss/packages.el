@@ -6,4 +6,4 @@
 (when (modulep! +org)
   (package! elfeed-org :pin "34c0b4d758942822e01a5dbe66b236e49a960583"))
 (when (modulep! +youtube)
-  (package! elfeed-tube :pin "79d5a08d76ea3ae96d7def9a5e2ede2e3562462a"))
+  (package! elfeed-tube :pin "307bcfb30b7c14b110da6f64431ad91ded92905b"))

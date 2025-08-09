@@ -5,4 +5,4 @@
 (package! calfw-org :pin "03abce97620a4a7f7ec5f911e669da9031ab9088")
 (package! calfw-cal :pin "03abce97620a4a7f7ec5f911e669da9031ab9088")
 (package! calfw-ical :pin "03abce97620a4a7f7ec5f911e669da9031ab9088")
-(package! org-gcal :pin "9f9d93e4f0d5863b1318e9e702e1ee6e841c2649")
+(package! org-gcal :pin "23561f63b9433353420a4cb113f455f6ca31abe6")
