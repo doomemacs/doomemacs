@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/llm/packages.el
 
-(package! gptel :pin "0a7744610814da90a27cb8f6a090915f61bde4b8")
+(package! gptel :pin "af821efe63006cb571a071a8cda03fd2a57c18f5")
 
 (package! gptel-quick
   :recipe (:host github :repo "karthink/gptel-quick")

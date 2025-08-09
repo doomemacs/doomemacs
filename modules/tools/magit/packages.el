@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/magit/packages.el
 
-(package! transient :pin "f3f498aa155f88c7e2ab6d1d01d1361813059db8") ; 0.9.2
-(package! magit :pin "2f1ff91f128f28aa277e0e060ef44b4be8a989c1") ; 4.3.6
+(package! transient :pin "aa32e0d66cc389befed7a8e8df9439d92a729daa") ; 0.9.4
+(package! magit :pin "5b820a1d1e94649e0f218362286d520d9f29ac2c") ; 4.3.8
 (when (modulep! +forge)
   (package! forge
     :pin "a31859547a1ea5e2acbab67b6b64f90134e2a156" ; 0.5.3

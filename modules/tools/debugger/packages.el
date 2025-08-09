@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/debugger/packages.el
 
-(package! dape :pin "1df78343063a9a695892fda1759089045609c4ed")
+(package! dape :pin "411e4b6126cfbd6df9a8bdc6bff39b133a31b1d9")
 
 ;; DEPRECATED
 (when (modulep! +lsp)
