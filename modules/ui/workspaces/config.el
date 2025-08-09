@@ -107,7 +107,7 @@ stored in `persp-save-dir'.")
   (add-to-list 'window-persistent-parameters '(winner-ring . t))
 
   (add-hook! 'persp-before-deactivate-functions
-    (defun +workspaces-save-winner-data-h (_)
+    (defun +workspaces-save-winner-data-h (&rest _)
       (when (and (bound-and-true-p winner-mode)
                  (get-current-persp))
         (set-persp-parameter
@@ -116,7 +116,7 @@ stored in `persp-save-dir'.")
                             winner-pending-undo-ring)))))
 
   (add-hook! 'persp-activated-functions
-    (defun +workspaces-load-winner-data-h (_)
+    (defun +workspaces-load-winner-data-h (&rest _)
       (when (bound-and-true-p winner-mode)
         (cl-destructuring-bind
             (currents alist pending-undo-ring)
@@ -212,7 +212,9 @@ stored in `persp-save-dir'.")
   (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
 
   ;; Fix #1973: visual selection surviving workspace changes
-  (add-hook 'persp-before-deactivate-functions #'deactivate-mark)
+  (add-hook! 'persp-before-deactivate-functions
+    (defun +workspaces-disable-mark-after-switch-h (&rest _)
+      (deactivate-mark)))
 
   ;; Fix #1017: stop session persistence from restoring a broken posframe
   (after! posframe
