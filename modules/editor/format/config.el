@@ -45,11 +45,10 @@ This is controlled by `+format-on-save-disabled-modes'."
   (set-debug-variable! 'apheleia-log-only-errors nil)
   (set-debug-variable! 'apheleia-log-debug-info t 2)
 
-  (defadvice! +format--inhibit-reformat-on-prefix-arg-a (orig-fn &optional arg)
-    "Make it so \\[save-buffer] with prefix arg inhibits reformatting."
-    :around #'basic-save-buffer
-    (let ((apheleia-inhibit (or apheleia-inhibit current-prefix-arg)))
-      (funcall orig-fn)))
+  ;; UX: Use prefix-arg on `save-buffer' or `basic-save-buffer' to inhibit
+  ;;   format-on-save behavior.
+  (define-key apheleia-mode-map [remap basic-save-buffer] #'+format/save-buffer-no-reformat)
+  (define-key apheleia-mode-map [remap save-buffer] #'+format/save-buffer)
 
   ;; HACK: Apheleia suppresses notifications that the current buffer has
   ;;   changed, so plugins that listen for them need to be manually informed:

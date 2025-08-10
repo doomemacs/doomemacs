@@ -417,7 +417,7 @@
        :desc "Previous buffer"             "p"   #'previous-buffer
        :desc "Revert buffer"               "r"   #'revert-buffer
        :desc "Rename buffer"               "R"   #'rename-buffer
-       :desc "Save buffer"                 "s"   #'basic-save-buffer
+       :desc "Save buffer"                 "s"   #'save-buffer
        :desc "Save all buffers"            "S"   #'evil-write-all
        :desc "Save buffer as root"         "u"   #'doom/sudo-save-buffer
        :desc "Pop up scratch buffer"       "x"   #'doom/open-scratch-buffer
@@ -514,7 +514,7 @@
        :desc "Browse private config"       "P"   #'doom/open-private-config
        :desc "Recent files"                "r"   #'recentf-open-files
        :desc "Rename/move file"            "R"   #'doom/move-this-file
-       :desc "Save file"                   "s"   #'save-buffer
+       :desc "Save file"                   "s"   #'basic-save-buffer
        :desc "Save file as..."             "S"   #'write-file
        :desc "Sudo find file"              "u"   #'doom/sudo-find-file
        :desc "Sudo this file"              "U"   #'doom/sudo-this-file

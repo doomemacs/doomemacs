@@ -1,5 +1,10 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
+;; HACK: `apheleia-mode' doesn't define a keymap. By defining one before the
+;;   minor mode is loaded, `define-minor-mode' will automatically register it as
+;;   apheleia-mode's keymap.
+;;;###autoload (defvar apheleia-mode-map (make-sparse-keymap))
+
 (defun +format--current-indentation ()
   (save-excursion
     (goto-char (point-min))
@@ -94,5 +99,19 @@ may not always work. Keep your undo keybind handy!"
    (if (doom-region-active-p)
        #'+format/region
      #'+format/buffer)))
+
+;;;###autoload
+(defun +format/save-buffer-no-reformat ()
+  "`save-buffer', but don't trigger `apheleia's save-on-format behavior."
+  (interactive)
+  (let (apheleia-mode)
+    (basic-save-buffer)))
+
+;;;###autoload
+(defun +format/save-buffer (arg)
+  "`save-buffer', but the prefix ARG also inhibits format-on-save behavior."
+  (interactive "P")
+  (let ((apheleia-mode (and apheleia-mode (memq arg '(nil 1)))))
+    (call-interactively #'save-buffer)))
 
 ;;; format.el ends here
