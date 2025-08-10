@@ -329,7 +329,7 @@ delete."
                             return (select-window win))))))))))
 
 ;;;###autoload
-(defun +eshell-switch-workspace-fn (type)
+(defun +eshell-switch-workspace-fn (type &rest _)
   (when (eq type 'frame)
     (setq +eshell-buffers
           (or (persp-parameter 'eshell-buffers)
