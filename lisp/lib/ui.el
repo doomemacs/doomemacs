@@ -198,11 +198,8 @@ arg)."
          (alist `((,parameter . ,opacity))))
     (if (eq frames t)
         (modify-all-frames-parameters alist)
-      (dolist (frame (if (eq frames t) (frame-list) frames))
-        (modify-frame-parameters frame alist))
-      (when frame-notice-user-settings  ; only necessary at startup
-        (setf (alist-get (car alist) initial-frame-alist) (cdr alist)))
-      (setf (alist-get (car alist) default-frame-alist) (cdr alist)))))
+      (dolist (frame frames)
+        (modify-frame-parameters frame alist)))))
 
 (defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
