@@ -59,12 +59,12 @@
       (when (executable-find "php-language-server.php")
         (setq lsp-clients-php-server-command "php-language-server.php"))
       (add-hook mode-vars-hook #'lsp! 'append))
-    (eval `(map! :localleader
-           :map ,mode-map
-           :prefix ("t" . "test")
-           "r" #'phpunit-current-project
-           "a" #'phpunit-current-class
-           "s" #'phpunit-current-test))))
+    (map! :localleader
+          :map ,mode-map
+          :prefix ("t" . "test")
+          "r" #'phpunit-current-project
+          "a" #'phpunit-current-class
+          "s" #'phpunit-current-test)))
 
 
 (use-package! php-mode
