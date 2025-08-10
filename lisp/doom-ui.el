@@ -357,7 +357,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (defadvice! doom--comint-enable-undo-a (process _string)
     :after #'comint-output-filter
     (with-current-buffer (process-buffer process)
-      (let ((start-marker comint-last-output-start))
+      (when-let* ((start-marker comint-last-output-start))
         (when (and (< start-marker
                       (or (if process (process-mark process))
                           (point-max-marker)))
@@ -377,10 +377,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
     :after #'comint-output-filter
     ;; Adapted from https://github.com/michalrus/dotfiles/blob/c4421e361400c4184ea90a021254766372a1f301/.emacs.d/init.d/040-terminal.el.symlink#L33-L49
     (with-current-buffer (process-buffer process)
-      (let* ((start-marker comint-last-output-start)
-             (end-marker (or (if process (process-mark process))
-                             (point-max-marker))))
-        (when (< start-marker end-marker) ;; Account for some of the IELM’s wilderness.
+      (let ((start-marker comint-last-output-start)
+            (end-marker (process-mark process)))
+        (when (and start-marker (< start-marker end-marker)) ;; Account for some of the IELM’s wilderness.
           (let ((inhibit-read-only t))
             ;; Make all past output read-only (disallow buffer modifications)
             (add-text-properties comint-last-input-start (1- end-marker) '(read-only t))
