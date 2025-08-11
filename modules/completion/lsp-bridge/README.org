@@ -1,0 +1,77 @@
+#+title:    :completion lsp-bridge
+#+subtitle: The fastest LSP client in the Emacs ecosystem
+#+created:  July 23, 2025
+#+since:    25.08.0
+
+* Description :unfold:
+The goal of lsp-bridge is to implement the fastest LSP client in the Emacs
+ecosystem using multi-threading technology, with a plug-and-play design
+philosophy to save you time and effort, because time is money.
+
+Advantages of lsp-bridge:
+
+- Blazingly fast: Offload LSP request and data analysis to an external process,
+preventing Emacs from getting stuck due to delays or large data triggering
+garbage collection
+- Remote Completion: Built-in support for remote server code completion, with
+various login methods such as passwords and public keys, supports tramp protocol
+and jump server, supports Docker
+- Plug and play: Can be used immediately after installation, requires no additional
+configuration, no need to manually set up frontend completion, backend completion,
+or multi-backend integration configurations, code completion also works in
+org-mode src blocks
+- Multi-server fusion: A simple JSON is all you need to combine multiple LSP Servers
+into one file that provides services for example Python which offers code
+completion with Pyright and diagnostic and formatting capabilities with Ruff
+- Flexible Customization: Customizing LSP server options is as simple as using a
+JSON file, allowing different projects to have different JSON configurations
+with just a few lines of rules
+
+[[https://github.com/manateelazycat/lsp-bridge][GitHub website of lsp-bridge]]
+
+** Maintainers
+- [[doom-user:][@Joxos]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/No hacks documented for this module./
+
+** Packages
+- doom-package:lsp-bridge
+
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+* TODO Usage
+#+begin_quote
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+[[doom-suggest-faq:][Ask a question?]]
+
+** Helm vs Ivy vs Ido vs Vertico
+See [[id:4f36ae11-1da8-4624-9c30-46b764e849fc][this answer]].
+
+* TODO Appendix
+#+begin_quote
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
