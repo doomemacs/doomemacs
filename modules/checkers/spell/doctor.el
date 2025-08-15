@@ -1,6 +1,6 @@
 ;;; checkers/spell/doctor.el -*- lexical-binding: t; -*-
 
-(when (or (not (modulep! +flyspell))
+(when (or (modulep! -flyspell)
           (modulep! +aspell))
   (unless (executable-find "aspell")
     (warn! "Couldn't find aspell executable; spell checker will not work")))

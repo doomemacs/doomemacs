@@ -6,5 +6,5 @@
          "This module requires (:tools lsp)")
 
 (when (modulep! :editor format)
-  (unless (executable-find "efmt")
-    (warn! "Couldn't find efmt. Formatting will be disabled.")))
+  (unless (and (executable-find "rebar3") (zerop (car (doom-call-process "rebar3" "fmt" "-v"))))
+    (warn! "Couldn't find erlfmt. Formatting will be disabled.")))

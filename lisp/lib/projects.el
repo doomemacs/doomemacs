@@ -79,16 +79,21 @@ file will be created within it so that it will always be treated as one. This
 command will throw an error if a parent of DIR is a valid project (which would
 mask DIR)."
   (interactive "D")
+  (when-let ((proj-dir (doom-project-root dir)))
+    (if (file-equal-p proj-dir dir)
+        (user-error "ERROR: Directory is already a project: %s" proj-dir)
+      (user-error "ERROR: Directory is already inside another project: %s" proj-dir)))
   (let ((short-dir (abbreviate-file-name dir)))
-    (unless (file-equal-p (doom-project-root dir) dir)
-      (with-temp-file (doom-path dir ".project")))
-    (let ((proj-dir (doom-project-root dir)))
-      (unless (file-equal-p proj-dir dir)
-        (user-error "Can't add %S as a project, because %S is already a project"
-                    short-dir (abbreviate-file-name proj-dir)))
-      (message "%S was not a project; adding .project file to it"
-               short-dir (abbreviate-file-name proj-dir))
-      (projectile-add-known-project dir))))
+    (when (projectile-ignored-project-p dir)
+      (user-error "ERROR: Directory is in projectile's ignore list: %s" short-dir))
+    (dolist (proj projectile-known-projects)
+      (when (file-in-directory-p proj dir)
+        (user-error "ERROR: Directory contains a known project: %s" short-dir))
+      (when (file-equal-p proj dir)
+        (user-error "ERROR: Directory is already a known project: %s" short-dir)))
+    (with-temp-file (doom-path dir ".project"))
+    (message "Added directory as a project: %s" short-dir)
+    (projectile-add-known-project dir)))
 
 
 ;;
@@ -114,8 +119,8 @@ Returns nil if not in a project."
   "Return the name of the current project.
 
 Returns '-' if not in a valid project."
-  (if-let (project-root (or (doom-project-root dir)
-                            (if dir (expand-file-name dir))))
+  (if-let* ((project-root (or (doom-project-root dir)
+                              (if dir (expand-file-name dir)))))
       (funcall projectile-project-name-function project-root)
     "-"))
 
@@ -146,20 +151,23 @@ If DIR is not a project, it will be indexed (but not cached)."
             ;; Intentionally avoid `helm-projectile-find-file', because it runs
             ;; asynchronously, and thus doesn't see the lexical
             ;; `default-directory'
-            (if (doom-module-p :completion 'ivy)
+            (if (doom-module-active-p :completion 'ivy)
                 #'counsel-projectile-find-file
               #'projectile-find-file)))
-          ((and (bound-and-true-p vertico-mode)
-                (fboundp '+vertico/find-file-in))
-           (+vertico/find-file-in default-directory))
           ((and (bound-and-true-p ivy-mode)
                 (fboundp 'counsel-file-jump))
            (call-interactively #'counsel-file-jump))
-          ((project-current nil dir)
-           (project-find-file-in nil nil dir))
           ((and (bound-and-true-p helm-mode)
                 (fboundp 'helm-find-files))
            (call-interactively #'helm-find-files))
+          ((when-let* ((project-current-directory-override dir)
+                       (pr (project-current t dir)))
+             (condition-case _
+                 (project-find-file-in nil (list dir) pr t)
+               ;; FIX: project.el throws errors if DIR is an empty directory,
+               ;;   which is poor UX.
+               (wrong-type-argument
+                (call-interactively #'find-file)))))
           ((call-interactively #'find-file)))))
 
 ;;;###autoload
@@ -167,9 +175,9 @@ If DIR is not a project, it will be indexed (but not cached)."
   "Traverse a file structure starting linearly from DIR."
   (let ((default-directory (file-truename (expand-file-name dir))))
     (call-interactively
-     (cond ((doom-module-p :completion 'ivy)
+     (cond ((doom-module-active-p :completion 'ivy)
             #'counsel-find-file)
-           ((doom-module-p :completion 'helm)
+           ((doom-module-active-p :completion 'helm)
             #'helm-find-files)
            (#'find-file)))))
 
@@ -179,3 +187,6 @@ If DIR is not a project, it will be indexed (but not cached)."
   (unless (file-remote-p project-root)
     (or (file-in-directory-p project-root temporary-file-directory)
         (file-in-directory-p project-root doom-local-dir))))
+
+(provide 'doom-lib '(projects))
+;;; projects.el ends here

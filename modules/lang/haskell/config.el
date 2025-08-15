@@ -1,11 +1,12 @@
 ;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
+;; DEPRECATED: Remove when projectile is replaced with project.el
 (after! projectile
   (add-to-list 'projectile-project-root-files "stack.yaml"))
 
 
 ;;
-;;; Common packages
+;;; Packages
 
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
@@ -52,7 +53,6 @@
   :init
   (add-hook 'haskell-mode-local-vars-hook #'lsp! 'append)
   (add-hook 'haskell-literate-mode-local-vars-hook #'lsp! 'append)
-  (after! lsp-mode (require 'lsp-haskell))
   :config
   ;; Does some strange indentation if it pastes in the snippet
   (setq-hook! 'haskell-mode-hook yas-indent-line 'fixed))

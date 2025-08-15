@@ -68,7 +68,9 @@ gfm-mode:
     - ~$ pip install proselint~
     - Or through your OS package manager
       - MacOS: ~$ brew install proselint~
-      - Arch Linux: ~$ pacman -S proselint~
+      - Arch Linux: [[https://aur.archlinux.org/packages/proselint][proselint in AUR]]
+      - Debian & Ubuntu: ~$ apt-get install python3-proselint~
+      - Fedora: ~$ dnf install proselint~
   - [[https://github.com/textlint/textlint][textlint]] (~$ npm install textlint~)
 
 ** Markdown compiler

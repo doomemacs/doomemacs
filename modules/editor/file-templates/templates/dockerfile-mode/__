@@ -1,4 +1,6 @@
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+# --
 FROM ${1:phusion/baseimage:latest}
-MAINTAINER ${2:`user-full-name` <`user-mail-address`>}
+LABEL org.opencontainers.image.authors="${2:`user-full-name` <`user-mail-address`>}"
 
 $0

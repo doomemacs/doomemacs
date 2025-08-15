@@ -5,10 +5,11 @@
 
 * Description :unfold:
 This module provides op-hints (operation hinting), i.e. visual feedback for
-certain operations. It highlights regions of text that the last operation (like
-yank) acted on.
+certain editing operations. It highlights regions of text that the last
+operation (like yank) acted on.
 
-Uses [[doom-package:evil-goggles]] for evil users and [[doom-package:volatile-highlights]] otherwise.
+Uses [[doom-package:evil-goggles]] for evil users and [[doom-package:goggles]]
+otherwise.
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -20,7 +21,7 @@ Uses [[doom-package:evil-goggles]] for evil users and [[doom-package:volatile-hi
 
 ** Packages
 - [[doom-package:evil-goggles]] if [[doom-module::editor evil]]
-- [[doom-package:volatile-highlights]] unless [[doom-module::editor evil]]
+- [[doom-package:goggles]] unless [[doom-module::editor evil]]
 
 ** Hacks
 /No hacks documented for this module./

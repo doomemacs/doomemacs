@@ -56,8 +56,8 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
             (prin1-to-string val))
            ((stringp val)
             (propertize (format "%S" val) 'face 'font-lock-string-face))
-           ((numberp val)
-            (propertize (format "%s" val) 'face 'highlight-numbers-number))
+           ((and (numberp val) (facep 'font-lock-number-face)) ; introduced in 29.1+
+            (propertize (format "%s" val) 'face 'font-lock-number-face))
            ((format "%s" val)))
      t)))
 
@@ -160,10 +160,10 @@ If ARG (universal argument), open selection in other-window."
     (user-error "No completion session is active"))
   (require 'wgrep)
   (let ((caller (ivy-state-caller ivy-last)))
-    (if-let (occur-fn (plist-get +ivy-edit-functions caller))
+    (if-let* ((occur-fn (plist-get +ivy-edit-functions caller)))
         (ivy-exit-with-action
          (lambda (_) (funcall occur-fn)))
-      (if-let (occur-fn (plist-get ivy--occurs-list caller))
+      (if-let* ((occur-fn (plist-get ivy--occurs-list caller)))
           (let ((buffer (generate-new-buffer
                          (format "*ivy-occur%s \"%s\"*"
                                  (if caller (concat " " (prin1-to-string caller)) "")
@@ -265,12 +265,12 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
            (replace-regexp-in-string
             "[! |]" (lambda (substr)
                       (cond ((and (string= substr " ")
-                                  (not (modulep! +fuzzy)))
+                                  (modulep! -fuzzy))
                              "  ")
                             ((string= substr "|")
                              "\\\\\\\\|")
                             ((concat "\\\\" substr))))
-            (rxt-quote-pcre (doom-thing-at-point-or-region)))))
+            (doom-pcre-quote (doom-thing-at-point-or-region)))))
      directory args
      (or prompt
          (format "Search project [%s]: "
@@ -351,7 +351,7 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
                   :require-match t
                   :action (lambda (cand)
                             (let ((mark (cdr cand)))
-                              (delq! (marker-buffer mark) buffers)
+                              (cl-callf2 delq (marker-buffer mark) buffers)
                               (mapc #'kill-buffer buffers)
                               (setq buffers nil)
                               (with-current-buffer (switch-to-buffer (marker-buffer mark))

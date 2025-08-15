@@ -31,7 +31,7 @@
   (add-transient-hook! #'company-yasnippet (require 'yasnippet))
 
   :config
-  (add-to-list 'doom-debug-variables '(yas-verbosity . 3))
+  (set-debug-variable! 'yas-verbosity 3)
 
   ;; Allow private snippets in DOOMDIR/snippets
   (add-to-list 'yas-snippet-dirs '+snippets-dir)
@@ -45,7 +45,7 @@
   (advice-add #'yas-snippet-dirs :filter-return #'delete-dups)
 
   ;; Remove GUI dropdown prompt (prefer ivy/helm)
-  (delq! 'yas-dropdown-prompt yas-prompt-functions)
+  (cl-callf2 delq 'yas-dropdown-prompt yas-prompt-functions)
   ;; Prioritize private snippets in `+snippets-dir' over built-in ones if there
   ;; are multiple choices.
   (add-to-list 'yas-prompt-functions #'+snippets-prompt-private)

@@ -63,11 +63,11 @@
                 :switch evil-goggles-enable-join
                 :advice evil-goggles--join-advice))))
 
-
-(use-package! volatile-highlights
+(use-package! goggles
   :unless (modulep! :editor evil)
-  :hook (doom-first-input . volatile-highlights-mode)
+  :hook ((prog-mode text-mode) . goggles-mode)
   :config
-  (after! undo-fu
-    (vhl/define-extension 'undo-fu 'undo-fu-only-undo 'undo-fu-only-redo)
-    (vhl/install-extension 'undo-fu)))
+  (goggles-define +goggles-general-undo undo) ; goggles only supports `primitive-undo' by default
+  (goggles-define +goggles-register-paste insert-register)
+  (goggles-define +goggles-kill-word backward-kill-word kill-word)
+  (goggles-define +goggles-undo-fu undo-fu-only-undo undo-fu-only-redo))

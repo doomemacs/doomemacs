@@ -4,9 +4,7 @@
   (when (modulep! +lsp)
     (add-hook 'purescript-mode-local-vars-hook #'lsp! 'append))
 
-  (add-hook! 'purescript-mode-hook
-             #'purescript-indentation-mode
-             #'rainbow-delimiters-mode)
+  (add-hook 'purescript-mode-hook #'purescript-indentation-mode)
 
   (set-formatter! 'purs-tidy '("purs-tidy" "format") :modes '(purescript-mode))
 
@@ -35,7 +33,6 @@
   :hook (purescript-mode . psc-ide-mode)
   :config
   (remove-hook 'company-backends 'company-psc-ide-backend)
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  (when (modulep! :checkers syntax -flymake)
     (psc-ide-flycheck-setup))
   (set-company-backend! 'purescript-mode 'company-psc-ide-backend))

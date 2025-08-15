@@ -272,12 +272,11 @@ If on a:
                 (org-element-property :end lineage))
              (org-open-at-point arg))))
 
+        ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
+         (org-toggle-checkbox))
+
         (`paragraph
          (+org--toggle-inline-images-in-subtree))
-
-        ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
-         (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
-           (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
         (_
          (if (or (org-in-regexp org-ts-regexp-both nil t)
@@ -334,6 +333,36 @@ see how ARG affects this command."
               (y-or-n-p "No active clock. Clock in on current item?"))
          (org-clock-in))
         ((org-clock-in-last arg))))
+
+;;;###autoload
+(defun +org/reformat-at-point ()
+  "Reformat the element at point.
+
+If in an org src block, invokes `+format/org-block' if the ':editor format'
+  module is enabled.
+If in an org table, realign the cells with `org-table-align'.
+Otherwise, falls back to `org-fill-paragraph' to reflow paragraphs."
+  (interactive)
+  (let ((element (org-element-at-point)))
+    (cond ((doom-region-active-p)
+           ;; TODO Perform additional formatting?
+           ;; (save-restriction
+           ;;   (narrow-to-region beg end)
+           ;;   (org-table-recalculate t)
+           ;;   (org-table-map-tables #'org-table-align)
+           ;;   (org-align-tags t)
+           ;;   (org-update-statistics-cookies t)
+           ;;   ...)
+           (if (modulep! :editor format)
+               (call-interactively #'+format/org-blocks-in-region)
+             (message ":editor format is disabled, skipping reformatting of org-blocks")))
+          ((org-in-src-block-p nil element)
+           (unless (modulep! :editor format)
+             (user-error ":editor format module is disabled, ignoring reformat..."))
+           (call-interactively #'+format/org-block))
+          ((org-at-table-p)
+           (save-excursion (org-table-align)))
+          ((call-interactively #'org-fill-paragraph)))))
 
 
 ;;; Folds
@@ -443,31 +472,26 @@ Made for `org-tab-first-hook'."
   (when (and (modulep! :editor snippets)
              (require 'yasnippet nil t)
              (bound-and-true-p yas-minor-mode))
-    (and (let ((major-mode (cond ((org-in-src-block-p t)
-                                  (org-src-get-lang-mode (org-eldoc-get-src-lang)))
-                                 ((org-inside-LaTeX-fragment-p)
-                                  'latex-mode)
-                                 (major-mode)))
-               (org-src-tab-acts-natively nil) ; causes breakages
-               ;; Smart indentation doesn't work with yasnippet, and painfully slow
-               ;; in the few cases where it does.
-               (yas-indent-line 'fixed))
-           (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                           (evil-insert-state-p)
-                           (evil-emacs-state-p))
-                       (or (and (bound-and-true-p yas--tables)
-                                (gethash major-mode yas--tables))
-                           (progn (yas-reload-all) t))
-                       (yas--templates-for-key-at-point))
-                  (yas-expand)
-                  t)
-                 ((use-region-p)
-                  (yas-insert-snippet)
-                  t)))
-         ;; HACK Yasnippet breaks org-superstar-mode because yasnippets is
-         ;;      overzealous about cleaning up overlays.
-         (when (bound-and-true-p org-superstar-mode)
-           (org-superstar-restart)))))
+    (let ((major-mode (if (org-in-src-block-p t)
+                          (org-src-get-lang-mode (org-eldoc-get-src-lang))
+                        major-mode))
+          (org-src-tab-acts-natively nil) ; causes breakages
+          ;; Smart indentation doesn't work with yasnippet, and painfully slow
+          ;; in the few cases where it does.
+          (yas-indent-line 'fixed))
+      (cond ((and (or (not (bound-and-true-p evil-local-mode))
+                      (evil-insert-state-p)
+                      (evil-emacs-state-p))
+                  (or (and (bound-and-true-p yas--tables)
+                           (gethash major-mode yas--tables))
+                      (with-memoization (get 'yas-reload-all 'reloaded)
+                        (always (yas-reload-all))))
+                  (yas--templates-for-key-at-point))
+             (yas-expand)
+             t)
+            ((use-region-p)
+             (yas-insert-snippet)
+             t)))))
 
 ;;;###autoload
 (defun +org-cycle-only-current-subtree-h (&optional arg)
@@ -508,7 +532,12 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
        ;; Must be done on a timer because `org-show-set-visibility' (used by
        ;; `org-reveal') relies on overlays that aren't immediately available
        ;; when `org-mode' first initializes.
-       (run-at-time 0.1 nil #'org-reveal '(4))))
+       (let ((buf (current-buffer)))
+         (unless (doom-temp-buffer-p buf)
+           (run-at-time 0.1 nil (lambda ()
+                                  (when (buffer-live-p buf)
+                                    (with-current-buffer buf
+                                      (org-reveal '(4))))))))))
 
 ;;;###autoload
 (defun +org-remove-occur-highlights-h ()
@@ -516,10 +545,3 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
   (when org-occur-highlights
     (org-remove-occur-highlights)
     t))
-
-;;;###autoload
-(defun +org-enable-auto-update-cookies-h ()
-  "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
-  (when (bound-and-true-p evil-local-mode)
-    (add-hook 'evil-insert-state-exit-hook #'org-update-parent-todo-statistics nil t))
-  (add-hook 'before-save-hook #'org-update-parent-todo-statistics nil t))

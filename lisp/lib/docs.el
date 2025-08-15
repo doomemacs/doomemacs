@@ -372,7 +372,7 @@ depending.")
 (defvar doom-docs--cookies nil)
 ;;;###autoload
 (define-minor-mode doom-docs-mode
-  "Hides metadata, tags, & drawers and activates all org-mode pretiffications.
+  "Hides metadata, tags, & drawers and activates all org-mode prettifications.
 This primes `org-mode' for reading."
   :lighter " Doom Docs"
   :after-hook (org-restart-font-lock)
@@ -386,7 +386,7 @@ This primes `org-mode' for reading."
           (if doom-docs-mode
               (set (make-local-variable sym) t)
             (kill-local-variable sym)))
-        `(org-pretty-entities
+        '(org-pretty-entities
           org-hide-emphasis-markers
           org-hide-macro-markers))
   (when doom-docs-mode
@@ -485,6 +485,13 @@ This primes `org-mode' for reading."
          ("" 'warning))))
   "Extra font-lock keywords for Doom documentation.")
 
+(defvar doom-docs-org-mode-map
+  (let ((map (make-sparse-keymap))
+        (cmd (cmds! buffer-read-only #'kill-current-buffer)))
+    (define-key map "q" cmd)
+    (define-key map [remap evil-record-macro] cmd)
+    map))
+
 ;;;###autoload
 (define-derived-mode doom-docs-org-mode org-mode "Doom Docs"
   "A derivative of `org-mode' for Doom's documentation files.
@@ -552,4 +559,5 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
 
 (add-hook 'doom-docs-org-mode-hook #'doom-docs-read-only-h)
 
+(provide 'doom-lib '(docs))
 ;;; docs.el ends here

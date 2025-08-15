@@ -18,7 +18,7 @@
     (if (eq char 27)
         (cons "" "")
       (let* ((pair (+evil--embrace-get-pair (string char)))
-             (escape (if (sp-point-in-string) "\\\\" "\\"))
+             (escape (if (doom-point-in-string-p) "\\\\" "\\"))
              (escape (format "\\1%s" (regexp-quote escape))))
         (cons (replace-regexp-in-string "^\\( *\\)" escape (car pair))
               (replace-regexp-in-string "^\\( *\\)" escape (cdr pair)))))))

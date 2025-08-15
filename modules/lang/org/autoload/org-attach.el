@@ -19,7 +19,7 @@
   "TODO"
   (interactive)
   (require 'org-attach)
-  (if-let (dir (org-attach-dir))
+  (if-let* ((dir (org-attach-dir)))
       (pop-to-buffer
        ;; Rather than opening dired *and* image-dired windows, suppress them
        ;; both and open only the image-dired window.

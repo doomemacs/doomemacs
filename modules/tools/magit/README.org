@@ -14,14 +14,14 @@ This module provides Magit, an interface to the Git version control system.
 ** Module flags
 - +forge ::
   Enable Forge; a porcelain for managing Github issues and PRs from within
-  Emacs. Will take a while on first run to build =emacsql-sqlite=.
+  Emacs. Will take a while on first run to build =emacsql-sqlite=. *Requires Emacs
+  29.1 or newer.*
 
 ** Packages
 - [[doom-package:evil-magit]] if [[doom-module::editor evil +everywhere]]
 - [[doom-package:forge]] if [[doom-module:+forge]]
 - [[doom-package:code-review]] if [[doom-module:+forge]]
 - [[doom-package:magit]]
-- [[doom-package:magit-todos]]
 
 ** Hacks
 - [[doom-package:magit]] has been modified to recognize =$XDG_CACHE_HOME/git/credential/socket=.

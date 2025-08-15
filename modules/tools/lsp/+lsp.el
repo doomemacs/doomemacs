@@ -43,8 +43,23 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   (when (modulep! :config default +bindings)
     (setq lsp-keymap-prefix nil))
 
+  (unless (featurep :system 'windows)
+    ;; HACK: Frustratingly enough, the value of `lsp-zig-download-url-format' is
+    ;;   used immediately while the lsp-zig package is loading, so changing it
+    ;;   *after* lsp-zig makes no difference. What's worse, the variable is a
+    ;;   constant, so we can't change it *before* the package is loaded either!
+    ;;   Thank god a (non-inlined) function is used to build the URL, so we have
+    ;;   something to advise.
+    ;; REVIEW: Remove when zigtools/zls#1879 is resolved.
+    (defadvice! +lsp--use-correct-zls-download-url-a (fn &rest args)
+      "See zigtools/zls#1879."
+      :around #'lsp-zig--zls-url
+      (let ((lsp-zig-download-url-format
+             "https://github.com/zigtools/zls/releases/latest/download/zls-%s-%s.tar.xz"))
+        (apply fn args))))
+
   :config
-  (add-to-list 'doom-debug-variables 'lsp-log-io)
+  (set-debug-variable! 'lsp-log-io t 2)
 
   (setq lsp-intelephense-storage-path (concat doom-data-dir "lsp-intelephense/")
         lsp-vetur-global-snippets-dir
@@ -53,9 +68,6 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
                      (concat doom-user-dir "snippets/")))
         lsp-xml-jar-file (expand-file-name "org.eclipse.lsp4xml-0.3.0-uber.jar" lsp-server-install-dir)
         lsp-groovy-server-file (expand-file-name "groovy-language-server-all.jar" lsp-server-install-dir))
-
-  ;; REVIEW Remove this once this is fixed upstream.
-  (add-to-list 'lsp-client-packages 'lsp-racket)
 
   (add-hook! 'doom-escape-hook
     (defun +lsp-signature-stop-maybe-h ()
@@ -72,6 +84,9 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     :implementations '(lsp-find-implementation :async t)
     :type-definition #'lsp-find-type-definition)
 
+  ;; HACK: See emacs-lsp/lsp-mode#3577
+  (unless (modulep! :tools terraform)
+    (setq lsp-client-packages (delete 'lsp-terraform lsp-client-packages)))
 
   (defadvice! +lsp--respect-user-defined-checkers-a (fn &rest args)
     "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."
@@ -82,7 +97,11 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
           (setq-local flycheck-checker old-checker))
       (apply fn args)))
 
-  (add-hook! 'lsp-mode-hook #'+lsp-optimization-mode)
+  (add-hook 'lsp-before-initialize-hook #'+lsp-optimization-mode)
+  (add-hook! 'lsp-after-uninitialized-functions
+    (defun +lsp--disable-optimization-mode-if-no-workspaces-h (_workspace)
+      (unless (lsp--session-workspaces lsp--session)
+        (+lsp-optimization-mode -1))))
 
   (when (modulep! :completion company)
     (add-hook! 'lsp-completion-mode-hook
@@ -104,20 +123,20 @@ server getting expensively restarted when reverting buffers."
             restart
             (null +lsp-defer-shutdown)
             (= +lsp-defer-shutdown 0))
-        (prog1 (funcall fn restart)
-          (+lsp-optimization-mode -1))
+        (funcall fn restart)
       (when (timerp +lsp--deferred-shutdown-timer)
         (cancel-timer +lsp--deferred-shutdown-timer))
       (setq +lsp--deferred-shutdown-timer
             (run-at-time
              (if (numberp +lsp-defer-shutdown) +lsp-defer-shutdown 3)
-             nil (lambda (workspace)
-                   (with-lsp-workspace workspace
-                     (unless (lsp--workspace-buffers workspace)
-                       (let ((lsp-restart 'ignore))
-                         (funcall fn))
-                       (+lsp-optimization-mode -1))))
-             lsp--cur-workspace))))
+             nil (lambda (workspaces)
+                   (dolist (ws workspaces)
+                     (or (cl-some #'lsp-buffer-live-p
+                                  (lsp--workspace-buffers ws))
+                         (with-lsp-workspace ws
+                           (let ((lsp-restart 'ignore))
+                             (funcall fn))))))
+             lsp--buffer-workspaces))))
 
   (when (modulep! :ui modeline +light)
     (defvar-local lsp-modeline-icon nil)
@@ -138,8 +157,11 @@ server getting expensively restarted when reverting buffers."
                                    " "))
           (add-to-list 'global-mode-string
                        '(t (:eval lsp-modeline-icon))
-                       'append))))))
+                       'append)))))
 
+  (when (modulep! :completion corfu)
+    (setq lsp-completion-provider :none)
+    (add-hook 'lsp-mode-hook #'lsp-completion-mode)))
 
 (use-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)

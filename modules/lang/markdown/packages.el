@@ -1,12 +1,15 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/markdown/packages.el
 
-(package! markdown-mode :pin "c765b73b370f0fcaaa3cee28b2be69652e2d2c39")
-(package! markdown-toc :pin "3d724e518a897343b5ede0b976d6fb46c46bcc01")
-(package! edit-indirect :pin "f80f63822ffae78de38dbe72cacaeb1aaa96c732")
+(package! markdown-mode :pin "90ad4af79a8bb65a3a5cdd6314be44abd9517cfc")
+(package! markdown-toc :pin "1b0c5ae7f306f60b909390cad009b76660dd5acd")
+
+;; Required by `markdown-mode', or it will install it via package.el if it isn't
+;; present when you call `markdown-edit-code-block'.
+(package! edit-indirect :pin "82a28d8a85277cfe453af464603ea330eae41c05")
 
 (when (modulep! +grip)
-  (package! grip-mode :pin "5809fb62f6dd7b4bfa7685203aaa1474fca70f4e"))
+  (package! grip-mode :pin "96a927dce69d7607b981d7754cf8b415ebf9d6a8"))
 
 (when (modulep! :editor evil +everywhere)
   (package! evil-markdown

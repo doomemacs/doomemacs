@@ -7,7 +7,7 @@
 #+title:     `(+file-templates-module-for-path)`
 #+subtitle:  <A one-line quip about this module to display in init.example.el>
 #+created:   `(format-time-string "%B %d, %Y")`
-#+since:     `(car (split-string doom-version "-"))` (#COMMIT-OR-PR-REF)
+#+since:     `(car (split-string doom-modules-version "-"))` (#COMMIT-OR-PR-REF)
 
 * Description :unfold:
 $0Replace this with a short (1-2 sentence) description of what this module does.

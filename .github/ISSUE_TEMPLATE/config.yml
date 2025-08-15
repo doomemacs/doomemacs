@@ -1,14 +1,32 @@
 blank_issues_enabled: false
 contact_links:
+  - name: 📝 Feature Request
+    url: https://github.com/orgs/doomemacs/discussions/new?category=ideas
+    about: "Suggest or request a new feature or change"
+  - name: 📝 User Support
+    url: https://doomemacs.org/discuss/new?category=questions
+    about: "Ask the community for help"
+  - name: 📝 Bump Request
+    url: https://github.com/orgs/doomemacs/discussions/new?category=re-modules&title=[Bump Request] &body=%23%23%23%20Packages%20to%20bump%0A%0A-%20PackageA%0A-%20PackageB%0A-%20PackageB%0A%0A%23%23%23%20Why%20should%20they%20be%20bumped%20outside%20of%20the%20typical%20bump%20schedule%3F%0A%0ABecause%20...%3F
+    about: "Request a pinned package be bumped"
+  - name: 📣 Announcements
+    url: https://github.com/doomemacs/community/discussions/categories/announcements
+    about: "Follow project news, releases, and announcements"
   - name: Official Documentation
-    url: https://github.com/doomemacs/doomemacs/blob/master/docs/index.org
-    about: "Walks you through how to use, abuse, or confuse Doom Emacs. Also available from within Doom: `M-x doom/help`"
-  - name: Visit our Discourse
-    url: https://discourse.doomemacs.org
-    about: "A repository of official learning resources and discussion forum for Emacs and Doom"
+    url: https://docs.doomemacs.org
+    about: "Also available from within Doom: `M-x doom/help`"
+  # - name: Community Wiki
+  #   url: https://wiki.doomemacs.org
+  #   about: "The Community-maintained wiki"
+  - name: Frequently asked questions
+    url: https://docs.doomemacs.org/latest/faq
+    about: "Answers to common questions and solutions for frequently brought up issues"
+  - name: Do-not-PR list
+    url: https://doomemacs.org/donotpr
+    about: "A list of pull requests that won't be accepted"
+  - name: Visit our Discussions board
+    url: https://doomemacs.org/discuss
+    about: "Our public discussion and support forum"
   - name: Visit our Discord
     url: https://doomemacs.org/discord
-    about: "A place to chat, get to know the community, and get help quick"
-  - name: See third-party resources
-    url: https://discourse.doomemacs.org/c/guides/resources
-    about: "A curated collection of non-official resources to help you learn Emacs and Doom"
+    about: "A less formal space to chat, get to know the community, and get help quick"

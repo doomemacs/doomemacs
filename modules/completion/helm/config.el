@@ -43,7 +43,9 @@ Can be negative.")
         ;; symbol at point.
         helm-imenu-execute-action-at-once-if-one nil
         ;; Disable special behavior for left/right, M-left/right keys.
-        helm-ff-lynx-style-map nil)
+        helm-ff-lynx-style-map nil
+        ;; Don't commandeer the entire frame for helm commands.
+        helm-always-two-windows nil)
 
   (map! [remap apropos]                   #'helm-apropos
         [remap find-library]              #'helm-locate-library
@@ -100,11 +102,7 @@ Can be negative.")
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 
   ;; Hide minibuffer if `helm-echo-input-in-header-line'
-  (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe)
-
-  ;; Use helpful instead of describe-* to display documentation
-  (dolist (fn '(helm-describe-variable helm-describe-function))
-    (advice-add fn :around #'doom-use-helpful-a)))
+  (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe))
 
 
 (use-package! helm-posframe
@@ -148,7 +146,7 @@ Can be negative.")
 
 (defvar helm-generic-files-map (make-sparse-keymap))
 (after! helm-locate
-  (when (and IS-MAC
+  (when (and (featurep :system 'macos)
              (null helm-locate-command)
              (executable-find "mdfind"))
     (setq helm-locate-command "mdfind -name %s"))
@@ -188,7 +186,13 @@ Can be negative.")
 
 
 (use-package! helm-descbinds
-  :hook (helm-mode . helm-descbinds-mode))
+  :hook (helm-mode . helm-descbinds-mode)
+  :config
+  ;; HACK: Upstream claims that the two packages are incompatible, but changing
+  ;;   `prefix-help-command' seems to smooth the incompatibility over. More
+  ;;   testing is needed...
+  (setq helm-descbinds-disable-which-key nil
+        prefix-help-command #'helm-descbinds))
 
 
 (use-package! helm-icons

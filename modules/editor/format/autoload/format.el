@@ -1,11 +1,22 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
+;; HACK: `apheleia-mode' doesn't define a keymap. By defining one before the
+;;   minor mode is loaded, `define-minor-mode' will automatically register it as
+;;   apheleia-mode's keymap.
+;;;###autoload (defvar apheleia-mode-map (make-sparse-keymap))
+
 (defun +format--current-indentation ()
   (save-excursion
     (goto-char (point-min))
     (skip-chars-forward " \t\n")
     (current-indentation)))
 
+;;;###autoload (autoload 'apheleia--get-formatters "apheleia-formatters")
+
+;;;###autoload
+(defvar +format--region-p nil)
+
+;;;###autoload
 (defun +format-region (start end &optional callback)
   "Format from START to END with `apheleia'."
   (when-let* ((command (apheleia--get-formatters
@@ -15,79 +26,92 @@
               (cur-buffer (current-buffer))
               (formatted-buffer (get-buffer-create " *apheleia-formatted*"))
               (indent 0))
-    (with-current-buffer formatted-buffer
-      (erase-buffer)
-      (unless IS-WINDOWS
-        (setq-local coding-system-for-read 'utf-8)
-        (setq-local coding-system-for-write 'utf-8))
-      ;; Ensure this temp buffer seems as much like the origin buffer as
-      ;; possible, in case the formatter is an elisp function, like `gofmt'.
-      (cl-loop for (var . val)
-               in (cl-remove-if-not #'listp (buffer-local-variables cur-buffer))
-               ;; Making enable-multibyte-characters buffer-local causes an
-               ;; error.
-               unless (eq var 'enable-multibyte-characters)
-               ;; Using setq-local would quote var.
-               do (set (make-local-variable var) val))
-      ;;
-      (insert-buffer-substring-no-properties cur-buffer start end)
-      ;; Since we're piping a region of text to the formatter, remove any
-      ;; leading indentation to make it look like a file.
-      (setq indent (+format--current-indentation))
-      (when (> indent 0)
-        (indent-rigidly (point-min) (point-max) (- indent)))
-      ;;
-      (apheleia-format-buffer
-       command
-       (lambda ()
-         (with-current-buffer formatted-buffer
-           (when (> indent 0)
-             ;; restore indentation without affecting new
-             ;; indentation
-             (indent-rigidly (point-min) (point-max)
-                             (max 0 (- indent (+format--current-indentation)))))
-           (set-buffer-modified-p nil))
-         (with-current-buffer cur-buffer
-           (delete-region start end)
-           (insert-buffer-substring-no-properties formatted-buffer)
-           (when callback (funcall callback))
-           (kill-buffer formatted-buffer)))))))
+    (unwind-protect
+        (with-current-buffer formatted-buffer
+          (erase-buffer)
+          (unless (featurep :system 'windows)
+            (setq-local coding-system-for-read 'utf-8)
+            (setq-local coding-system-for-write 'utf-8))
+          ;; Ensure this temp buffer seems as much like the origin buffer as
+          ;; possible, in case the formatter is an elisp function, like `gofmt'.
+          (cl-loop for (var . val)
+                   in (cl-remove-if-not #'listp (buffer-local-variables cur-buffer))
+                   ;; `enable-multibyte-characters' can change how Emacs reads the
+                   ;; buffer's contents (or writes them to the formatters), which
+                   ;; can cause errors.
+                   unless (eq var 'enable-multibyte-characters)
+                   do (set (make-local-variable var) val))
+          ;;
+          (insert-buffer-substring-no-properties cur-buffer start end)
+          ;; Since we're piping a region of text to the formatter, remove any
+          ;; leading indentation to make it look like a file.
+          (setq indent (+format--current-indentation))
+          (when (> indent 0)
+            (indent-rigidly (point-min) (point-max) (- indent)))
+          ;;
+          (let ((+format--region-p (cons start end)))
+            (apheleia-format-buffer
+             command
+             (lambda ()
+               (with-current-buffer formatted-buffer
+                 (when (> indent 0)
+                   ;; restore indentation without affecting new indentation
+                   (indent-rigidly (point-min) (point-max)
+                                   (max 0 (- indent (+format--current-indentation)))))
+                 (set-buffer-modified-p nil))
+               (with-current-buffer cur-buffer
+                 (with-silent-modifications
+                   (replace-region-contents start end (lambda () formatted-buffer) 5))
+                 (when callback (funcall callback))
+                 (kill-buffer formatted-buffer))))))
+      (when (doom-region-active-p)
+        (setq deactivate-mark t)))))
 
 
 ;;
 ;;; Commands
 
 ;;;###autoload
-(defun +format/buffer (&optional arg)
-  "Reformat the current buffer using LSP or `format-all-buffer'."
-  (interactive "P")
-  (call-interactively
-   (if (and +format-with-lsp
-            (bound-and-true-p lsp-mode)
-            (lsp-feature? "textDocument/formatting"))
-       #'lsp-format-buffer
-     #'apheleia-format-buffer)))
+(defalias '+format/buffer #'apheleia-format-buffer)
 
 ;;;###autoload
-(defun +format/region (beg end &optional arg)
-  "Runs the active formatter on the lines within BEG and END.
+(defun +format/region (beg end &optional _arg interactive)
+  "Format the selected region.
 
-WARNING: this may not work everywhere. It will throw errors if the region
-contains a syntax error in isolation. It is mostly useful for formatting
-snippets or single lines."
-  (interactive "rP")
-  (if (and +format-with-lsp
-           (bound-and-true-p lsp-mode)
-           (lsp-feature? "textDocument/rangeFormatting"))
-      (call-interactively #'lsp-format-region)
-    (+format-region beg end)))
+WARNING: if the formatter doesn't support partial formatting, this command tries
+to pretend the active selection is the contents of a standalone file, but this
+may not always work. Keep your undo keybind handy!"
+  (interactive (list (doom-region-beginning)
+                     (doom-region-end)
+                     current-prefix-arg
+                     'interactive))
+  (+format-region
+   beg end
+   (lambda ()
+     (when interactive
+       (message "Region reformatted!")))))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()
-  "Runs the active formatter on the selected region (or whole buffer, if nothing
-is selected)."
+  "Format the selected region, or whole buffer if nothing is selected."
   (interactive)
   (call-interactively
    (if (doom-region-active-p)
        #'+format/region
      #'+format/buffer)))
+
+;;;###autoload
+(defun +format/save-buffer-no-reformat ()
+  "`save-buffer', but don't trigger `apheleia's save-on-format behavior."
+  (interactive)
+  (let (apheleia-mode)
+    (basic-save-buffer)))
+
+;;;###autoload
+(defun +format/save-buffer (arg)
+  "`save-buffer', but the prefix ARG also inhibits format-on-save behavior."
+  (interactive "P")
+  (let ((apheleia-mode (and apheleia-mode (memq arg '(nil 1)))))
+    (call-interactively #'save-buffer)))
+
+;;; format.el ends here

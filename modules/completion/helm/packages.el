@@ -1,20 +1,20 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/helm/packages.el
 
-(package! helm :pin "dfd6403947c5cd9f32afcd6bc92a1756cc958c82")
-(package! helm-company :pin "6eb5c2d730a60e394e005b47c1db018697094dde")
-(package! helm-c-yasnippet :pin "e214eec8b2875d8a7cd09006dfb6a8e15e9e4079")
-(package! helm-descbinds :pin "b72515982396b6e336ad7beb6767e95a80fca192")
+(package! helm :pin "90cd6ad68c472b9908346ea3d39b63e2547fcc3d")
+(package! helm-company :pin "4622b82353220ee6cc33468f710fa5b6b253b7f1")
+(package! helm-c-yasnippet :pin "c5880e740da101fde7a995e94a7b16c330e57583")
+(package! helm-descbinds :pin "c12bc85ef3ce342fe1c78cdd86117c05d5310789")
 (package! helm-describe-modes :pin "11fb36af119b784539d31c6160002de1957408aa")
-(package! helm-projectile :pin "35a2111d00c0c0c9d8743280d3f1243bb217118a")
+(package! helm-projectile :pin "041076e35a6663302a91a0fa672f847c7d64bf29")
 (package! helm-rg :pin "ee0a3c09da0c843715344919400ab0a0190cc9dc")
 (package! swiper-helm :pin "93fb6db87bc6a5967898b5fd3286954cc72a0008")
 
 (when (modulep! +childframe)
-  (package! helm-posframe :pin "87461b52b6f3f378c63642a33f584d4a4ba28351"))
+  (package! helm-posframe :pin "0b6bb016f0ff4980860a9d00574de311748c40b0"))
 (when (modulep! +fuzzy)
   (package! helm-flx :pin "5220099e695a3586dba2d59640217fe378e66310"))
 (when (modulep! +icons)
-  (package! helm-icons :pin "53349000b114b2dfc874252de6605e3bafa435e2"))
+  (package! helm-icons :pin "0d113719ee72cb7b6bb7db29f7200d667bd86607"))
 (when (modulep! :lang org)
-  (package! helm-org :pin "d67186d3a64e610c03a5f3d583488f018fb032e4"))
+  (package! helm-org :pin "4744ca7f8b35e17bafce9cb0093deb87a232699d"))

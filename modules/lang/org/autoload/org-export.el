@@ -3,13 +3,14 @@
 (defun +org--yank-html-buffer (buffer)
   (with-current-buffer buffer
     (require 'ox-clip)
-    (cond ((or IS-WINDOWS IS-MAC)
+    (cond ((or (featurep :system 'windows)
+               (featurep :system 'macos))
            (shell-command-on-region
             (point-min)
             (point-max)
-            (cond (IS-WINDOWS ox-clip-w32-cmd)
-                  (IS-MAC     ox-clip-osx-cmd))))
-          (IS-LINUX
+            (cond ((featurep :system 'windows) ox-clip-w32-cmd)
+                  ((featurep :system 'macos)   ox-clip-osx-cmd))))
+          ((featurep :system 'linux)
            (let ((html (buffer-string)))
              (with-temp-file (make-temp-file "ox-clip-md" nil ".html")
                (insert html))
@@ -48,6 +49,6 @@ properties and font-locking et all)."
      (+org--yank-html-buffer (markdown)))
     (_
      ;; Omit after/before-string overlay properties in htmlized regions, so we
-     ;; don't get fringe characters for things like flycheck or git-gutter.
+     ;; don't get fringe characters for things like flycheck or diff-hl
      (letf! (defun htmlize-add-before-after-strings (_beg _end text) text)
        (ox-clip-formatted-copy beg end)))))

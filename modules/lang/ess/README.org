@@ -19,9 +19,10 @@ SAS, Julia and Stata.
 
 ** Packages
 - [[doom-package:ess]]
-- [[doom-package:ess-R-data-view]]
+- [[doom-package:ess-view-data]]
 - [[doom-package:polymode]]
 - [[doom-package:poly-R]]
+- [[doom-package:quarto-mode]]
 - if [[doom-module:+stan]]
   - [[doom-package:company-stan]] if [[doom-module::completion company]]
   - [[doom-package:eldoc-stan]]

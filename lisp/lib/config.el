@@ -1,8 +1,5 @@
 ;;; lisp/lib/config.el -*- lexical-binding: t; -*-
 
-(defvar doom-bin-dir (expand-file-name "bin/" doom-emacs-dir))
-(defvar doom-bin (expand-file-name "doom" doom-bin-dir))
-
 ;;;###autoload
 (defvar doom-after-reload-hook nil
   "A list of hooks to run after `doom/reload' has reloaded Doom.")
@@ -16,7 +13,7 @@
   "Browse your `doom-user-dir'."
   (interactive)
   (unless (file-directory-p doom-user-dir)
-    (make-directory doom-user-dir t))
+    (user-error "$DOOMDIR doesn't exist (%s)" (abbreviate-file-name doom-user-dir)))
   (doom-project-browse doom-user-dir))
 
 ;;;###autoload
@@ -25,38 +22,36 @@
   (interactive)
   (doom-project-find-file doom-user-dir))
 
-;;;###autoload
-(defun doom/goto-private-init-file ()
-  "Open your private init.el file.
-And jumps to your `doom!' block."
-  (interactive)
-  (find-file (expand-file-name doom-module-init-file doom-user-dir))
-  (goto-char
-   (or (save-excursion
-         (goto-char (point-min))
-         (search-forward "(doom!" nil t))
-       (point))))
-
-;;;###autoload
-(defun doom/goto-private-config-file ()
-  "Open your private config.el file."
-  (interactive)
-  (find-file (expand-file-name doom-module-config-file doom-user-dir)))
-
-;;;###autoload
-(defun doom/goto-private-packages-file ()
-  "Open your private packages.el file."
-  (interactive)
-  (find-file (expand-file-name doom-module-packages-file doom-user-dir)))
-
 
 ;;
 ;;; Managements
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  `(let ((default-directory doom-emacs-dir))
-     (with-current-buffer (compile ,command t)
+  `(let* ((default-directory doom-emacs-dir)
+          (doom-bin "doom")
+          (doom-bin-dir (expand-file-name "bin/"))
+          (emacs-bin (doom-path invocation-directory invocation-name))
+          (exec-path (cons doom-bin-dir exec-path))
+          (shell-file-name shell-file-name))
+     (when (and (featurep :system 'windows)
+                (string-match-p "cmdproxy.exe$" shell-file-name))
+       (if-let* ((pwsh (or (executable-find "pwsh")
+                           (executable-find "powershell"))))
+           (setq doom-bin "doom.ps1"
+                 shell-file-name pwsh)
+         (user-error "Powershell 3.0+ is required for `doom/reload', but no pwsh.exe or powershell.exe found in your $PATH")))
+     ;; Ensure the bin/doom operates with the same environment as this running
+     ;; session.
+     (with-current-buffer
+         (with-environment-variables
+             (("PATH" (string-join exec-path path-separator))
+              ("EMACS" emacs-bin)
+              ("EMACSDIR" doom-emacs-dir)
+              ("DOOMDIR" doom-user-dir)
+              ("DOOMLOCALDIR" doom-local-dir)
+              ("DEBUG" (if doom-debug-mode (number-to-string doom-log-level))))
+           (compile (format ,command (file-name-concat "bin" doom-bin)) t))
        (let ((w (get-buffer-window (current-buffer))))
          (select-window w)
          (add-hook
@@ -69,9 +64,19 @@ And jumps to your `doom!' block."
               ,on-failure))
           nil 'local)))))
 
+(defvar doom-reload-command
+  (format "%s sync -B -e"
+          ;; /usr/bin/env doesn't exist on Android
+          (if (featurep :system 'android)
+              "sh %s"
+            "%s"))
+  "Command that `doom/reload' runs.")
 ;;;###autoload
 (defun doom/reload ()
   "Reloads your private config.
+
+WARNING: This command is experimental! If you haven't configured your config to
+be idempotent, then this could cause compounding slowness or errors.
 
 This is experimental! It will try to do as `bin/doom sync' does, but from within
 this Emacs session. i.e. it reload autoloads files (if necessary), reloads your
@@ -80,10 +85,9 @@ package list, and lastly, reloads your private config.el.
 Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
-  (doom--if-compile (format "%S sync -e" doom-bin)
-      (doom-context-with '(reload modules)
+  (doom--if-compile doom-reload-command
+      (with-doom-context 'reload
         (doom-run-hooks 'doom-before-reload-hook)
-        (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
@@ -104,9 +108,9 @@ remove orphaned ones. It also doesn't reload your private config.
 It is useful to only pull in changes performed by 'doom sync' on the command
 line."
   (interactive)
-  (require 'doom-profiles)
+  (doom-require 'doom-lib 'profiles)
   ;; TODO: Make this more robust
-  (doom-context-with 'reload
+  (with-doom-context 'reload
     (dolist (file (mapcar #'car doom-profile-generators))
       (when (string-match-p "/[0-9]+-loaddefs[.-]" file)
         (load (doom-path doom-profile-dir doom-profile-init-dir-name file)
@@ -122,16 +126,26 @@ Doing so from within Emacs will taint your shell environment.
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
   (interactive)
-  (doom-context-with 'reload
+  (with-doom-context 'reload
     (let ((default-directory doom-emacs-dir))
       (with-temp-buffer
         (doom-load-envvars-file doom-env-file)
         (message "Reloaded %S" (abbreviate-file-name doom-env-file))))))
 
+(defvar doom-upgrade-command
+  (format "%s upgrade -B --force"
+          ;; /usr/bin/env doesn't exist on Android
+          (if (featurep :system 'android)
+              "sh %s"
+            "%s"))
+  "Command that `doom/upgrade' runs.")
 ;;;###autoload
 (defun doom/upgrade ()
   "Run 'doom upgrade' then prompt to restart Emacs."
   (interactive)
-  (doom--if-compile (format "%S upgrade --force" doom-bin)
+  (doom--if-compile doom-upgrade-command
       (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
         (doom/restart-and-restore))))
+
+(provide 'doom-lib '(config))
+;;; config.el ends here

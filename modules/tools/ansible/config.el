@@ -21,7 +21,7 @@
 
 
 (use-package! jinja2-mode
-  :mode "\\.j2$"
+  :mode "\\.j2\\'"
   :config
   ;; The default behavior is to reindent the whole buffer on save. This is
   ;; disruptive and imposing. There are indentation commands available; the user
@@ -31,5 +31,10 @@
 
 (def-project-mode! +ansible-yaml-mode
   :modes '(yaml-mode)
-  :add-hooks '(ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
-  :files (or "roles/" "tasks/main.yml" "tasks/main.yaml"))
+  :add-hooks '(ansible-mode ansible-auto-decrypt-encrypt ansible-doc-mode)
+  :files (or "roles/"
+             "tasks/main.yml"
+             "tasks/main.yaml"
+             "ansible.cfg"
+             "galaxy.yml"
+             "galaxy.yaml"))

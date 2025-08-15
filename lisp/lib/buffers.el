@@ -91,12 +91,12 @@ If no project is active, return all buffers."
 ;;;###autoload
 (defun doom-special-buffer-p (buf)
   "Returns non-nil if BUF's name starts and ends with an *."
-  (equal (substring (buffer-name buf) 0 1) "*"))
+  (char-equal ?* (aref (buffer-name buf) 0)))
 
 ;;;###autoload
 (defun doom-temp-buffer-p (buf)
   "Returns non-nil if BUF is temporary."
-  (equal (substring (buffer-name buf) 0 1) " "))
+  (char-equal ?\s (aref (buffer-name buf) 0)))
 
 ;;;###autoload
 (defun doom-visible-buffer-p (buf)
@@ -111,12 +111,14 @@ If no project is active, return all buffers."
 ;;;###autoload
 (defun doom-non-file-visiting-buffer-p (buf)
   "Returns non-nil if BUF does not have a value for `buffer-file-name'."
-  (not (buffer-file-name buf)))
+  (not (buffer-file-name (or (buffer-base-buffer buf) buf))))
 
 ;;;###autoload
 (defun doom-real-buffer-list (&optional buffer-list)
   "Return a list of buffers that satisfy `doom-real-buffer-p'."
-  (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
+  (cl-loop for buf in (or buffer-list (doom-buffer-list))
+           if (doom-real-buffer-p buf)
+           collect buf))
 
 ;;;###autoload
 (defun doom-real-buffer-p (buffer-or-name)
@@ -160,15 +162,13 @@ See `doom-real-buffer-p' for details on what that means."
   "Return a list of buffers whose `major-mode' is `eq' to MODE(S).
 
 If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
-  (let ((modes (ensure-list modes)))
-    (cl-remove-if-not (if derived-p
-                          (lambda (buf)
-                            (apply #'provided-mode-derived-p
-                                   (buffer-local-value 'major-mode buf)
-                                   modes))
-                        (lambda (buf)
-                          (memq (buffer-local-value 'major-mode buf) modes)))
-                      (or buffer-list (doom-buffer-list)))))
+  (cl-loop with modes = (ensure-list modes)
+           for buf in (or buffer-list (doom-buffer-list))
+           for mode = (buffer-local-value 'major-mode buf)
+           if (if derived-p
+                  (apply #'provided-mode-derived-p mode modes)
+                (memq mode modes))
+           collect buf))
 
 ;;;###autoload
 (defun doom-visible-windows (&optional window-list)
@@ -179,24 +179,31 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
            collect window))
 
 ;;;###autoload
-(defun doom-visible-buffers (&optional buffer-list)
+(defun doom-visible-buffers (&optional buffer-list all-frames)
   "Return a list of visible buffers (i.e. not buried)."
-  (let ((buffers (delete-dups (mapcar #'window-buffer (window-list)))))
+  (let ((buffers
+         (delete-dups
+          (cl-loop for frame in (if all-frames (visible-frame-list) (list (selected-frame)))
+                   if (window-list frame)
+                   nconc (mapcar #'window-buffer it)))))
     (if buffer-list
-        (cl-delete-if (lambda (b) (memq b buffer-list))
-                      buffers)
-      (delete-dups buffers))))
+        (cl-loop for buf in buffers
+                 unless (memq buf buffer-list)
+                 collect buffers)
+      buffers)))
 
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
   "Get a list of buffers that are buried."
-  (cl-remove-if #'get-buffer-window (or buffer-list (doom-buffer-list))))
+  (cl-loop for buf in (or buffer-list (doom-buffer-list))
+           unless (doom-visible-buffer-p buf)
+           collect buf))
 
 ;;;###autoload
 (defun doom-matching-buffers (pattern &optional buffer-list)
   "Get a list of all buffers that match the regex PATTERN."
   (cl-loop for buf in (or buffer-list (doom-buffer-list))
-           when (string-match-p pattern (buffer-name buf))
+           if (string-match-p pattern (buffer-name buf))
            collect buf))
 
 ;;;###autoload
@@ -373,7 +380,7 @@ current project."
 (defun doom/kill-project-buffers (project &optional interactive)
   "Kill buffers for the specified PROJECT."
   (interactive
-   (list (if-let (open-projects (doom-open-projects))
+   (list (if-let* ((open-projects (doom-open-projects)))
              (completing-read
               "Kill buffers for project: " open-projects
               nil t nil nil
@@ -391,3 +398,6 @@ current project."
        interactive "Killed %d project buffers"
        (- (length buffer-list)
           (length (cl-remove-if-not #'buffer-live-p buffer-list)))))))
+
+(provide 'doom-lib '(buffers))
+;;; buffers.el ends here

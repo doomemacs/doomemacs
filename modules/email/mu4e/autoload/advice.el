@@ -1,44 +1,12 @@
 ;;; email/mu4e/autoload/advice.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(defun +mu4e~main-action-str-prettier-a (str &optional func-or-shortcut)
-  "Highlight the first occurrence of [.] in STR.
-If FUNC-OR-SHORTCUT is non-nil and if it is a function, call it
-when STR is clicked (using RET or mouse-2); if FUNC-OR-SHORTCUT is
-a string, execute the corresponding keyboard action when it is
-clicked."
-  (let ((newstr
-         (replace-regexp-in-string
-          "\\[\\(..?\\)\\]"
-          (lambda(m)
-            (format "%s"
-                    (propertize (match-string 1 m) 'face 'mu4e-highlight-face)))
-          (replace-regexp-in-string "\t\\*" (format "\t%s" +mu4e-main-bullet) str)))
-        (map (make-sparse-keymap))
-        (func (if (functionp func-or-shortcut)
-                  func-or-shortcut
-                (if (stringp func-or-shortcut)
-                    (lambda()(interactive)
-                      (execute-kbd-macro func-or-shortcut))))))
-    (define-key map [mouse-2] func)
-    (define-key map (kbd "RET") func)
-    (put-text-property 0 (length newstr) 'keymap map newstr)
-    (put-text-property (string-match "[A-Za-z].+$" newstr)
-                       (- (length newstr) 1) 'mouse-face 'highlight newstr)
-    newstr))
-
-;;;###autoload
-(defun +mu4e~main-keyval-str-prettier-a (str)
-  "Replace '*' with `+mu4e-main-bullet' in STR."
-  (replace-regexp-in-string "\t\\*" (format "\t%s" +mu4e-main-bullet) str))
-
 ;; Org msg LaTeX image scaling
 
 ;;;###autoload
 (defun +org-msg-img-scale-css (img-uri)
   "For a given IMG-URI, use imagemagick to find its width."
   (if +org-msg-currently-exporting
-      (when (and (not IS-WINDOWS)) ; relies on posix path
+      (when (and (not (featurep :system 'windows))) ; relies on posix path
         (let ((width-call (and (executable-find "identify")
                                (doom-call-process "identify" "-format" "%w"
                                                   (substring img-uri 7))))) ; 7=(length "file://")

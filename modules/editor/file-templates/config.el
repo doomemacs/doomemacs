@@ -19,9 +19,17 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/Makefile$"             :mode makefile-gmake-mode)
     ;; elisp
     ("/\\.dir-locals\\.el$")
-    ("/\\.doomrc$"
+    ("/\\.doom$"
      :trigger "__doomrc"
      :mode emacs-lisp-mode)
+    ("/\\.doom\\(?:module\\)?$"
+     :trigger "__doommodulerc"
+     :mode emacs-lisp-mode)
+    ("/\\.doom\\.el$"
+     :trigger "__doomrc_el"
+     :mode emacs-lisp-mode)
+    ;; TODO: .doomprofile
+    ;; TODO: profiles.el/doom-profiles.el
     ("/packages\\.el$" :when +file-templates-in-emacs-dirs-p
      :trigger "__doom-packages"
      :mode emacs-lisp-mode)
@@ -146,9 +154,13 @@ must be non-read-only, empty, and there must be a rule in
        (not (file-exists-p buffer-file-name))  ; ...is a new file
        (not (buffer-modified-p))    ; ...hasn't been modified
        (null (buffer-base-buffer))  ; ...isn't an indirect clone
-       (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
-         (apply #'+file-templates--expand rule))))
+       (+file-templates/apply)))
 
+(defun +file-templates/apply ()
+  "Actually expand a file template if one exists"
+  (interactive)
+  (when-let* ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
+    (apply #'+file-templates--expand rule)))
 
 ;;
 ;;; Bootstrap

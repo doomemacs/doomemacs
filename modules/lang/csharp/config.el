@@ -1,9 +1,10 @@
 ;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
 (use-package! csharp-mode
-  :hook (csharp-mode . rainbow-delimiters-mode)
+  :defer t
   :config
-  (set-formatter! 'csharpier '("dotnet-csharpier") :modes '(csharp-mode))
+  (set-formatter! 'csharpier '("csharpier" "format" "--write-stdout")
+    :modes '(csharp-mode))
   (set-electric! 'csharp-mode :chars '(?\n ?\}))
   (set-rotate-patterns! 'csharp-mode
     :symbols '(("public" "protected" "private")
@@ -50,8 +51,10 @@ or terminating simple string."
   :defer t
   :init
   (add-hook 'csharp-mode-local-vars-hook #'tree-sitter! 'append)
-  (if (fboundp #'csharp-tree-sitter-mode)
-      (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode))))
+  (when (fboundp #'csharp-tree-sitter-mode)
+    (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode))
+    (when (modulep! +lsp)
+      (add-hook 'csharp-tree-sitter-mode-local-vars-hook #'lsp! 'append))))
 
 
 ;; Unity shaders

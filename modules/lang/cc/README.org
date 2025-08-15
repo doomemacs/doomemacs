@@ -6,10 +6,11 @@
 * Description :unfold:
 This module adds support for the C-family of languages: C, C++, and Objective-C.
 
-- Code completion (~company-irony~)
-- eldoc support (~irony-eldoc~)
-- Syntax-checking (~flycheck-irony~)
-- Code navigation (~rtags~)
+Through LSP, this module offers:
+- Code completion
+- eldoc support
+- Syntax-checking
+- Code navigation
 - File Templates ([[../../editor/file-templates/templates/c-mode][c-mode]], [[../../editor/file-templates/templates/c++-mode][c++-mode]])
 - Snippets ([[https://github.com/hlissner/doom-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c++-mode][c++-mode]])
 - Several improvements to C++11 indentation and syntax highlighting.
@@ -20,34 +21,24 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-- +lsp ::
-  Enable LSP support for ~c-mode~, ~c++-mode~, and ~objc-mode~. Requires [[doom-module::tools
-  lsp]] and a langserver (supports ccls, clangd, and cquery). Replaces irony &
-  rtags.
+- lsp ::
+  Enable LSP support for ~c-mode~, ~c++-mode~, and ~objc-mode~. Requires [[doom-module::tools lsp]]
+  and a langserver (supports clangd, ccls, and cquery).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:cmake-mode]]
-- [[doom-package:company-glsl]]
 - [[doom-package:cuda-mode]]
 - [[doom-package:demangle-mode]]
 - [[doom-package:disaster]]
 - [[doom-package:glsl-mode]]
-- [[doom-package:modern-cpp-font-lock]]
+  - [[doom-package:company-glsl]]
+- [[doom-package:modern-cpp-font-lock]] unless [[doom-module:+tree-sitter]]
 - [[doom-package:opencl-mode]]
 - if [[doom-module:+lsp]]
   - [[doom-package:ccls]] if [[doom-module::tools lsp -eglot]]
-- else
-  - [[doom-package:company-irony]]
-  - [[doom-package:company-irony-c-headers]]
-  - [[doom-package:flycheck-irony]]
-  - [[doom-package:helm-rtags]] if [[doom-module::completion helm]]
-  - [[doom-package:irony]]
-  - [[doom-package:irony-eldoc]]
-  - [[doom-package:ivy-rtags]] if [[doom-module::completion ivy]]
-  - [[doom-package:rtags]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -62,21 +53,18 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 This module's requirements change depending on how you use it.
 
 - If [[doom-module:+lsp]] is enabled, you need one of *clangd v9+* or *ccls*.
-- If [[doom-module:+lsp]] is *not* enabled, you need *irony-server* and *rtags*.
 - Other features in this module depend on:
   - (optional) glslangValidator, for GLSL completion in ~glsl-mode~
   - (optional) cmake, for code completion in ~cmake-mode~
 - You will need a C/C++ compiler, like =gcc= or =clang=.
 
 ** LSP servers
-=lsp-mode= and =eglot= support a few LSP servers, but =clangd= and =ccls= are
-recommended.
+=lsp-mode= and =eglot= support a few LSP servers, but =clangd= is recommend:
 
 + clangd (must be v9 or newer) :: clangd is included with =llvm= which should be
   available through your OS' package manager.
   - Linux:
-    - Debian 11 & Ubuntu 20.10: ~$ apt-get install clangd-11~
-      - 20.04 LTS: [[https://pkgs.org/search/?q=clangd][clangd-10]]
+    - Debian & Ubuntu: ~$ apt-get install clangd~
     - Fedora & CentOS/RHEL 8+: ~$ dnf install clang-tools-extra~
     - openSUSE: ~$ zypper install clang~
     - Arch: ~$ pacman -S clang~
@@ -88,53 +76,9 @@ recommended.
   alternative install methods listed [[https://github.com/MaskRay/ccls/wiki/Install][in the project's wiki]].
 + cmake-language-server :: available through ~pip~ on most distributions
 
-** irony-server
-Irony powers the code completion, eldoc and syntax checking systems.
-
-After installing its dependencies (Clang and CMake), run ~M-x
-irony-install-server~ in Emacs.
-
-*** macOS
-Due to linking issues, macOS users must compile irony-server manually:
-#+begin_src sh
-brew install cmake
-brew install llvm
-git clone https://github.com/Sarcasm/irony-mode irony-mode
-#+end_src
-
-#+begin_src sh
-mkdir irony-mode/server/build
-pushd irony-mode/server/build
-
-DEST="$HOME/.emacs.d/.local/etc/irony-server/"
-cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/llvm \
-      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-      -DCMAKE_INSTALL_PREFIX="$DEST" ../
-cmake --build . --use-stderr --config Release --target install
-
-install_name_tool -change @rpath/libclang.dylib \
-    /usr/local/opt/llvm/lib/libclang.dylib \
-    "$DEST/bin/irony-server"
-
-# Cleanup
-popd
-rm -rf irony-mode
-#+end_src
-
-** rtags
-Code navigation requires an [[https://github.com/Andersbakken/rtags][rtags]] server (~rdm~) installed. This should be
-available through your OS's package manager.
-
-This module will auto-start ~rdm~ when you open C/C++ buffers (so long as one
-isn't already running). If you prefer to run it yourself:
-
-#+begin_src sh
-rdm &
-rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
-#+end_src
-
 ** =:editor format=
-The formatter used is [[doom-executable:clang-format]] which should be installed alongside =clang=.
+The formatter used is [[doom-executable:clang-format]] which should be installed alongside
+=clang=.
 
 For more info, see [[doom-module::editor format]].
 
@@ -164,27 +108,19 @@ additional function to get inheritance type hierarchy is added:
 #+end_quote
 
 ** Project compile settings
-By default, a set of default compile settings are defined in
-~+cc-default-compiler-options~ for C, C++ and Objective C. Irony, rtags and
-flycheck will fall back to these. *This variable does nothing for LSP users.*
-
-For a more universal solution: both LSP servers and irony will recognize a
-[[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] (a ~compile_commands.json~ file). There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to
-generate one]]. Here is an example using [[http://www.cmake.org/][CMake]] and [[https://github.com/rizsotto/Bear][bear]]:
-
+LSP servers and Flycheck will recognize a [[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] (a
+~compile_commands.json~ file). There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to generate one]]. Here is an
+example using [[http://www.cmake.org/][CMake]] and [[https://github.com/rizsotto/Bear][bear]]:
 #+begin_src sh
 # For CMake projects
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+$ cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
 #+end_src
 
 #+begin_src sh
 # For non-CMake projects
-make clean
-bear make
+$ make clean
+$ bear -- make
 #+end_src
-
-Use ~M-x +cc/reload-compile-db~ to reload your compile db in an already-open
-C/C++/ObjC buffer.
 
 *** Known issues with bear on macOS
 MacOS' [[https://support.apple.com/en-us/HT204899][System Integrity Protection (SIP)]] might interfere with bear if ~make~ is
@@ -215,7 +151,7 @@ brew install make
 #+end_src
 #+begin_src sh
 make clean
-bear gmake
+bear -- gmake
 #+end_src
 
 Additional info:
@@ -229,6 +165,7 @@ Search for your combination of =(LSP client package, LSP server)=. You are using
 
 *** LSP-mode with clangd
 #+begin_src emacs-lisp
+;;; add to $DOOMDIR/config.el
 (after! lsp-clangd
   (setq lsp-clients-clangd-args
         '("-j=3"
@@ -245,31 +182,36 @@ server everywhere clangd can be used.
 
 *** LSP-mode with ccls
 #+begin_src emacs-lisp
+;;; add to $DOOMDIR/config.el
 (after! ccls
   (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
-  (set-lsp-priority! 'ccls 2)) ; optional as ccls is the default in Doom
+  (set-lsp-priority! 'ccls 1))
 #+end_src
 
-This will both set your ccls flags and choose ccls as the default server. [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS
-documentation]] lists available options, use =t= for ~true~, =:json-false= for
-~false~, and =:json-null= for ~null~.
+This will prioritize =ccls= over =clangd=, if both are present on your system. Also
+feel free to tweak [[var:ccls-initialization-options]] to reconfigure it ([[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS
+documentation]] lists available options; use =t= for ~true~, =:json-false= for ~false~,
+and =:json-null= for ~null~).
 
 *** Eglot with clangd
+=clangd= will work with Eglot out of the box, but to customize its startup
+command, use [[fn:set-eglot-client!]]:
 #+begin_src emacs-lisp
-(set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy"))
+;;; add to $DOOMDIR/config.el
+(after! cc-mode
+  (set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy")))
 #+end_src
-
-This will both set your clangd flags and choose clangd as the default server (if
-it is the last =set-eglot-client! 'cc-mode= in your config).
 
 *** Eglot with ccls
+=ccls= will work with Eglot out of the box, but to customize its startup command,
+use [[fn:set-eglot-client!]]:
 #+begin_src emacs-lisp
-(set-eglot-client! 'cc-mode '("ccls" "--init={\"index\": {\"threads\": 3}}"))
+;;; add to $DOOMDIR/config.el
+(after! cc-mode
+  (set-eglot-client! 'cc-mode '("ccls" "--init={\"index\": {\"threads\": 3}}")))
 #+end_src
 
-This will both set your ccls flags and choose ccls as the default server (if it
-is the last =set-eglot-client! 'cc-mode= in your config). [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS documentation]]
-lists available options
+[[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS documentation]] lists available options
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]

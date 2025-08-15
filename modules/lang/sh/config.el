@@ -14,13 +14,10 @@
   :mode ("\\.bats\\'" . sh-mode)
   :mode ("\\.\\(?:zunit\\|env\\)\\'" . sh-mode)
   :mode ("/bspwmrc\\'" . sh-mode)
+  :magic ("#compdef " . sh-mode)
   :config
   (set-docsets! 'sh-mode "Bash")
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
-  (set-formatter! 'shfmt '("shfmt" "-ci"
-                           (unless indent-tabs-mode
-                             (list "-i" (number-to-string tab-width)))))
-
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
   (set-lookup-handlers! 'sh-mode :documentation #'+sh-lookup-documentation-handler)
   (set-ligatures! 'sh-mode
@@ -46,7 +43,7 @@
   (setq sh-indent-after-continuation 'always)
 
   ;; [pedantry intensifies]
-  (setq-hook! 'sh-mode-hook mode-name "sh")
+  (setq-hook! 'sh-mode-local-vars-hook mode-name "Sh")
 
   ;; recognize function names with dashes in them
   (add-to-list 'sh-imenu-generic-expression
@@ -69,11 +66,10 @@
               (1 'sh-quoted-exec prepend))
              (,(regexp-opt +sh-builtin-keywords 'symbols)
               (0 'font-lock-type-face append))))))
-  ;; 4. Fontify delimiters by depth
-  (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 
   ;; autoclose backticks
   (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p)))
+
 
 (use-package! company-shell
   :when (modulep! :completion company)
@@ -83,7 +79,16 @@
   (set-company-backend! 'sh-mode '(company-shell company-files))
   (setq company-shell-delete-duplicates t
         ;; whatis lookups are exceptionally slow on macOS (#5860)
-        company-shell-dont-fetch-meta IS-MAC))
+        company-shell-dont-fetch-meta (featurep :system 'macos)))
+
+
+(use-package! bash-completion
+  :when (modulep! :completion corfu)
+  :unless (modulep! +lsp)
+  :init
+  (add-hook! 'sh-mode-hook
+    (add-hook 'completion-at-point-functions
+              #'bash-completion-capf-nonexclusive nil t)))
 
 
 (use-package! powershell

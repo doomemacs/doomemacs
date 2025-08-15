@@ -8,6 +8,6 @@
   (unless (executable-find "shfmt")
     (warn! "Couldn't find shfmt. Code formatting will not work.")))
 
-(assert! (or (not (modulep! +tree-sitter))
+(assert! (or (modulep! -tree-sitter)
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")

@@ -31,9 +31,7 @@ package to be installed.")
 (defvar +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
   "A list of enabled LaTeX viewers to use, in this order. If they don't exist,
 they will be ignored. Recognized viewers are skim, evince, sumatrapdf, zathura,
-okular and pdf-tools.
-
-If no viewer is found, `latex-preview-pane-mode' is used.")
+okular and pdf-tools.")
 
 ;;
 (defvar +latex--company-backends nil)
@@ -42,7 +40,15 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
 ;;
 ;; Packages
 
-(add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
+;; HACK: Doom sets `custom-dont-initialize' during the early parts of its
+;;   startup process. This stops tex-site's setter on `TeX-modes' from
+;;   activating in `tex-site', which auctex loads *very early* from its
+;;   autoloads file. `tex-site's existence is hacky (more a historical artifact
+;;   and necessary evil, given its conflicts with the built in latex modes), so
+;;   I fix it as a one-off problem rather than a systemic one.
+(after! tex-site
+  (TeX-modes-set 'TeX-modes TeX-modes))
+
 
 (setq TeX-parse-self t ; parse on load
       TeX-auto-save t  ; parse on save
@@ -53,8 +59,6 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
       TeX-source-correlate-method 'synctex
       ;; Don't start the Emacs server when correlating sources.
       TeX-source-correlate-start-server nil
-      ;; Automatically insert braces after sub/superscript in `LaTeX-math-mode'.
-      TeX-electric-sub-and-superscript t
       ;; Just save, don't ask before each compilation.
       TeX-save-query nil)
 
@@ -75,8 +79,6 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
     fill-nobreak-predicate (cons #'texmathp fill-nobreak-predicate))
   ;; Enable word wrapping.
   (add-hook 'TeX-mode-hook #'visual-line-mode)
-  ;; Enable `rainbow-mode' after applying styles to the buffer.
-  (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   ;; Display output of LaTeX commands in a popup.
   (set-popup-rules! '((" output\\*$" :size 15)
                       ("^\\*TeX \\(?:Help\\|errors\\)"
@@ -85,33 +87,48 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
     ;; We have to use lower case modes here, because `smartparens-mode' uses
     ;; the same during configuration.
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
-      ;; All these excess pairs dramatically slow down typing in LaTeX buffers,
-      ;; so we remove them. Let snippets do their job.
-      (dolist (open '("\\left(" "\\left[" "\\left\\{" "\\left|"
-                      "\\bigl(" "\\biggl(" "\\Bigl(" "\\Biggl(" "\\bigl["
-                      "\\biggl[" "\\Bigl[" "\\Biggl[" "\\bigl\\{" "\\biggl\\{"
-                      "\\Bigl\\{" "\\Biggl\\{"
+      (dolist (open '(
+                      ;; All these pairs dramatically slow down typing in LaTeX
+                      ;; buffers, so remove them. Let snippets do their job.
+                      "\\left(" "\\left[" "\\left\\{" "\\left|"
+                      "\\bigl("   "\\biggl("   "\\Bigl("   "\\Biggl("
+                      "\\bigl["   "\\biggl["   "\\Bigl["   "\\Biggl["
+                      "\\bigl\\{" "\\biggl\\{" "\\Bigl\\{" "\\Biggl\\{"
                       "\\lfloor" "\\lceil" "\\langle"
-                      "\\lVert" "\\lvert" "`"))
-        (sp-local-pair modes open nil :actions :rem))
-      ;; And tweak these so that users can decide whether they want use LaTeX
-      ;; quotes or not, via `+latex-enable-plain-double-quotes'.
-      (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p))))
+                      "\\lVert" "\\lvert"
+                      ;; Disable pairs that interfere with AucTeX,
+                      ;; see https://github.com/Fuco1/smartparens/pull/1151.
+                      "`" "``" "\""))
+        ;; Some of the above pairs are in smartparens' global list, which
+        ;; applies to all modes, so we need a local ":actions nil" override
+        ;; (instead of ":actions :rem", which removes from the local list).
+        ;; While this keeps the pairs in `sp-pairs', it has negligible
+        ;; performance impact because smartparens will omit the pairs when
+        ;; building the buffer-local `sp-local-pairs' used during operation.
+        (sp-local-pair modes open nil :actions nil))))
   ;; Hook LSP, if enabled.
   (when (modulep! +lsp)
     (add-hook! '(tex-mode-local-vars-hook
-                 latex-mode-local-vars-hook)
+                 latex-mode-local-vars-hook
+                 LaTeX-mode-local-vars-hook)
                :append #'lsp!))
+  ;; Define a function to compile the project.
+  (defun +latex/compile ()
+    (interactive)
+    (TeX-save-document (TeX-master-file))
+    (TeX-command TeX-command-default 'TeX-master-file -1))
   (map! :localleader
         :map latex-mode-map
         :desc "View"          "v" #'TeX-view
-        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Compile"       "c" #'+latex/compile
+        :desc "Run all"       "a" #'TeX-command-run-all
         :desc "Run a command" "m" #'TeX-command-master)
   (map! :after latex
         :localleader
         :map LaTeX-mode-map
         :desc "View"          "v" #'TeX-view
-        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Compile"       "c" #'+latex/compile
+        :desc "Run all"       "a" #'TeX-command-run-all
         :desc "Run a command" "m" #'TeX-command-master))
 
 
@@ -120,6 +137,9 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
   :hook (TeX-mode . +latex-TeX-fold-buffer-h)
   :hook (TeX-mode . TeX-fold-mode)
   :config
+  ;; Reveal folds when moving cursor into them. This saves us the trouble of
+  ;; having to whitelist all motion commands in `TeX-fold-auto-reveal-commands'.
+  (setq TeX-fold-auto-reveal t)
   (defun +latex-TeX-fold-buffer-h ()
     (run-with-idle-timer 0 nil 'TeX-fold-buffer))
   ;; Fold after all AUCTeX macro insertions.
@@ -175,20 +195,22 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   (dolist (env '("itemize" "enumerate" "description"))
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex-indent-item-fn)))
 
-  ;; Fix #1849: allow fill-paragraph in itemize/enumerate.
-  (defadvice! +latex--re-indent-itemize-and-enumerate-a (fn &rest args)
+  ;; Fix #1849: allow fill-paragraph in itemize/enumerate/description.
+  (defadvice! +latex--re-indent-itemize-and-enumerate-and-description-a (fn &rest args)
     :around #'LaTeX-fill-region-as-para-do
     (let ((LaTeX-indent-environment-list
            (append LaTeX-indent-environment-list
-                   '(("itemize"   +latex-indent-item-fn)
-                     ("enumerate" +latex-indent-item-fn)))))
+                   '(("itemize"     +latex-indent-item-fn)
+                     ("enumerate"   +latex-indent-item-fn)
+                     ("description" +latex-indent-item-fn)))))
       (apply fn args)))
-  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (fn &rest args)
+  (defadvice! +latex--dont-indent-itemize-and-enumerate-and-description-a (fn &rest args)
     :around #'LaTeX-fill-region-as-paragraph
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
-      (delq! "itemize" LaTeX-indent-environment-list 'assoc)
-      (delq! "enumerate" LaTeX-indent-environment-list 'assoc)
-      (apply fn args))))
+      (dolist (item '("itemize" "enumerate" "description"))
+        (setf (alist-get item LaTeX-indent-environment-list nil t #'equal) nil))
+      (apply fn args)))
+  )
 
 
 (use-package! preview
@@ -239,19 +261,6 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
 (use-package! adaptive-wrap
   :hook (LaTeX-mode . adaptive-wrap-prefix-mode)
   :init (setq-default adaptive-wrap-extra-indent 0))
-
-
-(use-package! auctex-latexmk
-  :when (modulep! +latexmk)
-  :after latex
-  :init
-  ;; Pass the -pdf flag when TeX-PDF-mode is active.
-  (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-  ;; Set LatexMk as the default.
-  (setq-hook! LaTeX-mode TeX-command-default "LatexMk")
-  :config
-  ;; Add LatexMk as a TeX target.
-  (auctex-latexmk-setup))
 
 
 (use-package! evil-tex

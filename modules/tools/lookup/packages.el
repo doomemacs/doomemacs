@@ -8,25 +8,27 @@
   (package! helm))
 
 ;;
-(package! dumb-jump :pin "d9503c157ab88f0ed2fa1301aeb57e95ac564760")
+(package! dumb-jump :pin "42f97dea503367bf45c53a69de959177b06b0f59")
 (when (modulep! :completion ivy)
   (package! ivy-xref :pin "a82e8e117d2dd62c28b6a3e3d6e4cfb11c0bda38"))
 (when (modulep! :completion helm)
   (package! helm-xref :pin "ea0e4ed8a9baf236e4085cbc7178241f109a53fa"))
 
 ;; For dictionary and online lookup
-(package! request :pin "01e338c335c07e4407239619e57361944a82cb8a")
+(package! request :pin "c22e3c23a6dd90f64be536e176ea0ed6113a5ba6")
 
 (when (modulep! +docsets)
   (package! dash-docs :pin "29848b6b347ac520f7646c200ed2ec36cea3feda")
+  (when (modulep! :completion vertico)
+    (package! consult-dash :pin "edb57bf8cdbef422b88667fadc83e1bb046957a6"))
   (when (modulep! :completion helm)
     (package! helm-dash :pin "7f853bd34da666f0e9a883011c80f451b06f6c59"))
   (when (modulep! :completion ivy)
     (package! counsel-dash :pin "8decb980f111ebe7027361ee252279a9076da261")))
 
 (when (modulep! +dictionary)
-  (if IS-MAC
-      (package! osx-dictionary :pin "0715e5a3ac659df32a0f0fabfbbeef0228fbd9a9")
+  (if (featurep :system 'macos)
+      (package! osx-dictionary :pin "6abfd6908b0dc773020466225c908000870b383b")
     (package! define-word :pin "31a8c67405afa99d0e25e7c86a4ee7ef84a808fe")
     ;; REVIEW: This fork fixes SavchenkoValeriy/emacs-powerthesaurus#40.
     (package! powerthesaurus
@@ -34,5 +36,5 @@
                :repo "doomelpa/powerthesaurus")
       :pin "d9ebb866f6fce469102665f187266f0a041cfc4b")
     (when (modulep! +offline)
-      (package! wordnut :pin "feac531404041855312c1a046bde7ea18c674915")
-      (package! synosaurus :pin "14d34fc92a77c3a916b4d58400424c44ae99cd81"))))
+      (package! wordnut :pin "dffc75a455d0d4458b7555f4c051c51d71c8e18a")
+      (package! synosaurus :pin "690755ce88a50e65ab0441ce9aabe6341aae3964"))))

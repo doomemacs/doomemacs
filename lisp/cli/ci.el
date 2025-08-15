@@ -118,23 +118,24 @@ Each element of this list can be one of:
           (unless (equal scopes (sort (copy-sequence scopes) #'string-lessp))
             (fail! "Scopes are not in lexicographical order")))
 
-        (lambda! (&key type body)
+        (lambda! (&key _type body)
           "Enforce 72 character line width for BODY"
           (catch 'result
             (with-temp-buffer
               (save-excursion (insert body))
               (while (re-search-forward "^[^\n]\\{73,\\}" nil t)
                 (save-excursion
-                  (or
-                   ;; Long bump lines are acceptable
-                   (let ((bump-re "\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
-                     (re-search-backward (format "^%s -> %s$" bump-re bump-re) nil t))
-                   ;; Long URLs are acceptable
-                   (re-search-backward "https?://[^ ]+\\{73,\\}" nil t)
-                   ;; Lines that start with # or whitespace are comment or
-                   ;; code blocks.
-                   (re-search-backward "^\\(?:#\\| +\\)" nil t)
-                   (throw 'result (fail! "Line(s) in commit body exceed 72 characters"))))))))
+                  (let ((bol (match-beginning 0)))
+                    (or
+                     ;; Long bump lines are acceptable
+                     (let ((bump-re "\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
+                       (re-search-backward (format "^%s -> %s$" bump-re bump-re) bol t))
+                     ;; Long URLs are acceptable
+                     (re-search-backward "https?://[^ \n]+" bol t)
+                     ;; Lines that start with # or whitespace are comment or
+                     ;; code blocks.
+                     (re-search-backward "^\\(?:#\\| +\\)" bol t)
+                     (throw 'result (fail! "Line(s) in commit body exceed 72 characters")))))))))
 
         (lambda! (&key bang body type)
           "Ensure ! is accompanied by a 'BREAKING CHANGE:' in BODY"
@@ -270,19 +271,18 @@ Note: warnings are not considered failures.")
                    hooks-path))
           (user-error "Aborted")))
     (make-directory hooks-path 'parents)
-    (print-group!
-     (dolist (hook '("commit-msg" "pre-push"))
-       (let* ((hook (doom-path hooks-path hook))
-              (overwrite-p (file-exists-p hook)))
-         (with-temp-file hook
-           (insert "#!/usr/bin/env sh\n"
-                   (doom-path doom-emacs-dir "bin/doom")
-                   " --no-color ci hook " (file-name-base hook)
-                   " \"$@\""))
-         (set-file-modes hook #o700)
-         (print! (success "%s %s")
-                 (if overwrite-p "Overwrote" "Created")
-                 (path hook)))))))
+    (dolist (hook '("commit-msg" "pre-push"))
+      (let* ((hook (doom-path hooks-path hook))
+             (overwrite-p (file-exists-p hook)))
+        (with-temp-file hook
+          (insert "#!/usr/bin/env sh\n"
+                  (doom-path doom-emacs-dir "bin/doom")
+                  " --no-color ci hook " (file-name-base hook)
+                  " \"$@\""))
+        (set-file-modes hook #o700)
+        (print! (success "%s %s")
+                (if overwrite-p "Overwrote" "Created")
+                (path hook))))))
 
 ;; TODO Move to 'doom lint commits'
 (defcli! (ci lint-commits) (from &optional to)
@@ -339,24 +339,24 @@ Prevents pushing if there are unrebased or WIP commits."
                         (equal local-sha z40))
               (throw 'continue t))
             (print-group!
-             (mapc (lambda (commit)
-                     (seq-let (hash msg) (split-string commit "\t")
-                       (setq error t)
-                       (print! (item "%S commit in %s"
-                                     (car (split-string msg " "))
-                                     (substring hash 0 12)))))
-                   (split-string
-                    (cdr (doom-call-process
-                          "git" "rev-list"
-                          "--grep" (concat "^" (regexp-opt '("WIP" "squash!" "fixup!" "FIXUP") t) " ")
-                          "--format=%H\t%s"
-                          (if (equal remote-sha z40)
-                              local-sha
-                            (format "%s..%s" remote-sha local-sha))))
-                    "\n" t))
-             (when error
-               (print! (error "Aborting push due to unrebased WIP, squash!, or fixup! commits"))
-               (exit! 1)))))))))
+              (mapc (lambda (commit)
+                      (seq-let (hash msg) (split-string commit "\t")
+                        (setq error t)
+                        (print! (item "%S commit in %s"
+                                      (car (split-string msg " "))
+                                      (substring hash 0 12)))))
+                    (split-string
+                     (cdr (doom-call-process
+                           "git" "rev-list"
+                           "--grep" (concat "^" (regexp-opt '("WIP" "squash!" "fixup!" "FIXUP") t) " ")
+                           "--format=%H\t%s"
+                           (if (equal remote-sha z40)
+                               local-sha
+                             (format "%s..%s" remote-sha local-sha))))
+                     "\n" t))
+              (when error
+                (print! (error "Aborting push due to unrebased WIP, squash!, or fixup! commits"))
+                (exit! 1)))))))))
 
 
 ;;
@@ -426,24 +426,24 @@ Prevents pushing if there are unrebased or WIP commits."
         (failures 0))
     (print! (start "Linting %d commits" (length commits)))
     (print-group!
-     (pcase-dolist (`(,ref . ,commitmsg) commits)
-       (let* ((commit   (doom-ci--parse-commit commitmsg))
-              (shortref (substring ref 0 7))
-              (subject  (plist-get commit :subject)))
-         (cl-block 'linter
-           (letf! ((defun skip! (reason &rest args)
-                     (print! (warn "Skipped because: %s") (apply #'format reason args))
-                     (cl-return-from 'linter))
-                   (defun warn! (reason &rest args)
-                     (cl-incf warnings)
-                     (print! (warn "%s") (apply #'format reason args)))
-                   (defun fail! (reason &rest args)
-                     (cl-incf failures)
-                     (print! (error "%s") (apply #'format reason args))))
-             (print! (start "%s %s") shortref subject)
-             (print-group!
-              (mapc (doom-rpartial #'apply commit)
-                    doom-ci-commit-rules)))))))
+      (pcase-dolist (`(,ref . ,commitmsg) commits)
+        (let* ((commit   (doom-ci--parse-commit commitmsg))
+               (shortref (substring ref 0 7))
+               (subject  (plist-get commit :subject)))
+          (cl-block 'linter
+            (letf! ((defun skip! (reason &rest args)
+                      (print! (warn "Skipped because: %s") (apply #'format reason args))
+                      (cl-return-from 'linter))
+                    (defun warn! (reason &rest args)
+                      (cl-incf warnings)
+                      (print! (warn "%s") (apply #'format reason args)))
+                    (defun fail! (reason &rest args)
+                      (cl-incf failures)
+                      (print! (error "%s") (apply #'format reason args))))
+              (print! (start "%s %s") shortref subject)
+              (print-group!
+                (mapc (doom-rpartial #'apply commit)
+                      doom-ci-commit-rules)))))))
     (let ((issues (+ warnings failures)))
       (if (= issues 0)
           (print! (success "There were no issues!"))

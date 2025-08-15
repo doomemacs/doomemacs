@@ -91,7 +91,7 @@ query GetContinents($continentCode: String!) {
 With this module, there are 3 ways to view schemas:
 + =+graphql-doc-open-config= which uses a local [[https://github.com/jimkyndemeyer/graphql-config-examples][=.graphqlconfig=]] file to seed endpoints to query
 + =graphql-doc= which prompts you to select an endpoint based on ones added manually by =graphql-doc-add-api=
-+ =graphql-doc-open-url= which prompts to to manually enter an endpoint url
++ =graphql-doc-open-url= which prompts to manually enter an endpoint url
 
 When using the doc viewer, there are a few bindings for navigating around.
 

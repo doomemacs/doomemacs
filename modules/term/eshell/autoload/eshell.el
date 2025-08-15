@@ -75,6 +75,21 @@
       (insert command)
       (eshell-send-input nil t))))
 
+;; Adapted from `esh-help-run-help'
+;;;###autoload
+(defun +eshell-lookup-documentation (cmd)
+  "Show help for CMD (a shell command or elisp function)."
+  (cond ((eshell-find-alias-function cmd)
+         (always (helpful-callable (eshell-find-alias-function cmd))))
+        ((and (or (and (string-match-p "^\\*." cmd)
+                       (cl-callf substring cmd 1))
+                  (eshell-search-path cmd))
+              (zerop (car (doom-call-process manual-program cmd))))
+         (always (display-buffer (man cmd))))
+        ((functionp (intern cmd))
+         (helpful-callable (intern cmd)) t)
+        ((user-error "Couldn't find man pages or elisp documentation for %S" cmd))))
+
 
 ;;
 ;;; Commands
@@ -98,7 +113,7 @@
         (with-current-buffer eshell-buffer
           (fundamental-mode)
           (erase-buffer))))
-    (if-let (win (get-buffer-window eshell-buffer))
+    (if-let* ((win (get-buffer-window eshell-buffer)))
         (let (confirm-kill-processes)
           (delete-window win)
           (ignore-errors (kill-buffer eshell-buffer)))
@@ -120,6 +135,8 @@
       (if (eq major-mode 'eshell-mode)
           (run-hooks 'eshell-mode-hook)
         (eshell-mode))
+      (set-window-fringes nil 0 0)
+      (set-window-margins nil 1 nil)
       (when command
         (+eshell-run-command command buf)))
     buf))
@@ -151,7 +168,7 @@ Once the eshell process is killed, the previous frame layout is restored."
   (cond ((modulep! :completion ivy)
          (require 'em-hist)
          (let* ((ivy-completion-beg (eshell-bol))
-                (ivy-completion-end (point-at-eol))
+                (ivy-completion-end (line-end-position))
                 (input (buffer-substring-no-properties
                         ivy-completion-beg
                         ivy-completion-end)))
@@ -166,7 +183,7 @@ Once the eshell process is killed, the previous frame layout is restored."
         ((modulep! :completion helm)
          (helm-eshell-history))
         ((modulep! :completion vertico)
-         (forward-char 1) ;; Move outside of read only prompt text.
+         (eshell-bol)
          (consult-history))
         ((eshell-list-history))))
 
@@ -312,7 +329,7 @@ delete."
                             return (select-window win))))))))))
 
 ;;;###autoload
-(defun +eshell-switch-workspace-fn (type)
+(defun +eshell-switch-workspace-fn (type &rest _)
   (when (eq type 'frame)
     (setq +eshell-buffers
           (or (persp-parameter 'eshell-buffers)

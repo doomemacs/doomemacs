@@ -10,7 +10,9 @@ This module adds rudimentary [[https://www.idris-lang.org/][Idris]] support to D
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +lsp ::
+  Enable LSP support for ~idris-mode~. Requires [[doom-module::tools lsp]] and
+  [[https://github.com/idris-community/idris2-lsp][idris2-lsp]].
 
 ** Packages
 - [[doom-package:idris-mode]]
@@ -25,22 +27,37 @@ This module adds rudimentary [[https://www.idris-lang.org/][Idris]] support to D
 * TODO Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
+For [[doom-module:+lsp]], [[https://github.com/idris-community/idris2-lsp][idris2-lsp]] is required.
+
 #+begin_quote
- 󱌣 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
+󱌣 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
 #+end_quote
 
 * TODO Usage
 #+begin_quote
- 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-In addition to ~idris-mode~ goodness, adds frequently used functions under the
-[[kbd:][<localleader>]] key.
+In addition to ~idris-mode~ goodness, this module adds frequently used functions
+under the [[kbd:][<localleader>]] key.
 
 * TODO Configuration
 #+begin_quote
- 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
+
+** Support for Idris 2
+While [[doom-package:idris-mode]] was designed for v1 of the IDE-Protocol of Idris,
+it tries to maintain compatibility with v2. However, not all the features have
+been realized, so expect a little jank.
+
+To get this working, simply set [[var:idris-interpreter-path]] to the path of the
+=idris2= executable. E.g.
+#+begin_src emacs-lisp
+;;; add to $DOODMIR/config.el
+(after! idris-mode
+  (setq idris-interpreter-path "idris2"))
+#+end_src
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
@@ -50,5 +67,5 @@ In addition to ~idris-mode~ goodness, adds frequently used functions under the
 
 * TODO Appendix
 #+begin_quote
- 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

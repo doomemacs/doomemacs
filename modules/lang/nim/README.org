@@ -52,8 +52,8 @@ Alternatively, nim is usually available through your OS's package manager:
 - openSUSE: ~$ zypper install nim~
 
 ** Formatter
-
-Formatting is handled using the [[doom-module::editor format]] module via [[https://github.com/FedericoCeratto/nimfmt#installation][nimfmt]].
+Formatting is handled using the [[doom-module::editor format]] module via nimpretty
+(included with Nim).
 
 * TODO Usage
 #+begin_quote

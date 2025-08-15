@@ -1,5 +1,6 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
+;; DEPRECATED: Remove when projectile is replaced with project.el
 (after! projectile
   (add-to-list 'projectile-project-root-files "Gemfile"))
 
@@ -38,56 +39,18 @@
         "{" #'ruby-toggle-block))
 
 
-(use-package! robe
-  :defer t
-  :init
-  (add-hook! 'ruby-mode-hook
-    (defun +ruby-init-robe-mode-maybe-h ()
-      "Start `robe-mode' if `lsp-mode' isn't active."
-      (or (bound-and-true-p lsp-mode)
-          (bound-and-true-p lsp--buffer-deferred)
-          (robe-mode +1))))
-  :config
-  (set-repl-handler! 'ruby-mode #'robe-start)
-  (set-company-backend! 'ruby-mode 'company-robe 'company-dabbrev-code)
-  (set-lookup-handlers! 'ruby-mode
-    :definition #'robe-jump
-    :documentation #'robe-doc)
-  (when (boundp 'read-process-output-max)
-    ;; Robe can over saturate IPC, making interacting with it slow/clobbering
-    ;; the GC, so increase the amount of data Emacs reads from it at a time.
-    (setq-hook! '(robe-mode-hook inf-ruby-mode-hook)
-      read-process-output-max (* 1024 1024)))
-  (when (modulep! :editor evil)
-    (add-hook 'robe-mode-hook #'evil-normalize-keymaps))
-  (map! :localleader
-        :map robe-mode-map
-        "'"  #'robe-start
-        "h"  #'robe-doc
-        "R"  #'robe-rails-refresh
-        :prefix "s"
-        "d"  #'ruby-send-definition
-        "D"  #'ruby-send-definition-and-go
-        "r"  #'ruby-send-region
-        "R"  #'ruby-send-region-and-go
-        "i"  #'ruby-switch-to-inf))
-
-
-;; NOTE Must be loaded before `robe-mode'
 (use-package! yard-mode
   :hook ruby-mode)
 
 
-(use-package! rubocop
-  :hook (ruby-mode . rubocop-mode)
-  :config
-  (set-popup-rule! "^\\*RuboCop" :select t)
-  (map! :localleader
-        :map rubocop-mode-map
-        "f" #'rubocop-check-current-file
-        "F" #'rubocop-autocorrect-current-file
-        "p" #'rubocop-check-project
-        "P" #'rubocop-autocorrect-project))
+(use-package! ruby-json-to-hash
+  :defer t
+  :init
+  (map! :after ruby-mode
+        :map ruby-mode-map
+        :localleader
+        "J" #'ruby-json-to-hash-parse-json
+        "j" #'ruby-json-to-hash-toggle-let))
 
 
 ;;
@@ -181,6 +144,9 @@
         "v" #'minitest-verify))
 
 
+;;
+;;; Rails integration
+
 (use-package! projectile-rails
   :when (modulep! +rails)
   :hook ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
@@ -198,3 +164,29 @@
   (map! :localleader
         :map projectile-rails-mode-map
         "r" #'projectile-rails-command-map))
+
+(use-package! rails-routes
+  :when (modulep! +rails)
+  :defer t
+  :init
+  (map! :after ruby-mode
+        :map ruby-mode-map
+        "C-c o" #'rails-routes-insert
+        "C-c C-o" #'rails-routes-insert-no-cache
+        "C-c ! o" #'rails-routes-jump)
+  (map! :after web-mode
+        :map web-mode-map
+        "C-c o" #'rails-routes-insert
+        "C-c C-o" #'rails-routes-insert-no-cache
+        "C-c ! o" #'rails-routes-jump))
+
+(use-package! rails-i18n
+  :when (modulep! +rails)
+  :defer t
+  :init
+  (map! :after ruby-mode
+        :map ruby-mode-map
+        "C-c i" #'rails-i18n-insert-with-cache)
+  (map! :after web-mode
+        :map web-mode-map
+        "C-c i" #'rails-i18n-insert-with-cache))

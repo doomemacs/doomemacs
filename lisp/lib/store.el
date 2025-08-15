@@ -45,8 +45,7 @@ name under `pcache-directory' (by default a subdirectory under
   "Persist VARIABLES (list of symbols) in LOCATION (symbol).
 This populates these variables with cached values, if one exists, and saves them
 to file when Emacs quits. This cannot persist buffer-local variables."
-  (cl-check-type location string)
-  (dolist (var variables)
+  (dolist (var (ensure-list variables))
     (when (doom-store-member-p var location)
       (set var (doom-store-get var location))))
   (setf (alist-get location doom-store-persist-alist)
@@ -57,12 +56,10 @@ to file when Emacs quits. This cannot persist buffer-local variables."
   "Unregisters VARIABLES (list of symbols) in LOCATION (symbol).
 Variables to persist are recorded in `doom-store-persist-alist'. Does not affect
 the actual variables themselves or their values."
-  (cl-check-type location string)
-  (if variables
-      (setf (alist-get location doom-store-persist-alist)
+  (setf (alist-get location doom-store-persist-alist nil t)
+        (if variables
             (cl-set-difference (cdr (assq location doom-store-persist-alist))
-                               variables))
-    (delq! location doom-store-persist-alist 'assoc)))
+                               variables))))
 
 (defun doom--store-init (&optional location)
   (cl-check-type location (or null string))
@@ -153,3 +150,6 @@ LOCATION defaults to `doom-store-location'."
     (when (file-exists-p path)
       (delete-file path)
       t)))
+
+(provide 'doom-lib '(store))
+;;; store.el ends here

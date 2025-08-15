@@ -1,29 +1,28 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/vertico/packages.el
 
-(package! vertico
-  :recipe (:host github :repo "minad/vertico"
-           :files ("*.el" "extensions/*.el"))
-  :pin "a28370d07f35c5387c7a9ec2e5b67f0d4598058d")
+(package! vertico :pin "b43b594bb318e722b908f01a6a11409af14b1413")
 
-(package! orderless :pin "e6784026717a8a6a7dcd0bf31fd3414f148c542e")
+(package! orderless :pin "254f2412489bbbf62700f9d3d5f18e537841dcc3")
 
-(package! consult :pin "fe49dedd71802ff97be7b89f1ec4bd61b98c2b13")
-(package! consult-dir :pin "ed8f0874d26f10f5c5b181ab9f2cf4107df8a0eb")
-(when (and (modulep! :checkers syntax)
-           (not (modulep! :checkers syntax +flymake)))
-  (package! consult-flycheck :pin "3f2a7c17cc2fe64e0c07e3bf90e33c885c0d7062"))
-(package! embark :pin "9a44418c349e41020cdc5ad1bd21e8c77a429062")
-(package! embark-consult :pin "9a44418c349e41020cdc5ad1bd21e8c77a429062")
+(package! consult :pin "7146596b564fb0a52b5bff420f27454911f603c8")
+(package! consult-dir :pin "4532b8d215d16b0159691ce4dee693e72d71e0ff")
+(when (modulep! :checkers syntax -flymake)
+  (package! consult-flycheck :pin "8067363ee33c01d339d9f18091dce5f18e3b97ee"))
+(package! embark :pin "2941f2ea36d61c1a84c3f79ebe47d604c9a92b5d")
+(package! embark-consult :pin "2941f2ea36d61c1a84c3f79ebe47d604c9a92b5d")
 
-(package! marginalia :pin "866e50aee4f066b0903752c69b33e9b7cab93f97")
+(package! marginalia :pin "0e7097051cbcedcc4da9b633406291d4052ec0e4")
 
-(package! wgrep :pin "3132abd3750b8c87cbcf6942db952acfab5edccd")
+(package! wgrep :pin "49f09ab9b706d2312cab1199e1eeb1bcd3f27f6f")
 
 (when (modulep! +icons)
-  (package! nerd-icons-completion :pin "c2db8557a3c1a9588d111f8c8e91cae96ee85010"))
+  (package! nerd-icons-completion :pin "e15e21a263bad06424982c11e8d68ffe1372a4e7"))
 
 (when (modulep! +childframe)
   (package! vertico-posframe
     :recipe (:host github :repo "tumashu/vertico-posframe")
-    :pin "7da6d648ff4202a48eb6647ee7dce8d65de48779"))
+    :pin "c5a8b5f72a582e88a2a696a3bbc2df7af28bd229"))
+
+(when (modulep! :editor snippets)
+  (package! consult-yasnippet :pin "a3482dfbdcbe487ba5ff934a1bb6047066ff2194"))

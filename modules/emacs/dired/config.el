@@ -1,13 +1,12 @@
-;;; tools/dired/config.el -*- lexical-binding: t; -*-
+;;; emacs/dired/config.el -*- lexical-binding: t; -*-
 
-(defvar +dired-dirvish-icon-provider 'nerd-icons
-  "Icon provider to use for dirvish when the module is enabled.")
+;;
+;;; Packages
 
 (use-package! dired
   :commands dired-jump
   :init
   (setq dired-dwim-target t  ; suggest a target for moving/copying intelligently
-        dired-hide-details-hide-symlink-targets nil
         ;; don't prompt to revert, just do it
         dired-auto-revert-buffer #'dired-buffer-stale-p
         ;; Always copy/delete recursively
@@ -29,11 +28,11 @@
   (set-evil-initial-state! 'image-dired-display-image-mode 'emacs)
 
   (let ((args (list "-ahl" "-v" "--group-directories-first")))
-    (when IS-BSD
+    (when (featurep :system 'bsd)
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
       ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
       ;; when not using GNU ls.
-      (if-let (gls (executable-find "gls"))
+      (if-let* ((gls (executable-find "gls")))
           (setq insert-directory-program gls)
         ;; BSD ls doesn't support -v or --group-directories-first
         (setq args (list (car args)))))
@@ -59,126 +58,139 @@ Fixes #3939: unsortable dired entries on Windows."
     :before-while #'dired-buffer-stale-p
     (not (eq revert-buffer-function #'dired-virtual-revert)))
 
-  (map! :map dired-mode-map
-        ;; Kill all dired buffers on q
-        :ng "q" #'+dired/quit-all
-        ;; To be consistent with ivy/helm+wgrep integration
-        "C-c C-e" #'wdired-change-to-wdired-mode))
+  ;; To be consistent with vertico/ivy/helm+wgrep integration
+  (define-key dired-mode-map (kbd "C-c C-e") #'wdired-change-to-wdired-mode)
 
-
-(use-package! dired-rsync
-  :general (dired-mode-map "C-c C-r" #'dired-rsync))
-
-
-(use-package! diredfl
-  :hook (dired-mode . diredfl-mode))
-
-
-(use-package! ranger
-  :when (modulep! +ranger)
-  :after dired
-  :init (setq ranger-override-dired t)
-  :config
-  (unless (file-directory-p image-dired-dir)
-    (make-directory image-dired-dir))
-
-  (set-popup-rule! "^\\*ranger" :ignore t)
-
-  (defadvice! +dired--cleanup-header-line-a ()
-    "Ranger fails to clean up `header-line-format' when it is closed, so..."
-    :before #'ranger-revert
-    (dolist (buffer (buffer-list))
-      (when (buffer-live-p buffer)
-        (with-current-buffer buffer
-          (when (equal header-line-format '(:eval (ranger-header-line)))
-            (setq header-line-format nil))))))
-
-  (defadvice! +dired--cleanup-mouse1-bind-a ()
-    "Ranger binds an anonymous function to mouse-1 after previewing a buffer
-that prevents the user from escaping the window with the mouse. This command is
-never cleaned up if the buffer already existed before ranger was initialized, so
-we have to clean it up ourselves."
-    :after #'ranger-setup-preview
-    (when (window-live-p ranger-preview-window)
-      (with-current-buffer (window-buffer ranger-preview-window)
-        (local-unset-key [mouse-1]))))
-
-  (defadvice! +dired--ranger-travel-a ()
-    "Temporary fix for this function until ralesi/ranger.el#236 gets merged."
-    :override #'ranger-travel
-    (interactive)
-    (let ((prompt "Travel: "))
-      (cond
-       ((bound-and-true-p helm-mode)
-        (ranger-find-file (helm-read-file-name prompt)))
-       ((bound-and-true-p ivy-mode)
-        (ivy-read prompt 'read-file-name-internal
-                  :matcher #'counsel--find-file-matcher
-                  :action
-                  (lambda (x)
-                    (with-ivy-window
-                     (ranger-find-file (expand-file-name x default-directory))))))
-       ((bound-and-true-p ido-mode)
-        (ranger-find-file (ido-read-file-name prompt)))
-       (t
-        (ranger-find-file (read-file-name prompt))))))
-
-  (setq ranger-cleanup-on-disable t
-        ranger-excluded-extensions '("mkv" "iso" "mp4")
-        ranger-deer-show-details t
-        ranger-max-preview-size 10
-        ranger-show-literal nil
-        ranger-hide-cursor nil))
+  ;; On ESC, abort `wdired-mode' (will prompt)
+  (add-hook! 'doom-escape-hook
+    (defun +dired-wdired-exit-h ()
+      (when (eq major-mode 'wdired-mode)
+        (wdired-exit)
+        t))))
 
 
 (use-package! dirvish
-  :when (modulep! +dirvish)
-  :defer t
-  :init (after! dired (dirvish-override-dired-mode))
-  :hook (dired-mode . dired-omit-mode)
+  :commands dirvish-find-entry-a dirvish-dired-noselect-a
+  :general (dired-mode-map "C-c C-r" #'dirvish-rsync)
+  :init
+  (setq dirvish-cache-dir (file-name-concat doom-cache-dir "dirvish/"))
+  ;; HACK: ...
+  (advice-add #'dired--find-file :override #'dirvish--find-entry)
+  (advice-add #'dired-noselect :around #'dirvish-dired-noselect-a)
   :config
-  (setq dirvish-cache-dir (concat doom-cache-dir "dirvish/")
-        dirvish-hide-details nil
-        dirvish-attributes '(git-msg)
-        dired-omit-files (concat dired-omit-files "\\|^\\..*$"))
+  (dirvish-override-dired-mode)
+  (set-popup-rule! "^ ?\\*\\(?:[Dd]irvish\\|SIDE :: \\).*" :ignore t)
+
+  ;; Fixes #8038. This setting is for folks who expect to be able to switch back
+  ;; to dired buffers where the file is opened from.  In other cases, don't
+  ;; recycle sessions. We don't want leftover buffers lying around, especially
+  ;; if users are reconfiguring Dirvish or trying to recover from an error. It's
+  ;; too easy to accidentally break Dirvish (e.g. by focusing the header window)
+  ;; at the moment.  Starting from scratch isn't even that expensive, anyway.
+  (setq dirvish-reuse-session 'open)
+
+  (if (modulep! +dirvish)
+      (setq dirvish-attributes '(file-size)
+            dirvish-mode-line-format
+            '(:left (sort file-time symlink) :right (omit yank index)))
+    (setq dirvish-attributes nil
+          dirvish-use-header-line nil
+          dirvish-use-mode-line nil))
+
+  ;; Match the height of `doom-modeline', if it's being used.
+  ;; TODO: Make this respect user changes to these variables.
+  (when (modulep! :ui modeline)
+    (add-hook! 'dired-mode-hook
+      (defun +dired-update-mode-line-height-h ()
+        (when-let (height (bound-and-true-p doom-modeline-height))
+          (setq dirvish-mode-line-height height
+                dirvish-header-line-height height)))))
+
+  (when (modulep! :ui vc-gutter)
+    ;; The vc-gutter module uses `diff-hl-dired-mode' + `diff-hl-margin-mode'
+    ;; for diffs in dirvish buffers. `vc-state' uses overlays, so they won't be
+    ;; visible in the terminal.
+    (when (or (daemonp) (display-graphic-p))
+      (push 'vc-state dirvish-attributes)))
+
   (when (modulep! +icons)
-    (push +dired-dirvish-icon-provider dirvish-attributes))
+    (setq dirvish-subtree-always-show-state t)
+    (cl-callf append dirvish-attributes '(nerd-icons subtree-state)))
+
+  (setq dirvish-hide-details '(dirvish dirvish-side)
+        dirvish-hide-cursor '(dirvish dirvish-side))
+
+  (when (modulep! :ui tabs)
+    (after! centaur-tabs
+      (add-hook 'dired-mode-hook #'centaur-tabs-local-mode)
+      (add-hook 'dirvish-directory-view-mode-hook #'centaur-tabs-local-mode)))
+
+  ;; TODO: Needs more polished keybinds for non-Evil users
   (map! :map dirvish-mode-map
-        :n "b" #'dirvish-goto-bookmark
-        :n "z" #'dirvish-show-history
-        :n "f" #'dirvish-file-info-menu
-        :n "F" #'dirvish-toggle-fullscreen
-        :n "l" #'dired-find-file
-        :n "h" #'dired-up-directory
-        :localleader
-        "h" #'dired-omit-mode))
+        :n  "?"   #'dirvish-dispatch
+        :n  "q"   #'dirvish-quit
+        :n  "b"   #'dirvish-quick-access
+        :ng "f"   #'dirvish-file-info-menu
+        :n  "p"   #'dirvish-yank
+        :ng "S"   #'dirvish-quicksort
+        :n  "F"   #'dirvish-layout-toggle
+        :n  "z"   #'dirvish-history-jump
+        :n  "gh"  #'dirvish-subtree-up
+        :n  "gl"  #'dirvish-subtree-toggle
+        :n  "h"   #'dired-up-directory
+        :n  "l"   #'dired-find-file
+        :gm [left]  #'dired-up-directory
+        :gm [right] #'dired-find-file
+        :m  "[h"  #'dirvish-history-go-backward
+        :m  "]h"  #'dirvish-history-go-forward
+        :m  "[e"  #'dirvish-emerge-next-group
+        :m  "]e"  #'dirvish-emerge-previous-group
+        :n  "TAB" #'dirvish-subtree-toggle
+        :ng "M-b" #'dirvish-history-go-backward
+        :ng "M-f" #'dirvish-history-go-forward
+        :ng "M-n" #'dirvish-narrow
+        :ng "M-m" #'dirvish-mark-menu
+        :ng "M-s" #'dirvish-setup-menu
+        :ng "M-e" #'dirvish-emerge-menu
+        (:prefix ("y" . "yank")
+         :n "l"   #'dirvish-copy-file-true-path
+         :n "n"   #'dirvish-copy-file-name
+         :n "p"   #'dirvish-copy-file-path
+         :n "r"   #'dirvish-copy-remote-path
+         :n "y"   #'dired-do-copy)
+        (:prefix ("s" . "symlinks")
+         :n "s"   #'dirvish-symlink
+         :n "S"   #'dirvish-relative-symlink
+         :n "h"   #'dirvish-hardlink))
+
+  ;; HACK: Kill Dirvish session before switching projects/workspaces, otherwise
+  ;;   it errors out on trying to delete/change dedicated windows.
+  (add-hook! '(persp-before-kill-functions
+               persp-before-switch-functions
+               projectile-before-switch-project-hook)
+    (defun +dired--cleanup-dirvish-h (&rest _)
+      (when-let ((dv (cl-loop for w in (window-list)
+                              if (window-dedicated-p w)
+                              if (with-current-buffer (window-buffer w) (dirvish-curr))
+                              return it)))
+        (let (dirvish-reuse-session)
+          (with-selected-window (dv-root-window dv)
+            (dirvish-quit)))))))
 
 
-(use-package! nerd-icons-dired
-  :when (modulep! +icons)
-  :unless (modulep! +dirvish)
-  :hook (dired-mode . nerd-icons-dired-mode)
-  :config
-  (defadvice! +dired-disable-icons-in-wdired-mode-a (&rest _)
-    :before #'wdired-change-to-wdired-mode
-    (setq-local +wdired-icons-enabled (if nerd-icons-dired-mode 1 -1))
-    (when nerd-icons-dired-mode
-      (nerd-icons-dired-mode -1)))
-
-  (defadvice! +dired-restore-icons-after-wdired-mode-a (&rest _)
-    :after #'wdired-change-to-dired-mode
-    (nerd-icons-dired-mode +wdired-icons-enabled)))
+(use-package! diredfl
+  :hook (dired-mode . diredfl-mode)
+  :hook (dirvish-directory-view-mode . diredfl-mode))
 
 
 (use-package! dired-x
-  :unless (modulep! +dirvish)
-  :unless (modulep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
   (setq dired-omit-verbose nil
         dired-omit-files
         (concat dired-omit-files
                 "\\|^\\.DS_Store\\'"
+                "\\|^flycheck_.*"
                 "\\|^\\.project\\(?:ile\\)?\\'"
                 "\\|^\\.\\(?:svn\\|git\\)\\'"
                 "\\|^\\.ccls-cache\\'"
@@ -188,9 +200,9 @@ we have to clean it up ourselves."
   ;; deleted directory. Of course I do!
   (setq dired-clean-confirm-killing-deleted-buffers nil)
   ;; Let OS decide how to open certain files
-  (when-let (cmd (cond (IS-MAC "open")
-                       (IS-LINUX "xdg-open")
-                       (IS-WINDOWS "start")))
+  (when-let (cmd (cond ((featurep :system 'macos) "open")
+                       ((featurep :system 'linux) "xdg-open")
+                       ((featurep :system 'windows) "start")))
     (setq dired-guess-shell-alist-user
           `(("\\.\\(?:docx\\|pdf\\|djvu\\|eps\\)\\'" ,cmd)
             ("\\.\\(?:jpe?g\\|png\\|gif\\|xpm\\)\\'" ,cmd)
@@ -206,37 +218,8 @@ we have to clean it up ourselves."
         "h" #'dired-omit-mode))
 
 
-(use-package! fd-dired
-  :when doom-projectile-fd-binary
-  :defer t
-  :init
-  (global-set-key [remap find-dired] #'fd-dired)
-  (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t))
-
 (use-package! dired-aux
   :defer t
   :config
   (setq dired-create-destination-dirs 'ask
         dired-vc-rename-file t))
-
-;;;###package dired-git-info
-(map! :after dired
-      :map (dired-mode-map ranger-mode-map)
-      :ng ")" #'dired-git-info-mode)
-(setq dgi-commit-message-format "%h %cs %s"
-      dgi-auto-hide-details-p nil)
-(after! wdired
-  ;; Temporarily disable `dired-git-info-mode' when entering wdired, due to
-  ;; reported incompatibilities.
-  (defvar +dired--git-info-p nil)
-  (defadvice! +dired--disable-git-info-a (&rest _)
-    :before #'wdired-change-to-wdired-mode
-    (setq +dired--git-info-p (bound-and-true-p dired-git-info-mode))
-    (when +dired--git-info-p
-      (dired-git-info-mode -1)))
-  (defadvice! +dired--reactivate-git-info-a (&rest _)
-    :after '(wdired-exit
-             wdired-abort-changes
-             wdired-finish-edit)
-    (when +dired--git-info-p
-      (dired-git-info-mode +1))))

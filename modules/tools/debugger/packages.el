@@ -1,10 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/debugger/packages.el
 
-(when (package! realgud :pin "220ce2c348dab6cfc1cfa3c3f59644e777f9e8ff")
-  (when (modulep! :lang javascript)
-    (package! realgud-trepan-ni :pin "0ec088ea343835e24ae73da09bea96bfb02a3130")))
+(package! dape :pin "411e4b6126cfbd6df9a8bdc6bff39b133a31b1d9")
 
+;; DEPRECATED
 (when (modulep! +lsp)
-  (package! dap-mode :pin "096070aacff875a09c13e596e5d60a55e0f07ab1")
-  (package! posframe :pin "017deece88360c7297265680d78a0bb316470716"))
+  (package! dap-mode :pin "b97756665709bea37b9ffe262c5fa9196f1b4577")
+  (package! posframe :pin "12f540c9ad5da09673b2bca1132b41f94c134e82"))

@@ -11,6 +11,7 @@
         company-tooltip-limit 14
         company-tooltip-align-annotations t
         company-require-match 'never
+        company-idle-delay 0.26
         company-global-modes
         '(not erc-mode
               circe-mode
@@ -61,8 +62,7 @@
       :before #'company-begin-backend
       (company-abort)))
 
-  (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
-
+  (add-hook 'company-mode-hook #'+company-init-backends-h 'append)
 
   ;; NOTE Fix #1335: ensure `company-emulation-alist' is the first item of
   ;;      `emulation-mode-map-alists', thus higher priority than keymaps of
@@ -149,7 +149,7 @@
 
   ;; Don't show documentation in echo area, because company-box displays its own
   ;; in a child frame.
-  (delq! 'company-echo-metadata-frontend company-frontends)
+  (cl-callf2 delq 'company-echo-metadata-frontend company-frontends)
 
   (defun +company-box-icons--elisp-fn (candidate)
     (when (derived-mode-p 'emacs-lisp-mode)

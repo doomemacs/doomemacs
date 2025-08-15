@@ -39,7 +39,7 @@
 (evil-ex-define-cmd "gstage"      #'magit-stage)
 (evil-ex-define-cmd "gunstage"    #'magit-unstage)
 (evil-ex-define-cmd "gblame"      #'magit-blame)
-(evil-ex-define-cmd "grevert"     #'git-gutter:revert-hunk)
+(evil-ex-define-cmd "grevert"     #'+vc-gutter/revert-hunk)
 
 ;;; Dealing with buffers
 (evil-ex-define-cmd "k[ill]"      #'doom/kill-current-buffer)
@@ -52,7 +52,7 @@
 (evil-ex-define-cmd "pop[up]"     #'+popup/buffer)
 
 ;;; Project navigation
-(evil-ex-define-cmd "a"           #'projectile-find-other-file)
+(evil-ex-define-cmd "a"           #'find-sibling-file)
 (evil-ex-define-cmd "cd"          #'+evil:cd)
 (evil-ex-define-cmd "pwd"         #'+evil:pwd)
 

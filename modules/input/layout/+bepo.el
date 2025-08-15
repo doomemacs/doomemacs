@@ -54,8 +54,8 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
          :desc "Jump to documentation"     "S"  #'+lookup/documentation)
         (:prefix-map ("g" . "git")
          (:when (modulep! :ui vc-gutter)
-          :desc "Jump to next hunk"        ")"  #'git-gutter:next-hunk
-          :desc "Jump to previous hunk"    "("  #'git-gutter:previous-hunk))
+          :desc "Jump to next hunk"        ")"  #'+vc-gutter/next-hunk
+          :desc "Jump to previous hunk"    "("  #'+vc-gutter/previous-hunk))
         (:prefix-map ("p" . "project")
          :desc "Browse other project"      "»"  #'doom/browse-in-other-project)))
 

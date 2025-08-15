@@ -26,11 +26,3 @@
         "h" #'lean-hole
         "m" #'lean-message-boxes-toggle
         "e" #'lean-execute))
-
-
-(use-package! company-lean
-  :when (modulep! :completion company)
-  :after lean-mode
-  :init
-  (advice-add #'company-lean-hook :override #'ignore)
-  (set-company-backend! 'lean-mode 'company-lean))

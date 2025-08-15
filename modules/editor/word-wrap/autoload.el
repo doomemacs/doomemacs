@@ -66,7 +66,10 @@ wrapped at `fill-column' by configuring `+word-wrap-fill-style'."
         (unless +word-wrap--major-mode-is-visual
           (require 'dtrt-indent) ; for dtrt-indent--search-hook-mapping
           (setq-local +word-wrap--major-mode-indent-var
-                      (caddr (dtrt-indent--search-hook-mapping major-mode)))
+                      (let ((indent-var (caddr (dtrt-indent--search-hook-mapping major-mode))))
+                        (if (listp indent-var)
+                            (car indent-var)
+                          indent-var)))
 
           (advice-add #'adaptive-wrap-fill-context-prefix :around #'+word-wrap--adjust-extra-indent-a))
 

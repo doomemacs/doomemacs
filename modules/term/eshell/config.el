@@ -55,6 +55,9 @@ You should use `set-eshell-alias!' to change this.")
 ;;; Packages
 
 (after! eshell ; built-in
+  (set-lookup-handlers! 'eshell-mode
+    :documentation #'+eshell-lookup-documentation)
+
   (setq eshell-banner-message
         '(format "%s %s\n"
                  (propertize (format " %s " (string-trim (buffer-name)))
@@ -69,7 +72,7 @@ You should use `set-eshell-alias!' to change this.")
         ;; TODO Use `eshell-input-filter-initial-space' when Emacs 25 support is dropped
         eshell-input-filter (lambda (input) (not (string-match-p "\\`\\s-+" input)))
         ;; em-prompt
-        eshell-prompt-regexp "^.* λ "
+        eshell-prompt-regexp "^[^#$\n]* [#$λ] "
         eshell-prompt-function #'+eshell-default-prompt-fn
         ;; em-glob
         eshell-glob-case-insensitive t
@@ -82,6 +85,35 @@ You should use `set-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'+eshell-init-h)
   (add-hook 'eshell-exit-hook #'+eshell-cleanup-h)
 
+  ;; UX: Temporarily disable undo history between command executions. Otherwise,
+  ;;   undo could destroy output while it's being printed or delete buffer
+  ;;   contents past the boundaries of the current prompt.
+  (add-hook 'eshell-pre-command-hook #'buffer-disable-undo)
+  (add-hook! 'eshell-post-command-hook
+    (defun +eshell--enable-undo-h ()
+      (buffer-enable-undo (current-buffer))
+      (setq buffer-undo-list nil)))
+
+  ;; UX: Prior output in eshell buffers should be read-only. Otherwise, it's
+  ;;   trivial to make edits in visual modes (like evil's or term's
+  ;;   term-line-mode) and leave the buffer in a half-broken state (which you
+  ;;   must flush out with a couple RETs, which may execute the broken text in
+  ;;   the buffer),
+  (add-hook! 'eshell-pre-command-hook
+    (defun +eshell-protect-input-in-visual-modes-h ()
+      (when (and eshell-last-input-start
+                 eshell-last-input-end)
+        (add-text-properties eshell-last-input-start
+                             (1- eshell-last-input-end)
+                             '(read-only t)))))
+  (add-hook! 'eshell-post-command-hook
+    (defun +eshell-protect-output-in-visual-modes-h ()
+      (when (and eshell-last-input-end
+                 eshell-last-output-start)
+        (add-text-properties eshell-last-input-end
+                             eshell-last-output-start
+                             '(read-only t)))))
+
   ;; Enable autopairing in eshell
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
@@ -92,9 +124,6 @@ You should use `set-eshell-alias!' to change this.")
 
   ;; UI enhancements
   (add-hook! 'eshell-mode-hook
-    (defun +eshell-remove-fringes-h ()
-      (set-window-fringes nil 0 0)
-      (set-window-margins nil 1 nil))
     (defun +eshell-enable-text-wrapping-h ()
       (visual-line-mode +1)
       (set-display-table-slot standard-display-table 0 ?\ )))
@@ -104,6 +133,12 @@ You should use `set-eshell-alias!' to change this.")
   ;; Remove hscroll-margin in shells, otherwise you get jumpiness when the
   ;; cursor comes close to the left/right edges of the window.
   (setq-hook! 'eshell-mode-hook hscroll-margin 0)
+
+  ;; Recognize prompts as Imenu entries.
+  (setq-hook! 'eshell-mode-hook
+    imenu-generic-expression
+    `((,(propertize "λ" 'face 'eshell-prompt)
+       ,(concat eshell-prompt-regexp "\\(.*\\)") 1)))
 
   ;; Don't auto-write our aliases! Let us manage our own `eshell-aliases-file'
   ;; or configure `+eshell-aliases' via elisp.
@@ -215,33 +250,71 @@ Emacs versions < 29."
 
 (use-package! esh-help
   :after eshell
-  :config (setup-esh-help-eldoc))
+  :config
+  (setup-esh-help-eldoc)
+  ;; HACK: Fixes tom-tan/esh-help#7.
+  (defadvice! +eshell-esh-help-eldoc-man-minibuffer-string-a (cmd)
+    "Return minibuffer help string for the shell command CMD.
+Return nil if there is none."
+    :override #'esh-help-eldoc-man-minibuffer-string
+    (if-let* ((cache-result (gethash cmd esh-help-man-cache)))
+        (unless (eql 'none cache-result)
+          cache-result)
+      (let ((str (split-string (esh-help-man-string cmd) "\n")))
+        (if (equal (concat "No manual entry for " cmd) (car str))
+            (ignore (puthash cmd 'none esh-help-man-cache))
+          (puthash
+           cmd (when-let* ((str (seq-drop-while (fn! (not (string-match-p "^SYNOPSIS$" %))) str))
+                           (str (nth 1 str)))
+                 (substring str (string-match-p "[^\s\t]" str)))
+           esh-help-man-cache))))))
 
 
 (use-package! eshell-did-you-mean
   :after esh-mode ; Specifically esh-mode, not eshell
-  :config
-  (eshell-did-you-mean-setup)
-  ;; HACK There is a known issue with `eshell-did-you-mean' where it does not
-  ;;      work on first invocation, so we invoke it once manually by setting the
-  ;;      last command and then calling the output filter.
-  (setq eshell-last-command-name "catt")
-  (eshell-did-you-mean-output-filter "catt: command not found"))
+  :config (eshell-did-you-mean-setup)
+
+  ;; HACK: `pcomplete-completions' returns a function, but
+  ;;   `eshell-did-you-mean--get-all-commands' unconditionally expects it to
+  ;;   return a list of strings, causing wrong-type-arg errors in many cases.
+  ;;   `all-completions' handles all these cases.
+  (defadvice! +eshell--fix-eshell-did-you-mean-a (&rest _)
+    :override #'eshell-did-you-mean--get-all-commands
+    (unless eshell-did-you-mean--all-commands
+      (setq eshell-did-you-mean--all-commands
+            (all-completions "" (pcomplete-completions))))))
 
 
 (use-package eshell-syntax-highlighting
-  :hook (eshell-mode . eshell-syntax-highlighting-mode))
+  :hook (eshell-mode . eshell-syntax-highlighting-mode)
+  :config
+  (defadvice! +eshell-filter-history-from-highlighting-a (&rest _)
+    "Selectively inhibit `eshell-syntax-highlighting-mode'.
+So that mathces from history show up with highlighting."
+    :before-until #'eshell-syntax-highlighting--enable-highlighting
+    (memq this-command '(eshell-previous-matching-input-from-input
+                         eshell-next-matching-input-from-input)))
+
+  (defun +eshell-syntax-highlight-maybe-h ()
+    "Hook added to `pre-command-hook' to restore syntax highlighting
+when inhibited to show history matches."
+    (when (and eshell-syntax-highlighting-mode
+               (memq last-command '(eshell-previous-matching-input-from-input
+                                    eshell-next-matching-input-from-input)))
+      (eshell-syntax-highlighting--enable-highlighting)))
+
+  (add-hook! 'eshell-syntax-highlighting-elisp-buffer-setup-hook
+    (defun +eshell-syntax-highlighting-mode-h ()
+      "Hook to enable `+eshell-syntax-highlight-maybe-h'."
+      (if eshell-syntax-highlighting-mode
+          (add-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h nil t)
+        (remove-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h t))))
+
+  (add-hook 'eshell-syntax-highlighting-elisp-buffer-setup-hook #'highlight-quoted-mode))
 
 
 (use-package! fish-completion
-  :unless IS-WINDOWS
+  :unless (featurep :system 'windows)
   :hook (eshell-mode . fish-completion-mode)
-  :init (setq fish-completion-fallback-on-bash-p t)
-  :config
-  ;; HACK Even with `fish-completion-fallback-on-bash-p' non-nil,
-  ;;      `fish-completion--list-completions-with-desc' will throw an error if
-  ;;      fish isn't installed (and so, will fail to fall back to bash), so we
-  ;;      advise it to fail silently.
-  (defadvice! +eshell--fallback-to-bash-a (&rest _)
-    :before-until #'fish-completion--list-completions-with-desc
-    (unless (executable-find "fish") "")))
+  :init (setq fish-completion-fallback-on-bash-p t
+              fish-completion-inhibit-missing-fish-command-warning t))

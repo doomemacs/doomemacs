@@ -1,10 +1,11 @@
 ;;; ui/doom-quit/config.el -*- lexical-binding: t; -*-
 
 (defvar +doom-quit-messages
-  '(;; from Doom 1
+  `(;; from Doom 1
     "Please don't leave, there's more demons to toast!"
     "Let's beat it -- This is turning into a bloodbath!"
-    "I wouldn't leave if I were you. DOS is much worse."
+    ,(format "I wouldn't leave if I were you. %s is much worse."
+             (if (featurep :system 'windows) "DOS" "UNIX"))
     "Don't leave yet -- There's a demon around that corner!"
     "Ya know, next time you come in here I'm gonna toast ya."
     "Go ahead and leave. See if I care."

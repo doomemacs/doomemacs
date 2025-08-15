@@ -28,8 +28,8 @@
     :desc "Next buffer" "è" #'next-buffer)
    (:prefix-map ("g" . "git")
     (:when (modulep! :ui vc-gutter)
-     :desc "Jump to previous hunk" "é" #'git-gutter:previous-hunk
-     :desc "Jump to next hunk" "è" #'git-gutter:next-hunk))))
+     :desc "Jump to previous hunk" "é" #'+vc-gutter/previous-hunk
+     :desc "Jump to next hunk" "è" #'+vc-gutter/next-hunk))))
 
 (defun +layout-remap-evil-keys-for-azerty-h ()
   (map! :nv "à" #'evil-execute-macro
@@ -48,8 +48,8 @@
         :m  "èy"    #'+evil:c-string-encode
         :m  "éy"    #'+evil:c-string-decode
         (:when (modulep! :ui vc-gutter)
-         :m "èd"   #'git-gutter:next-hunk
-         :m "éd"   #'git-gutter:previous-hunk)
+         :m "èd"   #'+vc-gutter/next-hunk
+         :m "éd"   #'+vc-gutter/previous-hunk)
         (:when (modulep! :ui hl-todo)
          :m "èt"   #'hl-todo-next
          :m "ét"   #'hl-todo-previous)

@@ -148,9 +148,13 @@ hoist buggy forms into autoloads.")
          ;; So `autoload-generate-file-autoloads' knows where to write it
          (target-buffer (current-buffer))
          (module (doom-module-from-path file))
-         (generated-autoload-load-name (abbreviate-file-name (file-name-sans-extension file)))
-         (module-enabled-p (and (doom-module-p (car module) (cdr module))
-                                (doom-file-cookie-p file "if" t))))
+         (generated-autoload-load-name
+          (abbreviate-file-name (file-name-sans-extension file)))
+         (module-enabled-p
+          (and (doom-module-active-p (car module) (cdr module))
+               (doom-file-cookie-p file "if" t)))
+         ;; (load-path (cons doom-modules-dir load-path))
+         )
     (save-excursion
       (when module-enabled-p
         (quiet! (autoload-generate-file-autoloads file target-buffer)))
@@ -163,37 +167,40 @@ hoist buggy forms into autoloads.")
 Autoloads will be generated from autoload cookies in FILES (except those that
 match one of the regexps in EXCLUDE -- a list of strings). If LITERAL is
 non-nil, treat FILES as pre-generated autoload files instead."
-  (require 'autoload)
+  (quiet! ; silence deprecation notices in 30+
+    (require 'autoload))
   (let (autoloads)
     (dolist (file files (nreverse (delq nil autoloads)))
       (when (and (not (seq-find (doom-rpartial #'string-match-p file) exclude))
                  (file-readable-p file))
         (doom-log "loaddefs:scan: %s" file)
-        (setq file (file-truename file))
         (with-temp-buffer
-          (if literal
-              (insert-file-contents file)
-            (doom-autoloads--scan-file file))
-          (save-excursion
-            (while (re-search-forward "\\_<load-file-name\\_>" nil t)
-              ;; `load-file-name' is meaningless in a concatenated
-              ;; mega-autoloads file, but also essential in isolation, so we
-              ;; replace references to it with the file they came from.
-              (let ((ppss (save-excursion (syntax-ppss))))
-                (or (nth 3 ppss)
-                    (nth 4 ppss)
-                    (replace-match (prin1-to-string (abbreviate-file-name file)) t t)))))
-          (let ((load-file-name file)
-                (load-path
-                 (append (list doom-user-dir)
-                         doom-modules-dirs
-                         load-path)))
-            (condition-case _
-                (while t
-                  (push (doom-autoloads--cleanup-form (read (current-buffer))
-                                                      (not literal))
-                        autoloads))
-              (end-of-file))))))))
+          (let (subautoloads)
+            (if literal
+                (insert-file-contents file)
+              (doom-autoloads--scan-file file))
+            (save-excursion
+              ;; Fixup the special #$ reader form and throw away comments.
+              (while (re-search-forward "#\\$\\|^;\\(.*\n\\)" nil 'move)
+                (unless (ppss-string-terminator (save-match-data (syntax-ppss)))
+                  (replace-match (if (match-end 1) "" file) t t))))
+            (let ((load-file-name file)
+                  (load-true-file-name load-file-name)
+                  (load-path
+                   (append (list doom-user-dir)
+                           doom-module-load-path
+                           load-path)))
+              (condition-case _
+                  (while t
+                    (push (doom-autoloads--cleanup-form (read (current-buffer))
+                                                        (not literal))
+                          subautoloads))
+                (end-of-file)))
+            (when (delq nil subautoloads)
+              (push `(let* ((load-file-name ,file)
+                            (load-true-file-name load-file-name))
+                       ,@(nreverse subautoloads))
+                    autoloads))))))))
 
 (provide 'doom-lib '(autoloads))
 ;;; autoloads.el end here

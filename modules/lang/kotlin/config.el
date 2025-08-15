@@ -15,6 +15,5 @@
 
 
 (use-package! flycheck-kotlin
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :hook (kotlin-mode . flycheck-kotlin-setup))

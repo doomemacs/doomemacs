@@ -3,6 +3,12 @@
 #+created:  February 20, 2017
 #+since:    2.0.0
 
+#+begin_quote
+  *This module is deprecated* in favor of the [[doom-module::completion vertico]]
+    module. This module will be in maintenance mode until it is eventually
+    removed. Consider switching to the Vertico module instead.
+#+end_quote
+
 * Description :unfold:
 This module provides Ivy integration for a variety of Emacs commands, as well as
 a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep/][ripgrep]].
@@ -176,7 +182,16 @@ A wgrep buffer can be opened from swiper with [[kbd:][C-c C-e]].
 ** TODO Change the position of the ivy childframe
 
 * TODO Troubleshooting
-/There are no known problems with this module./ [[doom-report:][Report one?]]
+** Sorting is not applied at all sometimes
+If the number of candidates is greater than ~ivy-sort-max-size~, sorting will be
+disabled completely. Doom lowers the default value to prevent performance
+issues, so increasing the value may fix your issue:
+#+begin_src elisp
+;;; add to $DOOMDIR/config.el
+(after! ivy
+  (setq ivy-sort-max-size 30000))  ; Doom sets this to 7500, but Ivy's default is 30k
+#+end_src
+
 
 * Frequently asked questions
 [[doom-suggest-faq:][Ask a question?]]

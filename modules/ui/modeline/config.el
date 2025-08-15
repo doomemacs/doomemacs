@@ -23,10 +23,7 @@
         ;; Only show file encoding if it's non-UTF-8 and different line endings
         ;; than the current OSes preference
         doom-modeline-buffer-encoding 'nondefault
-        doom-modeline-default-eol-type
-        (cond (IS-MAC 2)
-              (IS-WINDOWS 1)
-              (0)))
+        doom-modeline-default-eol-type (if (featurep :system 'windows) 1 0))
 
   :config
   ;; Fix an issue where these two variables aren't defined in TTY Emacs on MacOS
@@ -43,12 +40,6 @@
       (if (eq major-mode 'magit-status-mode)
           (doom-modeline-set-modeline 'magit)
         (hide-mode-line-mode))))
-
-  ;; Some functions modify the buffer, causing the modeline to show a false
-  ;; modified state, so force them to behave.
-  (defadvice! +modeline--inhibit-modification-hooks-a (fn &rest args)
-    :around #'ws-butler-after-save
-    (with-silent-modifications (apply fn args)))
 
 
   ;;

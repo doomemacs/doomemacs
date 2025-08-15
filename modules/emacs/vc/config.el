@@ -5,7 +5,7 @@
 ;; 2021, amirite?
 (setq-default vc-handled-backends '(SVN Git Hg))
 
-(when IS-WINDOWS
+(when (featurep :system 'windows)
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
 ;; In case the user is using `bug-reference-mode'
@@ -28,10 +28,13 @@
         "k" #'log-view-msg-prev))
 
 
-(after! vc-annotate
+(after! vc
   (set-popup-rules!
-    '(("^\\*vc-diff" :select nil)   ; *vc-diff*
-      ("^\\*vc-change" :select t))) ; *vc-change-log*
+    '(("^\\*vc-diff" :select nil :size '+popup-shrink-to-fit)
+      ("^\\*vc-change-log" :select t))))
+
+
+(after! vc-annotate
   (set-evil-initial-state! 'vc-annotate-mode 'normal)
 
   ;; Clean up after itself
@@ -40,6 +43,38 @@
 
 (after! vc-dir
   (set-evil-initial-state! 'vc-dir-mode 'emacs))
+
+
+(use-package! smerge-mode
+  :defer t
+  :init
+  (add-hook! 'find-file-hook
+    (defun +vc-init-smerge-mode-h ()
+      (unless (bound-and-true-p smerge-mode)
+        (save-excursion
+          (goto-char (point-min))
+          (when (re-search-forward "^<<<<<<< " nil t)
+            (smerge-mode 1))))))
+  :config
+  (map! :map smerge-mode-map
+        :localleader
+        "n" #'smerge-next
+        "p" #'smerge-prev
+        "r" #'smerge-resolve
+        "a" #'smerge-keep-all
+        "b" #'smerge-keep-base
+        "o" #'smerge-keep-lower
+        "l" #'smerge-keep-lower
+        "m" #'smerge-keep-upper
+        "u" #'smerge-keep-upper
+        "E" #'smerge-ediff
+        "C" #'smerge-combine-with-next
+        "R" #'smerge-refine
+        "C-m" #'smerge-keep-current
+        (:prefix "="
+         "<" #'smerge-diff-base-upper
+         ">" #'smerge-diff-base-lower
+         "=" #'smerge-diff-upper-lower)))
 
 
 (after! git-timemachine
@@ -54,8 +89,10 @@
 file in your browser at the visited revision."
     :around #'browse-at-remote-get-url
     (if git-timemachine-mode
-        (let* ((start-line (line-number-at-pos (min (region-beginning) (region-end))))
-               (end-line (line-number-at-pos (max (region-beginning) (region-end))))
+        (let* ((start-line (and (use-region-p) (line-number-at-pos
+                                                (min (region-beginning) (region-end)))))
+               (point-end (and (use-region-p) (max (region-beginning) (region-end))))
+               (end-line (and (use-region-p) (line-number-at-pos point-end)))
                (remote-ref (browse-at-remote--remote-ref buffer-file-name))
                (remote (car remote-ref))
                (ref (car git-timemachine-revision))
@@ -63,14 +100,15 @@ file in your browser at the visited revision."
                 (file-relative-name
                  buffer-file-name (expand-file-name (vc-git-root buffer-file-name))))
                (target-repo (browse-at-remote--get-url-from-remote remote))
-               (remote-type (browse-at-remote--get-remote-type target-repo))
-               (repo-url (cdr target-repo))
+               (remote-type (browse-at-remote--get-remote-type (plist-get target-repo :unresolved-host)))
+               (repo-url (plist-get target-repo :url))
                (url-formatter (browse-at-remote--get-formatter 'region-url remote-type)))
           (unless url-formatter
             (error (format "Origin repo parsing failed: %s" repo-url)))
           (funcall url-formatter repo-url ref relname
                    (if start-line start-line)
-                   (if (and end-line (not (equal start-line end-line))) end-line)))
+                   (when (and end-line (not (equal start-line end-line)))
+                     (if (eq (char-before point-end) ?\n) (- end-line 1) end-line))))
       (funcall fn)))
 
   (defadvice! +vc-update-header-line-a (revision)
@@ -89,6 +127,10 @@ info in the `header-line-format' is a more visible indicator."
                     (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                     date-full date-relative))))
 
+  ;; HACK: `delay-mode-hooks' suppresses font-lock-mode in later versions of
+  ;;   Emacs, so git-timemachine buffers end up unfontified.
+  (add-hook 'git-timemachine-mode-hook #'font-lock-mode)
+
   (after! evil
     ;; Rehash evil keybindings so they are recognized
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
@@ -101,27 +143,6 @@ info in the `header-line-format' is a more visible indicator."
         :n "C-n" #'git-timemachine-show-next-revision
         :n "gb"  #'git-timemachine-blame
         :n "gtc" #'git-timemachine-show-commit))
-
-
-(use-package! git-commit
-  :hook (doom-first-file . global-git-commit-mode)
-  :config
-  (set-yas-minor-mode! 'git-commit-mode)
-
-  ;; Enforce git commit conventions.
-  ;; See https://chris.beams.io/posts/git-commit/
-  (setq git-commit-summary-max-length 50
-        git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))
-  (setq-hook! 'git-commit-mode-hook fill-column 72)
-
-  (add-hook! 'git-commit-setup-hook
-    (defun +vc-start-in-insert-state-maybe-h ()
-      "Start git-commit-mode in insert state if in a blank commit message,
-otherwise in default state."
-      (when (and (bound-and-true-p evil-mode)
-                 (not (evil-emacs-state-p))
-                 (bobp) (eolp))
-        (evil-insert-state)))))
 
 
 (after! browse-at-remote

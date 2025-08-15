@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/graphql/packages.el
 
-(package! graphql-mode :pin "1437b790060f6ce4a8dc57df2023443645b899e5")
-(package! graphql-doc :pin "d37140267e0c426c7c18aff31900aa1650257394")
+(package! graphql-mode :pin "ee49531935ede7a2c9597713e13a4c9d33ef2220")
+(package! graphql-doc :pin "17755a2466a1acef68eac664093fcd13cd51494a")
 (unless (modulep! +lsp)
   (package! company-graphql
     :recipe (:host github :repo "thaenalpha/company-graphql")

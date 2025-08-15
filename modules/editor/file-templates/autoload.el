@@ -81,7 +81,7 @@ evil is loaded and enabled)."
                    (and yas--active-field-overlay
                         (overlay-buffer yas--active-field-overlay)
                         (overlay-get yas--active-field-overlay 'yas--field)))
-          (evil-initialize-state 'insert))))))
+          (evil-change-state 'insert))))))
 
 ;;;###autoload
 (defun +file-templates-get-short-path ()

@@ -9,7 +9,6 @@
       (add-hook 'graphql-mode-local-vars-hook #'lsp! 'append)
     (set-company-backend! 'graphql-mode 'company-graphql))
 
-  (add-hook 'graphql-mode-hook #'rainbow-delimiters-mode)
   (set-docsets! 'graphql-mode :add "GraphQL Specification")
 
   (set-electric! 'graphql-mode

@@ -3,10 +3,6 @@
 #+created:  October 13, 2021
 #+since:    21.12.0
 
-#+begin_quote
-  *This module is deprecated.* ~god-mode~ is EOL and no longer maintained.
-#+end_quote
-
 * Description :unfold:
 Adds [[doom-package:god-mode]] support to Doom Emacs, allowing for entering commands without
 modifier keys, similar to Vim's modality, separating command mode and insert

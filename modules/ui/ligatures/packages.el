@@ -1,5 +1,5 @@
 (when (and (or (featurep 'ns)
-               (string-match-p "HARFBUZZ" system-configuration-features))
+               (featurep 'harfbuzz))
            (featurep 'composite))
   (package! ligature
-    :pin "0e5d0a8554622bcb0ec634e364795650ff4f2457"))
+    :pin "6ac1634612dbd42f7eb81ecaf022bd239aabb954"))

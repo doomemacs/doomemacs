@@ -1,0 +1,320 @@
+#+title:    :completion corfu
+#+subtitle: Complete with cap(f), cape, and a flying feather
+#+created:  September 9, 2022
+#+since:    3.0.0 (#7002)
+
+* Description :unfold:
+This module provides code completion, powered by [[doom-package:corfu]].
+
+It is recommended to enable either this or [[doom-module::completion company]] in
+case you desire pre-configured auto-completion. Corfu is much lighter weight and
+focused, plus it's built on native Emacs functionality, whereas Company is heavy
+and highly non-native, but has some extra features and more maturity.
+
+If you choose Corfu, we also highly recomend reading [[https://github.com/minad/corfu][its README]] and [[https://github.com/minad/cape][cape's
+README]], as the backend is very configurable and provides many power-user
+utilities for fine-tuning. Only some of common behaviors are documented here.
+
+** Maintainers
+- [[doom-user:][@LuigiPiucco]]
+- [[doom-user:][@LemonBreezes]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +icons ::
+  Display icons beside completion suggestions.
+- +orderless ::
+  Pull in [[doom-package:orderless]] if necessary and apply multi-component
+  completion (still needed if [[doom-module::completion vertico]] is active).
+- +dabbrev ::
+  Enable and configure [[doom-package:dabbrev]] as a close-to-universal CAPF
+  fallback.
+
+** Packages
+- [[doom-package:corfu]]
+- [[doom-package:cape]]
+- [[doom-package:nerd-icons-corfu]] if [[doom-module::completion corfu +icons]]
+- [[doom-package:orderless]] if [[doom-module::completion corfu +orderless]]
+- [[doom-package:corfu-terminal]] if [[doom-module::os tty]]
+- [[doom-package:yasnippet-capf]] if [[doom-module::editor snippets]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+Enable this module in your ~doom!~ block.
+
+This module has no direct requirements, but some languages may have their own
+requirements to fulfill before you get code completion in them (and some
+languages may lack code completion support altogether). Run ~$ doom doctor~ to
+find out if you're missing any dependencies. Note that Corfu may have support
+for completions in languages that have no development intelligence, since it
+supports generic, context insensitive candidates such as file names or recurring
+words. Snippets may also appear in the candidate list if available.
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+By default, completion gets triggered after typing 2 non-space consecutive
+characters, by means of [[kbd:][C-SPC]] at any moment or [[kbd:][TAB]] on a line with proper
+indentation. Many styles of completion are documented below, which can be
+composed to suit the user. The following keybindings are generally available:
+
+| Keybind | Description                                |
+|---------+--------------------------------------------|
+| [[kbd:][C-n]]     | Go to next candidate                       |
+| [[kbd:][C-p]]     | Go to previous candidate                   |
+| [[kbd:][C-S-n]]   | Go to next doc line                        |
+| [[kbd:][C-S-p]]   | Go to previous doc line                    |
+| [[kbd:][C-S-s]]   | Export to minibuffer                       |
+| [[kbd:][TAB]]     | (when not completing) Indent or complete   |
+| [[kbd:][C-SPC]]   | (when not completing) Complete             |
+| [[kbd:][C-u]]     | (evil) Go to next candidate page           |
+| [[kbd:][C-d]]     | (evil) Go to previous candidate page       |
+| [[kbd:][C-h]]     | (evil) Toggle documentation (if available) |
+| [[kbd:][M-t]]     | (emacs) (when not completing) Complete     |
+
+Bindings in the following sections are additive, and unless otherwise noted, are
+enabled by default with configurable behavior. Additionally, for users of evil,
+[[kdb:][C-SPC]] is smart regarding your state. In normal-like states, enter insert then
+start corfu; in visual-like states, perform [[help:evil-change][evil-change]] (which leaves you in
+insert state) then start corfu; in insert-like states, start corfu immediatelly.
+
+** Commit preview on type
+When the completion popup is visible, by default the current candidate is
+previewed into the buffer, and further input commits that candidate as previewed
+(note it does not perform candidate exit actions, such as expanding snippets).
+
+The feature is in line with other common editors, but if you prefer the preview
+to be only visual or for there to be no preview, configure
+[[var:corfu-preview-current]].
+
+#+begin_src emacs-lisp
+;; Non-inserting preview
+(setq corfu-preview-current t)
+;; No preview
+(setq corfu-preview-current nil)
+#+end_src
+
+** Commit on [[kbd:][RET]] with pass-through
+A lot of people like to use [[kbd:][RET]] to commit, so here we bind it to Corfu's
+insertion function. Note that Corfu allows "no candidate" to be selected, and in
+that case, we have a custom binding to quit completion and pass-through. To make
+it less obtrusive by default, the popup starts in this unselected state. See
+[[var:corfu-preselect]] to alter the initial behavior; it can start with the first
+one selected, for instance. Then, you have to move one candidate backwards to
+pass-through The exact action of [[kbd:][RET]] can be changed via
+[[var:+corfu-want-ret-to-confirm]].
+
+| Keybind | Description           |
+|---------+-----------------------|
+| [[kbd:][RET]]     | Insert candidate DWIM |
+
+** Cycle directionally
+If you'd rather think in directions rather than next/previous, arrow keys and vi
+movements to control the selection and documentation view are bound by default.
+You may unbind them by setting to nil, see ~map!~'s documentation.
+
+| Keybind  | Description                     |
+|----------+---------------------------------|
+| [[kbd:][<down>]]   | Go to next candidate            |
+| [[kbd:][<up>]]     | Go to previous candidate        |
+| [[kbd:][C-j]]      | (evil) Go to next candidate     |
+| [[kbd:][C-k]]      | (evil) Go to previous candidate |
+| [[kbd:][C-<down>]] | Go to next doc line             |
+| [[kbd:][C-<up>]]   | Go to previous doc line         |
+| [[kbd:][C-S-j]]    | (evil) Go to next doc line      |
+| [[kbd:][C-S-k]]    | (evil) Go to previous doc line  |
+
+** Cycle with [[kbd:][TAB]]
+[[kbd:][TAB]]-based cycling alternatives are also bound according to the table below:
+
+| Keybind | Description              |
+|---------+--------------------------|
+| [[kbd:][TAB]]     | Go to next candidate     |
+| [[kbd:][S-TAB]]   | Go to previous candidate |
+
+** Searching with multiple keywords (~+orderless~)
+If the [[doom-module::completion corfu +orderless]] flag is enabled, users can
+perform code completion with multiple search keywords by use of space as the
+separator. More information can be found [[https://github.com/oantolin/orderless#company][here]]. Pressing [[kdb:][C-SPC]] again while
+completing inserts a space as separator. This allows searching with
+space-separated terms; each piece will match individually and in any order, with
+smart casing. Pressing just [[kbd:][SPC]] acts as normal and quits completion, so that
+when typing sentences it doesn't try to complete the whole sentence instead of
+just the word. Pressing [[kdb:][C-SPC]] with point after a separator escapes it with a
+backslash, including the space in the search term, and pressing it with an
+already escaped separator before point deletes it. Thus, you can cycle back if
+you accidentaly press more than needed.
+
+| Keybind | Description                                     |
+|---------+-------------------------------------------------|
+| [[kbd:][C-SPC]]   | (evil) (when completing) Insert separator DWIM  |
+| [[kbd:][M-SPC]]   | (emacs) (when completing) Insert separator DWIM |
+| [[kbd:][SPC]]     | (when completing) Quit autocompletion           |
+| [[kbd:][SPC]]     | (when completing with separators) Self-insert   |
+
+** Exporting to the minibuffer
+The entries shown in the completion popup can be exported to a ~completing-read~
+minibuffer, giving access to all the manipulations that suite allows. Using
+Vertico for instance, one could use this to export with [[doom-package:embark]] via
+[[kbd:][C-c C-l]] and get a buffer with all candidates.
+
+* Configuration
+A few variables may be set to change behavior of this module:
+
+- [[var:completion-at-point-functions]] ::
+  This is not a module/package variable, but a builtin Emacs one. Even so, it's
+  very important to how Corfu works, so we document it here. It contains a list
+  of functions that are called in turn to generate completion candidates. The
+  regular (non-lexical) value should contain few entries and they should
+  generally be context aware, so as to predict what you need. Additional
+  functions can be added as you get into more and more specific contexts. Also,
+  there may be cases where you know beforehand the kind of candidate needed, and
+  want to enable only that one. For this, the variable may be lexically bound to
+  the correct value, or you may call the CAPF interactively if a single function
+  is all you need.
+- [[var:corfu-auto-delay]] ::
+  Number of seconds till completion occurs automatically. Defaults to 0.1.
+- [[var:corfu-auto-prefix]] ::
+  Number of characters till auto-completion starts to happen. Defaults to 2.
+- [[var:corfu-on-exact-match]] ::
+  Configures behavior for exact matches.
+- [[var:corfu-preselect]] ::
+  Configures startup selection, choosing between the first candidate or the
+  prompt.
+- [[var:corfu-preview-current]] ::
+  Configures current candidate preview.
+- [[var:+corfu-want-ret-to-confirm]] ::
+  Controls the behavior of [[kbd:][RET]] when the popup is visible - whether it confirms
+  the selected candidate, and whether [[kbd:][RET]] is passed through (ie. the normal
+  behavior of [[kbd:][RET]] is performed). The default value of ~t~ enables confirmation
+  and disables pass-through. Other variations are ~nil~ for pass-through and no
+  confirmation and ~both~ for confirmation followed by pass-through. Finally,
+  the value of ~minibuffer~ will both confirm and pass-through (like ~both~)
+  when in the minibuffer, and only confirm (like ~t~) otherwise.
+- [[var:+corfu-buffer-scanning-size-limit]]  ::
+  Sets the maximum buffer size to be scanned by ~cape-dabbrev~. Defaults to 1 MB.
+  Set this if you are having performance problems using the CAPF.
+- [[var:+corfu-want-minibuffer-completion]] ::
+  Whether to enable Corfu in the minibuffer. See its documentation for
+  additional tweaks.
+- [[var:+corfu-want-tab-prefer-expand-snippets]] ::
+  Whether to prefer expanding snippets over cycling candidates when pressing
+  [[kbd:][TAB]].
+- [[var:+corfu-want-tab-prefer-navigating-snippets]] ::
+  Whether to prefer navigating snippets over cycling candidates when pressing
+  [[kbd:][TAB]] and [[kbd:][S-TAB]].
+- [[var:+corfu-want-tab-prefer-navigating-org-tables]] ::
+  Whether to prefer navigating org tables over cycling candidates when pressing
+  [[kbd:][TAB]] and [[kbd:][S-TAB]].
+
+** Turning off auto-completion
+To disable idle (as-you-type) completion, unset ~corfu-auto~:
+#+begin_src emacs-lisp
+;;; in $DOOMDIR/config.el
+(after! corfu
+  (setq corfu-auto nil))
+#+end_src
+
+** Adding CAPFs to a mode
+To add other CAPFs on a mode-per-mode basis, put either of the following in your
+~config.el~:
+
+#+begin_src emacs-lisp
+(add-hook! some-mode (add-hook 'completion-at-point-functions #'some-capf depth t))
+;; OR, but note the different call signature
+(add-hook 'some-mode-hook (lambda () (add-hook 'completion-at-point-functions #'some-capf depth t)))
+#+end_src
+
+~DEPTH~ above is an integer between -100, 100, and defaults to 0 if nil. Also
+see ~add-hook!~'s documentation for additional ways to call it. ~add-hook~ only
+accepts the quoted arguments form above.
+
+** Adding CAPFs to a key
+To add other CAPFs to keys, adapt the snippet below into your ~config.el~:
+
+#+begin_src emacs-lisp
+(map! :map some-mode-map
+      "C-x e" #'cape-emoji)
+#+end_src
+
+It's okay to add to the mode directly because ~completion-at-point~ works
+regardless of Corfu (the latter is an enhanced UI for the former). Just note not
+all CAPFs are interactive to be called this way, in which case you can use
+[[doom-package:cape]]'s adapter to enable this.
+
+* Troubleshooting
+[[doom-report:][Report an issue?]]
+
+** Troubleshooting ~cape-dabbrev~
+
+If you have performance issues with ~cape-dabbrev~, the first thing I recommend
+doing is to look at the list of buffers Dabbrev is scanning:
+
+#+begin_src emacs-lisp
+(dabbrev--select-buffers) ; => (#<buffer README.org> #<buffer config.el<3>> #<buffer cape.el> ...)
+(length (dabbrev--select-buffers)) ; => 37
+#+end_src
+
+... and modify ~dabbrev-ignored-buffer-regexps~ or ~dabbrev-ignored-buffer-modes~
+accordingly.
+
+If you see garbage completion candidates, you can use the following command to
+debug the issue:
+
+#+begin_src emacs-lisp
+;;;###autoload
+(defun search-in-dabbrev-buffers (search-string)
+  "Search for SEARCH-STRING in all buffers returned by `dabbrev--select-buffers'."
+  (interactive "sSearch string: ")
+  (let ((buffers (dabbrev--select-buffers)))
+    (multi-occur buffers search-string)))
+
+;; Example usage:
+;; Why are these weird characters appearing in my completions?
+(search-in-dabbrev-buffers "\342\200\231")
+#+end_src
+
+** Fixing TAB Keybindings
+
+If you encounter an issue where your ~TAB~ keybindings are not responding in Doom
+Emacs while the ~:editor evil~ module is active, it's likely caused by a conflict
+where ~<tab>~ keybindings and insert state bindings are overriding your ~TAB~ key
+assignments.
+
+In Evil mode, keybinding priorities are set such that:
+1. ~<tab>~ keybindings supersede ~TAB~ keybindings and only work in GUI Emacs.
+2. Bindings in insert state take precedence whenever the insert state is active.
+
+To resolve this conflict and to assign your desired command to the ~TAB~ key, you
+must redefine the keybindings with insert state set explicitly. You can do this
+by configuring your ~evil~ keybindings for the insert state as follows:
+
+#+begin_src emacs-lisp
+(map! :gi "TAB"   #'your-command
+      :gi "<tab>" #'your-command)
+#+end_src
+
+Place this code in your Doom Emacs configuration file to set the function ~your-command~ as the response to pressing ~TAB~ during insert mode.
+
+Remember to replace ~#'your-command~ with the actual command you wish to invoke
+with the ~TAB~ key.
+
+If ever in a situation like this, use ~describe-key~ with ~C-h k~ and look at what
+command is being called as well as what keymaps the command is defined in.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

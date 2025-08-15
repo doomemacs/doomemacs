@@ -18,17 +18,12 @@ capture, the end position, and the output buffer.")
 (use-package! markdown-mode
   :mode ("/README\\(?:\\.md\\)?\\'" . gfm-mode)
   :init
-  (setq markdown-enable-math t ; syntax highlighting for latex fragments
-        markdown-enable-wiki-links t
-        markdown-italic-underscore t
+  (setq markdown-italic-underscore t
         markdown-asymmetric-header t
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
         markdown-fontify-whole-heading-line t
-
-        ;; HACK Due to jrblevin/markdown-mode#578, invoking `imenu' throws a
-        ;;      'wrong-type-argument consp nil' error if you use native-comp.
-        markdown-nested-imenu-heading-index (not (ignore-errors (native-comp-available-p)))
+        markdown-fontify-code-blocks-natively t
 
         ;; `+markdown-compile' offers support for many transpilers (see
         ;; `+markdown-compile-functions'), which it tries until one succeeds.
@@ -36,8 +31,8 @@ capture, the end position, and the output buffer.")
         ;; This is set to `nil' by default, which causes a wrong-type-arg error
         ;; when you use `markdown-open'. These are more sensible defaults.
         markdown-open-command
-        (cond (IS-MAC "open")
-              (IS-LINUX "xdg-open"))
+        (cond ((featurep :system 'macos) "open")
+              ((featurep :system 'linux) "xdg-open"))
 
         ;; A sensible and simple default preamble for markdown exports that
         ;; takes after the github asthetic (plus highlightjs syntax coloring).
@@ -50,11 +45,12 @@ capture, the end position, and the output buffer.")
                 "<style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style>"
                 "<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>"
                 "<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>"
-                "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>"))
-
-  ;; A shorter alias for org src blocks than "markdown"
-  (after! org-src
-    (add-to-list 'org-src-lang-modes '("md" . markdown)))
+                "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>")
+        ;; Disabled to prevent accidentally clicking links while focusing Emacs
+        ;; or a markdown buffer. We prefer keyboard-centric workflows anyway and
+        ;; already have ffap or lookup commands for opening links at point (e.g.
+        ;; gf or pressing RET on a link).
+        markdown-mouse-follow-link nil)
 
   :config
   (set-flyspell-predicate! '(markdown-mode gfm-mode)
@@ -76,12 +72,19 @@ capture, the end position, and the output buffer.")
     fill-nobreak-predicate (cons #'markdown-code-block-at-point-p
                                  fill-nobreak-predicate))
 
-  ;; HACK Prevent mis-fontification of YAML metadata blocks in `markdown-mode'
-  ;;      which occurs when the first line contains a colon in it. See
-  ;;      jrblevin/markdown-mode#328.
+  ;; HACK: Prevent mis-fontification of YAML metadata blocks in `markdown-mode'
+  ;;   which occurs when the first line contains a colon in it. See
+  ;;   jrblevin/markdown-mode#328.
   (defadvice! +markdown-disable-front-matter-fontification-a (&rest _)
     :override #'markdown-match-generic-metadata
     (ignore (goto-char (point-max))))
+
+  ;; HACK: markdown-mode calls a major mode without inhibiting its hooks, which
+  ;;   could contain expensive functionality. I suppress it to speed up their
+  ;;   fontification.
+  (defadvice! +markdown-optimize-src-buffer-modes-a (fn &rest args)
+    :around #'markdown-fontify-code-block-natively
+    (delay-mode-hooks (apply fn args)))
 
   (map! :map markdown-mode-map
         :localleader
@@ -136,11 +139,12 @@ capture, the end position, and the output buffer.")
   (map! :map evil-markdown-mode-map
         :n "TAB" #'markdown-cycle
         :n [backtab] #'markdown-shifttab
-        :i "M-*" #'markdown-insert-list-item
-        :i "M-b" #'markdown-insert-bold
-        :i "M-i" #'markdown-insert-italic
-        :i "M-`" #'+markdown/insert-del
-        :i "M--" #'markdown-insert-hr
+        (:unless evil-disable-insert-state-bindings
+          :i "M-*" #'markdown-insert-list-item
+          :i "M-b" #'markdown-insert-bold
+          :i "M-i" #'markdown-insert-italic
+          :i "M-`" #'+markdown/insert-del
+          :i "M--" #'markdown-insert-hr)
         :n "M-r" #'browse-url-of-file
         :m "]h"  #'markdown-next-visible-heading
         :m "[h"  #'markdown-previous-visible-heading

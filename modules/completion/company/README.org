@@ -3,6 +3,12 @@
 #+created:  February 19, 2017
 #+since:    2.0.0
 
+#+begin_quote
+  *This module is deprecated* in favor of the [[doom-module::completion corfu]]
+    module. This module will be in maintenance mode until it is eventually
+    removed. Consider switching to the Corfu module instead.
+#+end_quote
+
 * Description :unfold:
 This module provides code completion, powered by [[https://github.com/company-mode/company-mode][company-mode]]. Many of Doom's
 [[doom-module::lang]] modules require it for "intellisense" functionality.
@@ -16,7 +22,7 @@ https://assets.doomemacs.org/completion/company/overlay.png
 
 ** Module flags
 - +childframe ::
-  Display completion candidates in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than an overlay or
+  Display completion candidates in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][childframe]] rather than an overlay or
   tooltip. *Requires GUI Emacs.*
 - +tng ::
   Invoke completion on [[kbd:][TAB]] instad of [[kbd:][C-SPC]]. When company is active, [[kbd:][TAB]] and

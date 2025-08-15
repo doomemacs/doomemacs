@@ -38,26 +38,17 @@ grows larger."
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup-save-a)
 
-(defun +popup/quit-window ()
+(defun +popup/quit-window (&optional arg)
   "The regular `quit-window' sometimes kills the popup buffer and switches to a
 buffer that shouldn't be in a popup. We prevent that by remapping `quit-window'
 to this commmand."
-  (interactive)
+  (interactive "P")
   (let ((orig-buffer (current-buffer)))
-    (quit-window)
+    (quit-window arg)
     (when (and (eq orig-buffer (current-buffer))
                (+popup-buffer-p))
       (+popup/close nil 'force))))
-(global-set-key [remap quit-window] #'+popup/quit-window)
-
-(defadvice! +popup-override-display-buffer-alist-a (fn &rest args)
-  "When `pop-to-buffer' is called with non-nil ACTION, that ACTION should
-override `display-buffer-alist'."
-  :around #'switch-to-buffer-other-tab
-  :around #'switch-to-buffer-other-window
-  :around #'switch-to-buffer-other-frame
-  (let ((display-buffer-alist nil))
-    (apply fn args)))
+(define-key +popup-buffer-mode-map [remap quit-window] #'+popup/quit-window)
 
 
 ;;
@@ -102,26 +93,6 @@ were followed."
 
 ;;;###package evil
 (progn
-  ;; Make evil-mode cooperate with popups
-  (defadvice! +popup--evil-command-window-a (hist cmd-key execute-fn)
-    "Monkey patch the evil command window to use `pop-to-buffer' instead of
-`switch-to-buffer', allowing the popup manager to handle it."
-    :override #'evil-command-window
-    (when (eq major-mode 'evil-command-window-mode)
-      (user-error "Cannot recursively open command line window"))
-    (dolist (win (window-list))
-      (when (equal (buffer-name (window-buffer win))
-                   "*Command Line*")
-        (kill-buffer (window-buffer win))
-        (delete-window win)))
-    (setq evil-command-window-current-buffer (current-buffer))
-    (ignore-errors (kill-buffer "*Command Line*"))
-    (with-current-buffer (pop-to-buffer "*Command Line*")
-      (setq-local evil-command-window-execute-fn execute-fn)
-      (setq-local evil-command-window-cmd-key cmd-key)
-      (evil-command-window-mode)
-      (evil-command-window-insert-commands hist)))
-
   (defadvice! +popup--evil-command-window-execute-a ()
     "Execute the command under the cursor in the appropriate buffer, rather than
 the command buffer."
@@ -315,20 +286,11 @@ Ugh, such an ugly hack."
            (popup-p (+popup-window-p window)))
       (prog1 (apply fn args)
         (when (and popup-p (window-live-p window))
-          (delete-window window)))))
-
-  ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
-  (defadvice! +popup--org-pop-to-buffer-a (fn buf &optional norecord)
-    "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
-    :around #'org-switch-to-buffer-other-window
-    (if +popup-mode
-        (pop-to-buffer buf nil norecord)
-      (funcall fn buf norecord))))
-
+          (delete-window window))))))
 
 ;;;###package org-journal
 (defadvice! +popup--use-popup-window-a (fn &rest args)
-  :around #'org-journal-search-by-string
+  :around #'org-journal--search-by-string
   (letf! ((#'switch-to-buffer #'pop-to-buffer))
     (apply fn args)))
 

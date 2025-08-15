@@ -19,20 +19,9 @@ Useful for scenarios where an instant reconnect will not be successful.")
 (defvar +irc-bot-list '("fsbot" "rudybot")
   "Nicks listed have `circe-fool-face' applied and will not be tracked.")
 
-(defvar +irc-time-stamp-format "%H:%M"
-  "The format of time stamps.
-
-See `format-time-string' for a full description of available
-formatting directives. ")
-
-(defvar +irc-notifications-watch-strings nil
-  "A list of strings which can trigger a notification.  You don't need to put
-your nick here.
-
-See `circe-notifications-watch-strings'.")
-
 (defvar +irc-defer-notifications nil
   "How long to defer enabling notifications, in seconds (e.g. 5min = 300).
+
 Useful for ZNC users who want to avoid the deluge of notifications during buffer
 playback.")
 
@@ -42,12 +31,15 @@ playback.")
   (format (format "%%%ds | %%s" +irc-left-padding)
           (concat "*** " left) right))
 
+(define-obsolete-variable-alias '+irc-notifications-watch-strings 'circe-notifications-watch-strings "3.0.0")
+(define-obsolete-variable-alias '+irc-time-stamp-format 'lui-time-stamp-format "3.0.0")
+
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! circe
-  :commands circe circe-server-buffers
+  :commands circe-server-buffers
   :config
   (setq circe-default-quit-message nil
         circe-default-part-message nil
@@ -94,41 +86,10 @@ playback.")
   (add-hook 'circe-mode-hook #'+irc--add-circe-buffer-to-persp-h)
   (add-hook 'circe-mode-hook #'turn-off-smartparens-mode)
 
-  ;; HACK Fix #1862: circe hangs on TLS connections when using OpenSSL versions
-  ;;      > 1.1.0, where tls.el does not correctly determine the end of the info
-  ;;      block. This fixes proposed in jorgenschaefer/circe#340
-  (setq-hook! 'circe-mode-hook
-    tls-end-of-info
-    (concat "\\("
-            ;; `openssl s_client' regexp. See ssl/ssl_txt.c lines 219-220.
-            ;; According to apps/s_client.c line 1515 `---' is always the last
-            ;; line that is printed by s_client before the real data.
-            "^    Verify return code: .+\n\\(\\|^    Extended master secret: .+\n\\)\\(\\|^    Max Early Data: .+\n\\)---\n\\|"
-            ;; `gnutls' regexp. See src/cli.c lines 721-.
-            "^- Simple Client Mode:\n"
-            "\\(\n\\|"                           ; ignore blank lines
-            ;; According to GnuTLS v2.1.5 src/cli.c lines 640-650 and 705-715 in
-            ;; `main' the handshake will start after this message. If the
-            ;; handshake fails, the programs will abort.
-            "^\\*\\*\\* Starting TLS handshake\n\\)*"
-            "\\)"))
-
   (defadvice! +irc--circe-run-disconnect-hook-a (&rest _)
     "Runs `+irc-disconnect-hook' after circe disconnects."
     :after #'circe--irc-conn-disconnected
     (run-hooks '+irc-disconnect-hook))
-
-  (add-hook! 'lui-pre-output-hook
-    (defun +irc-circe-truncate-nicks-h ()
-      "Truncate long nicknames in chat output non-destructively."
-      (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
-        (goto-char beg)
-        (let ((end (next-single-property-change beg 'lui-format-argument))
-              (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)
-                               :nick)))
-          (when (> (length nick) +irc-left-padding)
-            (compose-region (+ beg +irc-left-padding -1) end
-                            +irc-truncate-nick-char))))))
 
   (add-hook! 'circe-message-option-functions
     (defun +irc-circe-message-option-bot-h (nick &rest ignored)
@@ -159,14 +120,21 @@ playback.")
 
 
 (use-package! circe-color-nicks
-  :hook (circe-channel-mode . enable-circe-color-nicks)
+  :defer t
+  ;; NOTE: I avoid `:after' on purpose, because it convolutes load order and
+  ;;   makes it harder for users to know what to target with `after!' or
+  ;;   `with-eval-after-load' when trying to configure packages.
+  :init (after! circe (require 'circe-color-nicks))
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
-        circe-color-nicks-everywhere t))
+        circe-color-nicks-everywhere t)
+  (enable-circe-color-nicks))
 
 
 (use-package! circe-new-day-notifier
-  :after circe
+  :defer t
+  ;; NOTE: See NOTE in `circe-color-nicks' above.
+  :init (after! circe (require 'circe-new-day-notifier))
   :config
   (enable-circe-new-day-notifier)
   (setq circe-new-day-notifier-format-message
@@ -174,7 +142,7 @@ playback.")
 
 
 (use-package! circe-notifications
-  :commands enable-circe-notifications
+  :defer t
   :init
   (add-hook! 'circe-server-connected-hook
     (defun +irc-init-circe-notifications-h ()
@@ -184,11 +152,10 @@ playback.")
                              #'enable-circe-notifications))
         (enable-circe-notifications))))
   :config
-  (setq circe-notifications-watch-strings +irc-notifications-watch-strings
-        circe-notifications-emacs-focused nil
+  (setq circe-notifications-emacs-focused nil
         circe-notifications-alert-style
-        (cond (IS-MAC 'osx-notifier)
-              (IS-LINUX 'libnotify)
+        (cond ((featurep :system 'macos) 'osx-notifier)
+              ((featurep :system 'linux) 'libnotify)
               (circe-notifications-alert-style))))
 
 
@@ -197,9 +164,26 @@ playback.")
   :config
   (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
   (setq lui-fill-type nil)
+  (setq lui-flyspell-p (modulep! :checkers spell +flyspell))
 
-  (when (modulep! :checkers spell)
-    (setq lui-flyspell-p t))
+  (setq lui-time-stamp-format "%H:%M"
+        lui-time-stamp-position 'right-margin)
+
+  (enable-lui-autopaste)  ; prompt to use paste service for large pastes
+  (enable-lui-track)      ; horizontal line marking last read message
+  (enable-lui-irc-colors) ; enable IRC colors (see https://www.mirc.co.uk/colors.html)
+
+  (add-hook! 'lui-pre-output-hook
+    (defun +irc-truncate-nicks-h ()
+      "Truncate long nicknames in chat output non-destructively."
+      (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
+        (goto-char beg)
+        (let ((end (next-single-property-change beg 'lui-format-argument))
+              (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)
+                               :nick)))
+          (when (> (length nick) +irc-left-padding)
+            (compose-region (+ beg +irc-left-padding -1) end
+                            +irc-truncate-nick-char))))))
 
   (after! evil
     (defun +irc-evil-insert-h ()
@@ -214,7 +198,6 @@ after prompt marker."
 
     (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
-
 
   (defun +irc-preinput-scroll-to-bottom-h ()
     "Go to the end of the buffer in all windows showing it.
@@ -235,14 +218,11 @@ Courtesy of esh-mode.el"
   (add-hook! 'lui-mode-hook
     (add-hook 'pre-command-hook #'+irc-preinput-scroll-to-bottom-h nil t))
 
-  ;; enable a horizontal line marking the last read message
-  (add-hook 'lui-mode-hook #'enable-lui-track-bar)
-
   (add-hook! 'lui-mode-hook
     (defun +irc-init-lui-margins-h ()
-      (setq lui-time-stamp-position 'right-margin
-            lui-time-stamp-format +irc-time-stamp-format
-            right-margin-width (length (format-time-string lui-time-stamp-format))))
+      (pcase lui-time-stamp-position
+        (`right-margin (setq right-margin-width (length (format-time-string lui-time-stamp-format))))
+        (`left-margin  (setq left-margin-width  (length (format-time-string lui-time-stamp-format))))))
     (defun +irc-init-lui-wrapping-a ()
       (setq fringes-outside-margins t
             word-wrap t
@@ -251,8 +231,5 @@ Courtesy of esh-mode.el"
 
 (use-package! lui-logging
   :after lui
+  :init (setq lui-logging-directory (file-name-concat doom-profile-state-dir "lui"))
   :config (enable-lui-logging))
-
-
-(use-package! lui-autopaste
-  :hook (circe-channel-mode . enable-lui-autopaste))

@@ -18,22 +18,24 @@ pretty symbols and ligatures previously defined for MODES.
 
 For example, the rule for emacs-lisp-mode is very simple:
 
-  (set-ligatures! \\='emacs-lisp-mode
-    :lambda \"lambda\")
+  (after! elisp-mode
+    (set-ligatures! \\='emacs-lisp-mode
+      :lambda \"lambda\"))
 
 This will replace any instances of \"lambda\" in emacs-lisp-mode with the symbol
 associated with :lambda in `+ligatures-extra-symbols'.
 
-Pretty symbols can be unset for emacs-lisp-mode with:
+Pretty symbols can be unset by passing `nil':
 
-  (set-ligatures! \\='emacs-lisp-mode nil)
+  (after! rustic
+    (set-ligatures! \\='rustic-mode nil))
 
 Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
 `emacs-lisp-mode' is derived from `prog-mode'."
   (declare (indent defun))
   (if (null (car-safe plist))
       (dolist (mode (ensure-list modes))
-        (delq! mode +ligatures-extra-alist 'assq))
+        (setf (alist-get mode +ligatures-extra-alist nil t) nil))
     (let ((results))
       (while plist
         (let ((key (pop plist)))
@@ -41,7 +43,7 @@ Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
               (push (cons (pop plist) char) results))))
       (dolist (mode (ensure-list modes))
         (setf (alist-get mode +ligatures-extra-alist)
-              (if-let (old-results (alist-get mode +ligatures-extra-alist))
+              (if-let* ((old-results (alist-get mode +ligatures-extra-alist)))
                   (dolist (cell results old-results)
                     (setf (alist-get (car cell) old-results) (cdr cell)))
                 results))))))
@@ -60,17 +62,24 @@ For example, the rule for emacs-lisp-mode is very simple:
 
 This will ligate \"->\" into the arrow of choice according to your font.
 
-Font ligatures can be unset for emacs-lisp-mode with:
+All font ligatures for emacs-lisp-mode can be unset with:
 
   (set-font-ligatures! \\='emacs-lisp-mode nil)
 
-Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
-`emacs-lisp-mode' is derived from `prog-mode'."
+However, ligatures for any parent modes (like `prog-mode') will still be in
+effect, as `emacs-lisp-mode' is derived from `prog-mode'."
   (declare (indent defun))
-  (if (null ligatures)
-      (dolist (mode (ensure-list modes))
-        (add-to-list 'ligature-ignored-major-modes mode))
-    (after! ligature
-       (dolist (mode (ensure-list modes))
-         (setq ligature-ignored-major-modes (delq mode ligature-ignored-major-modes)))
-       (ligature-set-ligatures (ensure-list modes) ligatures))))
+  (after! ligature
+    (if (or (null ligatures) (equal ligatures '(nil)))
+        (dolist (table ligature-composition-table)
+          (let ((modes (ensure-list modes))
+                (tmodes (car table)))
+            (cond ((and (listp tmodes) (cl-intersection modes tmodes))
+                   (let ((tmodes (cl-nset-difference tmodes modes)))
+                     (setq ligature-composition-table
+                           (if tmodes
+                               (cons tmodes (cdr table))
+                             (delete table ligature-composition-table)))))
+                  ((memq tmodes modes)
+                   (setq ligature-composition-table (delete table ligature-composition-table))))))
+      (ligature-set-ligatures modes ligatures))))

@@ -1,9 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; checkers/spell/packages.el
 
-(if (not (modulep! +flyspell))
-    (package! spell-fu :pin "aed6e87aa31013534b7a6cbedb26e4f29ccea735")
-  (package! flyspell-correct :pin "7d7b6b01188bd28e20a13736ac9f36c3367bd16e")
+(if (modulep! -flyspell)
+    (package! spell-fu
+      :recipe (:host github :repo "emacsmirror/spell-fu")
+      :pin "d465d70126d7ff8e37013ef942c292aaa1ca23f3")
+  (package! flyspell-correct :pin "1e7a5a56362dd875dddf848b9a9e25d1395b9d37")
   (cond ((modulep! :completion ivy)
          (package! flyspell-correct-ivy))
         ((modulep! :completion helm)

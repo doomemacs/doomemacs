@@ -10,7 +10,7 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
 - Snippets
 - Run tests ([[doom-package:nose]], [[doom-package:pytest]])
 - Auto-format (with ~black~, requires [[doom-module::editor format]])
-- LSP integration (=mspyls=, =pyls=, or =pyright=)
+- LSP integration (=pyls=, =jedi=, =ruff=, =pyright=, or =basedpyright=)
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -23,15 +23,15 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
 - +cython ::
   Enable support for Cython files support.
 - +lsp ::
-  Enable LSP support for ~python-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports mspyls, pyls, and pyright).
+  Enable LSP support for ~python-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (=pyls=, =jedi=, =ruff=, or =pyright=).
 - +poetry ::
   Enable Python packaging, dependency management, and virtual environment
   support via [[https://python-poetry.org/][Poetry]].
 - +pyenv ::
   Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
 - +pyright ::
-  Use the pyright LSP server instead of mspyls or pyls (requires [[doom-module:+lsp]]).
+  Add support for the pyright LSP server (requires [[doom-module:+lsp]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
@@ -53,8 +53,6 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
 - if [[doom-module:+lsp]]
   - if [[doom-module:+pyright]]
     - [[doom-package:lsp-pyright]]
-  - else
-    - [[doom-package:lsp-python-ms]]
 
 ** Hacks
 - [[doom-package:anaconda-mode]] is configured to activate when [[doom-package:lsp-mode]] (or [[doom-package:eglot]]) don't -- or
@@ -88,9 +86,10 @@ For LSP support the [[doom-module::tools lsp]] module must be enabled, along wit
 
 An alternative LSP server can be used by installing them through the
 [[cmd:][lsp-install-server]] command, or an external package manager. For example:
+- To install *basedpyright*: ~$ pip install basedpyright~
+- To install *pyright*: ~$ pip install pyright~ or ~$ npm i -g pyright~.
 - To install [[https://pypi.org/project/python-language-server/][*pyls*]]: ~$ pip install python-language-server[all]~.
 - To install *mspyls*: ~M-x lsp-install-server RET mspyls~.
-- To install *pyright*: ~$ pip install pyright~ or ~$ npm i -g pyright~.
 
 ** Formatter
 

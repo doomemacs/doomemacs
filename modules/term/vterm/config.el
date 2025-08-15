@@ -17,6 +17,8 @@
   :config
   (set-popup-rule! "^\\*vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
 
+  (map! :map vterm-mode-map "C-q" #'vterm-send-next-key)
+
   ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
   ;; spawn another if want one.
   (setq vterm-kill-buffer-on-exit t)

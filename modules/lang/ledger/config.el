@@ -38,8 +38,7 @@
 
 
 (use-package! flycheck-ledger
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after ledger-mode)
 
 

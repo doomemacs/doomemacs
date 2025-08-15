@@ -86,7 +86,7 @@ in [[../../editor/evil/+commands.el][config/default/+evil-commands.el]]).
 | ~+workspace/other~                | [[kbd:][SPC TAB `]]            | Switch to last workspace                                   |
 | ~+workspace/switch-left~          | [[kbd:][SPC TAB []] / [[kbd:][[ w]] / [[kbd:][gT]] | Switch to previous workspace                               |
 | ~+workspace/switch-right~         | [[kbd:][SPC TAB ]]] / [[kbd:][] w]] / [[kbd:][gt]] | Switch to next workspace                                   |
-| ~+workspace/delete~               | [[kbd:][SPC TAB d]]            | Delete the current workspace                               |
+| ~+workspace/kill~                 | [[kbd:][SPC TAB d]]            | Delete the current workspace                               |
 | ~+workspace/kill-session~         | [[kbd:][SPC TAB x]] / [[kbd:][:sclear]]  | Clears the current session (kills all windows and buffers) |
 
 * TODO Configuration
@@ -120,6 +120,6 @@ in [[../../editor/evil/+commands.el][config/default/+evil-commands.el]]).
 + ~+workspace-save-session NAME~
 + ~+workspace-new NAME~
 + ~+workspace-rename NAME NEW-NAME~
-+ ~+workspace-delete NAME &optional INHIBIT-KILL-P~
++ ~+workspace-kill NAME &optional INHIBIT-KILL-P~
 + ~+workspace-switch NAME &optional AUTO-CREATE-P~
 + ~+workspace-protected-p NAME~ -> bool

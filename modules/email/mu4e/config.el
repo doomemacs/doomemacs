@@ -2,6 +2,7 @@
 
 (defvar +mu4e-backend 'mbsync
   "Which backend to use. Can either be offlineimap, mbsync or nil (manual).")
+(make-obsolete-variable '+mu4e-backend "Use the :email mu4e module's +mbsync or +offlineimap flags instead" "24.09")
 
 (defvar +mu4e-personal-addresses 'nil
   "Alternative to mu4e-personal-addresses that can be set for each account (mu4e context).")
@@ -19,10 +20,37 @@
             (version< mu4e-mu-version "1.4"))
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
-  (setq mu4e-attachment-dir
-        (lambda (&rest _)
-          (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
+  (set-debug-variable! 'mu4e-debug)
+  ;; mu4e now uses `display-buffer-alist' so we need to add some rules of our own
+  (set-popup-rule! "^\\*mu4e-\\(main\\|headers\\)\\*" :ignore t)
+  (set-popup-rule! "^\\*mu4e-log\\*" :select nil)
+
+  ;; Treat mu4e main menu buffer as real, so it can be switched to or fallen
+  ;; back to when killing other buffers.
+  (add-hook 'mu4e-main-mode-hook #'doom-mark-buffer-as-real-h)
+
+  ;; Ensures backward/forward compatibility for mu4e, which is prone to breaking
+  ;; updates, and also cannot be pinned, because it's bundled with mu (which you
+  ;; must install via your OS package manager).
+  (with-demoted-errors "%s" (require 'mu4e-compat nil t))
+  ;; For users on older mu4e.
+  (unless (boundp 'mu4e-headers-buffer-name)
+    (defvar mu4e-headers-buffer-name "*mu4e-headers*"))
+
+  (cond ((or (modulep! +mbsync)
+             (eq +mu4e-backend 'mbsync))
+         (setq mu4e-get-mail-command
+               (concat "mbsync --all"
+                       ;; XDG support was added to isync 1.5, but this lets
+                       ;; users on older benefit from it sooner.
+                       (when-let (file (file-exists-p! "isyncrc" (or (getenv "XDG_CONFIG_HOME") "~/.config")))
+                         (format " --config %S" file)))
+               mu4e-change-filenames-when-moving t))
+        ((or (modulep! +offlineimap)
+             (eq +mu4e-backend 'offlineimap))
+         (setq mu4e-get-mail-command "offlineimap -o -q")))
+
   (when (version< mu4e-mu-version "1.8")
     ;; Define aliases to maintain backwards compatibility. The list of suffixes
     ;; were obtained by comparing mu4e~ and mu4e-- functions in `obarray'.
@@ -42,7 +70,8 @@
                "read-patch-directory" "replace-first-line-matching"
                "request-contacts-maybe" "rfc822-phrase-type" "start" "stop"
                "temp-window" "update-contacts" "update-mail-and-index-real"
-               "update-mail-mode" "update-sentinel-func"))
+               "update-mail-mode" "update-sentinel-func" "view-gather-mime-parts"
+               "view-open-file" "view-mime-part-to-temp-file"))
       (defalias (intern (concat "mu4e--" transferable-suffix))
         (intern (concat "mu4e~" transferable-suffix))
         "Alias to provide the API of mu4e 1.8 (mu4e~ ⟶ mu4e--).")
@@ -66,14 +95,8 @@ is non-nil."
           mu4e-view-image-max-width 800
           mu4e-view-use-gnus t))
 
-  (pcase +mu4e-backend
-    (`mbsync
-     (setq mu4e-get-mail-command "mbsync -a"
-           mu4e-change-filenames-when-moving t))
-    (`offlineimap
-     (setq mu4e-get-mail-command "offlineimap -o -q")))
-
   (setq mu4e-update-interval nil
+        mu4e-notification-support t
         mu4e-sent-messages-behavior 'sent
         mu4e-hide-index-messages t
         ;; configuration for sending mail
@@ -92,9 +115,9 @@ is non-nil."
               (t #'ido-completing-read))
         mu4e-attachment-dir
         (concat
-         (if-let ((xdg-download-query (and (executable-find "xdg-user-dir")
-                                           (doom-call-process "xdg-user-dir" "DOWNLOAD")))
-                  (xdg-download-dir (and (= 0 (car xdg-download-query)) (cdr xdg-download-query))))
+         (if-let* ((xdg-download-query (and (executable-find "xdg-user-dir")
+                                            (doom-call-process "xdg-user-dir" "DOWNLOAD")))
+                   (xdg-download-dir (and (= 0 (car xdg-download-query)) (cdr xdg-download-query))))
              xdg-download-dir
            (expand-file-name (or (getenv "XDG_DOWNLOAD_DIR")
                                  "Downloads")
@@ -119,6 +142,7 @@ is non-nil."
   ;; Better search symbols
   (letf! ((defun make-help-button (text help-echo)
             (with-temp-buffer
+              (insert " ")
               (insert-text-button text
                                   'help-echo help-echo
                                   'mouse-face nil)
@@ -127,13 +151,13 @@ is non-nil."
             (cons (make-help-button text1 help-echo)
                   (make-help-button text2 help-echo))))
     (setq mu4e-headers-threaded-label
-          (make-help-button-cons "T" (concat " " (nerd-icons-octicon "nf-oct-git_branch" :v-adjust 0.05))
+          (make-help-button-cons "T" (nerd-icons-octicon "nf-oct-git_branch" :v-adjust 0.05)
                                  "Thread view")
           mu4e-headers-related-label
-          (make-help-button-cons "R" (concat " " (nerd-icons-mdicon "nf-md-link" :v-adjust -0.1))
+          (make-help-button-cons "R" (nerd-icons-mdicon "nf-md-link" :v-adjust -0.1)
                                  "Showing related emails")
           mu4e-headers-full-label
-          (make-help-button-cons "F" (concat " " (nerd-icons-mdicon "nf-md-disc"))
+          (make-help-button-cons "F" (nerd-icons-mdicon "nf-md-disc")
                                  "Search is full!")))
 
   ;; set mail user agent
@@ -221,46 +245,45 @@ is non-nil."
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
   ;; Html mails might be better rendered in a browser
-  (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
-  (when (fboundp 'make-xwidget)
-    (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-in-xwidget)))
+  (add-to-list 'mu4e-view-actions '("view in browser" . mu4e-action-view-in-browser))
+  (when (fboundp 'xwidget-webkit-browse-url)
+    (add-to-list 'mu4e-view-actions '("xview in xwidget" . mu4e-action-view-in-xwidget)))
 
   ;; Detect empty subjects, and give users an opotunity to fill something in
-  (defun +mu4e-check-for-subject ()
-    "Check that a subject is present, and prompt for a subject if not."
-    (save-excursion
-      (goto-char (point-min))
-      (search-forward "--text follows this line--")
-      (re-search-backward "^Subject:") ; this should be present no matter what
-      (let ((subject (string-trim (substring (thing-at-point 'line) 8))))
-        (when (string-empty-p subject)
-          (end-of-line)
-          (insert (read-string "Subject (optional): "))
-          (message "Sending...")))))
+  (add-hook! 'message-send-hook
+    (defun +mu4e-check-for-subject ()
+      "Check that a subject is present, and prompt for a subject if not."
+      (save-excursion
+        (goto-char (point-min))
+        (search-forward "--text follows this line--")
+        (re-search-backward "^Subject:") ; this should be present no matter what
+        (let ((subject (string-trim (substring (thing-at-point 'line) 8))))
+          (when (string-empty-p subject)
+            (end-of-line)
+            (insert (read-string "Subject (optional): "))
+            (message "Sending..."))))))
 
-  (add-hook 'message-send-hook #'+mu4e-check-for-subject)
-
-  ;; The header view needs a certain amount of horizontal space to
-  ;; actually show you all the information you want to see
-  ;; so if the header view is entered from a narrow frame,
-  ;; it's probably worth trying to expand it
-  (defun +mu4e-widen-frame-maybe ()
-    "Expand the mu4e-headers containing frame's width to `+mu4e-min-header-frame-width'."
-    (dolist (frame (frame-list))
-      (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
-                          mu4e-headers-buffer-name)
-                 (< (frame-width) +mu4e-min-header-frame-width))
-        (set-frame-width frame +mu4e-min-header-frame-width))))
-  (add-hook 'mu4e-headers-mode-hook #'+mu4e-widen-frame-maybe)
+  ;; The header view needs a certain amount of horizontal space to actually show
+  ;; you all the information you want to see so if the header view is entered
+  ;; from a narrow frame, it's probably worth trying to expand it
+  (defvar +mu4e-min-header-frame-width 120
+    "Minimum reasonable with for the header view.")
+  (add-hook! 'mu4e-headers-mode-hook
+    (defun +mu4e-widen-frame-maybe ()
+      "Expand the mu4e-headers containing frame's width to `+mu4e-min-header-frame-width'."
+      (dolist (frame (frame-list))
+        (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
+                            mu4e-headers-buffer-name)
+                   (< (frame-width) +mu4e-min-header-frame-width))
+          (set-frame-width frame +mu4e-min-header-frame-width)))))
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  (when (modulep! :ui workspaces)
-    (map! :map mu4e-main-mode-map
-          :ne "h" #'+workspace/other))
-
-  (map! :map mu4e-headers-mode-map
+  (map! (:when (modulep! :ui workspaces)
+         :map mu4e-main-mode-map
+         :ne "h" #'+workspace/other)
+        :map mu4e-headers-mode-map
         :vne "l" #'+mu4e/capture-msg-to-agenda)
 
   ;; Functionality otherwise obscured in mu4e 1.6
@@ -268,25 +291,25 @@ is non-nil."
     (defun +mu4e-view-select-attachment ()
       "Use completing-read to select a single attachment.
 Acts like a singular `mu4e-view-save-attachments', without the saving."
-      (if-let ((parts (delq nil (mapcar
-                                 (lambda (part)
-                                   (when (assoc "attachment" (cdr part))
-                                     part))
-                                 (mu4e~view-gather-mime-parts))))
-               (files (+mu4e-part-selectors parts)))
+      (if-let* ((parts (delq nil (mapcar
+                                  (lambda (part)
+                                    (when (assoc "attachment" (cdr part))
+                                      part))
+                                  (mu4e--view-gather-mime-parts))))
+                (files (+mu4e-part-selectors parts)))
           (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
         (user-error (mu4e-format "No attached files found"))))
 
     (defun +mu4e-view-open-attachment ()
       "Select an attachment, and open it."
       (interactive)
-      (mu4e~view-open-file
-       (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
+      (mu4e--view-open-file
+       (mu4e--view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
 
     (defun +mu4e-view-select-mime-part-action ()
       "Select a MIME part, and perform an action on it."
       (interactive)
-      (let ((labeledparts (+mu4e-part-selectors (mu4e~view-gather-mime-parts))))
+      (let ((labeledparts (+mu4e-part-selectors (mu4e--view-gather-mime-parts))))
         (if labeledparts
             (mu4e-view-mime-part-action
              (cadr (assoc (completing-read "Select part: " (mapcar #'car labeledparts))
@@ -338,18 +361,19 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
         :desc "save draft"    "S" #'message-dont-send
         :desc "attach"        "a" #'+mu4e/attach-files)
 
-  ;; Due to evil, none of the marking commands work when making a visual selection in
-  ;; the headers view of mu4e. Without overriding any evil commands we may actually
-  ;; want to use in and evil selection, this can be easily fixed.
-  (when (modulep! :editor evil)
-    (map! :map mu4e-headers-mode-map
-          :v "*" #'mu4e-headers-mark-for-something
-          :v "!" #'mu4e-headers-mark-for-read
-          :v "?" #'mu4e-headers-mark-for-unread
-          :v "u" #'mu4e-headers-mark-for-unmark))
+  ;; Due to evil, none of the marking commands work when making a visual
+  ;; selection in the headers view of mu4e. Without overriding any evil commands
+  ;; we may actually want to use in and evil selection, this can be easily
+  ;; fixed.
+  (map! :map mu4e-headers-mode-map
+        :v "*" #'mu4e-headers-mark-for-something
+        :v "!" #'mu4e-headers-mark-for-read
+        :v "?" #'mu4e-headers-mark-for-unread
+        :v "u" #'mu4e-headers-mark-for-unmark)
 
-  (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address-h)
+  (add-hook 'mu4e-compose-pre-hook #'+mu4e-set-from-address-h)
 
+  ;; HACK
   (defadvice! +mu4e-ensure-compose-writeable-a (&rest _)
     "Ensure that compose buffers are writable.
 This should already be the case yet it does not always seem to be."
@@ -359,40 +383,23 @@ This should already be the case yet it does not always seem to be."
     :before #'mu4e-compose-resend
     (read-only-mode -1))
 
-  (defvar +mu4e-main-bullet "⚫"
-    "Prefix to use instead of \"	*\" in the mu4e main view.
-This is enacted by `+mu4e~main-action-str-prettier-a' and
-`+mu4e~main-keyval-str-prettier-a'.")
-
-  (advice-add #'mu4e--key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
-  (advice-add #'mu4e--main-action-str :override #'+mu4e~main-action-str-prettier-a)
-  (when (modulep! :editor evil)
-    ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
-    (setq evil-collection-mu4e-end-region-misc "quit"))
-
-  ;; process lock control
-  (when IS-WINDOWS
-    (setq
-     +mu4e-lock-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock")
-     +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
+  ;; HACK: process lock control
+  (when (featurep :system 'windows)
+    (setq +mu4e-lock-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock")
+          +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
 
   (add-hook 'kill-emacs-hook #'+mu4e-lock-file-delete-maybe)
-  (advice-add 'mu4e--start :around #'+mu4e-lock-start)
-  (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
+  (advice-add #'mu4e--start :around #'+mu4e-lock-start)
+  (advice-add #'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
-(unless (modulep! +org)
-  (after! mu4e
-    (defun org-msg-mode (&optional _)
-      "Dummy function."
-      (message "Enable the +org mu4e flag to use org-msg-mode."))
-    (defun +mu4e-compose-org-msg-handle-toggle (&rest _)
-      "Placeholder to allow for the assumtion that this function is defined.
-Ignores all arguments and returns nil."
-      nil)))
 
 (use-package! org-msg
-  :after mu4e
   :when (modulep! +org)
+  :defer t
+  :init
+  ;; Avoid using `:after' because it ties the :config below to when `mu4e'
+  ;; loads, rather than when `org-msg' loads.
+  (after! mu4e (require 'org-msg))
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"
@@ -408,26 +415,25 @@ Ignores all arguments and returns nil."
 (\\(?:attached\\|enclosed\\))\\|\
 \\(?:attached\\|enclosed\\)[ \t\n]\\(?:for\\|is\\)[ \t\n]")
 
-  (defvar +org-msg-currently-exporting nil
-    "Helper variable to indicate whether org-msg is currently exporting the org buffer to HTML.
-Usefull for affecting HTML export config.")
-  (defadvice! +org-msg--now-exporting-a (&rest _)
-    :before #'org-msg-org-to-xml
-    (setq +org-msg-currently-exporting t))
-  (defadvice! +org-msg--not-exporting-a (&rest _)
-    :after #'org-msg-org-to-xml
-    (setq +org-msg-currently-exporting nil))
-
-  (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled-a)
-  (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled-a)
-
   (map! :map org-msg-edit-mode-map
+        "TAB" #'org-msg-tab   ; To mirror the binding on <tab>
         :desc "attach" "C-c C-a" #'+mu4e/attach-files
         :localleader
         :desc "attach" "a" #'+mu4e/attach-files)
 
-  ;; I feel like it's reasonable to expect files to be attached
-  ;; in the order you attach them, not the reverse.
+  ;; HACK: ...
+  (defvar +org-msg-currently-exporting nil
+    "Non-nil if org-msg is currently exporting the org buffer to HTML.")
+  (defadvice! +org-msg--now-exporting-a (fn &rest args)
+    :around #'org-msg-org-to-xml
+    (let ((+org-msg-currently-exporting t))
+      (apply fn args)))
+
+  ;; HACK: ...
+  (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled-a)
+  (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled-a)
+
+  ;; HACK: Ensure files are attached in the order they were attached.
   (defadvice! +org-msg-attach-attach-in-order-a (file &rest _args)
     "Link FILE into the list of attachment."
     :override #'org-msg-attach-attach
@@ -435,31 +441,25 @@ Usefull for affecting HTML export config.")
     (let ((files (org-msg-get-prop "attachment")))
       (org-msg-set-prop "attachment" (nconc files (list file)))))
 
-  (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
-    "Whether to toggle ")
-  (defun +mu4e-compose-org-msg-handle-toggle (toggle-p)
-    (when (xor toggle-p +mu4e-compose-org-msg-toggle-next)
+  ;; HACK: Toggle `org-msg' where sensible.
+  (defvar +mu4e-compose-org-msg-toggle-next t)
+  (defadvice! +mu4e-maybe-toggle-org-msg-a (&rest _)
+    :before #'+mu4e/attach-files
+    :before #'mu4e-compose-new
+    :before #'mu4e-compose-reply
+    :before #'mu4e-compose-forward
+    :before #'mu4e-compose-resend
+    (when (xor (/= 1 (prefix-numeric-value current-prefix-arg))
+               +mu4e-compose-org-msg-toggle-next)
       (org-msg-mode (if org-msg-mode -1 1))
-      (setq +mu4e-compose-org-msg-toggle-next
-            (not +mu4e-compose-org-msg-toggle-next))))
+      (cl-callf not +mu4e-compose-org-msg-toggle-next)))
 
-  (defadvice! +mu4e-maybe-toggle-org-msg-a (fn &optional toggle-p)
-    :around #'mu4e-compose-new
-    :around #'mu4e-compose-reply
-    :around #'mu4e-compose-forward
-    :around #'mu4e-compose-resend
-    (interactive "p")
-    (+mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
-    (funcall fn))
-
+  ;; HACK: ...
   (defadvice! +mu4e-draft-open-signature-a (fn &rest args)
     "Prevent `mu4e-compose-signature' from being used with `org-msg-mode'."
     :around #'mu4e-draft-open
     (let ((mu4e-compose-signature (unless org-msg-mode mu4e-compose-signature)))
       (apply fn args)))
-
-  (map! :map org-msg-edit-mode-map
-        "TAB" #'org-msg-tab) ; only <tab> bound by default
 
   (defvar +org-msg-accent-color "#c01c28"
     "Accent color to use in org-msg's generated CSS.
@@ -477,12 +477,11 @@ Must be set before org-msg is loaded to take effect.")
                (table `((margin-top . "6px") (margin-bottom . "6px")
                         (border-left . "none") (border-right . "none")
                         (border-top . "2px solid #222222")
-                        (border-bottom . "2px solid #222222")
-                        ))
+                        (border-bottom . "2px solid #222222")))
                (ftl-number `(,color ,bold (text-align . "left")))
                (inline-modes '(asl c c++ conf cpp csv diff ditaa emacs-lisp
-                                   fundamental ini json makefile man org plantuml
-                                   python sh xml))
+                               fundamental ini json makefile man org plantuml
+                               python sh xml))
                (inline-src `((background-color . "rgba(27,31,35,.05)")
                              (border-radius . "3px")
                              (padding . ".2em .4em")
@@ -631,7 +630,6 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
 
     (defvar +mu4e--last-invalid-gmail-action 0)
 
-    (delq! 'delete mu4e-marks #'assq)
     (setf (alist-get 'delete mu4e-marks)
           (list
            :char '("D" . "✘")
@@ -677,77 +675,3 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
             (`refile (mu4e-action-retag-message msg "-\\Inbox"))
             (`flag   (mu4e-action-retag-message msg "+\\Starred"))
             (`unflag (mu4e-action-retag-message msg "-\\Starred"))))))))
-
-;;
-;;; Alerts
-
-(use-package! mu4e-alert
-  :after mu4e
-  :config
-  (setq doom-modeline-mu4e t)
-
-  (mu4e-alert-enable-mode-line-display)
-  (mu4e-alert-enable-notifications)
-
-  (when (version<= "1.6" mu4e-mu-version)
-    (defadvice! +mu4e-alert-filter-repeated-mails-fixed-a (mails)
-      "Filters the MAILS that have been seen already\nUses :message-id not :docid."
-      :override #'mu4e-alert-filter-repeated-mails
-      (cl-remove-if (lambda (mail)
-                      (prog1 (and (not mu4e-alert-notify-repeated-mails)
-                                  (ht-get mu4e-alert-repeated-mails
-                                          (plist-get mail :message-id)))
-                        (ht-set! mu4e-alert-repeated-mails
-                                 (plist-get mail :message-id)
-                                 t)))
-                    mails)))
-
-  (when IS-LINUX
-    (mu4e-alert-set-default-style 'libnotify)
-
-    (defvar +mu4e-alert-bell-cmd '("paplay" . "/usr/share/sounds/freedesktop/stereo/message.oga")
-      "Cons list with command to play a sound, and the sound file to play.
-Disabled when set to nil.")
-
-    (setq mu4e-alert-email-notification-types '(subjects))
-    (defun +mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group _all-mails)
-      "Default function to format MAIL-GROUP for notification.
-ALL-MAILS are the all the unread emails"
-      (when +mu4e-alert-bell-cmd
-        (start-process "mu4e-alert-bell" nil (car +mu4e-alert-bell-cmd) (cdr +mu4e-alert-bell-cmd)))
-      (if (> (length mail-group) 1)
-          (let* ((mail-count (length mail-group))
-                 (first-mail (car mail-group))
-                 (title-prefix (format "You have %d unread emails"
-                                       mail-count))
-                 (field-value (mu4e-alert--get-group first-mail))
-                 (title-suffix (format (pcase mu4e-alert-group-by
-                                         (`:from "from %s:")
-                                         (`:to "to %s:")
-                                         (`:maildir "in %s:")
-                                         (`:priority "with %s priority:")
-                                         (`:flags "with %s flags:"))
-                                       field-value))
-                 (title (format "%s %s" title-prefix title-suffix)))
-            (list :title title
-                  :body (s-join "\n"
-                                (mapcar (lambda (mail)
-                                          (format "%s<b>%s</b> • %s"
-                                                  (cond
-                                                   ((plist-get mail :in-reply-to) "⮩ ")
-                                                   ((string-match-p "\\`Fwd:"
-                                                                    (plist-get mail :subject)) " ⮯ ")
-                                                   (t "  "))
-                                                  (truncate-string-to-width (or (caar (plist-get mail :from))
-                                                                                (cdar (plist-get mail :from)))
-                                                                            20 nil nil t)
-                                                  (truncate-string-to-width
-                                                   (replace-regexp-in-string "\\`Re: \\|\\`Fwd: " ""
-                                                                             (plist-get mail :subject))
-                                                   40 nil nil t)))
-                                        mail-group))))
-        (let* ((new-mail (car mail-group))
-               (subject (plist-get new-mail :subject))
-               (sender (caar (plist-get new-mail :from))))
-          (list :title sender :body subject))))
-    (setq mu4e-alert-grouped-mail-notification-formatter #'+mu4e-alert-grouped-mail-notification-formatter-with-bell)))

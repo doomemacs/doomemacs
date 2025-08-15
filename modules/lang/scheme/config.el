@@ -2,7 +2,6 @@
 
 (use-package! scheme
   :interpreter ("scsh" . scheme-mode)
-  :hook (scheme-mode . rainbow-delimiters-mode)
   :config
   (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes '(scheme-mode))
   (advice-add #'scheme-indent-function :override #'+scheme-indent-function-a))
@@ -78,8 +77,7 @@
 
 (use-package! flycheck-guile
   :when (modulep! +guile)
-  :when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
+  :when (modulep! :checkers syntax -flymake)
   :after geiser)
 
 ;; Add Guix channels to Guile load path

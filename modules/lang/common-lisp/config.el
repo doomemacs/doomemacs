@@ -1,5 +1,9 @@
 ;;; lang/common-lisp/config.el -*- lexical-binding: t; -*-
 
+(defcustom +lisp-quicklisp-paths '("~/quicklisp" "~/.quicklisp")
+  "A list of directories to search for Quicklisp's site files."
+  :type '(repeat directory))
+
 ;; `lisp-mode' is loaded at startup. In order to lazy load its config we need to
 ;; pretend it isn't loaded
 (defer-feature! lisp-mode)
@@ -10,7 +14,6 @@
 
 ;;;###package lisp-mode
 (defvar inferior-lisp-program "sbcl")
-(add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
 
 (use-package! sly
@@ -76,7 +79,9 @@
       "Attempt to auto-start sly when opening a lisp buffer."
       (cond ((or (doom-temp-buffer-p (current-buffer))
                  (sly-connected-p)))
-            ((executable-find (car (split-string inferior-lisp-program)))
+            ((executable-find (car (if (listp inferior-lisp-program)
+                                       inferior-lisp-program
+                                     (split-string inferior-lisp-program))))
              (let ((sly-auto-start 'always))
                (sly-auto-start)
                (add-hook 'kill-buffer-hook #'+common-lisp--cleanup-sly-maybe-h nil t)))
@@ -110,12 +115,13 @@
           :desc "Remove notes"          "n" #'sly-remove-notes
           :desc "Compile region"        "r" #'sly-compile-region)
          (:prefix ("e" . "evaluate")
-          :desc "Evaluate buffer"     "b" #'sly-eval-buffer
-          :desc "Evaluate last"       "e" #'sly-eval-last-expression
-          :desc "Evaluate/print last" "E" #'sly-eval-print-last-expression
-          :desc "Evaluate defun"      "f" #'sly-eval-defun
-          :desc "Undefine function"   "F" #'sly-undefine-function
-          :desc "Evaluate region"     "r" #'sly-eval-region)
+          :desc "Evaluate buffer"        "b" #'sly-eval-buffer
+          :desc "Evaluate defun"         "d" #'sly-overlay-eval-defun
+          :desc "Evaluate last"          "e" #'sly-eval-last-expression
+          :desc "Evaluate/print last"    "E" #'sly-eval-print-last-expression
+          :desc "Evaluate defun (async)" "f" #'sly-eval-defun
+          :desc "Undefine function"      "F" #'sly-undefine-function
+          :desc "Evaluate region"        "r" #'sly-eval-region)
          (:prefix ("g" . "goto")
           :desc "Go back"              "b" #'sly-pop-find-definition-stack
           :desc "Go to"                "d" #'sly-edit-definition
@@ -141,7 +147,7 @@
           :desc "Who sets"                "S" #'sly-who-sets)
          (:prefix ("r" . "repl")
           :desc "Clear REPL"         "c" #'sly-mrepl-clear-repl
-          :desc "Load Project"       "l" #'+lisp/load-project-systems
+          :desc "Load System"        "l" #'sly-asdf-load-system
           :desc "Quit connection"    "q" #'sly-quit-lisp
           :desc "Restart connection" "r" #'sly-restart-inferior-lisp
           :desc "Reload Project"     "R" #'+lisp/reload-project
@@ -154,7 +160,7 @@
           :desc "Replay stickers"          "r" #'sly-stickers-replay
           :desc "Add/remove sticker"       "s" #'sly-stickers-dwim)
          (:prefix ("t" . "test")
-          :desc "Test System" "s" #'+lisp/test-system)
+          :desc "Test System" "s" #'sly-asdf-test-system)
          (:prefix ("T" . "trace")
           :desc "Toggle"         "t" #'sly-toggle-trace-fdefinition
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
@@ -168,3 +174,13 @@
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-repl-ansi-color))
+
+(use-package! sly-asdf
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-asdf 'append))
+
+(use-package! sly-stepper
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-stepper))

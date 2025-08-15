@@ -1,10 +1,5 @@
 ;;; editor/fold/autoload/hideshow.el -*- lexical-binding: t; -*-
 
-(defface +fold-hideshow-folded-face
-  `((t (:inherit font-lock-comment-face :weight light)))
-  "Face to hightlight `hideshow' overlays."
-  :group 'doom-themes)
-
 ;;;###autoload
 (defun +fold-hideshow-haml-forward-sexp-fn (arg)
   (haml-forward-sexp arg)
@@ -30,7 +25,8 @@
                          'empty-line
                          'vimish-fold-fringe))))
     (overlay-put
-     ov 'display (propertize "  [...]  " 'face '+fold-hideshow-folded-face))))
+     ov 'display (propertize +fold-ellipsis
+                             'face '+fold-hideshow-folded-face))))
 
 
 ;;
@@ -53,7 +49,7 @@ fails. If before is nil, it will return the first line where predicate fails, ot
 the last line where predicate holds."
   (save-excursion
     (goto-char start)
-    (goto-char (point-at-bol))
+    (goto-char (line-beginning-position))
     (let ((bnd (if (> 0 direction)
                    (point-min)
                  (point-max)))
@@ -61,9 +57,9 @@ the last line where predicate holds."
       (when skip (forward-line direction))
       (cl-loop while (and (/= (point) bnd) (funcall predicate base-indent))
                do (progn
-                    (when before (setq pt (point-at-bol)))
+                    (when before (setq pt (line-beginning-position)))
                     (forward-line direction)
-                    (unless before (setq pt (point-at-bol)))))
+                    (unless before (setq pt (line-beginning-position)))))
       pt)))
 
 (defun +fold-hideshow-indent-range (&optional point)

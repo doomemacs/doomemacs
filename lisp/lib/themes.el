@@ -3,16 +3,25 @@
 ;;;###autoload
 (defconst doom-customize-theme-hook nil)
 
+;;;###autoload
+(defun doom--run-customize-theme-hook (fn)
+  "Run FN, but suppress any writes to `custom-file'."
+  (letf! (defun put (symbol prop value)
+           (unless (string-prefix-p "saved-" (symbol-name prop))
+             (funcall put symbol prop value)))
+    (let (custom--inhibit-theme-enable)
+      (funcall fn))))
+
 (add-hook! 'doom-load-theme-hook
   (defun doom-apply-customized-faces-h ()
     "Run `doom-customize-theme-hook'."
-    (run-hooks 'doom-customize-theme-hook)))
+    (run-hook-wrapped 'doom-customize-theme-hook #'doom--run-customize-theme-hook)))
 
-(defun doom--custom-theme-set-face (spec)
+(defun doom--normalize-face-spec (spec)
   (cond ((listp (car spec))
          (cl-loop for face in (car spec)
                   collect
-                  (car (doom--custom-theme-set-face (cons face (cdr spec))))))
+                  (car (doom--normalize-face-spec (cons face (cdr spec))))))
         ((keywordp (cadr spec))
          `((,(car spec) ((t ,(cdr spec))))))
         (`((,(car spec) ,(cdr spec))))))
@@ -27,19 +36,18 @@ all themes. It will apply to all themes once they are loaded."
   (let ((fn (gensym "doom--customize-themes-h-")))
     `(progn
        (defun ,fn ()
-         (let (custom--inhibit-theme-enable)
-           (dolist (theme (ensure-list (or ,theme 'user)))
-             (when (or (eq theme 'user)
-                       (custom-theme-enabled-p theme))
+         (dolist (theme (ensure-list (or ,theme 'user)))
+           (if (or (eq theme 'user)
+                   (custom-theme-enabled-p theme))
                (apply #'custom-theme-set-faces theme
-                      (mapcan #'doom--custom-theme-set-face
-                              (list ,@specs)))))))
+                      (mapcan #'doom--normalize-face-spec
+                              (list ,@specs))))))
        ;; Apply the changes immediately if the user is using the default theme
        ;; or the theme has already loaded. This allows you to evaluate these
        ;; macros on the fly and customize your faces iteratively.
-       (when (or (get 'doom-theme 'previous-themes)
+       (when (or (get 'doom-theme 'history)
                  (null doom-theme))
-         (funcall #',fn))
+         (doom--run-customize-theme-hook #',fn))
        ;; FIXME Prevent clobbering this on-the-fly
        (add-hook 'doom-customize-theme-hook #',fn 100))))
 
@@ -55,23 +63,20 @@ doom-themes' API without worry."
 
 ;;;###autoload
 (defun doom/reload-theme ()
-  "Reload the current Emacs theme."
+  "Reload all currently active themes."
   (interactive)
-  (unless doom-theme
-    (user-error "No theme is active"))
-  (let ((themes (copy-sequence custom-enabled-themes)))
-    (mapc #'disable-theme custom-enabled-themes)
-    (let (doom-load-theme-hook)
-      (mapc #'enable-theme (reverse themes)))
-    (doom-run-hooks 'doom-load-theme-hook)
+  (let* ((themes (copy-sequence custom-enabled-themes))
+         (real-themes (cl-remove-if-not #'doom--theme-is-colorscheme-p themes)))
+    (mapc #'disable-theme themes)
+    (mapc #'enable-theme (reverse themes))
     (doom/reload-font)
     (message "%s %s"
              (propertize
               (format "Reloaded %d theme%s:"
-                      (length themes)
-                      (if (cdr themes) "s" ""))
+                      (length real-themes)
+                      (if (cdr real-themes) "s" ""))
               'face 'bold)
-             (mapconcat #'prin1-to-string themes ", "))))
+             (mapconcat #'prin1-to-string real-themes ", "))))
 
 
 ;;
@@ -107,3 +112,6 @@ non-interactive or frame-less sessions."
                (doom-theme-face-attribute theme face attribute inherit))
         (setq value (face-attribute-merged-with attribute value inherit))))
     value))
+
+(provide 'doom-lib '(themes))
+;;; themes.el ends here

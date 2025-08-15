@@ -5,9 +5,9 @@
   "Name of the workspace created by `=calendar', dedicated to calfw.")
 
 (defun +calendar--init ()
-  (if-let (win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
-                           (doom-visible-windows)
-                           :key #'window-buffer))
+  (if-let* ((win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
+                             (doom-visible-windows)
+                             :key #'window-buffer)))
       (select-window win)
     (call-interactively +calendar-open-function)))
 
@@ -36,7 +36,7 @@
   (interactive)
   (if (modulep! :ui workspaces)
       (when (+workspace-exists-p +calendar-workspace-name)
-        (+workspace/delete +calendar-workspace-name))
+        (+workspace/kill +calendar-workspace-name))
     (when (window-configuration-p +calendar--wconf)
       (set-window-configuration +calendar--wconf))
     (setq +calendar--wconf nil))

@@ -5,9 +5,9 @@
   :hook (doom-first-buffer . undo-fu-mode)
   :config
   ;; Increase undo history limits to reduce likelihood of data loss
-  (setq undo-limit 400000           ; 400kb (default is 160kb)
-        undo-strong-limit 3000000   ; 3mb   (default is 240kb)
-        undo-outer-limit 48000000)  ; 48mb  (default is 24mb)
+  (setq undo-limit 256000           ; 256kb (default is 160kb)
+        undo-strong-limit 2000000   ; 2mb   (default is 240kb)
+        undo-outer-limit 36000000)  ; 36mb  (default is 24mb)
 
   (define-minor-mode undo-fu-mode
     "Enables `undo-fu' for the current session."
@@ -21,7 +21,24 @@
               (define-key map (kbd "C-x r U") #'undo-fu-session-recover)
               map)
     :init-value nil
-    :global t))
+    :global t)
+
+  ;; HACK: If undo-tree creates its diff window next to a popup/side window, the
+  ;;   `balance-window' calls in `undo-tree-visualizer-update-diff' can wreck
+  ;;   havoc on the window tree, making the diff window an unclosable "root"
+  ;;   window (which emacs will happily throw errors about when you call
+  ;;   `undo-tree-visualizer-quit'). Breakage ensues.
+  ;; REVIEW: Should be reported/addressed upstream, in undo-tree!
+  (defadvice! +undo-tree--show-visualizer-diff-safely-a (&optional node)
+    :override #'undo-tree-visualizer-show-diff
+    (setq undo-tree-visualizer-diff t)
+    (let ((buff (with-current-buffer undo-tree-visualizer-parent-buffer
+                  (with-current-buffer (undo-tree-diff node)
+                    (hide-mode-line-mode +1))))
+          (display-buffer-mark-dedicated 'soft)
+          (win (split-window (get-buffer-window undo-tree-visualizer-parent-buffer))))
+      (set-window-buffer win buff)
+      (shrink-window-if-larger-than-buffer win))))
 
 
 (use-package! undo-fu-session

@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; checkers/grammar/packages.el
 
-(package! langtool :pin "8276eccc5587bc12fd205ee58a7a982f0a136e41")
-(package! writegood-mode :pin "ed42d918d98826ad88928b7af9f2597502afc6b0")
+(package! langtool :pin "6605f26f56b7da1499a32885236c02a40b0b0e31")
+(package! writegood-mode :pin "d54eadeedb8bf3aa0e0a584c0a7373c69644f4b8")

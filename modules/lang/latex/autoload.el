@@ -4,7 +4,7 @@
 (defun +latex-indent-item-fn ()
   "Indent LaTeX \"itemize\",\"enumerate\", and \"description\" environments.
 
-\"\\item\" is indented `LaTeX-indent-level' spaces relative to the the beginning
+\"\\item\" is indented `LaTeX-indent-level' spaces relative to the beginning
 of the environment.
 
 See `LaTeX-indent-level-item-continuation' for the indentation strategy this
@@ -65,3 +65,11 @@ typically insert macros."
   (if +latex-enable-unicode-math
       (company-math-symbols-unicode command arg)
     (company-math-symbols-latex command arg)))
+
+;;;###autoload
+(defun +latex/live-preview ()
+  "Launch the AUCTeX viewer and keep the document live compiled on save."
+  (interactive)
+  (auctex-cont-latexmk-mode)
+  (TeX-command-sequence t t)
+  )

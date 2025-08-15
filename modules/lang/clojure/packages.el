@@ -6,21 +6,20 @@
 ;;      git server with shallow clones disabled.
 (package! paredit
   :recipe (:host github :repo "emacsmirror/paredit")
-  :pin "9a2c4b37fc8c1c7bdbb1f86fdec874c0d0652e64")
+  :pin "af075775af91f2dbc63b915d762b4aec092946c4")
 
 ;; HACK Forward declare these clj-refactor/cider deps so that their deps are
 ;;      byte-compiled first.
-(package! parseclj :pin "4d0e780e00f1828b00c43099e6eebc6582998f72")
-(package! parseedn :pin "a09686fbb9113b8b1b4f20c9e1dc0d6fea01a64f")
+(package! parseclj :pin "6af22372e0fe14df882dd300b22b12ba2d7e00b0")
+(package! parseedn :pin "3407e4530a367b6c2b857dae261cdbb67a440aaa")
 
 ;;; Core packages
-(package! clojure-mode :pin "3453cd229b412227aaffd1dc2870fa8fa213c5b1")
-(package! clj-refactor :pin "b5abe655e572a6ecfed02bb8164b64716ef76b8e")
-(package! cider :pin "1ed5163433c991c00ea83fdd4447e8daf4aeccbe")
-(when (and (modulep! :checkers syntax)
-           (not (modulep! :checkers syntax +flymake)))
-  (package! flycheck-clj-kondo :pin "ff7bed2315755cfe02ef471edf522e27b78cd5ca"))
-(package! jet :pin "f007660c568e924e32d486a02aa4cd18203313cc")
+(package! clojure-mode :pin "b766094aea28bdc7b44ce1960d96434fe7d1d9cf")
+(package! clj-refactor :pin "dc1bbc8cdaa723bdbb6669ea7d280625c370755d")
+(package! cider :pin "12f10a6f4b3052a9b437f92cf97d551a5964f4cb")
+(when (modulep! :checkers syntax -flymake)
+  (package! flycheck-clj-kondo :pin "e38c67ba9db1ea1cbe1b61ab39b506c05efdcdbf"))
+(package! jet :pin "c9a92675efd802f37df5e3eab7858dbbeced6ea4")
 (package! neil
   :recipe (:host github :repo "babashka/neil" :files ("*.el"))
-  :pin "1dbac785cee4af8ad499839adbb83a8a297e7c70")
+  :pin "0b7373dd1b5a0dc7f8aff83b8e65d75d7d5e23bc")

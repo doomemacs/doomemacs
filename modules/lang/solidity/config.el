@@ -10,8 +10,7 @@
   (set-formatter! 'prettier-solidity '(npx "prettier" "--stdin-filepath" filepath "--parser=solidity") :modes '(solidity-mode))
 
   (use-package! solidity-flycheck  ; included with solidity-mode
-    :when (and (modulep! :checkers syntax)
-               (not (modulep! :checkers syntax +flymake)))
+    :when (modulep! :checkers syntax -flymake)
     :config
     (setq flycheck-solidity-solc-addstd-contracts t)
     (when (funcall flycheck-executable-find solidity-solc-path)
@@ -21,4 +20,4 @@
 
   (use-package! company-solidity
     :when (modulep! :completion company)
-    :config (delq! 'company-solidity company-backends)))
+    :config (cl-callf2 delq 'company-solidity company-backends)))

@@ -98,17 +98,14 @@ exist, and `org-link' otherwise."
   (when buffer-read-only
     (add-text-properties
      start end
-     (list 'display
-           (concat
-            #(" " 0 1
-              (rear-nonsticky
-               t display (raise 0.05)
-               face (:family "github-octicons"
-                     :inherit font-lock-variable-name-face
-                     :height 0.8
-                     :box (:line-width 1 :style none)))
-              1 2 (face (:height 0.2)))
-            var)))))
+     (list
+      'display
+      (concat (nerd-icons-mdicon "nf-md-toggle_switch") ; "󰔡"
+              " " (propertize var
+                              'face
+                              (if (boundp (intern var))
+                                  'font-lock-variable-name-face
+                                'shadow)))))))
 
 ;;;###autoload
 (defun +org-link--fn-link-activate-fn (start end fn _bracketed-p)
@@ -116,31 +113,25 @@ exist, and `org-link' otherwise."
     (add-text-properties
      start end
      (list 'display
-           (concat
-            #("λ " 0 1 (face (:inherit font-lock-function-name-face
-                              :box (:line-width 1 :style none)
-                              :height 0.9))
-              1 2 (face (:height 0.2)))
-            fn)))))
+           (concat (nerd-icons-mdicon "nf-md-function") ; "󰊕"
+                   " " (propertize fn
+                                   'face
+                                   (if (fboundp (intern fn))
+                                       'font-lock-function-name-face
+                                     'shadow)))))))
 
 ;;;###autoload
-(defun +org-link--face-link-activate-face (start end face _bracketed-p)
+(defun +org-link--face-link-activate-fn (start end face _bracketed-p)
   (when buffer-read-only
     (add-text-properties
      start end
      (list 'display
-           (concat
-            (propertize
-             ""
-             'rear-nonsticky t
-             'display '(raise -0.02)
-             'face (list '(:family "file-icons" :height 1.0)
-                          (if (facep (intern face))
-                              (intern face)
-                            'default)
-                          '(:underline nil)))
-            #(" " 0 1 (face (:underline nil)))
-            face)))))
+           (concat (nerd-icons-mdicon "nf-md-format_text") ; "󰊄"
+                   " " (propertize face
+                                   'face
+                                   (if (facep (intern face))
+                                       (intern face)
+                                     'shadow)))))))
 
 (defun +org-link--command-keys (command)
   "Convert command reference TEXT to key binding representation."
@@ -156,7 +147,7 @@ exist, and `org-link' otherwise."
     (concat prefix (and prefix " ") key-text)))
 
 ;;;###autoload
-(defun +org-link--command-link-activate-command (start end command _bracketed-p)
+(defun +org-link--command-link-activate-fn (start end command _bracketed-p)
   (when buffer-read-only
     (add-text-properties
      start end (list 'display (+org-link--command-keys command)))))
@@ -166,12 +157,11 @@ exist, and `org-link' otherwise."
   (cl-destructuring-bind (&key category module flag)
       (+org-link--read-module-spec module-path)
     (when category
-      (let ((doom-modules-dirs (list doom-modules-dir)))
-        (if-let* ((path (doom-module-locate-path category module))
-                  (path (or (car (doom-glob path "README.org"))
-                            path)))
-            (find-file path)
-          (user-error "Can't find Doom module '%s'" module-path))))
+      (if-let* ((path (doom-module-locate-path (cons category module)))
+                (path (or (car (doom-glob path "README.org"))
+                          path)))
+          (find-file path)
+        (user-error "Can't find Doom module '%s'" module-path)))
     (when flag
       (goto-char (point-min))
       (when (and (re-search-forward "^\\*+ \\(?:TODO \\)?Module flags")
@@ -183,50 +173,36 @@ exist, and `org-link' otherwise."
         (recenter)))))
 
 ;;;###autoload
-(defun +org-link--doom-module-link-face-fn (module-path)
-  (cl-destructuring-bind (&key category module flag)
-      (+org-link--read-module-spec module-path)
-    (if (and category (doom-module-locate-path category module))
-        `(:inherit org-priority
-          :weight bold)
-      'error)))
-
-;;;###autoload
 (defun +org-link--doom-module-link-activate-fn (start end module-path _bracketed-p)
   (when buffer-read-only
     (cl-destructuring-bind (&key category module flag)
         (+org-link--read-module-spec module-path)
       (let ((overall-face
-             (cond
-              ((doom-module-p category module flag)
-               '((:underline nil) org-link org-block bold))
-              ((and category (doom-module-locate-path category module))
-               '(shadow org-block bold))
-              (t '((:strike-through t) error org-block))))
+             (if (and category (doom-module-locate-path (cons category module)))
+                 '((:underline nil) org-link org-block bold)
+               '(shadow org-block bold)))
             (icon-face
-             (if (doom-module-p category module flag) 'success 'error)))
+             (cond
+              ((doom-module-active-p category module flag) 'success)
+              ((and category (doom-module-locate-path (cons category module))) 'warning)
+              (t 'error))))
         (add-text-properties
          start end
          (list 'face overall-face
                'display
                (concat
-                (propertize
-                 " "
-                 'rear-nonsticky t
-                 'display '(raise -0.02)
-                 'face `(:inherit ,icon-face
-                         :family "FontAwesome"
-                         :height 1.0))
-                module-path)))))))
+                (nerd-icons-octicon "nf-oct-stack" ; ""
+                                    :face icon-face)
+                " " module-path)))))))
 
 ;;;###autoload
 (defun +org-link--doom-package-link-activate-fn (start end package _bracketed-p)
   (when buffer-read-only
     (let ((overall-face
            (if (locate-library package)
-               '((:underline nil) org-link org-block italic)
+               '((:underline nil :weight regular) org-link org-block italic)
              '(shadow org-block italic)))
-          (pkg-face
+          (icon-face
            (cond
             ((featurep (intern package)) 'success)
             ((locate-library package) 'warning)
@@ -236,16 +212,12 @@ exist, and `org-link' otherwise."
        (list 'face overall-face
              'display
              (concat
-              (propertize
-               "\uf0c4" ; Octicon package symbol
-               'rear-nonsticky t
-               'display '(raise -0.02)
-               'face `(:family "github-octicons" :height 1.0
-                       :inherit ,pkg-face))
+              (nerd-icons-octicon "nf-oct-package" ; ""
+                                  :face icon-face)
               " " package))))))
 
 ;;;###autoload
-(defun +org-link-follow-doom-package-fn (pkg _prefixarg)
+(defun +org-link--doom-package-link-follow-fn (pkg _prefixarg)
   "TODO"
   (doom/describe-package (intern-soft pkg)))
 
@@ -257,15 +229,11 @@ exist, and `org-link' otherwise."
        start end
        (list 'display
              (concat
-              (nerd-icons-devicon "nf-dev-terminal_badge"
-                                  :rear-nonsticky t
-                                  :display '(raise -0.02)
-                                  :face (list :height 1.0
-                                              :inherit (if found 'success 'error)))
+              (nerd-icons-octicon "nf-oct-terminal" ; ""
+                                  :face (if found 'success 'error))
               " "
-              (propertize
-               executable
-               'face (if found 'org-verbatim 'default))))))))
+              (propertize executable
+                          'face (if found 'org-verbatim 'shadow))))))))
 
 ;;
 ;;; Help-echo / eldoc
@@ -325,9 +293,9 @@ exist, and `org-link' otherwise."
         (cl-destructuring-bind (&key category module flag)
             (+org-link--read-module-spec (org-element-property :path link))
           (cond
-           ((doom-module-p category module)
+           ((doom-module-active-p category module)
             (propertize "enabled" 'face 'success))
-           ((and category (doom-module-locate-path category module))
+           ((and category (doom-module-locate-path (cons category module)))
             (propertize "disabled" 'face 'error))
            (t (propertize "unknown" 'face '(bold error)))))))
       ("doom-executable"
@@ -347,16 +315,14 @@ exist, and `org-link' otherwise."
 (defun +org-image-file-data-fn (protocol link _description)
   "Intepret LINK as an image file path and return its data."
   (setq
-   link (expand-file-name
-         link (pcase protocol
-                ("download"
-                 (or (if (require 'org-download nil t) org-download-image-dir)
-                     (if (require 'org-attach)         org-attach-id-dir)
-                     default-directory))
-                ("attachment"
-                 (require 'org-attach)
-                 org-attach-id-dir)
-                (_ default-directory))))
+   link (pcase protocol
+          ("download"
+           (expand-file-name link (or (if (require 'org-download nil t) org-download-image-dir)
+               default-directory)))
+          ("attachment"
+           (require 'org-attach)
+           (org-attach-expand link))
+          (_ (expand-file-name link default-directory))))
   (when (and (file-exists-p link)
              (image-type-from-file-name link))
     (with-temp-buffer
@@ -375,7 +341,7 @@ exist, and `org-link' otherwise."
   "Interpret LINK as an URL to an image file."
   (when (and (image-type-from-file-name link)
              (not (eq org-display-remote-inline-images 'skip)))
-    (if-let (buf (url-retrieve-synchronously (concat protocol ":" link)))
+    (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
         (with-current-buffer buf
           (goto-char (point-min))
           (re-search-forward "\r?\n\r?\n" nil t)
@@ -443,6 +409,15 @@ exist, and `org-link' otherwise."
                    (org-link-unescape (match-string-no-properties 1)))))
       (delete-region (match-beginning 0) (match-end 0))
       (insert label))))
+
+;;;###autoload
+(defun +org/yank-link ()
+  "Copy the url at point to the clipboard.
+If on top of an Org link, will only copy the link component."
+  (interactive)
+  (let ((url (thing-at-point 'url)))
+    (kill-new (or url (user-error "No URL at point")))
+    (message "Copied link: %s" url)))
 
 ;;;###autoload
 (defun +org/play-gif-at-point ()

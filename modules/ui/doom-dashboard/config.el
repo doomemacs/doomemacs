@@ -183,9 +183,9 @@ PLIST can have the following properties:
   (setq-local auto-hscroll-mode nil)
   ;; Line numbers are ugly with large margins
   (setq-local display-line-numbers-type nil)
-  (cl-loop for (car . _cdr) in fringe-indicator-alist
-           collect (cons car nil) into alist
-           finally do (setq-local fringe-indicator-alist alist))
+  ;; Ensure the ever-changing margins don't screw with the mode-line's
+  ;; right-alignment (see #8114).
+  (setq-local mode-line-right-align-edge 'right-margin)
   ;; Ensure point is always on a button
   (add-hook 'post-command-hook #'+doom-dashboard-reposition-point-h nil 'local)
   ;; hl-line produces an ugly cut-off line highlight in the dashboard, so don't

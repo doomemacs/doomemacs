@@ -18,9 +18,14 @@
 ;; Enable the mouse in terminal Emacs
 (add-hook 'tty-setup-hook #'xterm-mouse-mode)
 
+;; Support for child frames in terminal frames was added in 31. Enable it, if it
+;; is available.
+(when (featurep 'tty-child-frames)
+  (add-hook 'tty-setup-hook #'tty-tip-mode))
+
 ;; Windows terminals don't support what I'm about to do, but best not to wrap
-;; this in a IS-WINDOWS check, in case you're using WSL or Cygwin, which do and
-;; *might* support it.
+;; this in an OS check, in case you're using WSL or Cygwin, which *might*
+;; support it.
 (add-hook! 'tty-setup-hook
   (defun doom-init-clipboard-in-tty-emacs-h ()
     ;; Fix the clipboard in tty Emacs by...
@@ -41,4 +46,19 @@
 ;; http://www.culater.net/software/SIMBL/SIMBL.php and
 ;; https://github.com/saitoha/mouseterm-plus/releases. That makes to support
 ;; VT's DECSCUSR sequence.
-(add-hook 'tty-setup-hook #'evil-terminal-cursor-changer-activate)
+(use-package! evil-terminal-cursor-changer
+  :hook (tty-setup . evil-terminal-cursor-changer-activate))
+
+;; Add support for the Kitty keyboard protocol.
+(use-package! kkp
+  :hook (tty-setup . global-kkp-mode)
+  :config
+  ;; HACK: Allow C-i to function independently of TAB in KKP-supported
+  ;;   terminals. Requires the `input-decode-map' entry in
+  ;;   lisp/doom-keybinds.el.
+  (define-key! key-translation-map
+    [?\C-i] (cmd! (if-let* (((kkp--this-terminal-has-active-kkp-p))
+                            (keys (this-single-command-raw-keys))
+                            ((> (length keys) 2))
+                            ((equal (cl-subseq keys -3) [27 91 49])))
+                      [C-i] [?\C-i]))))

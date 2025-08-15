@@ -40,7 +40,6 @@ is added to the jump-list (managed by [[doom-package:better-jumper]]).
 
 [[fn:recenter]] is called after many hooks and commands, such as:
 - [[var:better-jumper-post-jump-hook]]
-- [[var:rtags-after-find-file-hook]]
 - [[var:org-follow-link-hook]]
 - [[var:imenu-after-jump-hook]]
 - [[var:counsel-grep-post-action-hook]]

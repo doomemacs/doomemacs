@@ -129,7 +129,7 @@ Using optionals attributes FACE, HELP-ECHO and VOFFSET."
   "Set the modeline to NAME.
 If DEFAULT is non-nil, apply to all future buffers. Modelines are defined with
 `def-modeline!'."
-  (if-let (format (assq name +modeline-format-alist))
+  (if-let* ((format (assq name +modeline-format-alist)))
       (cl-destructuring-bind (lhs . rhs) (cdr format)
         (if default
             (setq-default +modeline-format-left lhs
@@ -368,7 +368,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
              ;; In case the user saves the file to a new location
              after-save-hook
              ;; ...or makes external changes then returns to Emacs
-             focus-in-hook
+             doom-switch-frame-hook
              ;; ...or when we change the current project!
              projectile-after-switch-project-hook
              ;; ...when the visited file changes (e.g. it's renamed)
@@ -474,7 +474,7 @@ lines are selected, or the NxM dimensions of a block selection.")
 (defun +modeline-add-selection-segment-h ()
   (add-to-list '+modeline-format-left '+modeline-selection-info 'append))
 (defun +modeline-remove-selection-segment-h ()
-  (delq! '+modeline-selection-info +modeline-format-left))
+  (cl-callf2 delq '+modeline-selection-info +modeline-format-left))
 
 (if (featurep 'evil)
     (progn
@@ -489,7 +489,7 @@ lines are selected, or the NxM dimensions of a block selection.")
   `(:eval
     (let ((sys (coding-system-plist buffer-file-coding-system))
           (eol (coding-system-eol-type-mnemonic buffer-file-coding-system)))
-      (concat (unless (equal eol ,(if IS-WINDOWS "CRLF" "LF"))
+      (concat (unless (equal eol ,(if (featurep :system 'windows) "CRLF" "LF"))
                 (concat "  " eol " "))
               (if (memq (plist-get sys :category)
                         '(coding-category-undecided coding-category-utf-8))

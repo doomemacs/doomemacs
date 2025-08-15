@@ -44,8 +44,9 @@ It does this by ignoring everything before the nearest package root (see
 root)."
   (cond ((doom-special-buffer-p (current-buffer))
          "{PackageName}")
-        ((not (eq major-mode 'java-mode))
-         (user-error "Not in java-mode"))
+        ((and (not (eq major-mode 'java-mode))
+              (not (eq major-mode 'java-ts-mode))
+              (user-error "Not in java-mode or java-ts-mode")))
         ((when-let (project-root (doom-project-root))
            (let* ((project-root (file-truename project-root))
                   (file-path
@@ -73,8 +74,9 @@ root)."
   "Get the class name for the current file."
   (cond ((doom-special-buffer-p (current-buffer))
          "{ClassName}")
-        ((not (eq major-mode 'java-mode))
-         (user-error "Not in java-mode"))
+        ((and (not (eq major-mode 'java-mode))
+              (not (eq major-mode 'java-ts-mode))
+              (user-error "Not in java-mode or java-ts-mode")))
         (buffer-file-name
          (file-name-sans-extension (file-name-base (buffer-file-name))))
         ((user-error "Can't deduce the class name"))))

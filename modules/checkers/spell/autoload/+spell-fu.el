@@ -1,5 +1,5 @@
 ;;; checkers/spell/autoload/+spell-fu.el -*- lexical-binding: t; -*-
-;;;###if (not (modulep! +flyspell))
+;;;###if (modulep! -flyspell)
 
 (defun +spell--correct (replace poss word orig-pt start end)
   (cond ((eq replace 'ignore)

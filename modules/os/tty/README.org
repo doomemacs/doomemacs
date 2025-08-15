@@ -11,6 +11,7 @@ This module configures Emacs for use in the terminal, by providing:
 - Cursor-shape changing across evil states (requires a terminal that supports
   it).
 - Mouse support in the terminal.
+- Support for the [[https://sw.kovidgoyal.net/kitty/keyboard-protocol/][Kitty keyboard protocol]] in supported terminals.
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -25,6 +26,7 @@ This module configures Emacs for use in the terminal, by providing:
 ** Packages
 - [[doom-package:clipetty]] if [[doom-module:+osc]]
 - [[doom-package:evil-terminal-cursor-changer]] if [[doom-module::editor evil]]
+- [[doom-package:kkp]]
 - [[doom-package:xclip]] unless [[doom-module:+osc]]
 
 ** Hacks

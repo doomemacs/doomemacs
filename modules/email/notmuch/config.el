@@ -45,6 +45,7 @@ variable accordingly.")
   (set-company-backend! 'notmuch-message-mode
     'notmuch-company '(company-ispell company-yasnippet))
 
+  (set-popup-rule! "^\\*notmuch" :ignore t)
   (set-popup-rule! "^\\*notmuch-hello" :side 'left :size 30 :ttl 0)
   (set-popup-rule! "^\\*subject:" :size 0.6 :ttl 0)
 
