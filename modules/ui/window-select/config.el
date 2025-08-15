@@ -17,7 +17,7 @@
   :config
   (unless (modulep! +numbers)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-  (setq aw-scope 'frame
+  (setq aw-scope (if (modulep! +global) 'global 'frame)
         aw-background t))
 
 
