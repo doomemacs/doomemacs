@@ -166,6 +166,18 @@
         (indent-region (point-min) (point-max))
         (save-buffer)))))
 
+;;;###autoload
+(defun +literate-indent-elisp-src-blocks ()
+  "Indent all emacs-lisp src blocks in the current Org buffer, then save."
+  (interactive)
+  (save-excursion
+    (org-babel-map-src-blocks nil
+      (when (string= lang "emacs-lisp")
+        (org-babel-do-in-edit-buffer
+          (emacs-lisp-mode)
+          (indent-region (point-min) (point-max)))))
+    (save-buffer)))
+
 ;;
 ;;; Hooks
 
