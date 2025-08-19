@@ -161,7 +161,23 @@ server getting expensively restarted when reverting buffers."
 
   (when (modulep! :completion corfu)
     (setq lsp-completion-provider :none)
-    (add-hook 'lsp-mode-hook #'lsp-completion-mode)))
+    (add-hook 'lsp-mode-hook #'lsp-completion-mode))
+
+  (when (modulep! +booster)
+    (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+      "Prepend emacs-lsp-booster command to lsp CMD."
+      (let ((orig-result (funcall old-fn cmd test?)))
+        (if (and (not test?)                             ;; for check lsp-server-present?
+                 (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+                 (not (functionp 'json-rpc-connection))  ;; native json-rpc
+                 (executable-find "emacs-lsp-booster"))
+            (progn
+              (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+                (setcar orig-result command-from-exec-path))
+              (message "Using emacs-lsp-booster for %s!" orig-result)
+              (append '("emacs-lsp-booster" "--disable-bytecode" "--") orig-result))
+          orig-result)))
+    (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)))
 
 (use-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
