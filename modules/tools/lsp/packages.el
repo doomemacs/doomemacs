@@ -7,7 +7,11 @@
       (when (modulep! :completion vertico)
         (package! consult-eglot :pin "2816f8aad7d6a1e6d5e5b4a5e04c1d74b82b26b8"))
       (when (modulep! :checkers syntax -flymake)
-        (package! flycheck-eglot :pin "0d7f0afc9bf08fce4a3ee225ec6540a91f8cfd76")))
+        (package! flycheck-eglot :pin "0d7f0afc9bf08fce4a3ee225ec6540a91f8cfd76"))
+      (when (modulep! +booster)
+        (package! eglot-booster
+          :recipe (:host github :repo "jdtsmith/eglot-booster")
+          :pin "cab7803c4f0adc7fff9da6680f90110674bb7a22")))
   (package! lsp-mode :pin "65a414ddeb84d0282eda357cbd41ea674a42fd0b")
   (package! lsp-ui :pin "bbb1aa0192cce1ee39c2f36953cc5256d49534a4")
   (when (modulep! :completion ivy)
