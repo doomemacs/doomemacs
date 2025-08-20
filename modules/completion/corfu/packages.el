@@ -11,7 +11,8 @@
   ;; save contributor headaches we should only pin vertico's orderless and leave
   ;; this one unpinned.
   (package! orderless))
-(when (modulep! :os tty)
+(when (and (modulep! :os tty)
+           (not (featurep 'tty-child-frames)))
   (package! corfu-terminal :pin "501548c3d51f926c687e8cd838c5865ec45d03cc"))
 (when (modulep! :editor snippets)
   (package! yasnippet-capf :pin "f53c42a996b86fc95b96bdc2deeb58581f48c666"))
