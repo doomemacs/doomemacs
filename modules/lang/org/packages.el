@@ -142,7 +142,7 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (modulep! :lang rest)
-  (package! ob-restclient :pin "8183f8af08838854cf145ca4855b373f3e7c44b0"))
+  (package! ob-restclient :pin "94dd9cd98ff50717135ed5089afb378616faf11a"))
 (when (modulep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 
