@@ -19,7 +19,6 @@ capture, the end position, and the output buffer.")
   :mode ("/README\\(?:\\.md\\)?\\'" . gfm-mode)
   :init
   (setq markdown-italic-underscore t
-        markdown-asymmetric-header t
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
         markdown-fontify-whole-heading-line t
