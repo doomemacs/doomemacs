@@ -59,7 +59,11 @@ server an expensive restart when its buffer is reverted."
   :when (modulep! +booster)
   :after eglot
   :init
-  (setq eglot-booster-io-only t)
+  (setq eglot-booster-io-only
+        ;; JSON parser on 30+ is faster, so we only exploit eglot-booster's IO
+        ;; buffering (benefits more talkative LSP servers).
+        (and (> emacs-major-version 29)
+             (not (functionp 'json-rpc-connection))))
   :config
   (eglot-booster-mode +1))
 
