@@ -163,21 +163,26 @@ server getting expensively restarted when reverting buffers."
     (setq lsp-completion-provider :none)
     (add-hook 'lsp-mode-hook #'lsp-completion-mode))
 
-  (when (modulep! +booster)
-    (defadvice! +lsp--booster-final-command-a (fn cmd &optional test?)
-      "Prepend emacs-lsp-booster command to lsp CMD."
-      :around #'lsp-resolve-final-command
-      (let ((orig-result (funcall fn cmd test?)))
-        (if (and (not test?)                             ;; for check lsp-server-present?
-                 (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
-                 (not (functionp 'json-rpc-connection))  ;; native json-rpc
-                 (executable-find "emacs-lsp-booster"))
-            (progn
-              (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
-                (setcar orig-result command-from-exec-path))
-              (message "Using emacs-lsp-booster for %s!" orig-result)
-              (append '("emacs-lsp-booster" "--disable-bytecode" "--") orig-result))
-          orig-result)))))
+  ;; TODO: Without eglot-booster's `jsonrpc--json-read' advice, this advice is
+  ;;   counter-productive. And it's questionable whether the marginal gains from
+  ;;   IO buffering beyond Emacs 30+ are worth the trouble. Also needs to be
+  ;;   tested with `lsp-use-plists'.
+  ;; (when (modulep! +booster)
+  ;;   (defadvice! +lsp--booster-final-command-a (fn cmd &optional test?)
+  ;;     "Prepend emacs-lsp-booster command to lsp CMD."
+  ;;     :around #'lsp-resolve-final-command
+  ;;     (let ((orig-result (funcall fn cmd test?)))
+  ;;       (if (and (not test?)                             ;; for check lsp-server-present?
+  ;;                (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+  ;;                (not (functionp 'json-rpc-connection))  ;; native json-rpc
+  ;;                (executable-find "emacs-lsp-booster"))
+  ;;           (progn
+  ;;             (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+  ;;               (setcar orig-result command-from-exec-path))
+  ;;             (message "Using emacs-lsp-booster for %s!" orig-result)
+  ;;             (append '("emacs-lsp-booster" "--disable-bytecode" "--") orig-result))
+  ;;         orig-result))))
+  )
 
 
 (use-package! lsp-ui
