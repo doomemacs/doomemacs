@@ -209,6 +209,7 @@ This function respects the value of `+corfu-want-minibuffer-completion':
 
 (use-package! corfu-terminal
   :when (modulep! :os tty)
+  :unless (featurep 'tty-child-frames)
   :hook ((corfu-mode . corfu-terminal-mode)))
 
 
