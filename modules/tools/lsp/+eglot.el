@@ -55,6 +55,15 @@ server an expensive restart when its buffer is reverted."
       (funcall fn server))))
 
 
+(use-package! eglot-booster
+  :when (modulep! +booster)
+  :after eglot
+  :init
+  (setq eglot-booster-io-only t)
+  :config
+  (eglot-booster-mode +1))
+
+
 (use-package! consult-eglot
   :when (modulep! :completion vertico)
   :defer t
@@ -67,10 +76,3 @@ server an expensive restart when its buffer is reverted."
 (use-package! flycheck-eglot
   :when (modulep! :checkers syntax -flymake)
   :hook (eglot-managed-mode . flycheck-eglot-mode))
-
-(use-package! eglot-booster
-  :when (modulep! +eglot +booster)
-  :after eglot
-  :config (eglot-booster-mode)
-  :init
-  (setq eglot-booster-io-only t))
