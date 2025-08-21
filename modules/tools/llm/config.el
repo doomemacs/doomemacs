@@ -11,7 +11,9 @@
     :select t
     :size 0.3
     :quit nil
-    :ttl nil))
+    :ttl nil)
+  (when (modulep! +mcp)
+    (require 'gptel-integrations)))
 
 
 (use-package! gptel-quick
@@ -26,6 +28,12 @@
 (use-package! gptel-magit
   :when (modulep! :tools magit)
   :hook (magit-mode . gptel-magit-install))
+
+(use-package! mcp
+  :when (and (modulep! +mcp)
+             (>= emacs-major-version 30))
+  :config
+  (require 'mcp-hub))
 
 
 ;; TODO: Aidermacs?
