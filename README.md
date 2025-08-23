@@ -5,7 +5,7 @@
 [Install](#install) • [Documentation] • [FAQ] • [Screenshots] • [Contribute](#contribute)
 
 ![Made with Doom Emacs](https://img.shields.io/github/tag/doomemacs/doomemacs.svg?style=flat-square&label=release&color=58839b)
-![Supports Emacs 27.1–30.1](https://img.shields.io/badge/Supports-Emacs_27.1–30.1-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
+![Supports Emacs 27.1–30.2](https://img.shields.io/badge/Supports-Emacs_27.1–30.2-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
 ![Latest commit](https://img.shields.io/github/last-commit/doomemacs/doomemacs?style=flat-square)
 <!-- ![Build status: master](https://img.shields.io/github/workflow/status/doomemacs/doomemacs/CI/master?style=flat-square) -->
 [![Discord Server](https://img.shields.io/discord/406534637242810369?color=738adb&label=Discord&logo=discord&logoColor=white&style=flat-square)][discord]
@@ -99,8 +99,7 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 # Prerequisites
 - Git 2.23+
-- Emacs 27.1–30.1 (**Recommended: 30.1 +
-  [native-comp](https://www.emacswiki.org/emacs/GccEmacs)**)
+- Emacs 27.1–30.2 (30.2 is recommended; some Doom's modules require 29.1+)
 - [ripgrep] 11.0+
 - GNU `find`
 - *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)

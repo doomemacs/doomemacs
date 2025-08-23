@@ -66,7 +66,7 @@ in."
            (explain! "Because development (or bleeding edge) builds are prone to random breakage, "
                      "there will be a greater burden on you to investigate and deal with issues. "
                      "Please make extra sure that your issue is reproducible on a stable version "
-                     "(between 27.1 and 30.1) before reporting them to Doom's issue tracker!\n"
+                     "(between 27.1 and 30.2) before reporting them to Doom's issue tracker!\n"
                      "\n"
                      "If this doesn't phase you, read the \"Why does Doom not support Emacs HEAD\" QnA "
                      "in Doom's FAQ. It offers some advice for debugging and surviving issues on the "
@@ -75,13 +75,13 @@ in."
           ((= emacs-major-version 27)
            (warn! "Emacs 27 is supported, but not for long!")
            (explain! "Doom will drop 27.x support sometime mid-2025. It's recommended that you upgrade "
-                     "to the latest stable release (currently 30.1). It is better supported, faster, and "
+                     "to the latest stable release (currently 30.2). It is better supported, faster, and "
                      "more stable.")))
 
     (when (and (version= emacs-version "29.4") (featurep 'pgtk))
       (warn! "Detected emacs-pgtk 29.4!")
       (explain! "If you are experiencing segfaults (crashes), consider downgrading to 29.3 or "
-                "upgrading to 30.1+. A known bug in 29.4 causes intermittent crashes. "
+                "upgrading to 30.2+. A known bug in 29.4 causes intermittent crashes. "
                 "See doomemacs#7915 for details.")))
 
   (print! (start "Checking for Doom's prerequisites..."))
