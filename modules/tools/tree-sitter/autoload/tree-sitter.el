@@ -39,6 +39,8 @@ Note that COMMIT is only available in Emacs >=31."
                    ((and (fboundp 'treesit-available-p)
                          (treesit-available-p)
                          (fboundp ts-mode)
+                         (or (eq treesit-enabled-modes t)
+                             (memq ts-mode treesit-enabled-modes))
                          ;; Only prompt once, and log other times.
                          (cl-every (if ensured?
                                        (doom-rpartial #'treesit-ready-p 'message)

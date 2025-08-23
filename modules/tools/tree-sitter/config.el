@@ -7,7 +7,32 @@
   :when (fboundp 'treesit-available-p)
   :when (treesit-available-p)
   :defer t
+  :preface
+  (setq treesit-enabled-modes t)
+
+  ;; HACK: These *-ts-mode-maybe functions all treat `treesit-enabled-modes'
+  ;;   strangely in the event the language's grammar is unavailable. Plus, they
+  ;;   add yet-another-layer of complexity for users to be cognicent of. Get rid
+  ;;   of them.
+  ;; REVIEW: Handle this during the 'doom sync' process instead.
+  (setq auto-mode-alist
+        (save-match-data
+          (cl-loop for (src . fn) in auto-mode-alist
+                   unless (and (functionp fn)
+                               (string-match "-ts-mode-maybe$" (symbol-name fn)))
+                   collect (cons src fn))))
+
   :config
+  ;; HACK: The implementation of `treesit-enabled-modes's setter and
+  ;;   `treesit-major-mode-remap-alist' are intrusively opinionated, so I
+  ;;   disable it altogether as to not unexpectedly modify
+  ;;   `major-mode-remap-alist' at runtime. What's more, there's no guarantee
+  ;;   this will be populated correctly unless the user is on a particular
+  ;;   commit of Emacs 31 or newer. Best we simply ignore it.
+  (dolist (m treesit-major-mode-remap-alist)
+    (setq major-mode-remap-alist (delete m major-mode-remap-alist)))
+  (setq treesit-major-mode-remap-alist nil)
+
   ;; HACK: treesit lacks any way to dictate where to install grammars.
   (add-to-list 'treesit-extra-load-path (concat doom-profile-data-dir "tree-sitter"))
   (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
