@@ -253,18 +253,6 @@ Also adds support for a `:sync' parameter to override `:async'."
             (funcall orig-fn arg info params)
           (funcall fn orig-fn arg info params)))))
 
-  ;; HACK Fix #6061. Seems `org-babel-do-in-edit-buffer' has the side effect of
-  ;;   deleting side windows. Should be reported upstream! This advice
-  ;;   suppresses this behavior wherever it is known to be used.
-  (defadvice! +org-fix-window-excursions-a (fn &rest args)
-    "Suppress changes to the window config anywhere
-`org-babel-do-in-edit-buffer' is used."
-    :around #'evil-org-open-below
-    :around #'evil-org-open-above
-    :around #'org-indent-region
-    :around #'org-indent-line
-    (save-window-excursion (apply fn args)))
-
   (defadvice! +org-fix-newline-and-indent-in-src-blocks-a (&optional indent _arg _interactive)
     "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
     :after #'org-return
