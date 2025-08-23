@@ -719,14 +719,6 @@ mutating hooks on exported output, like formatters."
   (add-to-list 'org-file-apps '(directory . emacs))
   (add-to-list 'org-file-apps '(remote . emacs))
 
-  ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
-  ;; `org-auto-align-tags', such as in `org-self-insert-command' and
-  ;; `org-delete-backward-char'.
-  ;; TODO Should be reported/PR'ed upstream
-  (defadvice! +org--respect-org-auto-align-tags-a (&rest _)
-    :before-while #'org-fix-tags-on-the-fly
-    org-auto-align-tags)
-
   (defadvice! +org--strip-properties-from-outline-a (fn &rest args)
     "Fix variable height faces in eldoc breadcrumbs."
     :around #'org-format-outline-path
