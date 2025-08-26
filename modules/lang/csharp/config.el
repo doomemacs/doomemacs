@@ -2,6 +2,9 @@
 
 (use-package! csharp-mode
   :hook (csharp-mode . rainbow-delimiters-mode)
+  :init
+  (when (modulep! +tree-sitter)
+    (set-tree-sitter! 'csharp-mode 'csharp-ts-mode 'c-sharp))
   :config
   (set-formatter! 'csharpier '("csharpier" "format" "--write-stdout")
     :modes '(csharp-mode csharp-ts-mode))
@@ -38,26 +41,12 @@
     (add-hook 'csharp-mode-local-vars-hook #'lsp! 'append)
     (add-hook 'csharp-ts-mode-local-vars-hook #'lsp! 'append))
 
-  (when (and (modulep! +tree-sitter)
-             (fboundp 'csharp-ts-mode)) ; 29.1+ only
-    (set-tree-sitter! 'csharp-mode 'csharp-ts-mode
-      '((c-sharp :url "https://github.com/tree-sitter/tree-sitter-c-sharp"
-                 :rev "v0.23.1"))))
-
   (defadvice! +csharp-disable-clear-string-fences-a (fn &rest args)
     "This turns off `c-clear-string-fences' for `csharp-mode'. When
 on for `csharp-mode' font lock breaks after an interpolated string
 or terminating simple string."
     :around #'csharp-disable-clear-string-fences
     (unless (eq major-mode 'csharp-mode)
-      (apply fn args)))
-
-  ;; HACK: `csharp-ts-mode' changes `auto-mode-alist' every time the mode is
-  ;;   activated, which runs the risk of overwriting user (or Doom) entries.
-  ;; REVIEW: Should be addressed upstream.
-  (defadvice! +csharp--undo-ts-side-effects-a (fn &rest args)
-    :around #'csharp-ts-mode
-    (let (auto-mode-alist)
       (apply fn args))))
 
 

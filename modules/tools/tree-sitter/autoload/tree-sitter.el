@@ -15,10 +15,11 @@ MODE and TS-MODE are major mode symbols. If RECIPES is provided, fall back to
 MODE if RECIPES don't pass `treesit-ready-p' when activating TS-MODE. Use this
 for ts modes that error out instead of failing gracefully.
 
-RECIPES are an alist of plists with the format (LANG &key URL REV SOURCE-DIR CC
-CPP COMMIT), which will be transformed into entries for
-`treesit-language-source-alist' (which descrie what each of these keys mean).
-Note that COMMIT is only available in Emacs >=31."
+RECIPES is a symbol (a grammar language name), list thereof, or alist of plists
+with the format (LANG &key URL REV SOURCE-DIR CC CPP COMMIT). If an alist of
+plists, it will be transformed into entries for `treesit-language-source-alist'
+(which describe what each of these keys mean). Note that COMMIT is ignored
+pre-Emacs 31."
   (declare (indent 2))
   (cl-check-type mode symbol)
   (cl-check-type ts-mode symbol)
@@ -41,6 +42,11 @@ Note that COMMIT is only available in Emacs >=31."
                          (fboundp ts-mode)
                          (or (eq treesit-enabled-modes t)
                              (memq ts-mode treesit-enabled-modes))
+                         ;; Lazily load autoload so
+                         ;; `treesit-language-source-alist' is initialized.
+                         (let ((fn (symbol-function ts-mode)))
+                           (or (not (autoloadp fn))
+                               (autoload-do-load fn)))
                          ;; Only prompt once, and log other times.
                          (cl-every (if ensured?
                                        (doom-rpartial #'treesit-ready-p 'message)
@@ -54,16 +60,16 @@ Note that COMMIT is only available in Emacs >=31."
                     m))))))))
   (with-eval-after-load 'treesit
     (dolist (recipe recipes)
-      (cl-destructuring-bind (name &key url rev source-dir cc cpp commit)
-          (ensure-list recipe)
-        (setf (alist-get name treesit-language-source-alist)
-              (append (list url rev source-dir cc cpp)
-                      ;; COMPAT: 31.1 introduced a COMMIT recipe argument. On
-                      ;;   <=30.x, extra arguments will trigger an arity error
-                      ;;   when installing grammars.
-                      (if (eq (cdr (func-arity 'treesit--install-language-grammar-1))
-                              'many)
-                          (list commit))))))))
+      (when (cdr (setq recipe (ensure-list recipe)))
+        (cl-destructuring-bind (name &key url rev source-dir cc cpp commit) recipe
+          (setf (alist-get name treesit-language-source-alist)
+                (append (list url rev source-dir cc cpp)
+                        ;; COMPAT: 31.1 introduced a COMMIT recipe argument. On
+                        ;;   <=30.x, extra arguments will trigger an arity error
+                        ;;   when installing grammars.
+                        (if (eq (cdr (func-arity 'treesit--install-language-grammar-1))
+                                'many)
+                            (list commit)))))))))
 
 ;; ;; HACK: Remove and refactor when `use-package' eager macro expansion is solved or `use-package!' is removed
 ;; ;;;###autoload
@@ -81,6 +87,11 @@ Note that COMMIT is only available in Emacs >=31."
 ;;                 (evil-textobj-tree-sitter-goto-textobj group previous end query)))
 ;;     sym))
 
+;;;###autoload
+(defun +tree-sitter-ts-mode-inhibit-side-effects-a (fn &rest args)
+  "Suppress changes to `auto-mode-alist' and `interpreter-mode-alist'."
+  (let (auto-mode-alist interpreter-mode-alist)
+    (apply fn args)))
 
 ;;; TODO: Backwards compatibility
 

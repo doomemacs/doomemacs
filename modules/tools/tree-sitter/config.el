@@ -10,37 +10,41 @@
   :preface
   (setq treesit-enabled-modes t)
 
-  ;; HACK: These *-ts-mode-maybe functions all treat `treesit-enabled-modes'
-  ;;   strangely in the event the language's grammar is unavailable. Plus, they
-  ;;   add yet-another-layer of complexity for users to be cognicent of. Get rid
-  ;;   of them.
-  ;; REVIEW: Handle this during the 'doom sync' process instead.
-  (setq auto-mode-alist
-        (save-match-data
-          (cl-loop for (src . fn) in auto-mode-alist
-                   unless (and (functionp fn)
-                               (string-match "-ts-mode-maybe$" (symbol-name fn)))
-                   collect (cons src fn))))
+  ;; HACK: The *-ts-mode major modes are inconsistent about how they treat
+  ;;   missing language grammars (some error out, some respect
+  ;;   `treesit-auto-install-grammar', some fall back to `fundamental-mode').
+  ;;   I'd like to address this poor UX using `major-mode-remap-alist' entries
+  ;;   created by `set-tree-sitter!' (which will fall back to the non-treesit
+  ;;   modes), but most *-ts-mode's clobber `auto-mode-alist' and/or
+  ;;   `interpreter-mode-alist' each time the major mode is activated, so those
+  ;;   must be undone too so they don't overwrite user config.
+  ;; TODO: Handle this during the 'doom sync' process instead.
+  (save-match-data
+    (dolist (sym '(auto-mode-alist interpreter-mode-alist))
+      (set
+       sym (cl-loop for (src . fn) in (symbol-value sym)
+                    unless (and (functionp fn)
+                                (string-match "-ts-mode\\(?:-maybe\\)?$" (symbol-name fn)))
+                    collect (cons src fn)))))
+
+  ;; HACK: These *-ts-modes change `auto-mode-alist' and/or
+  ;;   `interpreter-mode-alist' every time they are activated, running the risk
+  ;;   of overwriting user (or Doom) config.
+  ;; REVIEW: Should be addressed upstream.
+  (dolist (mode '(csharp-ts-mode
+                  python-ts-mode))
+    (advice-add mode :around #'+tree-sitter-ts-mode-inhibit-side-effects-a))
 
   :config
   ;; HACK: The implementation of `treesit-enabled-modes's setter and
-  ;;   `treesit-major-mode-remap-alist' are intrusively opinionated, so I
-  ;;   disable it altogether as to not unexpectedly modify
-  ;;   `major-mode-remap-alist' at runtime. What's more, there's no guarantee
-  ;;   this will be populated correctly unless the user is on a particular
-  ;;   commit of Emacs 31 or newer. Best we simply ignore it.
-  (dolist (m treesit-major-mode-remap-alist)
-    (setq major-mode-remap-alist (delete m major-mode-remap-alist)))
+  ;;   `treesit-major-mode-remap-alist' is intrusively opinionated, so disable
+  ;;   it ato avoid untimely (and overriding) modifications of
+  ;;   `major-mode-remap-alist' at runtime. What's more, this was only
+  ;;   introduced in 31, so ignoring them is more consistent for pre-31 users.
+  (when major-mode-remap-alist
+    (dolist (m treesit-major-mode-remap-alist)
+      (setq major-mode-remap-alist (delete m major-mode-remap-alist))))
   (setq treesit-major-mode-remap-alist nil)
-
-  ;; HACK: treesit lacks any way to dictate where to install grammars.
-  (add-to-list 'treesit-extra-load-path (concat doom-profile-data-dir "tree-sitter"))
-  (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
-    "Write grammars to `doom-profile-data-dir'."
-    :around #'treesit-install-language-grammar
-    :around #'treesit--build-grammar
-    (let ((user-emacs-directory doom-profile-data-dir))
-      (apply fn args)))
 
   ;; HACK: Some *-ts-mode packages modify `major-mode-remap-defaults'
   ;;   inconsistently. Playing whack-a-mole to undo those changes is more hassle
@@ -55,6 +59,15 @@
                +tree-sitter--major-mode-remaps-alist
              major-mode-remap-defaults)))
       (funcall fn mode)))
+
+  ;; HACK: Keep $EMACSDIR clean by installing grammars to the active profile.
+  (add-to-list 'treesit-extra-load-path (concat doom-profile-data-dir "tree-sitter"))
+  (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
+    "Write grammars to `doom-profile-data-dir'."
+    :around #'treesit-install-language-grammar
+    :around #'treesit--build-grammar
+    (let ((user-emacs-directory doom-profile-data-dir))
+      (apply fn args)))
 
   ;; TODO: Move most of these out to modules
   (dolist (map '((awk "https://github.com/Beaglefoot/tree-sitter-awk" nil nil nil nil)

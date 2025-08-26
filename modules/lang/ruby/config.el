@@ -41,8 +41,7 @@
   :when (fboundp 'ruby-ts-mode) ; 29.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'ruby-mode 'ruby-ts-mode
-    '((ruby :url "https://github.com/tree-sitter/tree-sitter-ruby")))
+  (set-tree-sitter! 'ruby-mode 'ruby-ts-mode 'ruby)
   :config
   (set-electric! 'ruby-ts-mode :words '("else" "end" "elsif"))
   (set-repl-handler! 'ruby-ts-mode #'inf-ruby)

@@ -25,9 +25,7 @@
   :when (fboundp 'json-ts-mode) ; 29.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'json-mode 'json-ts-mode
-    '((json :url "https://github.com/tree-sitter/tree-sitter-json"
-            :rev "v0.24.8")))
+  (set-tree-sitter! 'json-mode 'json-ts-mode 'json)
   :config
   ;; HACK: Rely on `major-mode-remap-defaults'.
   (cl-callf2 assq-delete-all 'json-ts-mode auto-mode-alist)

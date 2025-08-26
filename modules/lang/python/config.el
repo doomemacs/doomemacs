@@ -20,8 +20,7 @@
         python-indent-guess-indent-offset-verbose nil)
 
   (when (modulep! +tree-sitter)
-    (set-tree-sitter! 'python-mode 'python-ts-mode
-      '((python :url "https://github.com/tree-sitter/tree-sitter-python"))))
+    (set-tree-sitter! 'python-mode 'python-ts-mode 'python))
 
   :config
   ;; HACK: `python-base-mode' (and `python-ts-mode') don't exist on pre-29
@@ -98,16 +97,7 @@
 
   ;; HACK: `python-mode' doesn't update `tab-width' to reflect
   ;;   `python-indent-offset', causing issues anywhere `tab-width' is respected.
-  (setq-hook! '(python-mode-hook python-ts-mode-hook) tab-width python-indent-offset)
-
-  ;; HACK: `python-ts-mode' changes `auto-mode-alist' and
-  ;;   `interpreter-mode-alist' every time the mode is activated, which runs the
-  ;;   risk of overwriting user (or Doom) entries.
-  ;; REVIEW: Should be addressed upstream.
-  (defadvice! +python--undo-ts-side-effects-a (fn &rest args)
-    :around #'python-ts-mode
-    (let (auto-mode-alist interpreter-mode-alist)
-      (apply fn args))))
+  (setq-hook! '(python-mode-hook python-ts-mode-hook) tab-width python-indent-offset))
 
 
 (use-package! pyimport

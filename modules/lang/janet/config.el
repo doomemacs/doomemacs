@@ -30,9 +30,4 @@
   :init
   (set-tree-sitter! 'janet-mode 'janet-ts-mode
     `(janet-simple :url "https://github.com/sogaiu/tree-sitter-janet-simple"
-                   :cc ,(if (featurep :system 'windows) "gcc.exe")))
-  :config
-  ;; HACK: These entries are inserted twice by this package, so remove them so
-  ;;   this module can be the single source of truth.
-  (cl-callf2 rassq-delete-all 'janet-ts-mode auto-mode-alist)
-  (cl-callf2 rassq-delete-all 'janet-ts-mode interpreter-mode-alist))
+                   :cc ,(if (featurep :system 'windows) "gcc.exe"))))

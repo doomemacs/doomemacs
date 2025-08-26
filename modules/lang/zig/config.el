@@ -47,7 +47,4 @@
     '((zig :url "https://github.com/tree-sitter/zig-tree-sitter"
            :rev "v0.25.0")))
   :config
-  ;; HACK: Rely on `major-mode-remap-defaults'
-  (cl-callf2 rassq-delete-all 'zig-ts-mode auto-mode-alist)
-
   (+zig-common-config 'zig-ts-mode))

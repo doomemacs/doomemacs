@@ -83,16 +83,8 @@
   :when (fboundp 'php-ts-mode) ; 30.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'php-mode 'php-ts-mode
-    '((php :url "https://github.com/tree-sitter/tree-sitter-php"
-       :rev "v0.23.11"
-       :source-dir "php/src")
-      (phpdoc :url "https://github.com/claytonrcarter/tree-sitter-phpdoc")))
+  (set-tree-sitter! 'php-mode 'php-ts-mode '(php phpdoc))
   :config
-  ;; HACK: Rely on `major-mode-remap-defaults'.
-  (cl-callf2 rassq-delete-all 'php-ts-mode auto-mode-alist)
-  (cl-callf2 rassq-delete-all 'php-ts-mode interpreter-mode-alist)
-
   (+php-common-config 'php-ts-mode))
 
 

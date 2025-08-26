@@ -59,16 +59,8 @@
   :when (fboundp 'elixir-ts-mode) ; 30.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'elixir-mode 'elixir-ts-mode
-    '((elixir :url "https://github.com/elixir-lang/tree-sitter-elixir"
-              :rev "v0.3.3")
-      (heex :url "https://github.com/phoenixframework/tree-sitter-heex"
-            :rev "v0.7.0")))
+  (set-tree-sitter! 'elixir-mode 'elixir-ts-mode '(elixir heex))
   :config
-  ;; HACK: Rely on `major-mode-remap-defaults' (and elixir-mode's autoloaded
-  ;;   auto-mode-alist entries).
-  (cl-callf2 rassq-delete-all 'elixir-ts-mode auto-mode-alist)
-
   (+elixir-common-config 'elixir-ts-mode))
 
 

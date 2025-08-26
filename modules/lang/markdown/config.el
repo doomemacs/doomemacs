@@ -131,14 +131,7 @@ capture, the end position, and the output buffer.")
   :when (fboundp 'markdown-ts-mode)
   :defer t
   :init
-  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode
-    '((markdown :url "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
-                :rev "v0.4.1"
-                :source-dir "tree-sitter-markdown-inline/src")
-      (markdown-inline :url "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
-                       :rev "v0.4.1"
-                       :source-dir "tree-sitter-markdown-inline/src")))
-
+  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode '(markdown markdown-inline))
   :config
   (cl-callf2 delete '("\\.md\\'" . markdown-ts-mode) auto-mode-alist))
 

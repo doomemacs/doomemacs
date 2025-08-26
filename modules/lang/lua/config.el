@@ -30,9 +30,7 @@
   :when (fboundp 'lua-ts-mode) ; 30.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'lua-mode 'lua-ts-mode
-    '((lua :url "https://github.com/tree-sitter-grammars/tree-sitter-lua"
-           :rev "v0.3.0")))
+  (set-tree-sitter! 'lua-mode 'lua-ts-mode 'lua)
   :config
   (set-lookup-handlers! 'lua-ts-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-ts-mode :words '("else" "end"))
