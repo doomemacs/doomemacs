@@ -26,6 +26,7 @@ e.g. ~cargo~.
   editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
+- [[doom-package:rust-mode]]
 - [[doom-package:rustic]]
 
 ** Hacks

@@ -8,15 +8,46 @@
 ;;
 ;;; Packages
 
-(use-package! rustic
+;; HACK: `rust-mode' and `rustic' add entries to `auto-mode-alist', but package
+;;   load order makes which gets precedence unpredictable. By removing them
+;;   early, we rely on our own entries in `auto-mode-alist' and
+;;   `major-mode-remap-defaults' to ensure correct order.
+(cl-callf2 rassq-delete-all 'rust-mode auto-mode-alist)
+(cl-callf2 rassq-delete-all 'rustic-mode auto-mode-alist)
+
+
+(use-package! rust-mode
   :mode ("\\.rs\\'" . rust-mode)
-  :mode ("\\.rs\\'" . rustic-mode)
+  :defer t
   :preface
-  ;; HACK: `rust-mode' and `rustic' add entries to `auto-mode-alist', but
-  ;;   package load order makes which gets precedence unpredictable. By removing
-  ;;   them early, we rely on the `:mode' directives above to re-insert them
-  ;;   with the correct order.
-  (setq auto-mode-alist (assoc-delete-all "\\.rs\\'" auto-mode-alist))
+  ;; Ensure rust-mode derives from rust-ts-mode, b/c rustic-mode derives from
+  ;; rust-mode. This way, rustic-mode is the only major mode we have to worry
+  ;; about.
+  (setq rust-mode-treesitter-derive (modulep! +tree-sitter))
+
+  :config
+  (setq rust-indent-method-chain t)
+
+  ;; Load order is important for these two packages.
+  (let (auto-mode-alist)
+    (require 'rustic-mode nil t)))
+
+
+(use-package! rust-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'rust-ts-mode) ; 29.1+ only
+  :defer t
+  :init
+  (set-tree-sitter! 'rust-mode 'rust-ts-mode 'rust)
+
+  (add-to-list 'major-mode-remap-defaults '(rust-mode . rust-ts-mode) t))
+
+
+(use-package! rustic
+  :defer t
+  :preface
+  (unless (assq 'rust-mode major-mode-remap-defaults)
+    (add-to-list 'major-mode-remap-defaults '(rust-mode . rustic-mode)))
 
   ;; HACK `rustic' sets up some things too early. I'd rather disable it and let
   ;;   our respective modules standardize how they're initialized.
@@ -27,20 +58,19 @@
     (remove-hook 'rustic-mode-hook #'flycheck-mode)
     (remove-hook 'rustic-mode-hook #'flymake-mode-off)
     (remove-hook 'flycheck-mode-hook #'rustic-flycheck-setup))
+
   :init
   ;; HACK Certainly, `rustic-babel' does this, but the package (and many other
   ;;   rustic packages) must be loaded in order for them to take effect. To lazy
-  ;;   load it all, we must do it early:
+  ;;   load it all, it must be done earlier:
   (after! org-src
     (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
     (add-to-list 'org-src-lang-modes '("rust" . rustic)))
+
   :config
-  (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
   (set-docsets! 'rustic-mode "Rust")
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
   (set-popup-rule! "^\\*cargo-run" :vslot -1)
-
-  (setq rustic-indent-method-chain t)
 
   ;; Leave automatic reformatting to the :editor format module.
   (setq rustic-babel-format-src-block nil
@@ -60,7 +90,7 @@
     ;;   response of Rust Analyzer, which is not stable enough for `lsp-mode'
     ;;   maintainers (see emacs-lsp/lsp-mode#1740).
     (unless (modulep! :tools lsp +eglot)
-      (defadvice! +rust--dont-cache-results-from-ra-a (fn &rest args)
+      (defadvice! +rust--dont-cache-results-from-ra-a (&rest _)
         :after #'lsp-eldoc-function
         (when (derived-mode-p 'rust-mode 'rust-ts-mode)
           (setq lsp--hover-saved-bounds nil)))
@@ -84,9 +114,6 @@
                          (s-join " "))))
           (lsp--render-element (concat "```rust\n" sig cmt "\n```"))))))
 
-  (when (modulep! +tree-sitter)
-    (add-hook 'rustic-mode-local-vars-hook #'tree-sitter! 'append))
-
   ;; HACK If lsp/eglot isn't available, it attempts to install lsp-mode via
   ;;   package.el. Doom manages its own dependencies through straight so disable
   ;;   this behavior to avoid package-not-initialized errors.
@@ -97,17 +124,17 @@
   (map! :map rustic-mode-map
         :localleader
         (:prefix ("b" . "build")
-          :desc "cargo audit"      "a" #'+rust/cargo-audit
-          :desc "cargo build"      "b" #'rustic-cargo-build
-          :desc "cargo bench"      "B" #'rustic-cargo-bench
-          :desc "cargo check"      "c" #'rustic-cargo-check
-          :desc "cargo clippy"     "C" #'rustic-cargo-clippy
-          :desc "cargo doc"        "d" #'rustic-cargo-build-doc
-          :desc "cargo doc --open" "D" #'rustic-cargo-doc
-          :desc "cargo fmt"        "f" #'rustic-cargo-fmt
-          :desc "cargo new"        "n" #'rustic-cargo-new
-          :desc "cargo outdated"   "o" #'rustic-cargo-outdated
-          :desc "cargo run"        "r" #'rustic-cargo-run)
+         :desc "cargo audit"      "a" #'+rust/cargo-audit
+         :desc "cargo build"      "b" #'rustic-cargo-build
+         :desc "cargo bench"      "B" #'rustic-cargo-bench
+         :desc "cargo check"      "c" #'rustic-cargo-check
+         :desc "cargo clippy"     "C" #'rustic-cargo-clippy
+         :desc "cargo doc"        "d" #'rustic-cargo-build-doc
+         :desc "cargo doc --open" "D" #'rustic-cargo-doc
+         :desc "cargo fmt"        "f" #'rustic-cargo-fmt
+         :desc "cargo new"        "n" #'rustic-cargo-new
+         :desc "cargo outdated"   "o" #'rustic-cargo-outdated
+         :desc "cargo run"        "r" #'rustic-cargo-run)
         (:prefix ("t" . "cargo test")
-          :desc "all"              "a" #'rustic-cargo-test
-          :desc "current test"     "t" #'rustic-cargo-current-test)))
+         :desc "all"              "a" #'rustic-cargo-test
+         :desc "current test"     "t" #'rustic-cargo-current-test)))
