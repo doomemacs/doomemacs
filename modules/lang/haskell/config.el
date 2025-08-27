@@ -28,9 +28,6 @@
              #'haskell-collapse-mode ; support folding haskell code blocks
              #'interactive-haskell-mode)
 
-  (when (modulep! +tree-sitter)
-    (add-hook 'haskell-mode-local-vars-hook #'tree-sitter! 'append))
-
   (add-to-list 'completion-ignored-extensions ".hi")
 
   (map! :map haskell-mode-map
@@ -45,6 +42,16 @@
         "c" #'haskell-cabal-visit-file
         "h" #'haskell-hide-toggle
         "H" #'haskell-hide-toggle-all))
+
+
+;; TODO: Mirror other haskell-mode config to ts-mode
+(use-package! haskell-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'haskell-ts-mode)
+  :defer t
+  :init
+  (set-tree-sitter! 'haskell-mode 'haskell-ts-mode
+    '((haskell :url "https://github.com/tree-sitter/tree-sitter-haskell"))))
 
 
 (use-package! lsp-haskell
