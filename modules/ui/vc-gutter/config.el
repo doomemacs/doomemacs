@@ -171,7 +171,10 @@ Respects `diff-hl-disable-on-remote'."
                 (null (buffer-file-name (buffer-base-buffer)))
                 (null (get-buffer-window (current-buffer))))
       (setq diff-hl-timer nil)
-      (if (diff-hl--use-async-p)
+      (if (and diff-hl-update-async
+               (not
+                (run-hook-with-args-until-success 'diff-hl-async-inhibit-functions
+                                                  default-directory)))
           (progn
             (+vc-gutter--kill-thread)
             (setq +vc-gutter--diff-hl-thread
