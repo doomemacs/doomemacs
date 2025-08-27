@@ -30,12 +30,17 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
            (modulep! :tools lsp -eglot))
   (load! "+lsp"))
 
-(when (modulep! +tree-sitter)
-  (add-hook 'java-mode-local-vars-hook #'tree-sitter! 'append))
-
 
 ;;
 ;;; Common packages
+
+(use-package! java-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'java-ts-mode) ; 29.1+ only
+  :defer t
+  :init
+  (set-tree-sitter! 'java-mode 'java-ts-mode '(java doxygen)))
+
 
 (use-package! android-mode
   :commands android-mode
