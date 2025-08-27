@@ -1,12 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/helm/packages.el
 
-(package! helm :pin "90cd6ad68c472b9908346ea3d39b63e2547fcc3d")
+(package! helm :pin "c8d147be4d89cb3355b89a645ba3703a46bad15d")
 (package! helm-company :pin "4622b82353220ee6cc33468f710fa5b6b253b7f1")
 (package! helm-c-yasnippet :pin "c5880e740da101fde7a995e94a7b16c330e57583")
-(package! helm-descbinds :pin "c12bc85ef3ce342fe1c78cdd86117c05d5310789")
+(package! helm-descbinds :pin "0aff44badad976ebf2666a7e9b6ddf4db53e59e5")
 (package! helm-describe-modes :pin "11fb36af119b784539d31c6160002de1957408aa")
-(package! helm-projectile :pin "041076e35a6663302a91a0fa672f847c7d64bf29")
+(package! helm-projectile :pin "41bc1c1973a1528f9ae974701d42e3deccce5cbe")
 (package! helm-rg :pin "ee0a3c09da0c843715344919400ab0a0190cc9dc")
 (package! swiper-helm :pin "93fb6db87bc6a5967898b5fd3286954cc72a0008")
 
