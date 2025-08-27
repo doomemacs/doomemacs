@@ -7,7 +7,3 @@
 (when (modulep! :editor format)
   (unless (executable-find "shfmt")
     (warn! "Couldn't find shfmt. Code formatting will not work.")))
-
-(assert! (or (modulep! -tree-sitter)
-             (modulep! :tools tree-sitter))
-         "This module requires (:tools tree-sitter)")
