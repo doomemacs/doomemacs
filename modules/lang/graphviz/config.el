@@ -8,10 +8,6 @@
   :config
   (set-company-backend! 'graphviz-dot-mode 'company-graphviz-dot-backend)
   (set-formatter! 'graphviz-dot #'+graphviz-formatter :modes '(graphviz-dot-mode))
-  (set-tree-sitter-lang! 'graphviz-dot-mode 'dot)
-
-  (when (modulep! +tree-sitter)
-    (add-hook 'graphiz-dot-mode-hook #'tree-sitter!))
 
   (after! dtrt-indent
     (add-to-list 'dtrt-indent-hook-mapping-list '(graphviz-mode graphviz-dot-indent-width)))
