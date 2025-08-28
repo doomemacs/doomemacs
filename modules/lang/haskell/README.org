@@ -21,6 +21,7 @@ This module adds Haskell support to Doom Emacs.
   
 ** Packages
 - [[doom-package:haskell-mode]]
+- [[doom-package:haskell-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:lsp-haskell]] if [[doom-module:+lsp]]
 
 ** Hacks
