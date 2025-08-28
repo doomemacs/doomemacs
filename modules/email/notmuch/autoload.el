@@ -116,7 +116,9 @@
   (notmuch-mua-mail
    nil
    nil
-   (list (cons 'From  (completing-read "From: " (notmuch-user-emails))))))
+   (list (cons 'From  (message-make-from
+                         (notmuch-user-name)
+                         (completing-read "From: " (notmuch-user-emails)))))))
 
 ;;;###autoload
 (defun +notmuch/open-message-with-mail-app-notmuch-tree ()
