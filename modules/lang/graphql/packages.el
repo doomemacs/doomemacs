@@ -7,3 +7,5 @@
   (package! company-graphql
     :recipe (:host github :repo "thaenalpha/company-graphql")
     :pin "aed9f5109e877944a895d08fc08bad103f03096b"))
+(when (modulep! +tree-sitter)
+  (package! graphql-ts-mode :pin "e933f235408ea195762700fd07c2d828e8f09aac"))

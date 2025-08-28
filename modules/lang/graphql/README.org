@@ -26,10 +26,14 @@ It includes:
 - +lsp ::
   Enable LSP support for ~graphql-mode~. Requires [[doom-module::tools lsp]] and a langserver
   ([[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#readme][graphql-language-service-cli]]).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:company-graphql]] unless [[doom-module:+lsp]]
 - [[doom-package:graphql-mode]]
+- [[doom-package:graphql-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:graphql-doc]]
 
 ** Hacks
