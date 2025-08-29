@@ -1,8 +1,5 @@
 ;;; lang/php/config.el -*- lexical-binding: t; -*-
 
-(defvar +php--company-backends nil
-  "List of company backends to use in `php-mode'.")
-
 (defvar +php-default-docker-container "php-fpm"
   "The default docker container to run commands in.")
 
@@ -48,13 +45,7 @@
     :return "return"
     :yield "use")
 
-  (if (modulep! -lsp)
-      ;; `+php-company-backend' uses `php-extras-company' or
-      ;; `company-dabbrev-code', in that order.
-      (when +php--company-backends
-        (set-company-backend! 'php-mode
-          (cons :separate +php--company-backends)
-          'company-dabbrev-code))
+  (when (modulep! +lsp)
     (when (executable-find "php-language-server.php")
       (setq lsp-clients-php-server-command "php-language-server.php"))
     (add-hook 'php-mode-local-vars-hook #'lsp! 'append))
@@ -87,32 +78,6 @@
         "u"  #'php-refactor--optimize-use
         "xm" #'php-refactor--extract-method
         "rv" #'php-refactor--rename-local-variable))
-
-
-(use-package! php-extras
-  :after php-mode
-  :preface
-  (setq php-extras-eldoc-functions-file
-        (concat doom-profile-cache-dir "php-extras-eldoc-functions"))
-  ;; We'll set up company support ourselves
-  (advice-add #'php-extras-company-setup :override #'ignore)
-  (add-to-list '+php--company-backends #'php-extras-company)
-  :config
-  ;; Silence warning if `php-extras-eldoc-functions-file' hasn't finished
-  ;; generating yet.
-  (defun php-extras-load-eldoc ()
-    (require 'php-extras-eldoc-functions php-extras-eldoc-functions-file t))
-  ;; Make expensive php-extras generation async
-  (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
-    (message "Generating PHP eldoc files...")
-    (require 'async)
-    (async-start `(lambda ()
-                    ,(async-inject-variables "\\`\\(load-path\\|php-extras-eldoc-functions-file\\)$")
-                    (require 'php-extras-gen-eldoc)
-                    (php-extras-generate-eldoc-1 t))
-                 (lambda (_)
-                   (load (concat php-extras-eldoc-functions-file ".el"))
-                   (message "PHP eldoc updated!")))))
 
 
 (use-package! hack-mode
