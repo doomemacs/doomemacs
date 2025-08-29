@@ -42,9 +42,8 @@
     :return "return"
     :yield "use")
 
-  (let ((mode-hook (intern (format "%s-hook" mode)))
-        (mode-vars-hook (intern (format "%s-local-vars-hook" mode)))
-        (mode-map (symbol-value (intern (format "%s-map" mode)))))
+  (let ((mode-vars-hook (intern (format "%s-local-vars-hook" mode)))
+        (mode-map (intern (format "%s-map" mode))))
     (sp-with-modes (ensure-list mode)
       (sp-local-pair "<?"    "?>" :post-handlers '(("| " "SPC" "=") ("||\n[i]" "RET") ("[d2]" "p")))
       (sp-local-pair "<?php" "?>" :post-handlers '(("| " "SPC") ("||\n[i]" "RET"))))
