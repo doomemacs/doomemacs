@@ -23,45 +23,15 @@ pre-Emacs 31."
   (declare (indent 2))
   (cl-check-type mode symbol)
   (cl-check-type ts-mode symbol)
-  (setq recipes (ensure-list recipes))
+  (setq recipes (mapcar #'ensure-list (ensure-list recipes)))
   (dolist (m (ensure-list mode))
     (add-to-list
      '+tree-sitter--major-mode-remaps-alist
-     (cons
-      m (let (ensured?)
-          (lambda ()
-            (funcall
-             ;; Because standard major-mode remapping doesn't offer graceful
-             ;; failure in some cases, I implement it myself:
-             (cond ((null recipes) m)
-                   ((not (fboundp ts-mode))
-                    (message "Couldn't find %S, using %S instead" ts-mode m)
-                    m)
-                   ((and (fboundp 'treesit-available-p)
-                         (treesit-available-p)
-                         (fboundp ts-mode)
-                         (or (eq treesit-enabled-modes t)
-                             (memq ts-mode treesit-enabled-modes))
-                         ;; Lazily load autoload so
-                         ;; `treesit-language-source-alist' is initialized.
-                         (let ((fn (symbol-function ts-mode)))
-                           (or (not (autoloadp fn))
-                               (autoload-do-load fn)))
-                         ;; Only prompt once, and log other times.
-                         (cl-every (if ensured?
-                                       (doom-rpartial #'treesit-ready-p 'message)
-                                     #'treesit-ensure-installed)
-                                   (cl-loop for r in recipes
-                                            if (listp r)
-                                            collect (car r)
-                                            else collect (list r))))
-                    ts-mode)
-                   ((setq ensured? t)
-                    m))))))))
-  (with-eval-after-load 'treesit
-    (dolist (recipe recipes)
-      (when (cdr (setq recipe (ensure-list recipe)))
-        (cl-destructuring-bind (name &key url rev source-dir cc cpp commit) recipe
+     (list m ts-mode (mapcar #'car recipes) nil)))
+  (when (setq recipes (cl-remove-if-not #'cdr recipes))
+    (with-eval-after-load 'treesit
+      (dolist (recipe recipes)
+        (cl-destructuring-bind (name &key url rev source-dir cc cpp commit) (ensure-list recipe)
           (setf (alist-get name treesit-language-source-alist)
                 (append (list url rev source-dir cc cpp)
                         ;; COMPAT: 31.1 introduced a COMMIT recipe argument. On

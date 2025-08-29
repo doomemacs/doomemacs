@@ -35,6 +35,40 @@
                   python-ts-mode))
     (advice-add mode :around #'+tree-sitter-ts-mode-inhibit-side-effects-a))
 
+  ;; HACK: Some *-ts-mode packages modify `major-mode-remap-defaults'
+  ;;   inconsistently. Playing whack-a-mole to undo those changes is more hassle
+  ;;   then simply ignoring them (by overriding `major-mode-remap-defaults' for
+  ;;   any modes remapped with `set-tree-sitter!'). The user shouldn't touch
+  ;;   `major-mode-remap-defaults' anyway; `major-mode-remap-alist' will always
+  ;;   have precedence.
+  (defadvice! +tree-sitter--maybe-remap-major-mode-a (fn mode)
+    :around #'major-mode-remap
+    (let ((major-mode-remap-defaults
+           ;; Because standard major-mode remapping doesn't offer graceful
+           ;; failure in some cases, I implement it myself:
+           (cons (when-let* ((spec (assq mode +tree-sitter--major-mode-remaps-alist))
+                             (ts-mode (nth 1 spec))
+                             (langs (nth 2 spec)))
+                   (if (not (fboundp ts-mode))
+                       (ignore (message "Couldn't find %S, falling back to %S" ts-mode mode))
+                     (prog1 (and (or (eq treesit-enabled-modes t)
+                                     (memq ts-mode treesit-enabled-modes))
+                                 ;; Lazily load autoload so
+                                 ;; `treesit-language-source-alist' is
+                                 ;; initialized.
+                                 (let ((fn (symbol-function ts-mode)))
+                                   (or (not (autoloadp fn))
+                                       (autoload-do-load fn ts-mode)))
+                                 ;; Only prompt once, and log other times.
+                                 (cl-every (if (get ts-mode 'ensured?)
+                                               (doom-rpartial #'treesit-ready-p 'message)
+                                             #'treesit-ensure-installed)
+                                           langs)
+                                 `((,mode . ,ts-mode)))
+                       (put ts-mode 'ensured? t))))
+                 major-mode-remap-defaults)))
+      (funcall fn mode)))
+
   :config
   ;; HACK: The implementation of `treesit-enabled-modes's setter and
   ;;   `treesit-major-mode-remap-alist' is intrusively opinionated, so disable
@@ -45,20 +79,6 @@
     (dolist (m treesit-major-mode-remap-alist)
       (setq major-mode-remap-alist (delete m major-mode-remap-alist))))
   (setq treesit-major-mode-remap-alist nil)
-
-  ;; HACK: Some *-ts-mode packages modify `major-mode-remap-defaults'
-  ;;   inconsistently. Playing whack-a-mole to undo those changes is more hassle
-  ;;   then simply ignoring them (by overriding `major-mode-remap-defaults' for
-  ;;   any modes remapped with `set-tree-sitter!'). The user shouldn't touch
-  ;;   `major-mode-remap-defaults' anyway; `major-mode-remap-alist' will always
-  ;;   have precedence.
-  (defadvice! +tree-sitter--ignore-default-major-mode-remaps-a (fn mode)
-    :around #'major-mode-remap
-    (let ((major-mode-remap-defaults
-           (if-let* ((m (assq mode +tree-sitter--major-mode-remaps-alist)))
-               +tree-sitter--major-mode-remaps-alist
-             major-mode-remap-defaults)))
-      (funcall fn mode)))
 
   ;; HACK: Keep $EMACSDIR clean by installing grammars to the active profile.
   (add-to-list 'treesit-extra-load-path (concat doom-profile-data-dir "tree-sitter"))
