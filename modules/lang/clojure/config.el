@@ -32,18 +32,7 @@
                    clojurec-mode
                    clojurescript-mode
                    clojurex-mode))
-        (add-to-list 'lsp-language-id-configuration (cons m "clojure")))))
-
-  (when (modulep! +tree-sitter)
-    (add-hook! '(clojure-mode-local-vars-hook
-                 clojurec-mode-local-vars-hook
-                 clojurescript-mode-local-vars-hook)
-               :append
-               #'tree-sitter!)
-    ;; TODO: PR this upstream
-    (after! tree-sitter-langs
-      (add-to-list 'tree-sitter-major-mode-language-alist '(clojurec-mode . clojure))
-      (add-to-list 'tree-sitter-major-mode-language-alist '(clojurescript-mode . clojure)))))
+        (add-to-list 'lsp-language-id-configuration (cons m "clojure"))))))
 
 
 (use-package! clojure-ts-mode
