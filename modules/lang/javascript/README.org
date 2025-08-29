@@ -6,13 +6,14 @@
 * Description :unfold:
 This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.typescriptlang.org/][TypeScript]] support to Doom Emacs.
 
-- Code completion ([[doom-package:tide]])
-- REPL support ([[doom-package:nodejs-repl]])
-- Refactoring commands ([[doom-package:js2-refactor]])
-- Syntax checking ([[doom-package:flycheck]])
-- Browser code injection with [[doom-package:skewer-mode]]
-- Coffeescript & JSX support
-- Jump-to-definitions and references support ([[doom-package:xref]])
+- JSX/TSX support (requires [[doom-module:+tree-sitter]] and Emacs 29.1+)
+- LSP Integration
+  - Code completion (with [[doom-module::completion corfu]] (recommended) or
+    [[doom-module::completion company]])
+  - Syntax checking (with [[doom-module::checkers syntax]])
+  - Jump-to-definitions and references support
+- Code formatting (with [[doom-module::editor format]] and [[https://prettier.io/docs/en/install.html][prettier]])
+- REPL support (with [[doom-package:nodejs-repl]] and/or [[doom-module::tools eval]])
 
 ** Maintainers
 - [[doom-user:][@elken]]
@@ -23,22 +24,17 @@ This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.t
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~js2-mode~, ~rjsx-mode~, JS in ~web-mode~, and
-  ~typescript-mode~. Requires [[doom-module::tools lsp]] and a langserver (supports ts-ls and
-  deno-ls).
+  Enable LSP support for ~js-mode~, ~js-ts-mode~, ~typesript-mode~, and
+  ~typescript-ts-mode. Requires [[doom-module::tools lsp]] and a langserver
+  (supports ts-ls and deno-ls).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]]. Requires Emacs 29.1+.
+  Required for JSX/TSX support.
 
 ** Packages
-- [[doom-package:js2-refactor]]
 - [[doom-package:nodejs-repl]]
-- [[doom-package:npm-mode]]
-- [[doom-package:rjsx-mode]]
-- [[doom-package:skewer-mode]] (DEPRECATED)
-- [[doom-package:tide]]
-- [[doom-package:typescript-mode]]
-- [[doom-package:xref-js2]] if [[doom-module::tools lookup]]
+- [[doom-package:typescript-mode]] unless [[doom-module:+tree-sitter]]
 
 ** TODO Hacks
 #+begin_quote
@@ -59,96 +55,12 @@ This module requires [[https://nodejs.org/en/][NodeJS]] and one of [[https://www
 - openSUSE: ~$ zypper install nodejs npm~
 
 ** Formatter
-
 Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
 
 * TODO Usage
 #+begin_quote
- 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
-
-~rjsx-mode~ is used for all javascript buffers.
-
-** Commands
-*** rjsx-mode
-| command                          | key / ex command | description                                                |
-|----------------------------------+------------------+------------------------------------------------------------|
-| ~+javascript/open-repl~          | ~:repl~          | Open the NodeJS REPL (or send the current selection to it) |
-| ~+javascript/skewer-this-buffer~ | [[kbd:][<localleader> S]]  | Attaches a browser to the current buffer                   |
-
-*** Tide
-| command                 | key / ex command    | description            |
-|-------------------------+---------------------+------------------------|
-| ~tide-restart-server~   | [[kbd:][<localleader> R]]     | Restart tide server    |
-| ~tide-reformat~         | [[kbd:][<localleader> f]]     | Reformat region        |
-| ~tide-rename-symbol~    | [[kbd:][<localleader> r r s]] | Rename symbol at point |
-| ~tide-organize-imports~ | [[kbd:][<localleader> r o i]] | Organize imports       |
-
-*** Refactoring (js2-refactor-mode)
-| command                                           | key / ex command    | description                                                                                                        |
-|---------------------------------------------------+---------------------+--------------------------------------------------------------------------------------------------------------------|
-| ~js2r-expand-node-at-point~                       | [[kbd:][<localleader> r e e]] | Expand bracketed list according to node type at point                                                              |
-| ~js2r-contract-node-at-point~                     | [[kbd:][<localleader> r c c]] | Contract bracketed list according to node type at point                                                            |
-| ~js2r-extract-function~                           | [[kbd:][<localleader> r e f]] | Extracts the marked expressions out into a new named function.                                                     |
-| ~js2r-extract-method~                             | [[kbd:][<localleader> r e m]] | Extracts the marked expressions out into a new named method in an object literal.                                  |
-| ~js2r-toggle-function-expression-and-declaration~ | [[kbd:][<localleader> r t f]] | Toggle between function name() {} and var name = function ();                                                      |
-| ~js2r-toggle-arrow-function-and-expression~       | [[kbd:][<localleader> r t a]] | Toggle between function expression to arrow function.                                                              |
-| ~js2r-toggle-function-async~                      | [[kbd:][<localleader> r t s]] | Toggle between an async and a regular function.                                                                    |
-| ~js2r-introduce-parameter~                        | [[kbd:][<localleader> r i p]] | Changes the marked expression to a parameter in a local function.                                                  |
-| ~js2r-localize-parameter~                         | [[kbd:][<localleader> r l p]] | Changes a parameter to a local var in a local function.                                                            |
-| ~js2r-wrap-buffer-in-iife~                        | [[kbd:][<localleader> r w i]] | Wraps the entire buffer in an immediately invoked function expression                                              |
-| ~js2r-inject-global-in-iife~                      | [[kbd:][<localleader> r i g]] | Creates a shortcut for a marked global by injecting it in the wrapping immediately invoked function expression     |
-| ~js2r-add-to-globals-annotation~                  | [[kbd:][<localleader> r a g]] | Creates a /*global */ annotation if it is missing, and adds the var at point to it.                                |
-| ~js2r-extract-var~                                | [[kbd:][<localleader> r e v]] | Takes a marked expression and replaces it with a var.                                                              |
-| ~js2r-extract-let~                                | [[kbd:][<localleader> r e l]] | Similar to extract-var but uses a let-statement.                                                                   |
-| ~js2r-extract-const~                              | [[kbd:][<localleader> r e c]] | Similar to extract-var but uses a const-statement.                                                                 |
-| ~js2r-inline-var~                                 | [[kbd:][<localleader> r i v]] | Replaces all instances of a variable with its initial value.                                                       |
-| ~js2r-rename-var~                                 | [[kbd:][<localleader> r r v]] | Renames the variable on point and all occurrences in its lexical scope.                                            |
-| ~js2r-var-to-this~                                | [[kbd:][<localleader> r v t]] | Changes local var a to be this.a instead.                                                                          |
-| ~js2r-arguments-to-object~                        | [[kbd:][<localleader> r a o]] | Replaces arguments to a function call with an object literal of named arguments.                                   |
-| ~js2r-ternary-to-if~                              | [[kbd:][<localleader> r 3 i]] | Converts ternary operator to if-statement.                                                                         |
-| ~js2r-split-var-declaration~                      | [[kbd:][<localleader> r s v]] | Splits a var with multiple vars declared, into several var statements.                                             |
-| ~js2r-split-string~                               | [[kbd:][<localleader> r s s]] | Splits a string.                                                                                                   |
-| ~js2r-string-to-template~                         | [[kbd:][<localleader> r s t]] | Converts a string into a template string.                                                                          |
-| ~js2r-unwrap~                                     | [[kbd:][<localleader> r u w]] | Replaces the parent statement with the selected region.                                                            |
-| ~js2r-log-this~                                   | [[kbd:][<localleader> r l t]] | Adds a console.log() statement for what is at point (or region). With a prefix argument, use JSON pretty-printing. |
-| ~js2r-debug-this~                                 | [[kbd:][<localleader> r d t]] | Adds a debug() statement for what is at point (or region).                                                         |
-| ~js2r-forward-slurp~                              | [[kbd:][<localleader> r s l]] | Moves the next statement into current function, if-statement, for-loop or while-loop.                              |
-| ~js2r-forward-barf~                               | [[kbd:][<localleader> r b a]] | Moves the last child out of current function, if-statement, for-loop or while-loop.                                |
-| ~js2r-kill~                                       | [[kbd:][<localleader> r k]]   | Kills to the end of the line, but does not cross semantic boundaries.                                              |
-
-*** skewer-mode
-**** general
-| command                       | key / ex command  | description                           |
-|-------------------------------+-------------------+---------------------------------------|
-| ~skewer-eval-last-expression~ | [[kbd:][<localleader> s E]] | Evaluate last expression              |
-| ~skewer-eval-defun~           | [[kbd:][<localleader> s e]] | Evaluate function definition at point |
-| ~skewer-load-buffer~          | [[kbd:][<localleader> s f]] | Load buffer into REPL                 |
-
-**** css
-| command                               | key / ex command  | description                   |
-|---------------------------------------+-------------------+-------------------------------|
-| ~skewer-css-eval-current-declaration~ | [[kbd:][<localleader> s e]] | Evaluate declaration at point |
-| ~skewer-css-eval-current-rule~        | [[kbd:][<localleader> s r]] | Evaluate rule at point        |
-| ~skewer-css-eval-buffer~              | [[kbd:][<localleader> s b]] | Evaluate buffer               |
-| ~skewer-css-clear-all~                | [[kbd:][<localleader> s c]] | Clear all rules               |
-
-**** html
-| command                | key / ex command  | description           |
-|------------------------+-------------------+-----------------------|
-| ~skewer-html-eval-tag~ | [[kbd:][<localleader> s e]] | Evaluate tag at point |
-
-*** npm-mode
-| command                         | key / ex command  | description                                                      |
-|---------------------------------+-------------------+------------------------------------------------------------------|
-| ~npm-mode-npm-init~             | [[kbd:][<localleader> n n]] | Initialize npm project                                           |
-| ~npm-mode-npm-install~          | [[kbd:][<localleader> n i]] | Install npm package                                              |
-| ~npm-mode-npm-install-save~     | [[kbd:][<localleader> n s]] | Install npm package and save to package.json                     |
-| ~npm-mode-npm-install-save-dev~ | [[kbd:][<localleader> n d]] | Install npm package and save to package.json as a dev dependency |
-| ~npm-mode-npm-uninstall~        | [[kbd:][<localleader> n u]] | Uninstall npm package                                            |
-| ~npm-mode-npm-list~             | [[kbd:][<localleader> n l]] | List npm packages                                                |
-| ~npm-mode-npm-run~              | [[kbd:][<localleader> n r]] | Run npm task                                                     |
-| ~npm-mode-visit-project-file~   | [[kbd:][<localleader> n v]] | Find file in npm project                                         |
 
 * TODO Configuration
 #+begin_quote
