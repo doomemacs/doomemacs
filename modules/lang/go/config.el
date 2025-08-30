@@ -12,7 +12,7 @@
   (when (modulep! +lsp)
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
-  (map! :map ,(symbol-value (intern (format "%s-map" mode)))
+  (map! :map ,(intern (format "%s-map" mode))
         :localleader
         "a" #'go-tag-add
         "d" #'go-tag-remove

@@ -25,7 +25,7 @@
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
   (map! :localleader
-        :map ,(symbol-value (intern (format "%s-map" mode)))
+        :map ,(intern (format "%s-map" mode))
         "f" #'nix-update-fetch
         "p" #'nix-format-buffer
         "r" #'nix-repl-show

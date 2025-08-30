@@ -12,7 +12,7 @@
   (when (modulep! +lsp)
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
   (map! :localleader
-        :map ,(symbol-value (intern (format "%s-map" mode)))
+        :map ,(intern (format "%s-map" mode))
         "b" #'zig-compile
         "f" #'zig-format-buffer
         "r" #'zig-run
