@@ -1,8 +1,5 @@
 ;;; tools/tree-sitter/autoload/tree-sitter.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(defvar +tree-sitter--major-mode-remaps-alist nil)
-
 ;;;###autodef (fset 'tree-sitter! #'ignore)
 (defun tree-sitter! ()
   (message "Old tree-sitter.el support is deprecated!"))
@@ -25,9 +22,8 @@ pre-Emacs 31."
   (cl-check-type ts-mode symbol)
   (setq recipes (mapcar #'ensure-list (ensure-list recipes)))
   (dolist (m (ensure-list mode))
-    (add-to-list
-     '+tree-sitter--major-mode-remaps-alist
-     (list m ts-mode (mapcar #'car recipes) nil)))
+    (setf (alist-get m major-mode-remap-defaults) ts-mode)
+    (put ts-mode '+tree-sitter (cons m (mapcar #'car recipes))))
   (when (setq recipes (cl-remove-if-not #'cdr recipes))
     (with-eval-after-load 'treesit
       (dolist (recipe recipes)
