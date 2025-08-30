@@ -1011,8 +1011,8 @@ Must be run from a magit diff buffer."
                              ;;   indicates a successful clone (causing load
                              ;;   errors later).
                              (let ((try 0))
-                               (while (not (or (file-directory-p ".git")
-                                               (file-exists-p ".straight-commit")))
+                               (while (not (or (file-directory-p (doom-path repo-dir ".git"))
+                                               (file-exists-p (doom-path repo-dir ".straight-commit"))))
                                  (when (= try 3)
                                    (error "Failed to clone package"))
                                  (print! (warn "Failed to clone %S, trying again (attempt #%d)...") package (1+ try))
