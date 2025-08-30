@@ -131,9 +131,7 @@ capture, the end position, and the output buffer.")
   :when (fboundp 'markdown-ts-mode)
   :defer t
   :init
-  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode '(markdown markdown-inline))
-  :config
-  (cl-callf2 delete '("\\.md\\'" . markdown-ts-mode) auto-mode-alist))
+  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode '(markdown markdown-inline)))
 
 
 (use-package! evil-markdown

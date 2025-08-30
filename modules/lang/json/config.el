@@ -27,9 +27,6 @@
   :init
   (set-tree-sitter! 'json-mode 'json-ts-mode 'json)
   :config
-  ;; HACK: Rely on `major-mode-remap-defaults'.
-  (cl-callf2 assq-delete-all 'json-ts-mode auto-mode-alist)
-
   (when (modulep! +lsp)
     (add-hook 'json-ts-mode-local-vars-hook #'lsp! 'append)))
 

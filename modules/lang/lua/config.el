@@ -40,11 +40,7 @@
   (when (modulep! +lsp)
     (add-hook 'lua-ts-mode-local-vars-hook #'lsp! 'append)
     (when (modulep! :tools lsp +eglot)
-      (set-eglot-client! 'lua-ts-mode (+lua-generate-lsp-server-command))))
-
-  ;; HACK: Get rid of redundancies, rely on `major-mode-remap-defaults'
-  (cl-callf2 delete '("\\.lua\\'" . lua-ts-mode) auto-mode-alist)
-  (cl-callf2 delete '("\\<lua\\(?:jit\\)?" . lua-ts-mode) interpreter-mode-alist))
+      (set-eglot-client! 'lua-ts-mode (+lua-generate-lsp-server-command)))))
 
 
 (use-package! moonscript

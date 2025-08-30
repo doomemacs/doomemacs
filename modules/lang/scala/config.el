@@ -68,9 +68,6 @@
     (setq-hook! 'scala-ts-mode-hook lsp-enable-indentation nil)
     (add-hook 'scala-ts-mode-local-vars-hook #'lsp! 'append))
 
-  ;; HACK: Rely on `major-mode-remap-defaults'.
-  (cl-callf2 assq-delete-all 'scala-ts-mode auto-mode-alist)
-
   (+scala-common-config 'scala-ts-mode))
 
 
