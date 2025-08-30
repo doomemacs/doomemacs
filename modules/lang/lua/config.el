@@ -7,22 +7,23 @@
 ;;
 ;;; Major modes
 
+(defun +lua-common-config (mode)
+  (set-lookup-handlers! mode :documentation 'lua-search-documentation)
+  (set-electric! mode :words '("else" "end"))
+  (set-repl-handler! mode #'+lua/open-repl)
+  (set-company-backend! mode '(company-lua company-yasnippet))
+  (when (modulep! +lsp)
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append)
+    (when (modulep! :tools lsp +eglot)
+      (set-eglot-client! mode (+lua-generate-lsp-server-command)))))
+
+
 (use-package! lua-mode
   :interpreter "\\<lua\\(?:jit\\)?"
   :init
-  ;; lua-indent-level defaults to 3 otherwise. Madness.
-  (setq lua-indent-level 2)
-
+  (setq lua-indent-level 2)  ; default is 3; madness!
   :config
-  (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
-  (set-electric! 'lua-mode :words '("else" "end"))
-  (set-repl-handler! 'lua-mode #'+lua/open-repl)
-  (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
-
-  (when (modulep! +lsp)
-    (add-hook 'lua-mode-local-vars-hook #'lsp! 'append)
-    (when (modulep! :tools lsp +eglot)
-      (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command)))))
+  (+lua-common-config 'lua-mode))
 
 
 (use-package! lua-ts-mode
@@ -32,15 +33,7 @@
   :init
   (set-tree-sitter! 'lua-mode 'lua-ts-mode 'lua)
   :config
-  (set-lookup-handlers! 'lua-ts-mode :documentation 'lua-search-documentation)
-  (set-electric! 'lua-ts-mode :words '("else" "end"))
-  (set-repl-handler! 'lua-ts-mode #'+lua/open-repl)
-  (set-company-backend! 'lua-ts-mode '(company-lua company-yasnippet))
-
-  (when (modulep! +lsp)
-    (add-hook 'lua-ts-mode-local-vars-hook #'lsp! 'append)
-    (when (modulep! :tools lsp +eglot)
-      (set-eglot-client! 'lua-ts-mode (+lua-generate-lsp-server-command)))))
+  (+lua-common-config 'lua-ts-mode))
 
 
 (use-package! moonscript
