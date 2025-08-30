@@ -44,14 +44,16 @@
         "H" #'haskell-hide-toggle-all))
 
 
-;; TODO: Mirror other haskell-mode config to ts-mode
 (use-package! haskell-ts-mode
   :when (modulep! +tree-sitter)
   :when (fboundp 'haskell-ts-mode)
   :defer t
   :init
   (set-tree-sitter! 'haskell-mode 'haskell-ts-mode
-    '((haskell :url "https://github.com/tree-sitter/tree-sitter-haskell"))))
+    '((haskell :url "https://github.com/tree-sitter/tree-sitter-haskell")))
+  :config
+  (set-repl-handler! 'haskell-ts-mode #'run-haskell :persist t)
+  (set-eglot-client! 'haskell-ts-mode '("haskell-language-server-wrapper" "--lsp")))
 
 
 (use-package! lsp-haskell
