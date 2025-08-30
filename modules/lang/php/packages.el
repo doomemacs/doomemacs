@@ -11,6 +11,3 @@
   (package! hack-mode
     :recipe (:host github :repo "hhvm/hack-mode")
     :pin "0addbff8b61cfd75b81961507a1646c4acd316ba"))
-
-;; For building php-extras
-(package! async :pin "bb3f31966ed65a76abe6fa4f80a960a2917f554e")
