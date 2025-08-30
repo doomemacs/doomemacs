@@ -14,15 +14,34 @@ you [[https://plaintextaccounting.org/][manage your money in plain text]].
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~beancount-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports [[https://github.com/polarmutex/beancount-language-server][beancount-language-server]]).
+  Enable LSP support for ~beancount-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (supports [[https://github.com/polarmutex/beancount-language-server][beancount-language-server]]).
 
 ** Packages
 - [[doom-package:beancount]]
 
 ** Hacks
-- Associates the material =attach_money= icon with =*.beancount= files in the
-  [[doom-package:nerd-icons]] package.
+- Adds rudimentary syntax highlighting to ~custom~ directives, because
+  ~beancount-mode~ doesn't out of the box.
+- Fixes a bug in ~beancount-fava~ where the browser doesn't open after starting
+  Fava because of ANSI codes in Fava's output.
+- Fixes syntax checker only operating on visible region in narrowed buffers
+- Fixes file path resolution errors from syntax checker due to relative paths
+  (e.g. for ~include~ and ~document~ attributes/directives).
+- Adds support for "meta lines"; beancount code that is visible only to the
+  syntax checker, so users can resolve false-positives in multi-file beancount
+  ledgers. E.g.
+  #+begin_src beancount
+  ;# include "../config.beancount"
+  ;# 2025-01-01 pad Assets:Bank Equity:Opening-Balances
+  #+end_src
+- Adds code completion for:
+  - Event directives and values
+  - The payee field in transactions
+  - Currencies and commodities
+- Fixes completion for ~#tags~ and ~^links~ when they're not on their own line.
+- Adjusted code completion to scan not only the current file, but any included
+  files (recursively) for candidates.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
@@ -36,15 +55,38 @@ This module requires:
 - [[https://beancount.github.io/fava/][fava]], for a web interface for your ledgers
 - [[doom-executable:bean-format]], if [[doom-module::editor format]]
 
-* TODO Usage
-#+begin_quote
- 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
-#+end_quote
+* Usage
+This module provides ~beancount-mode~ for beancount ledger files. Opening any
+~*.beancount~ or ~*.bean~ will activate it.
 
-* TODO Configuration
-#+begin_quote
- 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
-#+end_quote
+** Keybinds
+| Binding               | Description                                      |
+|-----------------------+--------------------------------------------------|
+| [[kbd:<localleader> b]]   | Display balance sheet in popup                   |
+| [[kbd:<localleader> c]]   | Run ~bean-check~ on current file                   |
+| [[kbd:<localleader> l]]   | Show all transactions linked to the one at point |
+| [[kbd:<localleader> q]]   |                                                  |
+| [[kbd:<localleader> x]]   |                                                  |
+| [[kbd:<localleader> i c]] | Clone a transaction (select one from all files)  |
+| [[kbd:<localleader> i C]] | Clone transaction at point                       |
+| [[kbd:<localleader> i a]] | Insert account                                   |
+| [[kbd:<localleader> i d]] | Insert date                                      |
+| [[kbd:<localleader> i p]] | Insert prices (requires ~bean-price~)              |
+| [[kbd:<localleader> s r]] | Sort transactions in selected region             |
+| [[kbd:<localleader> s b]] | Sort transactions in buffer                      |
+
+* Configuration
+Look up customizable variables for ~beancount-mode~ via [[kbd:C-h V]] and typing
+~^beancount-~.
+
+On top of those, this module exposes the following variable:
+
+- +beancount-files (default: ~'auto~) ::
+  Controls what files to scan for code completion candidates. The default value,
+  ~'auto~, causes it to scan the current file and any included files
+  (recursively). If set to ~nil~, only the current buffer is considered (much
+  faster for massive, multi-file ledgers). Can also be a list of file paths (can
+  be relative to the current file).
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
