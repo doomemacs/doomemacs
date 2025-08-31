@@ -55,8 +55,11 @@ or t to enable all ts-modes."
           (const :tag "Enable all available ts-modes" t)
           (set :tag "List of enabled ts-modes"
                ,@(when (treesit-available-p)
-                   (sort (mapcar (lambda (m) `(function-item ,m))
-                                 (seq-uniq (mapcar #'cdr treesit-major-mode-remap-alist)))))))
+                   (let ((items (mapcar (lambda (m) `(function-item ,m))
+                                        (seq-uniq (mapcar #'cdr treesit-major-mode-remap-alist)))))
+                     (if (= (car (func-arity 'sort)) 1)
+                         (sort items)
+                       (sort items #'value<))))))
   :initialize #'custom-initialize-default
   :set (lambda (sym val)
          (set-default sym val)
