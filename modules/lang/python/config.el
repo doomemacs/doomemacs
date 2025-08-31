@@ -58,8 +58,8 @@
 
   ;; Default to Python 3. Prefer the versioned Python binaries since some
   ;; systems link the unversioned one to Python 2.
-  (when (and (executable-find "python3")
-             (string= python-shell-interpreter "python"))
+  (when (and (string= python-shell-interpreter "python") ; only if unmodified
+             (executable-find "python3"))
     (setq python-shell-interpreter "python3"))
 
   (add-hook! 'python-mode-hook
