@@ -13,9 +13,6 @@ SAS, Julia and Stata.
 ** Module flags
 - +stan ::
   Enable support for ~stan-mode~, including code completion and syntax checking.
-- +tree-sitter ::
-  Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Currently only supports ~ess-r-mode~. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:ess]]

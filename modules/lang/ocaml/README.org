@@ -23,9 +23,6 @@ This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by
 - +lsp ::
   Enable LSP support for ~tuareg-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/freebroccolo/ocaml-language-server][ocaml-language-server]]).
-- +tree-sitter ::
-  Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:dune]]

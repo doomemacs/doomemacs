@@ -9,6 +9,10 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(assert! (or (not (modulep! +tree-sitter))
+             (fboundp 'rust-ts-mode))
+         "Can't find `rust-ts-mode'; Emacs 29.1+ is required")
+
 (unless (executable-find "rustc")
   (warn! "Couldn't find rustc binary"))
 

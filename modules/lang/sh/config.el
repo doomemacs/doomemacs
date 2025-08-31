@@ -37,9 +37,6 @@
   (when (modulep! +lsp)
     (add-hook 'sh-mode-local-vars-hook #'lsp! 'append))
 
-  (when (modulep! +tree-sitter)
-    (add-hook 'sh-mode-local-vars-hook #'tree-sitter! 'append))
-
   (setq sh-indent-after-continuation 'always)
 
   ;; [pedantry intensifies]

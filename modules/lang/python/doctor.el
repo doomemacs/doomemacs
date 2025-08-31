@@ -8,6 +8,10 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(assert! (or (not (modulep! +tree-sitter))
+             (fboundp 'python-ts-mode))
+         "Can't find `python-ts-mode'; Emacs 29.1+ is required")
+
 (if (not (or (executable-find "python")
              (executable-find "python3")))
     (error! "Couldn't find python in your PATH")

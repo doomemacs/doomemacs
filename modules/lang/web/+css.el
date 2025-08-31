@@ -73,5 +73,12 @@ If set to `nil', disable all the above behaviors.")
                less-css-mode-local-vars-hook)
              :append #'lsp!))
 
-(when (modulep! +tree-sitter)
-  (add-hook 'css-mode-local-vars-hook #'tree-sitter! 'append))
+
+(use-package! css-ts-mode  ; 29.1+ only
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'css-mode 'css-ts-mode
+    '((css :url "https://github.com/tree-sitter/tree-sitter-css"
+           :rev "v0.23.0"
+           :commit "6a442a3cf461b0ce275339e5afa178693484c927"))))

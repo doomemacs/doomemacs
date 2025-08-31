@@ -25,16 +25,24 @@ This is ignored by ccls.")
   ;; set up before lsp is initialized. Also, we use local-vars hooks to ensure
   ;; these only run in their respective major modes, and not derived modes.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-ffap-integration-h)
+  :hook ((c-ts-mode-local-vars c++-ts-mode-local-vars) . +cc-init-ffap-integration-h)
   ;;; Improve fontification in C/C++ (also see `modern-cpp-font-lock')
-  :hook ((c-mode c++-mode) . +cc-fontify-constants-h)
+  :init
+  (when (modulep! +tree-sitter)
+    (set-tree-sitter! 'c-mode 'c-ts-mode
+      '((c :url "https://github.com/tree-sitter/tree-sitter-c")))
+    (set-tree-sitter! 'c++-mode 'c++-ts-mode
+      '((cpp :url "https://github.com/tree-sitter/tree-sitter-cpp"))))
   :config
-  (set-docsets! 'c-mode "C")
-  (set-docsets! 'c++-mode "C++" "Boost")
-  (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\} ?\{))
-  (set-rotate-patterns! 'c++-mode
+  (set-docsets! '(c-mode c-ts-mode) "C")
+  (set-docsets! '(c++-mode c++-ts-mode) "C++" "Boost")
+  (set-electric! '(c-mode c++-mode objc-mode java-mode
+                   c-ts-mode c++-ts-mode java-ts-mode)
+                 :chars '(?\n ?\} ?\{))
+  (set-rotate-patterns! '(c++-mode c++-ts-mode)
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
-  (set-ligatures! '(c-mode c++-mode)
+  (set-ligatures! '(c-mode c-ts-mode c++-mode c++-ts-mode)
     ;; Functional
     ;; :def "void "
     ;; Types
@@ -52,11 +60,6 @@ This is ignored by ccls.")
 
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.c\\(c\\|pp\\)?\\'" "\\1.h\\(h\\|pp\\)?\\'"))
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.h\\(h\\|pp\\)?\\'" "\\1.c\\(c\\|pp\\)?\\'"))
-
-  (when (modulep! +tree-sitter)
-    (add-hook! '(c-mode-local-vars-hook
-                 c++-mode-local-vars-hook)
-               :append #'tree-sitter!))
 
   ;; HACK Suppress 'Args out of range' error in when multiple modifications are
   ;;      performed at once in a `c++-mode' buffer, e.g. with `iedit' or
@@ -100,41 +103,66 @@ This is ignored by ccls.")
              (label . 0))))
 
   (when (listp c-default-style)
-    (setf (alist-get 'other c-default-style) "doom"))
-
-  (after! ffap
-    (add-to-list 'ffap-alist '(c-mode . ffap-c-mode))))
-
-
-(use-package! modern-cpp-font-lock
-  :unless (modulep! +tree-sitter)
-  :hook (c++-mode . modern-c++-font-lock-mode))
+    (setf (alist-get 'other c-default-style) "doom")))
 
 
 ;;
 ;; Major modes
 
-(after! cmake-mode
-  (set-docsets! 'cmake-mode "CMake")
+(use-package! cmake-mode
+  :defer t
+  :init
+  (when (and (modulep! +tree-sitter)
+             (boundp 'cmake-ts-mode)) ; 29+ only
+    (set-tree-sitter! 'cmake-mode 'cmake-ts-mode
+      '((cmake :url "https://github.com/uyha/tree-sitter-cmake"))))
+  :config
+  (set-docsets! '(cmake-mode cmake-ts-mode) "CMake")
   (set-popup-rule! "^\\*CMake Help\\*" :size 0.4 :ttl t)
-  (set-lookup-handlers! 'cmake-mode
-    :documentation '+cc-cmake-lookup-documentation-fn))
+  (set-lookup-handlers! '(cmake-mode cmake-ts-mode)
+    :documentation '+cc-cmake-lookup-documentation-fn)
+  (when (require 'company-cmake nil t)
+    (set-company-backend! '(cmake-mode cmake-ts-mode) 'company-cmake))
+  (when (modulep! +lsp)
+    (add-hook 'cmake-mode-local-vars-hook #'lsp! 'append)
+    (add-hook 'cmake-ts-mode-local-vars-hook #'lsp! 'append)))
 
 
-(use-package! company-cmake  ; for `cmake-mode'
-  :when (modulep! :completion company)
-  :after cmake-mode
-  :config (set-company-backend! 'cmake-mode 'company-cmake))
+(use-package! glsl-mode
+  :defer t
+  :init
+  (when (modulep! +tree-sitter)
+    (set-tree-sitter! 'glsl-mode 'glsl-ts-mode
+      '((glsl :url "https://github.com/tree-sitter-grammars/tree-sitter-glsl"))))
+  :config
+  (when (require 'company-glsl nil t)
+    (set-company-backend! 'glsl-mode 'company-glsl))
+  (when (modulep! +lsp)
+    (add-hook 'glsl-mode-local-vars-hook #'lsp! 'append)
+    (add-hook 'glsl-ts-mode-local-vars-hook #'lsp! 'append)))
+
+
+(use-package! cuda-mode
+  :defer t
+  :config
+  (when (modulep! +lsp)
+    (add-hook 'cuda-mode-local-vars-hook #'lsp! 'append))
+  )
+
+
+(use-package! cuda-ts-mode
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'cuda-mode 'cuda-ts-mode
+    '((cuda :url "https://github.com/tree-sitter-grammars/tree-sitter-cuda")))
+  :config
+  (when (modulep! +lsp)
+    (add-hook 'cuda-ts-mode-local-vars-hook #'lsp! 'append)))
 
 
 (use-package! demangle-mode
   :hook llvm-mode)
-
-
-(use-package! company-glsl  ; for `glsl-mode'
-  :when (modulep! :completion company)
-  :after glsl-mode
-  :config (set-company-backend! 'glsl-mode 'company-glsl))
 
 
 ;;
@@ -142,10 +170,10 @@ This is ignored by ccls.")
 
 (when (modulep! +lsp)
   (add-hook! '(c-mode-local-vars-hook
+               c-ts-mode-local-vars-hook
                c++-mode-local-vars-hook
-               objc-mode-local-vars-hook
-               cmake-mode-local-vars-hook
-               cuda-mode-local-vars-hook)
+               c++-ts-mode-local-vars-hook
+               objc-mode-local-vars-hook)
              :append #'lsp!)
 
   (if (modulep! :tools lsp -eglot)

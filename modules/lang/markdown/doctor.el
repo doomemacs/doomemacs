@@ -1,6 +1,10 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; lang/markdown/doctor.el
 
+(assert! (or (not (modulep! +tree-sitter))
+             (modulep! :tools tree-sitter))
+         "This module requires (:tools tree-sitter)")
+
 (when (require 'markdown-mode nil t)
   (cond ((eq markdown-command #'+markdown-compile)
          (unless (cl-loop for (exe . cmd) in (list (cons "marked" '+markdown-compile-marked)

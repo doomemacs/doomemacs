@@ -5,10 +5,6 @@
              (modulep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(assert! (or (not (modulep! +tree-sitter))
-             (modulep! :tools tree-sitter))
-         "This module requires (:tools tree-sitter)")
-
 (unless (executable-find "ocamlmerlin")
   (warn! "Couldn't find ocamlmerlin. Lookup, completion and syntax checking won't work"))
 

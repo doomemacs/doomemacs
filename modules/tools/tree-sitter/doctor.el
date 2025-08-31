@@ -1,4 +1,10 @@
-;;; tools/treesitter/doctor.el -*- lexical-binding: t; -*-
+;;; tools/tree-sitter/doctor.el -*- lexical-binding: t; -*-
 
 (unless (fboundp 'module-load)
-  (warn! "Emacs was not built with dynamic modules support. Tree sitter needs this to function"))
+  (error! "Emacs not built with dynamic modules support"))
+
+(if (version< emacs-version "29.1")
+    (error! "Emacs 29.1 or newer is required for tree-sitter support")
+  (unless (and (fboundp 'treesit-available-p)
+               (treesit-available-p))
+    (error! "Emacs not built with tree-sitter support!")))

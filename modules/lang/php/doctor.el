@@ -5,9 +5,15 @@
              (modulep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(assert! (or (not (modulep! +tree-sitter))
-             (modulep! :tools tree-sitter))
-         "This module requires (:tools tree-sitter)")
+(when (modulep! +tree-sitter)
+  (assert! (modulep! :tools tree-sitter)
+           "This module requires (:tools tree-sitter)")
+  (assert! (fboundp 'php-ts-mode)
+           "Can't find `php-ts-mode'; Emacs 30.1+ is required")
+  (unless (modulep! :lang javascript +tree-sitter)
+    (error! "(:lang (javascript +tree-sitter)) required, but not enabled"))
+  (unless (modulep! :lang web +tree-sitter)
+    (error! "(:lang (web +tree-sitter)) required, but not enabled")))
 
 (unless (executable-find "php")
   (warn! "Couldn't find php in your PATH"))

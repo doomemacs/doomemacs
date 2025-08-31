@@ -130,10 +130,6 @@
   (opam-switch-set-switch (tuareg-opam-current-compiler)))
 
 
-(when (modulep! +tree-sitter)
-  (add-hook 'tuareg-mode-local-vars-hook #'tree-sitter!))
-
-
 (use-package! dune
   :defer t
   :config

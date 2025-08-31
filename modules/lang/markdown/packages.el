@@ -8,6 +8,11 @@
 ;; present when you call `markdown-edit-code-block'.
 (package! edit-indirect :pin "82a28d8a85277cfe453af464603ea330eae41c05")
 
+(when (modulep! +tree-sitter)
+  (package! markdown-ts-mode
+    :built-in 'prefer  ; Emacs 31+ has a superior markdown-ts-mode
+    :pin "2f1ee8b94cdf53cebc31ae08ecfbba846193d5e1"))
+
 (when (modulep! +grip)
   (package! grip-mode :pin "11fecd5b38c78597ff53a39fb3a090e7c80350fa"))
 

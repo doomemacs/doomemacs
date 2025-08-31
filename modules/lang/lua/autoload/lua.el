@@ -1,5 +1,26 @@
 ;;; lang/lua/autoload/lua.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defvar +lua-lsp-dir (concat doom-data-dir "lsp/lua-language-server/")
+  "Absolute path to the directory of sumneko's lua-language-server.
+
+This directory MUST contain the 'main.lua' file and be the in-source build of
+lua-language-server.")
+
+;;;###autoload
+(defun +lua-generate-lsp-server-command ()
+  ;; The absolute path to lua-language-server binary is necessary because the
+  ;; bundled dependencies aren't found otherwise. The only reason this is a
+  ;; function is to dynamically change when/if `+lua-lsp-dir' does
+  (list (or (executable-find "lua-language-server")
+            (doom-path +lua-lsp-dir
+                       (cond ((featurep :system 'macos)   "bin/macOS")
+                             ((featurep :system 'linux)   "bin/Linux")
+                             ((featurep :system 'windows) "bin/Windows"))
+                       "lua-language-server"))
+        "-E" "-e" "LANG=en"
+        (doom-path +lua-lsp-dir "main.lua")))
+
 (defun +lua-love-build-command ()
   (when-let (root (+lua-love-project-root))
     (format "%s %s"

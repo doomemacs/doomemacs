@@ -23,10 +23,7 @@ Fish script) to Doom Emacs.
   (supports bash-language-server).
 - +powershell ::
   Add syntax highlighting for Powershell script files (=.ps1= and =.psm1=).
-- +tree-sitter ::
-  Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
- 
+
 ** Packages
 - [[doom-package:company-shell]] if [[doom-module::completion company]]
 - [[doom-package:fish-mode]] if [[doom-module:+fish]]

@@ -110,23 +110,6 @@ and return the value found in PLACE instead."
 (unless (fboundp 'pos-eol) (defalias 'pos-eol #'line-end-position))
 
 ;; Introduced in 29.1
-(unless (boundp 'major-mode-remap-alist)
-  (defvar major-mode-remap-alist nil)
-  (defvar-local set-auto-mode--last nil)
-  (define-advice set-auto-mode-0 (:override (mode &optional keep-mode-if-same) backport-major-mode-remap)
-    (unless (and keep-mode-if-same
-                 (or (eq (indirect-function mode)
-                         (indirect-function major-mode))
-                     (and set-auto-mode--last
-                          (eq mode (car set-auto-mode--last))
-                          (eq major-mode (cdr set-auto-mode--last)))))
-      (when mode
-        (funcall (major-mode-remap mode))
-        (unless (eq mode major-mode)
-          (setq set-auto-mode--last (cons mode major-mode)))
-        mode))))
-
-;; Introduced in 29.1
 (unless (boundp 'enable-theme-functions)
   (defcustom enable-theme-functions nil
     "Abnormal hook that is run after a theme has been enabled.
@@ -153,12 +136,26 @@ The functions in the hook are called with one parameter -- the
 ;;; From Emacs >= 30
 ;; Introduced in 30.1
 (unless (fboundp 'major-mode-remap)
+  (defvar major-mode-remap-alist nil)  ; introduced in 29.1
   (defvar major-mode-remap-defaults nil)
   (defun major-mode-remap (mode)
     "Return the function to use to enable MODE."
     (or (cdr (or (assq mode major-mode-remap-alist)
                  (assq mode major-mode-remap-defaults)))
-        mode)))
+        mode))
+  (defvar-local set-auto-mode--last nil)
+  (define-advice set-auto-mode-0 (:override (mode &optional keep-mode-if-same) backport-major-mode-remap)
+    (unless (and keep-mode-if-same
+                 (or (eq (indirect-function mode)
+                         (indirect-function major-mode))
+                     (and set-auto-mode--last
+                          (eq mode (car set-auto-mode--last))
+                          (eq major-mode (cdr set-auto-mode--last)))))
+      (when mode
+        (funcall (major-mode-remap mode))
+        (unless (eq mode major-mode)
+          (setq set-auto-mode--last (cons mode major-mode)))
+        mode))))
 
 ;; Introduced in 30.1
 (unless (boundp 'safe-local-variable-directories)

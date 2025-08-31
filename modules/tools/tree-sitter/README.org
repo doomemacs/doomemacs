@@ -27,12 +27,26 @@ It includes:
 /This module has no flags./
 
 ** Packages
-- [[doom-package:evil-textobj-tree-sitter]] if [[doom-module::editor evil +everywhere]]
-- [[doom-package:tree-sitter]]
-- [[doom-package:tree-sitter-langs]]
+/This module doesn't install any packages./
 
 ** Hacks
-/No hacks documented for this module./
+- ~treesit-auto-install-grammar~, ~treesit-ensure-installed~, ~treesit-enabled-modes~,
+  and ~treesit-major-mode-remap-alist~ have been backported from Emacs 30/31.
+- ~treesit~ has been advised to install grammars to the current Doom profile's
+  data folder, rather than in ~$EMACSDIR/treesit/~ (to keep ~$EMACSDIR~ clean and so
+  each profile can have their own grammars; in case of version conflicts).
+- Because *-ts-modes are inconsistent in how they handle missing language
+  grammars (some error out, some respect ~treesit-auto-install-grammar~ as of 30+,
+  some fall back to the non-ts-mode), ~major-mode-remap~ is advised to provide
+  consistent and graceful failure these cases (falling back to the non-ts-mode
+  in all cases, with a logged warning).
+- Some *-ts-modes modify ~auto-mode-alist~ and/or ~interpreter-mode-alist~ with
+  hardcoded entries whenever they are activated, potentially overriding user (or
+  Doom module) configuration. They have been advised to suppress this behavior.
+- Autoloaded ~*-ts-mode~/~*-ts-mode-maybe~ entries in ~auto-mode-alist~ and
+  ~interpreter-mode-alist~ are proactively removed so we can consistently rely on
+  ~major-mode-remap-{alist,defaults}~ instead (which is more predictable and
+  harder for users/modules to carelessly override)
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.

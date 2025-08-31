@@ -1,11 +1,7 @@
 ;;; lang/dart/config.el -*- lexical-binding: t; -*-
 
-(use-package! dart-mode
-  :defer t
-  :config
-  (when (modulep! +lsp)
-    (add-hook 'dart-mode-local-vars-hook #'lsp! 'append))
-  (set-ligatures! '(dart-mode)
+(defun +dart-common-config (mode)
+  (set-ligatures! mode
     ;; Functional
     :def "Function"
     :lambda "() =>"
@@ -23,7 +19,25 @@
     :for "for"
     :return "return"
     ;; Other
-    :yield "yield"))
+    :yield "yield")
+
+  (when (modulep! +lsp)
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append)))
+
+(use-package! dart-mode
+  :hook (dart-mode . rainbow-delimiters-mode)
+  :config
+  (+dart-common-config 'dart-mode))
+
+
+(use-package! dart-ts-mode
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'dart-mode 'dart-ts-mode
+    '((dart :url "https://github.com/ast-grep/tree-sitter-dart")))
+  :config
+  (+dart-common-config 'dart-ts-mode))
 
 
 (use-package! flutter

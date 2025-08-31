@@ -4,13 +4,10 @@
   :interpreter "julia"
   :config
   (unless (modulep! +snail)
-    (set-repl-handler! 'julia-mode #'+julia/open-repl))
+    (set-repl-handler! '(julia-mode julia-ts-mode) #'+julia/open-repl))
 
   (when (modulep! +lsp)
     (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
-
-  (when (modulep! +tree-sitter)
-    (add-hook 'julia-mode-local-vars-hook #'tree-sitter! 'append))
 
   ;; Borrow matlab.el's fontification of math operators. From
   ;; <https://web.archive.org/web/20170326183805/https://ogbe.net/emacsconfig.html>
@@ -47,9 +44,21 @@
         1 font-lock-type-face)))))
 
 
+(use-package! julia-ts-mode
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'julia-mode 'julia-ts-mode
+    '((julia :url "https://github.com/tree-sitter/tree-sitter-julia")))
+  :config
+  (when (modulep! +lsp)
+    (add-hook 'julia-ts-mode-local-vars-hook #'lsp! 'append)))
+
+
 (use-package! julia-repl
   :preface (defvar +julia-repl-start-hook nil)
   :hook (julia-mode . julia-repl-mode)
+  :hook (julia-ts-mode . julia-repl-mode)
   :hook (+julia-repl-start . +julia-override-repl-escape-char-h)
   :hook (+julia-repl-start . julia-repl-use-emacsclient)
   :config
@@ -95,7 +104,8 @@
   :after eglot
   :init
   ;; Prevent timeout while installing LanguageServer.jl
-  (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
+  (setq-hook! '(julia-mode-hook julia-ts-mode-hook)
+    eglot-connect-timeout (max eglot-connect-timeout 60))
   :config (eglot-jl-init))
 
 
@@ -103,6 +113,7 @@
   :when (modulep! +snail)
   :when (modulep! :term vterm)
   :hook (julia-mode . julia-snail-mode)
+  :hook (julia-ts-mode . julia-snail-mode)
   :config
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
 

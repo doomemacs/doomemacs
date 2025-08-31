@@ -9,6 +9,10 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(assert! (or (not (modulep! +tree-sitter))
+             (fboundp 'java-ts-mode))
+         "Can't find `java-ts-mode'; Emacs 29.1+ is required")
+
 (unless (executable-find "javac")
   (warn! "Couldn't find the javac executable, are you sure the JDK is installed?"))
 

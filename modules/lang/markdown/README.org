@@ -33,11 +33,16 @@ for Markdown's syntax is the format of plain text email. -- John Gruber
 - +grip ::
   Enable [[https://github.com/seagle0128/grip-mode][grip support]] (on [[kbd:][<localleader> p]]), to provide live github-style
   previews of your markdown (or org) files.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]]. Note that tree-sitter
+  support on Emacs 31 is superior to 30 and under.
 
 ** Packages
 - [[doom-package:edit-indirect]]
 - [[doom-package:evil-markdown]] if [[doom-module::editor evil +everywhere]]
 - [[doom-package:grip-mode]] if [[doom-module:+grip]]
+- [[doom-package:markdown-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:markdown-mode]]
 - [[doom-package:markdown-toc]]
 

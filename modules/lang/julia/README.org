@@ -15,8 +15,8 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~julia-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports LanguageServer.jl).
+  Enable LSP support for ~julia-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (supports LanguageServer.jl).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].

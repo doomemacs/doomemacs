@@ -19,20 +19,18 @@ Includes:
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
+- +lsp ::
+  Enable an LSP hook for ~nix-mode~. Requires [[doom-module::tools lsp]] and a
+  language server (one of either ~nil~ or ~rnix-lsp~).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
-- +lsp ::
-  Enable an LSP hook for ~nix-mode~. Requires [[doom-module::tools lsp]] and a language
-  server (one of either ~nil~ or ~rnix-lsp~).
-
-  You can still start a nix lsp manually without this flag, this just adds
-  a hook to always start the lsp when loading ~nix-mode~.
+  editing. Requires Emacs 29.1+ and [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:company-nixos-options]] if [[doom-module::completion company]]
 - [[doom-package:helm-nixos-options]] if [[doom-module::completion helm]]
 - [[doom-package:nix-mode]]
+- [[doom-package:nix-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:nix-update]]
 
 ** Hacks

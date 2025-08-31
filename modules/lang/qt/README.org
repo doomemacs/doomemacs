@@ -13,10 +13,16 @@ This module provides language functionality for [[https://qt.io][Qt]] specific f
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +lsp ::
+  Enable LSP support for ~qml-mode~/~qml-ts-mode~. Requires [[doom-module::tools lsp]]
+  and a langserver (supports [[https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html][qmlls]]).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:qml-mode]]
+- [[doom-package:qml-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:qt-pro-mode]]
 
 ** Hacks

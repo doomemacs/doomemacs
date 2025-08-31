@@ -5,6 +5,10 @@
              (modulep! :tools lsp))
          "This module requires (:tools lsp)")
 
+(assert! (or (not (modulep! +tree-sitter))
+             (modulep! :tools tree-sitter))
+         "This module requires (:tools tree-sitter)")
+
 (unless (executable-find "cabal")
   (warn! "Couldn't find cabal. haskell-mode may have issues."))
 

@@ -130,6 +130,13 @@ capture, the end position, and the output buffer.")
          :desc "GFM checkbox"      "x" #'markdown-toggle-gfm-checkbox)))
 
 
+(use-package! markdown-ts-mode  ; 31+ only
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode '(markdown markdown-inline)))
+
+
 (use-package! evil-markdown
   :when (modulep! :editor evil +everywhere)
   :hook (markdown-mode . evil-markdown-mode)

@@ -36,7 +36,7 @@ This module adds support for PHP 5.3+ (including PHP8) to Doom Emacs.
   langserver (supports [[https://emacs-lsp.github.io/lsp-mode/page/lsp-phpactor/][phpactor]], [[https://emacs-lsp.github.io/lsp-mode/page/lsp-intelephense/][intelephense]], [[https://emacs-lsp.github.io/lsp-mode/page/lsp-serenata/][serenata]], [[https://emacs-lsp.github.io/lsp-mode/page/lsp-php/][php-language-server]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]] and Emacs 30.1+.
 
 ** Packages
 - [[doom-package:async]]

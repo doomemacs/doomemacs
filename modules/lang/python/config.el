@@ -14,28 +14,39 @@
 ;;; Packages
 
 (use-package! python
-  :mode ("[./]flake8\\'" . conf-mode)
-  :mode ("/Pipfile\\'" . conf-mode)
+  :mode ("/\\(?:Pipfile\\|\\.?flake8\\)\\'" . conf-mode)
   :init
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil)
 
+  (when (modulep! +tree-sitter)
+    (set-tree-sitter! 'python-mode 'python-ts-mode
+      '((python :url "https://github.com/tree-sitter/tree-sitter-python"
+                :commit "bffb65a8cfe4e46290331dfef0dbf0ef3679de11"))))
+
+  :config
+  ;; HACK: `python-base-mode' (and `python-ts-mode') don't exist on pre-29
+  ;;   versions of Emacs, Rather than litter this module with conditionals, I
+  ;;   shim the keymap in.
+  (unless (boundp 'python-base-mode-map)
+    (defvaralias 'python-base-mode-map 'python-mode-map))
+
   (when (modulep! +lsp)
     (add-hook 'python-mode-local-vars-hook #'lsp! 'append)
+    (add-hook 'python-ts-mode-local-vars-hook #'lsp! 'append)
     ;; Use "mspyls" in eglot if in PATH
     (when (executable-find "Microsoft.Python.LanguageServer")
-      (set-eglot-client! 'python-mode '("Microsoft.Python.LanguageServer"))))
+      (set-eglot-client! '(python-mode python-ts-mode) '("Microsoft.Python.LanguageServer"))))
 
-  (when (modulep! +tree-sitter)
-    (add-hook 'python-mode-local-vars-hook #'tree-sitter! 'append))
-  :config
-  (set-repl-handler! 'python-mode #'+python/open-repl
+  (set-repl-handler! '(python-mode python-ts-mode) #'+python/open-repl
     :persist t
     :send-region #'python-shell-send-region
     :send-buffer #'python-shell-send-buffer)
-  (set-docsets! '(python-mode inferior-python-mode) "Python 3" "NumPy" "SciPy" "Pandas")
 
-  (set-ligatures! 'python-mode
+  (set-docsets! '(python-mode python-ts-mode inferior-python-mode)
+    "Python 3" "NumPy" "SciPy" "Pandas")
+
+  (set-ligatures! '(python-mode python-ts-mode)
     ;; Functional
     :def "def"
     :lambda "lambda"
@@ -62,7 +73,7 @@
              (executable-find "python3"))
     (setq python-shell-interpreter "python3"))
 
-  (add-hook! 'python-mode-hook
+  (add-hook! '(python-mode-hook python-ts-mode-hook)
     (defun +python-use-correct-flycheck-executables-h ()
       "Use the correct Python executables for Flycheck."
       (let ((executable python-shell-interpreter))
@@ -86,14 +97,16 @@
     (advice-add #'pythonic-activate :after-while #'+modeline-update-env-in-all-windows-h)
     (advice-add #'pythonic-deactivate :after #'+modeline-clear-env-in-all-windows-h))
 
-  (setq-hook! 'python-mode-hook tab-width python-indent-offset))
+  ;; HACK: `python-mode' doesn't update `tab-width' to reflect
+  ;;   `python-indent-offset', causing issues anywhere `tab-width' is respected.
+  (setq-hook! '(python-mode-hook python-ts-mode-hook) tab-width python-indent-offset))
 
 
 (use-package! pyimport
   :defer t
   :init
   (map! :after python
-        :map python-mode-map
+        :map python-base-mode-map
         :localleader
         :prefix ("i" . "imports")
         :desc "Insert missing imports" "i" #'pyimport-insert-missing
@@ -105,11 +118,12 @@
   :defer t
   :init
   (map! :after python
-        :map python-mode-map
+        :map python-base-mode-map
         :localleader
         (:prefix ("i" . "imports")
          :desc "Sort imports"      "s" #'py-isort-buffer
          :desc "Sort region"       "r" #'py-isort-region)))
+
 
 (use-package! nose
   :commands nose-mode
@@ -138,7 +152,7 @@
   :init
   (map! :after python
         :localleader
-        :map python-mode-map
+        :map python-base-mode-map
         :prefix ("t" . "test")
         "a" #'python-pytest
         "f" #'python-pytest-file-dwim
@@ -157,7 +171,7 @@
   :hook (python-mode . pipenv-mode)
   :init (setq pipenv-with-projectile nil)
   :config
-  (set-eval-handler! 'python-mode
+  (set-eval-handler! '(python-mode python-ts-mode)
     '((:command . (lambda () python-shell-interpreter))
       (:exec (lambda ()
                (if-let* ((bin (executable-find "pipenv" t))
@@ -165,7 +179,7 @@
                    (format "PIPENV_MAX_DEPTH=9999 %s run %%c %%o %%s %%a" bin)
                  "%c %o %s %a")))
       (:description . "Run Python script")))
-  (map! :map python-mode-map
+  (map! :map python-base-mode-map
         :localleader
         :prefix ("e" . "pipenv")
         :desc "activate"    "a" #'pipenv-activate
@@ -185,7 +199,8 @@
     (add-hook 'pyvenv-post-activate-hooks #'+modeline-update-env-in-all-windows-h)
     (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline-clear-env-in-all-windows-h))
   :config
-  (add-hook 'python-mode-local-vars-hook #'pyvenv-track-virtualenv)
+  (add-hook! '(python-mode-local-vars-hook python-ts-mode-local-vars-hook)
+             #'pyvenv-track-virtualenv)
   (add-to-list 'global-mode-string
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
                'append))
@@ -199,7 +214,8 @@
   (when (executable-find "pyenv")
     (pyenv-mode +1)
     (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
-  (add-hook 'python-mode-local-vars-hook #'+python-pyenv-mode-set-auto-h)
+  (add-hook! '(python-mode-local-vars-hook python-ts-mode-local-vars-hook)
+             #'+python-pyenv-mode-set-auto-h)
   (add-hook 'doom-switch-buffer-hook #'+python-pyenv-mode-set-auto-h))
 
 

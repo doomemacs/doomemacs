@@ -167,7 +167,19 @@
                nxml-mode-local-vars-hook)
              :append #'lsp!))
 
-(when (modulep! +tree-sitter)
-  (add-hook! '(html-mode-local-vars-hook
-               mhtml-mode-local-vars-hook)
-             :append #'tree-sitter!))
+
+(use-package! html-ts-mode  ; 30.1+ only
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'html-mode 'html-ts-mode
+    '((html :url "https://github.com/tree-sitter/tree-sitter-html"
+            :rev "v0.23.0"
+            :commit "6a442a3cf461b0ce275339e5afa178693484c927"))))
+
+
+(use-package! mhtml-ts-mode  ; 31+ only
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'mhtml-mode 'mhtml-ts-mode 'html))

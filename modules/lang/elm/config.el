@@ -5,9 +5,6 @@
       (add-hook 'elm-mode-local-vars-hook #'lsp! 'append)
     (set-company-backend! 'elm-mode 'company-elm))
 
-  (when (modulep! +tree-sitter)
-    (add-hook 'elm-mode-local-vars-hook #'tree-sitter! 'append))
- 
   (set-repl-handler! 'elm-mode #'run-elm-interactive)
   (set-ligatures! 'elm-mode
     :null "null"

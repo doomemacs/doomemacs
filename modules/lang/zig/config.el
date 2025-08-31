@@ -8,30 +8,43 @@
 ;;
 ;;; Packages
 
-(use-package! zig-mode
-  :defer t
-  :config
-  (setq zig-format-on-save nil) ; rely on :editor format instead
-
+(defun +zig-common-config (mode)
   (when (modulep! +lsp)
-    (add-hook 'zig-mode-local-vars-hook #'lsp! 'append))
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
+  (map! :localleader
+        :map ,(intern (format "%s-map" mode))
+        "b" #'zig-compile
+        "f" #'zig-format-buffer
+        "r" #'zig-run
+        "t" #'zig-test-buffer))
 
-  (when (modulep! +tree-sitter)
-    (add-hook 'zig-mode-local-vars-hook #'tree-sitter! 'append))
 
-  (when (modulep! :checkers syntax -flymake)
+(when (modulep! :checkers syntax -flymake)
+  (after! flycheck
     (eval '(flycheck-define-checker zig
              "A zig syntax checker using zig's `ast-check` command."
              :command ("zig" "ast-check" (eval (buffer-file-name)))
              :error-patterns
              ((error line-start (file-name) ":" line ":" column ": error: " (message) line-end))
-             :modes zig-mode)
+             :modes (zig-mode zig-ts-mode))
           t)
-    (add-to-list 'flycheck-checkers 'zig))
+    (add-to-list 'flycheck-checkers 'zig)))
 
-  (map! :localleader
-        :map zig-mode-map
-        "b" #'zig-compile
-        "f" #'zig-format-buffer
-        "r" #'zig-run
-        "t" #'zig-test-buffer))
+
+(use-package! zig-mode
+  :hook (zig-mode . rainbow-delimiters-mode)
+  :config
+  (setq zig-format-on-save nil) ; rely on :editor format instead
+  (+zig-common-config 'zig-mode))
+
+
+(use-package! zig-ts-mode
+  :when (modulep! +tree-sitter)
+  :when (fboundp 'zig-ts-mode)
+  :defer t
+  :init
+  (set-tree-sitter! 'zig-mode 'zig-ts-mode
+    '((zig :url "https://github.com/tree-sitter/zig-tree-sitter"
+           :rev "v0.25.0")))
+  :config
+  (+zig-common-config 'zig-ts-mode))
