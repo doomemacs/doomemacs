@@ -17,7 +17,6 @@
 
 
 (use-package! rust-mode
-  :mode ("\\.rs\\'" . rust-mode)
   :defer t
   :preface
   ;; Ensure rust-mode derives from rust-ts-mode, b/c rustic-mode derives from
@@ -33,26 +32,10 @@
     (require 'rustic-mode nil t)))
 
 
-(use-package! rust-ts-mode  ; 29.1+ only
-  :when (modulep! +tree-sitter)
-  :defer t
-  :init
-  (set-tree-sitter! 'rust-mode 'rust-ts-mode
-    `((rust :url "https://github.com/tree-sitter/tree-sitter-rust"
-            :commit ,(if (and (treesit-available-p)
-                              (< (treesit-library-abi-version) 15))
-                         "1f63b33efee17e833e0ea29266dd3d713e27e321"
-                       "18b0515fca567f5a10aee9978c6d2640e878671a"))))
-
-  (add-to-list 'major-mode-remap-defaults '(rust-mode . rust-ts-mode) t))
-
-
 (use-package! rustic
+  :mode ("\\.rs\\'" . rustic-mode)
   :defer t
   :preface
-  (unless (assq 'rust-mode major-mode-remap-defaults)
-    (add-to-list 'major-mode-remap-defaults '(rust-mode . rustic-mode)))
-
   ;; HACK `rustic' sets up some things too early. I'd rather disable it and let
   ;;   our respective modules standardize how they're initialized.
   (setq rustic-lsp-client nil)
@@ -64,6 +47,14 @@
     (remove-hook 'flycheck-mode-hook #'rustic-flycheck-setup))
 
   :init
+  (when (modulep! +tree-sitter)
+    (set-tree-sitter! 'rust-mode 'rustic-mode
+      `((rust :url "https://github.com/tree-sitter/tree-sitter-rust"
+              :commit ,(if (and (treesit-available-p)
+                                (< (treesit-library-abi-version) 15))
+                           "1f63b33efee17e833e0ea29266dd3d713e27e321"
+                         "18b0515fca567f5a10aee9978c6d2640e878671a")))))
+
   ;; HACK Certainly, `rustic-babel' does this, but the package (and many other
   ;;   rustic packages) must be loaded in order for them to take effect. To lazy
   ;;   load it all, it must be done earlier:
@@ -89,34 +80,35 @@
             'lsp-mode))
     (add-hook 'rustic-mode-local-vars-hook #'rustic-setup-lsp 'append)
 
-    ;; HACK: Add @scturtle fix for signatures on hover on LSP mode. This code
-    ;;   has not been upstreamed because it depends on the exact format of the
-    ;;   response of Rust Analyzer, which is not stable enough for `lsp-mode'
-    ;;   maintainers (see emacs-lsp/lsp-mode#1740).
-    (unless (modulep! :tools lsp +eglot)
+    (when (modulep! :tools lsp -eglot)
+      ;; HACK: Add @scturtle fix for signatures on hover on LSP mode. This code
+      ;;   has not been upstreamed because it depends on the exact format of the
+      ;;   response of Rust Analyzer, which is not stable enough for `lsp-mode'
+      ;;   maintainers (see emacs-lsp/lsp-mode#1740).
       (defadvice! +rust--dont-cache-results-from-ra-a (&rest _)
         :after #'lsp-eldoc-function
         (when (derived-mode-p 'rust-mode 'rust-ts-mode)
           (setq lsp--hover-saved-bounds nil)))
 
-      ;; extract and show short signature for rust-analyzer
-      (cl-defmethod lsp-clients-extract-signature-on-hover (contents (_server-id (eql rust-analyzer)))
-        (let* ((value (if lsp-use-plists (plist-get contents :value) (gethash "value" contents)))
-               (groups (--partition-by (s-blank? it) (s-lines (s-trim value))))
-               (mod-group (cond ((s-equals? "```rust" (car (-fifth-item groups))) (-third-item groups))
-                                ((s-equals? "```rust" (car (-third-item groups))) (-first-item groups))
-                                (t nil)))
-               (cmt (if (null mod-group) "" (concat " // " (cadr mod-group))))
-               (sig-group (cond ((s-equals? "```rust" (car (-fifth-item groups))) (-fifth-item groups))
-                                ((s-equals? "```rust" (car (-third-item groups))) (-third-item groups))
-                                (t (-first-item groups))))
-               (sig (->> sig-group
-                         (--drop-while (s-equals? "```rust" it))
-                         (--take-while (not (s-equals? "```" it)))
-                         (--map (s-replace-regexp "//.*" "" it))
-                         (--map (s-trim it))
-                         (s-join " "))))
-          (lsp--render-element (concat "```rust\n" sig cmt "\n```"))))))
+      ;; Extract and show short signature for rust-analyzer.
+      (after! lsp-rust
+        (cl-defmethod lsp-clients-extract-signature-on-hover (contents (_server-id (eql rust-analyzer)))
+          (let* ((value (if lsp-use-plists (plist-get contents :value) (gethash "value" contents)))
+                 (groups (--partition-by (s-blank? it) (s-lines (s-trim value))))
+                 (mod-group (cond ((s-equals? "```rust" (car (-fifth-item groups))) (-third-item groups))
+                                  ((s-equals? "```rust" (car (-third-item groups))) (-first-item groups))
+                                  (t nil)))
+                 (cmt (if (null mod-group) "" (concat " // " (cadr mod-group))))
+                 (sig-group (cond ((s-equals? "```rust" (car (-fifth-item groups))) (-fifth-item groups))
+                                  ((s-equals? "```rust" (car (-third-item groups))) (-third-item groups))
+                                  (t (-first-item groups))))
+                 (sig (->> sig-group
+                           (--drop-while (s-equals? "```rust" it))
+                           (--take-while (not (s-equals? "```" it)))
+                           (--map (s-replace-regexp "//.*" "" it))
+                           (--map (s-trim it))
+                           (s-join " "))))
+            (lsp--render-element (concat "```rust\n" sig cmt "\n```")))))))
 
   ;; HACK If lsp/eglot isn't available, it attempts to install lsp-mode via
   ;;   package.el. Doom manages its own dependencies through straight so disable
