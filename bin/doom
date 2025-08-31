@@ -9,8 +9,8 @@
 :; export __DOOMGEOM="${__DOOMGEOM:-`tput cols 2>/dev/null`x`tput lines 2>/dev/null`}"
 :; export __DOOMGPIPE=${__DOOMGPIPE:-$__DOOMPIPE}
 :; export __DOOMPIPE=; [ -t 0 ] || __DOOMPIPE="${__DOOMPIPE}0"; [ -t 1 ] || __DOOMPIPE="${__DOOMPIPE}1"
-:; $emacs --eval "(setq warning-inhibit-types '((files missing-lexbind-cookie)))" --load "$0" -- "$@" || exit=$?
-:; [ "${exit:-0}" -eq 254 ] && { export TMPDIR="${TMPDIR:-${TMP:-${TEMP:-`$emacs -Q --eval '(princ temporary-file-directory)' 2>/dev/null`}}}"; sh "${TMPDIR}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@" && true; exit="$?"; }
+:; eval "$emacs --eval \"(setq warning-inhibit-types '((files missing-lexbind-cookie)))\" --load" "$0" -- "$@" || exit=$?
+:; [ "${exit:-0}" -eq 254 ] && { export TMPDIR="${TMPDIR:-${TMP:-${TEMP:-`eval "$emacs -Q --eval '(princ temporary-file-directory)'" 2>/dev/null`}}}"; sh "${TMPDIR}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@" && true; exit="$?"; }
 :; exit $exit
 
 ;; This magical mess of a shebang is necessary for any script that relies on
