@@ -33,12 +33,16 @@
     (require 'rustic-mode nil t)))
 
 
-(use-package! rust-ts-mode
+(use-package! rust-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'rust-ts-mode) ; 29.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'rust-mode 'rust-ts-mode 'rust)
+  (set-tree-sitter! 'rust-mode 'rust-ts-mode
+    `((rust :url "https://github.com/tree-sitter/tree-sitter-rust"
+            :commit ,(if (and (treesit-available-p)
+                              (< (treesit-library-abi-version) 15))
+                         "1f63b33efee17e833e0ea29266dd3d713e27e321"
+                       "18b0515fca567f5a10aee9978c6d2640e878671a"))))
 
   (add-to-list 'major-mode-remap-defaults '(rust-mode . rust-ts-mode) t))
 

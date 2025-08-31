@@ -74,9 +74,11 @@ If set to `nil', disable all the above behaviors.")
              :append #'lsp!))
 
 
-(use-package! css-ts-mode
+(use-package! css-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'css-ts-mode) ; 29.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'css-mode 'css-ts-mode 'css))
+  (set-tree-sitter! 'css-mode 'css-ts-mode
+    '((css :url "https://github.com/tree-sitter/tree-sitter-css"
+           :rev "v0.23.0"
+           :commit "6a442a3cf461b0ce275339e5afa178693484c927"))))

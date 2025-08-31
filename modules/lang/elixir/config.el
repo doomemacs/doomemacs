@@ -54,12 +54,15 @@
              highlight-numbers-modelist)))
 
 
-(use-package! elixir-ts-mode
+(use-package! elixir-ts-mode  ; 30.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'elixir-ts-mode) ; 30.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'elixir-mode 'elixir-ts-mode '(elixir heex))
+  (set-tree-sitter! 'elixir-mode 'elixir-ts-mode
+    '((elixir :url "https://github.com/elixir-lang/tree-sitter-elixir"
+              :commit "02a6f7fd4be28dd94ee4dd2ca19cb777053ea74e")
+      (heex :url "https://github.com/phoenixframework/tree-sitter-heex"
+            :commit "f6b83f305a755cd49cf5f6a66b2b789be93dc7b9")))
   :config
   (+elixir-common-config 'elixir-ts-mode))
 

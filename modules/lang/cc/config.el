@@ -30,9 +30,10 @@ This is ignored by ccls.")
   :hook (c-mode-common . rainbow-delimiters-mode)
   :init
   (when (modulep! +tree-sitter)
-    (set-tree-sitter! 'c-mode 'c-ts-mode 'c)
-    (set-tree-sitter! 'c++-mode 'c++-ts-mode 'cpp))
-
+    (set-tree-sitter! 'c-mode 'c-ts-mode
+      '((c :url "https://github.com/tree-sitter/tree-sitter-c")))
+    (set-tree-sitter! 'c++-mode 'c++-ts-mode
+      '((cpp :url "https://github.com/tree-sitter/tree-sitter-cpp"))))
   :config
   (set-docsets! '(c-mode c-ts-mode) "C")
   (set-docsets! '(c++-mode c++-ts-mode) "C++" "Boost")
@@ -114,7 +115,8 @@ This is ignored by ccls.")
   :init
   (when (and (modulep! +tree-sitter)
              (boundp 'cmake-ts-mode)) ; 29+ only
-    (set-tree-sitter! 'cmake-mode 'cmake-ts-mode 'cmake))
+    (set-tree-sitter! 'cmake-mode 'cmake-ts-mode
+      '((cmake :url "https://github.com/uyha/tree-sitter-cmake"))))
   :config
   (set-docsets! '(cmake-mode cmake-ts-mode) "CMake")
   (set-popup-rule! "^\\*CMake Help\\*" :size 0.4 :ttl t)

@@ -20,12 +20,13 @@
         "f" #'json-mode-beautify))
 
 
-(use-package! json-ts-mode
+(use-package! json-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'json-ts-mode) ; 29.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'json-mode 'json-ts-mode 'json)
+  (set-tree-sitter! 'json-mode 'json-ts-mode
+    '((json :url "https://github.com/tree-sitter/tree-sitter-json"
+            :commit "4d770d31f732d50d3ec373865822fbe659e47c75")))
   :config
   (when (modulep! +lsp)
     (add-hook 'json-ts-mode-local-vars-hook #'lsp! 'append)))

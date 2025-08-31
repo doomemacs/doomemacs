@@ -168,17 +168,18 @@
              :append #'lsp!))
 
 
-(use-package! html-ts-mode
+(use-package! html-ts-mode  ; 30.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'html-ts-mode) ; 30.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'html-mode 'html-ts-mode 'html))
+  (set-tree-sitter! 'html-mode 'html-ts-mode
+    '((html :url "https://github.com/tree-sitter/tree-sitter-html"
+            :rev "v0.23.0"
+            :commit "6a442a3cf461b0ce275339e5afa178693484c927"))))
 
 
-(use-package! mhtml-ts-mode
+(use-package! mhtml-ts-mode  ; 31+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'mhtml-ts-mode) ; 31+ only
   :defer t
   :init
   (set-tree-sitter! 'mhtml-mode 'mhtml-ts-mode 'html))

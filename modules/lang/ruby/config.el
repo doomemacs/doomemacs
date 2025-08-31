@@ -36,12 +36,13 @@
         "{" #'ruby-toggle-block))
 
 
-(use-package! ruby-ts-mode
+(use-package! ruby-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'ruby-ts-mode) ; 29.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'ruby-mode 'ruby-ts-mode 'ruby)
+  (set-tree-sitter! 'ruby-mode 'ruby-ts-mode
+    '((ruby :url "https://github.com/tree-sitter/tree-sitter-ruby"
+            :commit "71bd32fb7607035768799732addba884a37a6210")))
   :config
   (set-electric! 'ruby-ts-mode :words '("else" "end" "elsif"))
   (set-repl-handler! 'ruby-ts-mode #'inf-ruby)

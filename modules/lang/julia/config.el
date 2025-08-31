@@ -48,7 +48,8 @@
   :when (modulep! +tree-sitter)
   :defer t
   :init
-  (set-tree-sitter! 'julia-mode 'julia-ts-mode 'julia)
+  (set-tree-sitter! 'julia-mode 'julia-ts-mode
+    '((julia :url "https://github.com/tree-sitter/tree-sitter-julia")))
   :config
   (when (modulep! +lsp)
     (add-hook 'julia-ts-mode-local-vars-hook #'lsp! 'append)))

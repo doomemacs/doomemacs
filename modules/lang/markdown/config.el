@@ -126,9 +126,8 @@ capture, the end position, and the output buffer.")
          :desc "GFM checkbox"      "x" #'markdown-toggle-gfm-checkbox)))
 
 
-(use-package! markdown-ts-mode
+(use-package! markdown-ts-mode  ; 31+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'markdown-ts-mode)
   :defer t
   :init
   (set-tree-sitter! 'markdown-mode 'markdown-ts-mode '(markdown markdown-inline)))

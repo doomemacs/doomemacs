@@ -52,12 +52,17 @@
   (+javascript-common-config 'js-mode))
 
 
-(use-package! js-ts-mode
+(use-package! js-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'js-ts-mode) ; 29.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'js-mode 'js-ts-mode 'javascript)
+  (set-tree-sitter! 'js-mode 'js-ts-mode
+    '((javascript :url "https://github.com/tree-sitter/tree-sitter-javascript"
+                  :rev "v0.23.0"
+                  :commit "108b2d4d17a04356a340aea809e4dd5b801eb40d")
+      (jsdoc :url "https://github.com/tree-sitter/tree-sitter-jsdoc"
+             :rev "v0.23.0"
+             :commit "b253abf68a73217b7a52c0ec254f4b6a7bb86665")))
   (+javascript-common-config 'js-ts-mode))
 
 
@@ -68,12 +73,14 @@
   (+javascript-common-config 'typescript-mode))
 
 
-(use-package! typescript-ts-mode
+(use-package! typescript-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'typescript-ts-mode) ; 29.1+ only
   :mode "\\.ts\\'"
   :init
-  (set-tree-sitter! 'typescript-mode 'typescript-ts-mode 'typescript)
+  (set-tree-sitter! 'typescript-mode 'typescript-ts-mode
+    '((typescript :url "https://github.com/tree-sitter/tree-sitter-typescript"
+                  :commit "8e13e1db35b941fc57f2bd2dd4628180448c17d5"
+                  :source-dir "typescript/src")))
   :config
   (+javascript-common-config 'typescript-ts-mode))
 

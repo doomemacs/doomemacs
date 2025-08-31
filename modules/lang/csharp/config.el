@@ -2,9 +2,13 @@
 
 (use-package! csharp-mode
   :hook (csharp-mode . rainbow-delimiters-mode)
+  :defer t
   :init
   (when (modulep! +tree-sitter)
-    (set-tree-sitter! 'csharp-mode 'csharp-ts-mode 'c-sharp))
+    (set-tree-sitter! 'csharp-mode 'csharp-ts-mode
+      '((c-sharp :url "https://github.com/tree-sitter/tree-sitter-c-sharp"
+                 :rev "v0.23.1"
+                 :commit "362a8a41b265056592a0c3771664a21d23a71392"))))
   :config
   (set-formatter! 'csharpier '("csharpier" "format" "--write-stdout")
     :modes '(csharp-mode csharp-ts-mode))

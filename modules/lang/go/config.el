@@ -53,7 +53,13 @@
   :when (fboundp 'go-ts-mode) ; 31.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'go-mode 'go-ts-mode '(go gomod gowork))
+  (set-tree-sitter! 'go-mode 'go-ts-mode
+    '((go :url "https://github.com/tree-sitter/tree-sitter-go"
+          :commit "12fe553fdaaa7449f764bc876fd777704d4fb752")
+      (gomod :url "https://github.com/camdencheek/tree-sitter-go-mod"
+             :commit "3b01edce2b9ea6766ca19328d1850e456fde3103")
+      (gowork :url "https://github.com/omertuc/tree-sitter-go-work"
+              :commit "949a8a470559543857a62102c84700d291fc984c")))
   :config
   (+go-common-config 'go-ts-mode))
 

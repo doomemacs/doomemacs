@@ -28,10 +28,11 @@
 
 (use-package! lua-ts-mode
   :when (modulep! +tree-sitter)
-  :when (fboundp 'lua-ts-mode) ; 30.1+ only
   :defer t
   :init
-  (set-tree-sitter! 'lua-mode 'lua-ts-mode 'lua)
+  (set-tree-sitter! 'lua-mode 'lua-ts-mode
+    '((lua :url "https://github.com/tree-sitter-grammars/tree-sitter-lua"
+           :commit "db16e76558122e834ee214c8dc755b4a3edc82a9")))
   :config
   (+lua-common-config 'lua-ts-mode))
 

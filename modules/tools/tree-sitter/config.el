@@ -45,7 +45,7 @@
       (if-let* ((ts (get mode '+tree-sitter))
                 (fallback-mode (car ts)))
           (cond ((not (fboundp mode))
-                 (message "Couldn't find %S, falling back to %S" mode fallback-mode)
+                 (message "Couldn't find `%S', falling back to `%S'" mode fallback-mode)
                  fallback-mode)
                 ((and (or (eq treesit-enabled-modes t)
                           (memq fallback-mode treesit-enabled-modes))
