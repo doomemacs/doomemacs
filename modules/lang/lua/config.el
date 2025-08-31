@@ -72,7 +72,7 @@
 ;;; Frameworks
 
 (def-project-mode! +lua-love-mode
-  :modes '(moonscript-mode lua-mode lua-ts-mode markdown-mode json-mode)
+  :modes '(moonscript-mode lua-mode lua-ts-mode markdown-mode json-mode json-ts-mode)
   :when (+lua-love-project-root)
   :on-load
   (progn

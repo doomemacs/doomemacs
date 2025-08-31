@@ -22,7 +22,7 @@
 ;;; Framework-based minor-modes
 
 (def-project-mode! +web-jekyll-mode
-  :modes '(web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
+  :modes '(web-mode js-mode js-ts-mode coffee-mode css-mode css-ts-mode haml-mode pug-mode)
   :files (and (or "_config.yml" "_config.toml")
               (or "_layouts/" "_posts/"))
   :on-enter
@@ -30,14 +30,14 @@
     (web-mode-set-engine "django")))
 
 (def-project-mode! +web-django-mode
-  :modes '(web-mode python-mode)
+  :modes '(web-mode python-mode python-ts-mode)
   :files ("manage.py")
   :on-enter
   (when (derived-mode-p 'web-mode)
     (web-mode-set-engine "django")))
 
 (def-project-mode! +web-wordpress-mode
-  :modes '(php-mode web-mode css-mode haml-mode pug-mode)
+  :modes '(php-mode php-ts-mode web-mode css-mode css-ts-mode haml-mode pug-mode)
   :files (or "wp-config.php" "wp-config-sample.php"))
 
 (when (modulep! :lang javascript)

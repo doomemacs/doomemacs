@@ -136,7 +136,7 @@
 ;; Projects
 
 (def-project-mode! +php-laravel-mode
-  :modes '(php-mode php-ts-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
+  :modes '(php-mode php-ts-mode yaml-mode yaml-ts-mode web-mode nxml-mode js-mode js-ts-mode scss-mode)
   :files (and "artisan" "server.php"))
 
 (def-project-mode! +php-composer-mode
