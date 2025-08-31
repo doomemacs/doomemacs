@@ -125,7 +125,7 @@
            typescript-mode
            solidity-mode)
   :when (locate-dominating-file default-directory "package.json")
-  :add-hooks '(+javascript-add-npm-path-h npm-mode))
+  :add-hooks '(+javascript-add-npm-path-h))
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))
