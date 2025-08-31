@@ -2,9 +2,7 @@
 ;;; lang/javascript/packages.el
 
 ;; Major modes
-(unless (or (modulep! +tree-sitter)
-            (fboundp 'treesit-available-p)
-            (treesit-available-p))
+(unless (modulep! +tree-sitter)
   (package! typescript-mode :pin "481df3ad2cdf569d8e6697679669ff6206fbd2f9"))
 
 ;; Extensions

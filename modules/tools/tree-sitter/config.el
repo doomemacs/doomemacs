@@ -60,7 +60,12 @@
                         (or (not (autoloadp fn))
                             (autoload-do-load fn mode)))
                       ;; Only prompt once, and log other times.
-                      (or (null (cdr ts))
+                      (or (null (cdr ts))  ; no grammars, no problem!
+                          ;; If the base/fallback mode doesn't exist, let's
+                          ;; assume we want no fallthrough for this major mode
+                          ;; and push forward anyway, even if a missing grammar
+                          ;; results in a broken state.
+                          (not (fboundp fallback-mode))
                           (cl-every (if (get mode '+tree-sitter-ensured)
                                         (doom-rpartial #'treesit-ready-p 'message)
                                       #'treesit-ensure-installed)
