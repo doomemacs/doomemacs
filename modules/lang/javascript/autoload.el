@@ -4,8 +4,10 @@
 
 ;;;###autoload
 (defun +javascript-npm-conf (&optional project-root refresh-p)
-  "Retrieves an alist of this project's 'package.json'. If REFRESH-P is non-nil
-ignore the cache."
+  "Retrieve an alist of this project's package.json.
+
+If REFRESH-P is non-nil ignore the cache. PROJECT-ROOT determines where to look
+for the package.json file, and defaults to the current buffer's project root."
   (let ((project-root (or project-root (doom-project-root))))
     (or (and (not refresh-p)
              (gethash project-root +javascript-npm-conf))
@@ -17,6 +19,10 @@ ignore the cache."
 
 ;;;###autoload
 (defun +javascript-npm-dep-p (packages &optional project-root refresh-p)
+  "Return non-nil if PACKAGES are dependencies of the NPM project at PROJECT-ROOT.
+
+This value is cached unless REFRESH-P is non-nil. If PROJECT-ROOT is omitted,
+the current buffer's project root is used."
   (when-let (data (and (bound-and-true-p +javascript-npm-mode)
                        (+javascript-npm-conf project-root refresh-p)))
     (let ((deps (append (cdr (assq 'dependencies data))
