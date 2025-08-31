@@ -51,7 +51,12 @@
                           (memq fallback-mode treesit-enabled-modes))
                       ;; Lazily load autoloaded `treesit-language-source-alist'
                       ;; entries.
-                      (let ((fn (symbol-function mode)))
+                      (let ((fn (symbol-function mode))
+                            ;; Silence "can't find grammar" warning popups from
+                            ;; `treesit-ready-p' calls in Emacs <=30.1. We'll
+                            ;; log it to *Messages* instead.
+                            (warning-suppress-types
+                             (cons '(treesit) warning-suppress-types)))
                         (or (not (autoloadp fn))
                             (autoload-do-load fn mode)))
                       ;; Only prompt once, and log other times.
