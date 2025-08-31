@@ -29,14 +29,6 @@ This must be set before `treemacs' has loaded.")
   ;; Don't follow the cursor (it's more disruptive/jarring than helpful as a default)
   (treemacs-follow-mode -1)
 
-  ;; HACK: persp-mode changed the signature for `persp-activated-functions', but
-  ;;   treemacs hasn't updated its usage yet.
-  ;; REVIEW: PR upstream
-  (remove-hook 'persp-activated-functions #'treemacs--remove-treemacs-window-in-new-frames)
-  (add-hook! 'persp-activated-functions
-    (defun +treemacs--remove-treemacs-window-in-new-frames-h (type &rest _)
-      (treemacs--remove-treemacs-window-in-new-frames type)))
-
   (set-popup-rule! "^ ?\\*Treemacs" :ignore t)
   (when +treemacs-git-mode
     ;; If they aren't supported, fall back to simpler methods

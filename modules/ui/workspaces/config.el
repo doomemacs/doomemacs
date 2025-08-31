@@ -212,9 +212,7 @@ stored in `persp-save-dir'.")
   (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
 
   ;; Fix #1973: visual selection surviving workspace changes
-  (add-hook! 'persp-before-deactivate-functions
-    (defun +workspaces-disable-mark-after-switch-h (&rest _)
-      (deactivate-mark)))
+  (add-hook 'persp-before-deactivate-functions #'deactivate-mark)
 
   ;; Fix #1017: stop session persistence from restoring a broken posframe
   (after! posframe
