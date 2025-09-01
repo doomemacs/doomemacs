@@ -24,7 +24,7 @@
 
 ;; Testing frameworks
 (package! rspec-mode :pin "29df3d081c6a1cbdf840cd13d45ea1c100c5bbaa")
-(package! minitest :pin "5999c45c047212cee15a2be67e78787776a79c35")
+(package! minitest :pin "d278e94fb1874c584699e1d6fa1b34224c1f8550")
 
 ;; Refactoring
 (package! ruby-json-to-hash :pin "383b22bb2e007289ac0dba146787d02ff99d4415")

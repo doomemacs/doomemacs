@@ -3,10 +3,10 @@
 
 ;; +html.el
 (package! emmet-mode :pin "322d3bb112fced57d63b44863357f7a0b7eee1e3")
-(package! haml-mode :pin "a64d58df8f098f858c6c11fa1629a90969f9c7e8")
+(package! haml-mode :pin "3bb4a96535eb5c81dbe6a43bfa8d67a778d449c0")
 (package! pug-mode :pin "73f8c2f95eba695f701df20c8436f49abadebdc1")
-(package! slim-mode :pin "8c92169817f2fa59255f547f0a9fb4fbb8309db9")
-(when (package! web-mode :pin "be2d59c8fa02b1a45ae54ce4079e502e659cefe6")
+(package! slim-mode :pin "0b1b3803290f749cb85084adc75013254b513d41")
+(when (package! web-mode :pin "1eb0abb1a9bffbb33db7bbfc6efe5b48bf416d57")
   (when (modulep! :completion company)
     (package! company-web :pin "863fb84b81ed283474e50330cd8d27b1ca0d74f1")))
 

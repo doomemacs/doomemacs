@@ -1,11 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/swift/packages.el
 
-(package! swift-mode :pin "e30b9d46e031fd25e794f00f23b6427f44f7d221")
+(package! swift-mode :pin "fc7df7bd906a2bb04aac6e0de47fc7acf33ceed3")
 
 (if (modulep! +lsp)
     (unless (modulep! :tools lsp +eglot)
-      (package! lsp-sourcekit :pin "1fb230109e90303bd36ad75b31e673ddcf928629"))
+      (package! lsp-sourcekit :pin "30918cd1aeeda5cfbc0fd615f97cf1bf388d8f2d"))
   (when (modulep! :completion company)
     (package! company-sourcekit :pin "a1860ad4dd3a542acd2fa0dfac2a388cbdf4af0c"))
   (when (modulep! :checkers syntax -flymake)

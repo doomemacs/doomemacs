@@ -1,6 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/purescript/packages.el
 
-(package! psc-ide :pin "4e614df553fb315d32ee9dac085109ee7786a3cf")
-(package! purescript-mode :pin "8c4736759afc0d567394740729d535774662afba")
+(package! psc-ide :pin "c64b05d9011d7c87c6ff2b53be08c3374b6dab66")
+(package! purescript-mode :pin "61732e23bd33b7d0d71bc6cff84b612bd2d9dff2")
 (package! psci :pin "ef31045295f29485fc697892fba53390fe193595")

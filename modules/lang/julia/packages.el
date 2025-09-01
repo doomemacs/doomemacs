@@ -2,7 +2,7 @@
 ;;; lang/julia/packages.el
 
 (package! julia-mode :pin "5c940c4ba357d8361534f11169f3d40b2d7833fc")
-(package! julia-repl :pin "317d56021889a336b4be241604ba71e46dc80581")
+(package! julia-repl :pin "681efc14a72ece3390137b01c4ee67f317cd8324")
 
 (when (and (modulep! +tree-sitter) (treesit-available-p))
   (package! julia-ts-mode :pin "d693c6b35d3aed986b2700a3b5f910de12d6c53c"))

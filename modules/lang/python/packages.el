@@ -12,21 +12,21 @@
 (when (modulep! +lsp)
   (unless (modulep! :tools lsp +eglot)
     (when (modulep! +pyright)
-      (package! lsp-pyright :pin "73377169beff8fe22cc6d52d65099db88bf49679"))))
+      (package! lsp-pyright :pin "0e59c00c7ffcf74e27da085ae33afdb9a48b9470"))))
 
 ;; Environment management
 (package! pipenv :pin "3af159749824c03f59176aff7f66ddd6a5785a10")
 (package! pyvenv :pin "31ea715f2164dd611e7fc77b26390ef3ca93509b")
 (when (modulep! +pyenv)
-  (package! pyenv-mode :pin "ba1a8c7bd7d03c006f8411c856990c083c814c9c"))
+  (package! pyenv-mode :pin "364bddb8f0c8ec022796210d8d3625a520e984b0"))
 (when (modulep! +conda)
-  (package! conda :pin "05de0c8f0cf336d90c044446aaa066ee13001b83"))
+  (package! conda :pin "8a1a934a2de576d4158b1b12329be4f5be931a4a"))
 (when (modulep! +poetry)
   (package! poetry :pin "1dff0d4a51ea8aff5f6ce97b154ea799902639ad"))
 
 ;; Testing frameworks
 (package! nose :pin "f8528297519eba911696c4e68fa88892de9a7b72")
-(package! python-pytest :pin "25d9801562a789ea5debceb1992bd528ebb4f689")
+(package! python-pytest :pin "ed2ecee09d1cccb4245842860d91940cb2fda769")
 
 ;; Import managements
 (package! pyimport :pin "4398ce8dd64fa0f685f4bf8683a35087649346d3")
