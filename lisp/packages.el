@@ -18,7 +18,7 @@
             :branch "develop"
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "8b3a54b247811d146954ddff881273438eaa9932")
+  :pin "25e02065419c8f26ad804f80463362862eb23edd")
 
 ;; doom-ui.el
 (package! nerd-icons :pin "6868c05c6eb56c6625ee7fa38450b514542ab636")
