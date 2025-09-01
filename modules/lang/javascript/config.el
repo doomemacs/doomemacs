@@ -85,11 +85,15 @@
   (+javascript-common-config 'typescript-ts-mode))
 
 
-(use-package! tsx-ts-mode
+(use-package! tsx-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
-  :when (fboundp 'tsx-ts-mode) ; 29.1+ only
   :mode "\\.[tj]sx\\'"
   :defer t
+  :init
+  (set-tree-sitter! nil 'tsx-ts-mode
+    '((tsx :url "https://github.com/tree-sitter/tree-sitter-typescript"
+           :commit "8e13e1db35b941fc57f2bd2dd4628180448c17d5"
+           :source-dir "tsx/src")))
   :config
   (+javascript-common-config 'tsx-ts-mode))
 
