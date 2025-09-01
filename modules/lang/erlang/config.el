@@ -13,7 +13,6 @@
 
 (use-package! erlang-ts
   :when (modulep! +tree-sitter)
-  :when (fboundp 'erlang-ts-mode)
   :defer t
   :init
   (set-tree-sitter! 'erlang-mode 'erlang-ts-mode

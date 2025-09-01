@@ -57,7 +57,6 @@
 
 (use-package! scala-ts-mode
   :when (modulep! +tree-sitter)
-  :when (fboundp 'treesit-available-p)
   :defer t
   :init
   (set-tree-sitter! 'scala-mode 'scala-ts-mode

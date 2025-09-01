@@ -40,7 +40,6 @@
 
 (use-package! zig-ts-mode
   :when (modulep! +tree-sitter)
-  :when (fboundp 'zig-ts-mode)
   :defer t
   :init
   ;; REVIEW: maxxnino/tree-sitter-zig is unmaintained; waiting for alternatives.

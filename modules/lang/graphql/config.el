@@ -33,7 +33,6 @@
 
 (use-package! graphql-ts-mode
   :when (modulep! +tree-sitter)
-  :when (fboundp 'treesit-available-p)
   :defer t
   :init
   (set-tree-sitter! 'graphql-mode 'graphql-ts-mode

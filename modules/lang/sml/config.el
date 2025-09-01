@@ -29,7 +29,6 @@
 ;; TODO: Mirror sml-mode keybinds to ts-mode
 (use-package! sml-ts-mode
   :when (modulep! +tree-sitter)
-  :when (fboundp 'treesit-available-p)
   :defer t
   :init
   (set-tree-sitter! 'sml-mode 'sml-ts-mode

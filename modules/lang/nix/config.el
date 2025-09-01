@@ -44,7 +44,6 @@
 
 (use-package! nix-ts-mode
   :when (modulep! +tree-sitter)
-  :when (fboundp 'treesit-available-p)
   :defer t
   :init
   (set-tree-sitter! 'nix-mode 'nix-ts-mode

@@ -46,7 +46,6 @@
 
 (use-package! haskell-ts-mode
   :when (modulep! +tree-sitter)
-  :when (fboundp 'haskell-ts-mode)
   :defer t
   :init
   (set-tree-sitter! 'haskell-mode 'haskell-ts-mode
