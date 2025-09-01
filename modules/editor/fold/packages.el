@@ -7,4 +7,4 @@
 (when (modulep! :editor evil)
   (package! evil-vimish-fold :pin "b6e0e6b91b8cd047e80debef1a536d9d49eef31a"))
 (when (modulep! :tools tree-sitter)
-  (package! treesit-fold :pin "6628b7cce585328e05d810b5505e4fdb9306f24f"))
+  (package! treesit-fold :pin "67b3e63eacd9fd6fdd3834dbc77fe776702a96b2"))
