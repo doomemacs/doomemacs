@@ -63,6 +63,7 @@
       (jsdoc :url "https://github.com/tree-sitter/tree-sitter-jsdoc"
              :rev "v0.23.0"
              :commit "b253abf68a73217b7a52c0ec254f4b6a7bb86665")))
+  :config
   (+javascript-common-config 'js-ts-mode))
 
 
