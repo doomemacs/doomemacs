@@ -28,7 +28,6 @@
     '((t (:foreground "#E10098")))
     "Face for GraphQL icon."
     :group 'nerd-icons-faces)
-  (add-hook 'graphql-mode-hook #'rainbow-delimiters-mode)
   (+graphql-common-config 'graphql-mode))
 
 

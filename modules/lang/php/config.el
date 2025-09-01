@@ -65,7 +65,7 @@
 
 
 (use-package! php-mode
-  :hook (php-mode . rainbow-delimiters-mode)
+  :defer t
   :config
   (+php-common-config 'php-mode)
 
