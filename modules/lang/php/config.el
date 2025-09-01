@@ -125,9 +125,11 @@
         "o" #'composer-find-json-file
         "l" #'composer-view-lock-file)
   (map! :after php-mode
+        :localleader
         :map php-mode-map
         :desc "composer" "c" +php-common-mode-map)
   (map! :after php-ts-mode
+        :localleader
         :map php-ts-mode-map
         :desc "composer" "c" +php-common-mode-map))
 
