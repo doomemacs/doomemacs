@@ -61,7 +61,13 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     ;; used for completion or eldoc popups).
     ;; REVIEW: Swap with `frame-parent' when 27 support is dropped
     (defun +indent-guides-in-childframe-p ()
-      (frame-parameter nil 'parent-frame)))
+      (frame-parameter nil 'parent-frame))
+    ;; indent-guides in src blocks can cause syntax highlighting to fail
+    ;; abruptly for some major modes (particularly *-ts-modes or rustic-mode).
+    ;; Since it's already working on the super org buffer, it's redundant to let
+    ;; it work on the contents of each babel block.
+    (defun +indent-guides-in-org-src-block-p ()
+      (string-prefix-p " *org-src-fontification:" (buffer-name))))
 
   ;; HACK: The way `indent-bars-display-on-blank-lines' functions, it places
   ;;   text properties with a display property containing a newline, which
