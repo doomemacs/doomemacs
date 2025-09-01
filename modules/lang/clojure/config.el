@@ -14,6 +14,10 @@
 ;;
 ;;; Packages
 
+(defun +clojure-disable-lsp-indentation-h ()
+  (setq-local lsp-enable-indentation nil))
+
+
 (use-package! clojure-mode
   :defer t
   :config
@@ -24,15 +28,8 @@
                  clojurec-mode-local-vars-hook
                  clojurescript-mode-local-vars-hook)
                :append
-               (defun +clojure-disable-lsp-indentation-h ()
-                 (setq-local lsp-enable-indentation nil))
-               #'lsp!)
-    (after! lsp-clojure
-      (dolist (m '(clojure-mode
-                   clojurec-mode
-                   clojurescript-mode
-                   clojurex-mode))
-        (add-to-list 'lsp-language-id-configuration (cons m "clojure"))))))
+               #'+clojure-disable-lsp-indentation-h
+               #'lsp!)))
 
 
 (use-package! clojure-ts-mode
@@ -48,6 +45,14 @@
   (set-tree-sitter! 'jank-mode 'clojure-ts-jank-mode 'cpp)
   (set-tree-sitter! 'joker-mode 'clojure-ts-joker-mode 'clojure)
   :config
+  (when (modulep! +lsp)
+    (add-hook! '(clojure-ts-mode-local-vars-hook
+                 clojure-ts-clojurec-mode-local-vars-hook
+                 clojure-ts-clojurescript-mode-local-vars-hook)
+               :append
+               #'+clojure-disable-lsp-indentation-h
+               #'lsp!))
+
   ;; HACK: Rely on `major-mode-remap-defaults' instead (upstream also doesn't
   ;;   check if the grammars are ready before adding these entries, which will
   ;;   bork clojure buffers.
