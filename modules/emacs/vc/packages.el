@@ -10,4 +10,4 @@
   ;; The original lives on codeberg.org; which has uptime issues.
   :recipe (:host github :repo "emacsmirror/git-timemachine")
   :pin "d1346a76122595aeeb7ebb292765841c6cfd417b")
-(package! git-modes :pin "f99010bbeb8b6d8a0819fac0195a2ef0159d08f0")
+(package! git-modes :pin "7063d66857023e6c010cecac52de67c0baa77fb7")

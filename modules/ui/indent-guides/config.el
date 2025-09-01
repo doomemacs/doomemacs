@@ -86,7 +86,7 @@ be enabled. If any function returns non-nil, the mode will not be activated."
         (goto-char nlp)
       (apply fn col args)))
 
-  ;; HACK: `indent-bars-mode' interactions with some packages poorly, often
+  ;; HACK: `indent-bars-mode' interacts with some packages poorly, often
   ;;   flooding whole sections of the buffer with indent guides. This section is
   ;;   dedicated to fixing interop with those packages.
   (when (modulep! :tools magit)
