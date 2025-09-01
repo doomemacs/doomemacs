@@ -43,8 +43,8 @@
   :when (fboundp 'zig-ts-mode)
   :defer t
   :init
+  ;; REVIEW: maxxnino/tree-sitter-zig is unmaintained; waiting for alternatives.
   (set-tree-sitter! 'zig-mode 'zig-ts-mode
-    '((zig :url "https://github.com/tree-sitter/zig-tree-sitter"
-           :rev "v0.25.0")))
+    '((zig :url "https://github.com/maxxnino/tree-sitter-zig")))
   :config
   (+zig-common-config 'zig-ts-mode))
