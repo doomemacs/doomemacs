@@ -77,25 +77,18 @@
 (use-package! typescript-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
   :mode "\\.ts\\'"
+  :mode ("\\.[tj]sx\\'" . tsx-ts-mode)
   :init
   (set-tree-sitter! 'typescript-mode 'typescript-ts-mode
     '((typescript :url "https://github.com/tree-sitter/tree-sitter-typescript"
                   :commit "8e13e1db35b941fc57f2bd2dd4628180448c17d5"
                   :source-dir "typescript/src")))
-  :config
-  (+javascript-common-config 'typescript-ts-mode))
-
-
-(use-package! tsx-ts-mode  ; 29.1+ only
-  :when (modulep! +tree-sitter)
-  :mode "\\.[tj]sx\\'"
-  :defer t
-  :init
   (set-tree-sitter! nil 'tsx-ts-mode
     '((tsx :url "https://github.com/tree-sitter/tree-sitter-typescript"
            :commit "8e13e1db35b941fc57f2bd2dd4628180448c17d5"
            :source-dir "tsx/src")))
   :config
+  (+javascript-common-config 'typescript-ts-mode)
   (+javascript-common-config 'tsx-ts-mode))
 
 
