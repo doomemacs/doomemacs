@@ -26,6 +26,8 @@ for its =+lsp= flag).
 - +peek ::
   Use ~lsp-ui-peek~ when looking up definitions and references with
   functionality from the [[doom-module::tools lookup]] module.
+- +bridge ::
+  Use [[https://github.com/manateelazycat/lsp-bridge][lsp-bridge]] instead of [[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] to implement the LSP client in Emacs.
 
 ** Packages
 - [[doom-package:lsp-mode]]
@@ -34,6 +36,8 @@ for its =+lsp= flag).
 - [[doom-package:helm-lsp]] ([[doom-module::completion helm]])
 - [[doom-package:consult-lsp]] ([[doom-module::completion vertico]])
 - [[doom-package:eglot]]
+- [[doom-package:lsp-bridge][lsp-bridge]]
+
 
 ** Hacks
 /No hacks documented for this module./
