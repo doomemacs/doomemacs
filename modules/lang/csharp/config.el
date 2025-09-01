@@ -5,9 +5,9 @@
   :init
   (when (modulep! +tree-sitter)
     (set-tree-sitter! 'csharp-mode 'csharp-ts-mode
-      '((c-sharp :url "https://github.com/tree-sitter/tree-sitter-c-sharp"
-                 :rev "v0.23.1"
-                 :commit "362a8a41b265056592a0c3771664a21d23a71392"))))
+      `((c-sharp :url "https://github.com/tree-sitter/tree-sitter-c-sharp"
+                 :rev ,(if (< emacs-major-version 30) "v0.20.0" "v0.23.1")
+                 :commit "3431444351c871dffb32654f1299a00019280f2f"))))
   :config
   (set-formatter! 'csharpier '("csharpier" "format" "--write-stdout")
     :modes '(csharp-mode csharp-ts-mode))
