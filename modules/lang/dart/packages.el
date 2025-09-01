@@ -3,7 +3,7 @@
 
 (package! dart-mode :pin "f82ff052309125b93d19bdd3f619266f908f43ce")
 
-(when (modulep! +tree-sitter)
+(when (and (modulep! +tree-sitter) (treesit-available-p))
   (package! dart-ts-mode
     :recipe (:host github
              :repo "50ways2sayhard/dart-ts-mode")

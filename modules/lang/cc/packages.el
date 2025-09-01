@@ -9,7 +9,7 @@
 (package! opencl-mode :pin "204d5d9e0f5cb2cbe810f2933230eb08fe2c7695")
 
 (when (package! cuda-mode :pin "c3dae31b3d1abedf4d0b98840127e2cac73d6ad8")
-  (when (modulep! +tree-sitter)
+  (when (and (modulep! +tree-sitter) (treesit-available-p))
     (package! cuda-ts-mode
       :recipe (:host github :repo "Ergus/cuda-ts-mode")
       :pin "807f15150deb3a3060bc36a0e135a27876d7e239")))

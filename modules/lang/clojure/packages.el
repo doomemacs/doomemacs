@@ -15,7 +15,7 @@
 
 ;;; Core packages
 (package! clojure-mode :pin "b766094aea28bdc7b44ce1960d96434fe7d1d9cf")
-(when (modulep! +tree-sitter)
+(when (and (modulep! +tree-sitter) (treesit-available-p))
   (package! clojure-ts-mode :pin "da56a6938f525c8ead1fb3d79eced4d892df1661"))
 (package! clj-refactor :pin "dc1bbc8cdaa723bdbb6669ea7d280625c370755d")
 (package! cider :pin "12f10a6f4b3052a9b437f92cf97d551a5964f4cb")

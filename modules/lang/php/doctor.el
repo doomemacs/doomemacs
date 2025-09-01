@@ -5,7 +5,7 @@
              (modulep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(when (modulep! +tree-sitter)
+(when (and (modulep! +tree-sitter) (treesit-available-p))
   (assert! (modulep! :tools tree-sitter)
            "This module requires (:tools tree-sitter)")
   (assert! (fboundp 'php-ts-mode)

@@ -8,6 +8,12 @@
 (autoload 'treesit-ready-p "treesit")
 
 ;;;###autoload
+(unless (fboundp 'treesit-available-p)
+  (defun treesit-available-p ()
+    "Return non-nil if tree-sitter support is built-in and available."
+    nil))
+
+;;;###autoload
 (defcustom treesit-auto-install-grammar 'ask
   "Whether to install tree-sitter language grammar libraries when needed.
 This controls whether Emacs will install missing grammar libraries
