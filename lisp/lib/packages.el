@@ -1112,10 +1112,14 @@ Must be run from a magit diff buffer."
                        (print! (start "\r(%d/%d) Fetching %s...%s") i total package esc)
                        (and (straight-vc-fetch-from-remote recipe)
                             (straight-vc-commit-present-p recipe target-ref)))
-                     (straight-vc-check-out-commit recipe target-ref)
-                     (or (not (eq type 'git))
-                         (setq output (doom-packages--commit-log-between ref target-ref)
-                               commits (length (split-string output "\n" t))))
+                     (if (file-exists-p ".straight-commit")
+                         (progn
+                           (delete-directory default-directory t)
+                           (straight-vc-git-clone recipe target-ref))
+                       (straight-vc-check-out-commit recipe target-ref)
+                       (or (not (eq type 'git))
+                           (setq output (doom-packages--commit-log-between ref target-ref)
+                                 commits (length (split-string output "\n" t)))))
                      (doom-packages--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
 
                     ((print! (start "\r(%d/%d) Re-cloning %s...") i total local-repo esc)
@@ -1163,7 +1167,7 @@ Must be run from a magit diff buffer."
                          (if (> n 0)
                              (format " (w/ %d dependents)" n)
                            "")))
-               (unless (string-empty-p output)
+               (when (and (stringp output) (not (string-empty-p output)))
                  (let ((lines (split-string output "\n")))
                    (setq output
                          (if (> (length lines) 20)
