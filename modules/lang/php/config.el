@@ -45,13 +45,7 @@
       (sp-local-pair "<?"    "?>" :post-handlers '(("| " "SPC" "=") ("||\n[i]" "RET") ("[d2]" "p")))
       (sp-local-pair "<?php" "?>" :post-handlers '(("| " "SPC") ("||\n[i]" "RET"))))
 
-    (if (modulep! -lsp)
-        ;; `+php-company-backend' uses `php-extras-company' or
-        ;; `company-dabbrev-code', in that order.
-        (when +php--company-backends
-          (set-company-backend! mode
-            (cons :separate +php--company-backends)
-            'company-dabbrev-code))
+    (when (modulep! +lsp)
       (when (executable-find "php-language-server.php")
         (setq lsp-clients-php-server-command "php-language-server.php"))
       (add-hook mode-vars-hook #'lsp! 'append))
