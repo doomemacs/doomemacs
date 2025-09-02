@@ -70,10 +70,20 @@
                           ;; and push forward anyway, even if a missing grammar
                           ;; results in a broken state.
                           (not (fboundp fallback-mode))
-                          (cl-every (if (get mode '+tree-sitter-ensured)
-                                        (doom-rpartial #'treesit-ready-p 'message)
-                                      #'treesit-ensure-installed)
-                                    (cdr ts))))
+                          ;; Ensure grammars are present (and prompt to install
+                          ;; them if needed).
+                          (if-let* ((grammars
+                                     (cl-remove-if (doom-rpartial #'treesit-ready-p 'message)
+                                                   (cdr ts))))
+                              (if (or (eq treesit-auto-install-grammar 'always)
+                                      (if (eq treesit-auto-install-grammar 'ask)
+                                          (y-or-n-p
+                                           (format "Missing tree-sitter grammars: %s\nInstall now?"
+                                                   (mapconcat #'symbol-name grammars ", ")))))
+                                  (mapc #'treesit-install-language-grammar grammars)
+                                (message "Aborted installing missing grammars...")
+                                nil)
+                            t)))
                  (put mode '+tree-sitter-ensured t)
                  mode)
                 (fallback-mode))
