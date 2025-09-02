@@ -57,12 +57,10 @@
   :defer t
   :init
   (set-tree-sitter! 'js-mode 'js-ts-mode
-    '((javascript :url "https://github.com/tree-sitter/tree-sitter-javascript"
-                  :rev "v0.23.0"
-                  :commit "108b2d4d17a04356a340aea809e4dd5b801eb40d")
+    `((javascript :url "https://github.com/tree-sitter/tree-sitter-javascript"
+                  :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.0" "v0.25.0"))
       (jsdoc :url "https://github.com/tree-sitter/tree-sitter-jsdoc"
-             :rev "v0.23.0"
-             :commit "b253abf68a73217b7a52c0ec254f4b6a7bb86665")))
+             :rev "v0.23.2")))
   :config
   (+javascript-common-config 'js-ts-mode))
 
