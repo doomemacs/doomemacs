@@ -7,10 +7,22 @@
 
 (autoload 'treesit-ready-p "treesit")
 
+;; In case of Emacs builds where treesit isn't built in (to avoid void-function
+;; errors and verbose, redundant checks everywhere).
 ;;;###autoload
 (unless (fboundp 'treesit-available-p)
   (defun treesit-available-p ()
     "Return non-nil if tree-sitter support is built-in and available."
+    nil))
+
+;;;###autoload
+(unless (fboundp 'treesit-library-abi-version)
+  (defun treesit-library-abi-version (&optional _min-compatible)
+    0))
+
+;;;###autoload
+(unless (fboundp 'treesit-language-abi-version)
+  (defun treesit-language-abi-version (&optional _lang)
     nil))
 
 ;;;###autoload
