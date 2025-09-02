@@ -151,19 +151,19 @@ or if the current buffer is read-only or not file-visiting."
     (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
 
     ;; Major-mode specific fixes
-    (sp-local-pair 'ruby-mode "{" "}"
+    (sp-local-pair '(ruby-mode ruby-ts-mode) "{" "}"
                    :pre-handlers '(:rem sp-ruby-pre-handler)
                    :post-handlers '(:rem sp-ruby-post-handler))
 
     ;; Don't eagerly escape Swift style string interpolation
-    (sp-local-pair 'swift-mode "\\(" ")" :when '(sp-in-string-p))
+    (sp-local-pair '(swift-mode swift-ts-mode) "\\(" ")" :when '(sp-in-string-p))
 
     ;; Don't do square-bracket space-expansion where it doesn't make sense to
-    (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
+    (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode markdown-ts-mode gfm-mode)
                    "[" nil :post-handlers '(:rem ("| " "SPC")))
 
     ;; Reasonable default pairs for HTML-style comments
-    (sp-local-pair (append sp--html-modes '(markdown-mode gfm-mode))
+    (sp-local-pair (append sp--html-modes '(markdown-mode markdown-ts-mode gfm-mode))
                    "<!--" "-->"
                    :unless '(sp-point-before-word-p sp-point-before-same-p)
                    :actions '(insert) :post-handlers '(("| " "SPC")))
@@ -196,13 +196,14 @@ or if the current buffer is read-only or not file-visiting."
                (looking-at-p "[ 	]*#include[^<]+"))))
 
       ;; ...and leave it to smartparens
-      (sp-local-pair '(c++-mode objc-mode)
+      (sp-local-pair '(c++-mode c++-ts-mode objc-mode)
                      "<" ">"
                      :when '(+default-cc-sp-point-is-template-p
                              +default-cc-sp-point-after-include-p)
                      :post-handlers '(("| " "SPC")))
 
-      (sp-local-pair '(c-mode c++-mode objc-mode java-mode)
+      (sp-local-pair '(c-mode c++-mode objc-mode java-mode
+                       c-ts-mode c++-ts-mode java-ts-mode)
                      "/*!" "*/"
                      :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
@@ -212,8 +213,14 @@ or if the current buffer is read-only or not file-visiting."
         (newline)
         (indent-according-to-mode)))
     (sp-local-pair
-     '(js2-mode typescript-mode rjsx-mode rust-mode c-mode c++-mode objc-mode
-       csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
+     '(js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-ts-mode
+       rust-mode rust-ts-mode rustic-mode
+       c-mode c++-mode objc-mode c-ts-mode c++-ts-mode
+       csharp-mode csharp-ts-mode
+       java-mode java-ts-mode
+       php-mode php-ts-mode
+       css-mode css-ts-mode
+       scss-mode less-css-mode
        stylus-mode scala-mode)
      "/*" "*/"
      :actions '(insert)
@@ -229,11 +236,11 @@ or if the current buffer is read-only or not file-visiting."
                        :post-handlers '(("| " "SPC") ("|[i]*)[d-2]" "RET")))))
 
     (after! smartparens-markdown
-      (sp-with-modes '(markdown-mode gfm-mode)
+      (sp-with-modes '(markdown-mode markdown-ts-mode gfm-mode)
         (sp-local-pair "```" "```" :post-handlers '(:add ("||\n[i]" "RET")))
 
         ;; The original rules for smartparens had an odd quirk: inserting two
-        ;; asterixex would replace nearby quotes with asterixes. These two rules
+        ;; asterisks would replace nearby quotes with asterisks. These two rules
         ;; set out to fix this.
         (sp-local-pair "**" nil :actions :rem)
         (sp-local-pair "*" "*"
@@ -245,14 +252,15 @@ or if the current buffer is read-only or not file-visiting."
                        :post-handlers '(("[d1]" "SPC") ("|*" "*"))))
 
       ;; This keybind allows * to skip over **.
-      (map! :map markdown-mode-map
-            :ig "*" (general-predicate-dispatch nil
-                      (looking-at-p "\\*\\* *")
-                      (cmd! (forward-char 2)))))
+      (let ((fn (general-predicate-dispatch nil
+                  (looking-at-p "\\*\\* *")
+                  (cmd! (forward-char 2)))))
+        (map! :map markdown-mode-map :ig "*" fn)
+        (map! :after markdown-ts-mode :map markdown-ts-mode-map :ig "*" fn)))
 
     ;; Removes haskell-mode trailing braces
     (after! smartparens-haskell
-      (sp-with-modes '(haskell-mode haskell-interactive-mode)
+      (sp-with-modes '(haskell-mode haskell-ts-mode haskell-interactive-mode)
         (sp-local-pair "{-" "-}" :actions :rem)
         (sp-local-pair "{-#" "#-}" :actions :rem)
         (sp-local-pair "{-@" "@-}" :actions :rem)
@@ -261,14 +269,16 @@ or if the current buffer is read-only or not file-visiting."
         (sp-local-pair "{-@" "@-")))
 
     (after! smartparens-python
-      (sp-with-modes 'python-mode
+      (sp-with-modes '(python-mode python-ts-mode)
         ;; Automatically close f-strings
         (sp-local-pair "f\"" "\"")
         (sp-local-pair "f\"\"\"" "\"\"\"")
         (sp-local-pair "f'''" "'''")
         (sp-local-pair "f'" "'"))
       ;; Original keybind interferes with smartparens rules
-      (define-key python-mode-map (kbd "DEL") nil)
+      (define-key (or (bound-and-true-p python-base-mode-map)
+                      python-mode-map)
+                  (kbd "DEL") nil)
       ;; Interferes with the def snippet in doom-snippets
       ;; TODO Fix this upstream, in doom-snippets, instead
       (setq sp-python-insert-colon-in-function-definitions nil))))
