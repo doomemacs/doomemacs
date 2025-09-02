@@ -30,9 +30,11 @@ This is ignored by ccls.")
   :init
   (when (modulep! +tree-sitter)
     (set-tree-sitter! 'c-mode 'c-ts-mode
-      '((c :url "https://github.com/tree-sitter/tree-sitter-c")))
+      `((c :url "https://github.com/tree-sitter/tree-sitter-c"
+           :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.6" "v0.24.1"))))
     (set-tree-sitter! 'c++-mode 'c++-ts-mode
-      '((cpp :url "https://github.com/tree-sitter/tree-sitter-cpp"))))
+      '((cpp :url "https://github.com/tree-sitter/tree-sitter-cpp"
+             :rev "v0.23.4"))))
   :config
   (set-docsets! '(c-mode c-ts-mode) "C")
   (set-docsets! '(c++-mode c++-ts-mode) "C++" "Boost")
