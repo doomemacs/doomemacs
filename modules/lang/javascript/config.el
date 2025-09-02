@@ -31,38 +31,33 @@
     (when (modulep! +lsp)
       (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append)))
 
-  (pcase mode
-    ((or 'js-mode 'js-ts-mode 'nodejs-repl-mode)
-     (set-docsets! mode "JavaScript"
-       "AngularJS" "Backbone" "BackboneJS" "Bootstrap" "D3JS" "EmberJS" "Express"
-       "ExtJS" "JQuery" "JQuery_Mobile" "JQuery_UI" "KnockoutJS" "Lo-Dash"
-       "MarionetteJS" "MomentJS" "NodeJS" "PrototypeJS" "React" "RequireJS"
-       "SailsJS" "UnderscoreJS" "VueJS" "ZeptoJS"))
-    ((or 'typescript-mode 'typescript-ts-mode)
-     (set-docsets! mode :add "TypeScript" "AngularTS")
-     (set-electric! mode :chars '(?\} ?\)) :words '("||" "&&")))))
+  (if (not (memq mode '(typescript-mode typescript-ts-mode)))
+      (set-docsets! mode "JavaScript"
+        "AngularJS" "Backbone" "BackboneJS" "Bootstrap" "D3JS" "EmberJS" "Express"
+        "ExtJS" "JQuery" "JQuery_Mobile" "JQuery_UI" "KnockoutJS" "Lo-Dash"
+        "MarionetteJS" "MomentJS" "NodeJS" "PrototypeJS" "React" "RequireJS"
+        "SailsJS" "UnderscoreJS" "VueJS" "ZeptoJS")
+    (set-docsets! mode :add "TypeScript" "AngularTS")
+    (set-electric! mode :chars '(?\} ?\)) :words '("||" "&&"))))
 
 
-(use-package! js-mode
-  :mode "\\.[mc]?js\\'"
-  :mode "\\.es6\\'"
-  :mode "\\.pac\\'"
-  :config
-  (setq js-chain-indent t)
-  (+javascript-common-config 'js-mode))
-
-
-(use-package! js-ts-mode  ; 29.1+ only
-  :when (modulep! +tree-sitter)
-  :defer t
+(use-package! js
+  :mode ("\\.[mc]?js\\'" . js-mode)
+  :mode ("\\.es6\\'" . js-mode)
+  :mode ("\\.pac\\'" . js-mode)
   :init
-  (set-tree-sitter! 'js-mode 'js-ts-mode
-    `((javascript :url "https://github.com/tree-sitter/tree-sitter-javascript"
-                  :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.0" "v0.25.0"))
-      (jsdoc :url "https://github.com/tree-sitter/tree-sitter-jsdoc"
-             :rev "v0.23.2")))
+  (when (modulep! +tree-sitter)  ; 29.1+ only
+    (set-tree-sitter! 'js-mode 'js-ts-mode
+      `((javascript :url "https://github.com/tree-sitter/tree-sitter-javascript"
+                    :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.0" "v0.25.0"))
+        (jsdoc :url "https://github.com/tree-sitter/tree-sitter-jsdoc"
+               :rev "v0.23.2"))))
   :config
-  (+javascript-common-config 'js-ts-mode))
+  (+javascript-common-config 'js-mode)
+  (when (modulep! +tree-sitter)
+    (+javascript-common-config 'js-ts-mode))
+
+  (setq js-chain-indent t))
 
 
 (use-package! typescript-mode
