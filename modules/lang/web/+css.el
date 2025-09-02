@@ -68,6 +68,7 @@ If set to `nil', disable all the above behaviors.")
 
 (when (modulep! +lsp)
   (add-hook! '(css-mode-local-vars-hook
+               css-ts-mode-local-vars-hook
                scss-mode-local-vars-hook
                sass-mode-local-vars-hook
                less-css-mode-local-vars-hook)

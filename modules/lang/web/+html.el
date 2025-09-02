@@ -163,6 +163,7 @@
 
 (when (modulep! +lsp)
   (add-hook! '(html-mode-local-vars-hook
+               html-ts-mode-local-vars-hook
                web-mode-local-vars-hook
                nxml-mode-local-vars-hook)
              :append #'lsp!))
