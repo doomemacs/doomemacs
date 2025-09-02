@@ -53,8 +53,8 @@
   :mode ("/go\\.mod\\'" . go-mod-ts-mode-maybe)
   :init
   (set-tree-sitter! 'go-mode 'go-ts-mode
-    '((go :url "https://github.com/tree-sitter/tree-sitter-go"
-          :commit "12fe553fdaaa7449f764bc876fd777704d4fb752")))
+    `((go :url "https://github.com/tree-sitter/tree-sitter-go"
+          :rev ,(if (< (treesit-library-abi-version) 15) "v0.20.0" "v0.25.0"))))
   (set-tree-sitter! nil 'go-mod-ts-mode
     '((gomod :url "https://github.com/camdencheek/tree-sitter-go-mod"
              :commit "3b01edce2b9ea6766ca19328d1850e456fde3103")))
