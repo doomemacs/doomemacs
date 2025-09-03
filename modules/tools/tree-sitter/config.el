@@ -62,7 +62,10 @@
                             (warning-suppress-types
                              (cons '(treesit) warning-suppress-types)))
                         (or (not (autoloadp fn))
-                            (autoload-do-load fn mode)))
+                            ;; ts-modes usually change these alists at autoload
+                            ;; *and* load time.
+                            (let (auto-mode-alist interpreter-mode-alist)
+                              (autoload-do-load fn mode))))
                       ;; Only prompt once, and log other times.
                       (or (null (cdr ts))  ; no grammars, no problem!
                           ;; If the base/fallback mode doesn't exist, let's
