@@ -84,11 +84,8 @@
          ;;   needed when we're relying on Corfu, hence these hacks:
          (add-hook! 'coq-mode-local-vars-hook
            (defun +coq-init-capf-completion-h ()
-             (when (bound-and-true-p company-mode)
-               (company-mode -1))
-             (add-hook 'completion-at-point-functions
-                       (cape-company-to-capf 'company-coq-master-backend)
-                       nil t)))
+             (setq company-coq-disabled-features '(company company-defaults))
+             (add-hook! 'completion-at-point-functions (cape-company-to-capf #'company-coq-master-backend))))
          (defadvice! +coq--proof-goto-point-advice (&rest _)
            :override #'company-coq--proof-goto-point-advice
            (when (bound-and-true-p company-candidates)
