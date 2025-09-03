@@ -261,9 +261,9 @@ or if the current buffer is read-only or not file-visiting."
     ;; Removes haskell-mode trailing braces
     (after! smartparens-haskell
       (sp-with-modes '(haskell-mode haskell-ts-mode haskell-interactive-mode)
-        (sp-local-pair "{-" "-}" :actions :rem)
-        (sp-local-pair "{-#" "#-}" :actions :rem)
-        (sp-local-pair "{-@" "@-}" :actions :rem)
+        (sp-local-pair "{-" "-}" :actions nil)
+        (sp-local-pair "{-#" "#-}" :actions nil)
+        (sp-local-pair "{-@" "@-}" :actions nil)
         (sp-local-pair "{-" "-")
         (sp-local-pair "{-#" "#-")
         (sp-local-pair "{-@" "@-")))
