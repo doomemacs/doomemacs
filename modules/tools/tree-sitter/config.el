@@ -60,7 +60,9 @@
                             ;; `treesit-ready-p' calls in Emacs <=30.1. We'll
                             ;; log it to *Messages* instead.
                             (warning-suppress-types
-                             (cons '(treesit) warning-suppress-types)))
+                             (if doom-debug-mode
+                                 warning-suppress-types
+                               (cons '(treesit) warning-suppress-types))))
                         (or (not (autoloadp fn))
                             ;; ts-modes usually change these alists at autoload
                             ;; *and* load time.
@@ -84,7 +86,9 @@
                                            (format "Missing tree-sitter grammars: %s\nInstall now?"
                                                    (mapconcat #'symbol-name grammars ", ")))))
                                   (mapc #'treesit-install-language-grammar grammars)
-                                (message "Aborted installing missing grammars...")
+                                (message "Treesit grammars missing (%s), falling back to `%s'..."
+                                         (mapconcat #'symbol-name grammars ", ")
+                                         fallback-mode)
                                 nil)
                             t)))
                  (put mode '+tree-sitter-ensured t)
