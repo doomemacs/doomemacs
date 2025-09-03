@@ -147,9 +147,9 @@ This is ignored by ccls.")
 (use-package! cuda-mode
   :defer t
   :config
+  (set-eglot-client! 'cuda-mode '("clangd"))
   (when (modulep! +lsp)
-    (add-hook 'cuda-mode-local-vars-hook #'lsp! 'append))
-  )
+    (add-hook 'cuda-mode-local-vars-hook #'lsp! 'append)))
 
 
 (use-package! cuda-ts-mode
@@ -159,6 +159,7 @@ This is ignored by ccls.")
   (set-tree-sitter! 'cuda-mode 'cuda-ts-mode
     '((cuda :url "https://github.com/tree-sitter-grammars/tree-sitter-cuda")))
   :config
+  (set-eglot-client! 'cuda-ts-mode '("clangd"))
   (when (modulep! +lsp)
     (add-hook 'cuda-ts-mode-local-vars-hook #'lsp! 'append)))
 
@@ -184,7 +185,6 @@ This is ignored by ccls.")
         ;; and grinding your system to a halt.
         (cl-pushnew (format "-j=%d" (max 1 (/ (doom-system-cpus) 2)))
                     lsp-clients-clangd-args))
-    (set-eglot-client! 'cuda-mode '("clangd"))
 
     ;; Map eglot specific helper
     (map! :localleader
