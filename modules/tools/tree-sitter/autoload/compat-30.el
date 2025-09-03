@@ -9,7 +9,7 @@
 
 ;; In case of Emacs builds where treesit isn't built in (to avoid void-function
 ;; errors and verbose, redundant checks everywhere).
-;;;###autoload
+;;;###autodef
 (unless (fboundp 'treesit-available-p)
   (defun treesit-available-p ()
     "Return non-nil if tree-sitter support is built-in and available."
