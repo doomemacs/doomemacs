@@ -18,24 +18,28 @@ plists, it will be transformed into entries for `treesit-language-source-alist'
 (which describe what each of these keys mean). Note that COMMIT is ignored
 pre-Emacs 31."
   (declare (indent 2))
-  (cl-check-type mode symbol)
+  (cl-check-type mode (or list symbol))
   (cl-check-type ts-mode symbol)
-  (setq recipes (mapcar #'ensure-list (ensure-list recipes)))
-  (dolist (m (ensure-list mode))
-    (setf (alist-get m major-mode-remap-defaults) ts-mode)
-    (put ts-mode '+tree-sitter (cons m (mapcar #'car recipes))))
-  (when (setq recipes (cl-remove-if-not #'cdr recipes))
-    (with-eval-after-load 'treesit
-      (dolist (recipe recipes)
-        (cl-destructuring-bind (name &key url rev source-dir cc cpp commit) (ensure-list recipe)
-          (setf (alist-get name treesit-language-source-alist)
-                (append (list url rev source-dir cc cpp)
-                        ;; COMPAT: 31.1 introduced a COMMIT recipe argument. On
-                        ;;   <=30.x, extra arguments will trigger an arity error
-                        ;;   when installing grammars.
-                        (if (eq (cdr (func-arity 'treesit--install-language-grammar-1))
-                                'many)
-                            (list commit)))))))))
+  (let ((recipes (mapcar #'ensure-list (ensure-list recipes))))
+    (dolist (m (or (ensure-list mode) (list nil)))
+      (when m
+        (setf (alist-get m major-mode-remap-defaults) ts-mode))
+      (put ts-mode '+tree-sitter (cons m (mapcar #'car recipes))))
+    (when-let* ((fn (intern-soft (format "%s-maybe" ts-mode))))
+      (cl-callf2 rassq-delete-all fn auto-mode-alist)
+      (cl-callf2 rassq-delete-all fn interpreter-mode-alist))
+    (when-let* ((recipes (cl-delete-if-not #'cdr recipes)))
+      (with-eval-after-load 'treesit
+        (dolist (recipe recipes)
+          (cl-destructuring-bind (name &key url rev source-dir cc cpp commit) (ensure-list recipe)
+            (setf (alist-get name treesit-language-source-alist)
+                  (append (list url rev source-dir cc cpp)
+                          ;; COMPAT: 31.1 introduced a COMMIT recipe argument. On
+                          ;;   <=30.x, extra arguments will trigger an arity error
+                          ;;   when installing grammars.
+                          (if (eq (cdr (func-arity 'treesit--install-language-grammar-1))
+                                  'many)
+                              (list commit))))))))))
 
 ;; ;; HACK: Remove and refactor when `use-package' eager macro expansion is solved or `use-package!' is removed
 ;; ;;;###autoload
