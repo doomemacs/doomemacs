@@ -737,7 +737,7 @@ triggering hooks during startup."
   (add-hook 'window-selection-change-functions #'doom-run-switch-window-hooks-h)
   (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
   ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
-  (add-hook 'server-visit-hook #'doom-run-switch-buffer-hooks-h))
+  (add-hook 'server-switch-hook #'doom-run-switch-buffer-hooks-h))
 
 ;; Apply fonts and theme
 (let ((hook (if (daemonp)
