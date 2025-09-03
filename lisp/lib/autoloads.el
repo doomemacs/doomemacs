@@ -60,7 +60,7 @@ hoist buggy forms into autoloads.")
           ;; HACK: Remove modifications to `auto-mode-alist' and
           ;;   `interpreter-mode-alist' in *-ts-mode package. They are applied
           ;;   twice and often overwrite user or module configuration.
-          ((equal (list (car form) (cadr form)) '(when (treesit-available-p)))
+          ((equal (list func (car (cdr-safe form))) '(when (treesit-available-p)))
            (setf (nth 2 form)
                  (cl-loop for form in (nth 2 form)
                           if (or (not (eq (car-safe form) 'add-to-list))
