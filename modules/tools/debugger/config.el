@@ -27,7 +27,13 @@
   (set-debug-variable! 'dape-debug t)
   (setq dape-buffer-window-arrangement 'right
         dape-inlay-hints t
-        dape-cwd-function #'projectile-project-root)
+        dape-cwd-function #'+debugger-dape-cwd-function-fn)
+
+  ;; REVIEW: Remove when projectile is replaced with project.el
+  (defun +debugger-dape-cwd-function-fn ()
+    (or (let (projectile-require-project-root)
+          (projectile-project-root))
+        (dape--default-cwd)))
 
   ;; Mode-line serves no purpose in REPL window.
   (add-hook 'dape-repl-mode-hook #'hide-mode-line-mode)
