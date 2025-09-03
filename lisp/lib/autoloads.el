@@ -57,6 +57,16 @@ hoist buggy forms into autoloads.")
   (let ((func (car-safe form)))
     (cond ((memq func '(provide custom-autoload register-definition-prefixes))
            nil)
+          ;; HACK: Remove modifications to `auto-mode-alist' and
+          ;;   `interpreter-mode-alist' in *-ts-mode package. They are applied
+          ;;   twice and often overwrite user or module configuration.
+          ((equal (list (car form) (cadr form)) '(when (treesit-available-p)))
+           (setf (nth 2 form)
+                 (cl-loop for form in (nth 2 form)
+                          if (or (not (eq (car-safe form) 'add-to-list))
+                                 (not (memq (nth 1 form) '(auto-mode-alist interpreter-mode-alist))))
+                          collect form))
+           form)
           ((and (eq func 'add-to-list)
                 (memq (doom-unquote (cadr form))
                       doom-autoloads-cached-vars))
