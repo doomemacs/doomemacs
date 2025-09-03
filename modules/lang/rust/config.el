@@ -29,7 +29,7 @@
 
   ;; Load order is important for these two packages.
   (let (auto-mode-alist)
-    (require 'rustic-mode nil t)))
+    (require 'rustic nil t)))
 
 
 (use-package! rustic
