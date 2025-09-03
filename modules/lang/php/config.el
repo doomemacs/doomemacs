@@ -72,7 +72,7 @@
   :when (modulep! +tree-sitter)
   :defer t
   :init
-  (set-tree-sitter! 'php-mode 'php-ts-mode
+  (set-tree-sitter! '(php-mode php-mode-maybe) 'php-ts-mode
     '((php :url "https://github.com/tree-sitter/tree-sitter-php"
            :rev "v0.23.11"
            :commit "f7cf7348737d8cff1b13407a0bfedce02ee7b046"
