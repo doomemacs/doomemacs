@@ -80,6 +80,5 @@ If set to `nil', disable all the above behaviors.")
   :defer t
   :init
   (set-tree-sitter! 'css-mode 'css-ts-mode
-    '((css :url "https://github.com/tree-sitter/tree-sitter-css"
-           :rev "v0.23.0"
-           :commit "6a442a3cf461b0ce275339e5afa178693484c927"))))
+    `((css :url "https://github.com/tree-sitter/tree-sitter-css"
+           :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.0" "v0.23.2")))))
