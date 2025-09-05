@@ -10,6 +10,10 @@
   :preface
   (setq treesit-enabled-modes t)
 
+  ;; At 3 (the default), too many users think syntax highlighting is broken or
+  ;; simply "looks off."
+  (setq treesit-font-lock-level 4)
+
   ;; HACK: The *-ts-mode major modes are inconsistent about how they treat
   ;;   missing language grammars (some error out, some respect
   ;;   `treesit-auto-install-grammar', some fall back to `fundamental-mode').
