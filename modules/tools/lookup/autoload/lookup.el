@@ -95,6 +95,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
                             'xref-backend-functions)
                       (make-list 5 async)
                       (make-list 5 (or (eq major-mode mode)
+                                       (memq mode (get major-mode 'derived-mode-extra-parents))
                                        (and (boundp mode)
                                             (symbol-value mode))))))))
         (add-hook hook fn)))))
