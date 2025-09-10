@@ -21,7 +21,12 @@
 (use-package! clojure-mode
   :defer t
   :config
-  (set-formatter! 'cljfmt '("cljfmt" "fix" "-") :modes '(clojure-mode clojurec-mode clojurescript-mode))
+  (set-formatter! 'cljfmt '("cljfmt" "fix" "-") :modes '(clojure-mode
+                                                         clojurec-mode
+                                                         clojurescript-mode
+                                                         clojure-ts-mode
+                                                         clojure-ts-clojurec-mode
+                                                         clojure-ts-clojurescript-mode))
 
   (when (modulep! +lsp)
     (add-hook! '(clojure-mode-local-vars-hook
@@ -224,7 +229,12 @@
   (setq cider-repl-display-help-banner nil)
 
   (map! (:localleader
-          (:map (clojure-mode-map clojurescript-mode-map clojurec-mode-map)
+          (:map (clojure-mode-map
+                 clojurescript-mode-map
+                 clojurec-mode-map
+                 clojure-ts-mode-map
+                 clojure-ts-clojurescript-mode-map
+                 clojure-ts-clojurec-mode-map)
             "'"  #'cider-jack-in-clj
             "\"" #'cider-jack-in-cljs
             "c"  #'cider-connect-clj
@@ -313,7 +323,7 @@
   :config
   (set-lookup-handlers! 'clj-refactor-mode
     :references #'cljr-find-usages)
-  (map! :map clojure-mode-map
+  (map! :map (clojure-mode-map clojure-ts-mode-map)
         :localleader
         :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
@@ -330,7 +340,12 @@
   :config
   (setq neil-prompt-for-version-p nil
         neil-inject-dep-to-project-p t)
-  (map! :map (clojure-mode-map clojurescript-mode-map clojurec-mode-map)
+  (map! :map (clojure-mode-map
+              clojurescript-mode-map
+              clojurec-mode-map
+              clojure-ts-mode-map
+              clojure-ts-clojurescript-mode-map
+              clojure-ts-clojurec-mode-map)
         :localleader
         "f"  #'neil-find-clojure-package))
 
@@ -338,6 +353,11 @@
 (use-package! jet
   :commands (jet)
   :config
-  (map! :map (clojure-mode-map clojurescript-mode-map clojurec-mode-map)
+  (map! :map (clojure-mode-map
+              clojurescript-mode-map
+              clojurec-mode-map
+              clojure-ts-mode-map
+              clojure-ts-clojurescript-mode-map
+              clojure-ts-clojurec-mode-map)
         :localleader
         "j" #'jet))
