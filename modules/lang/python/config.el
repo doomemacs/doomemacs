@@ -21,7 +21,8 @@
 
   (when (modulep! +tree-sitter)
     (set-tree-sitter! 'python-mode 'python-ts-mode
-      '((python :url "https://github.com/tree-sitter/tree-sitter-python"
+      `((python :url "https://github.com/tree-sitter/tree-sitter-python"
+                :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.6")
                 :commit "bffb65a8cfe4e46290331dfef0dbf0ef3679de11"))))
 
   :config
