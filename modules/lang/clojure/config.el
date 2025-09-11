@@ -14,6 +14,37 @@
 ;;
 ;;; Packages
 
+(defun +clojure-common-config (modes)
+  (set-formatter! 'cljfmt '("cljfmt" "fix" "-") :modes modes)
+
+  (when (modulep! +lsp)
+    (dolist (m modes)
+      (let ((hook (intern (format "%s-local-vars-hook" m))))
+        (add-hook hook #'+clojure-disable-lsp-indentation-h 'append)
+        (add-hook hook #'lsp! 'append))))
+
+  (let ((keymaps
+         (cl-loop for m in modes
+                  collect (intern (format "%s-map" m)))))
+
+    ;;; REVIEW: Uses `use-package!' so `package!'s `:disable' property is
+    ;;;   respected. Will be refactored later.
+    (use-package! neil
+      :defer t
+      :init
+      (map! :map ,keymaps
+            :localleader
+            "f"  #'neil-find-clojure-package))
+
+    (use-package! jet
+      :defer t
+      :init
+      (map! :map ,keymaps
+            :localleader
+            "j" #'jet))))
+
+
+
 (defun +clojure-disable-lsp-indentation-h ()
   (setq-local lsp-enable-indentation nil))
 
@@ -21,15 +52,7 @@
 (use-package! clojure-mode
   :defer t
   :config
-  (set-formatter! 'cljfmt '("cljfmt" "fix" "-") :modes '(clojure-mode clojurec-mode clojurescript-mode))
-
-  (when (modulep! +lsp)
-    (add-hook! '(clojure-mode-local-vars-hook
-                 clojurec-mode-local-vars-hook
-                 clojurescript-mode-local-vars-hook)
-               :append
-               #'+clojure-disable-lsp-indentation-h
-               #'lsp!)))
+  (+clojure-common-config '(clojure-mode clojurec-mode clojurescript-mode)))
 
 
 (use-package! clojure-ts-mode
@@ -44,14 +67,9 @@
   (set-tree-sitter! 'clojurescript-mode 'clojure-ts-clojurescript-mode 'javascript)
   (set-tree-sitter! 'jank-mode 'clojure-ts-jank-mode 'cpp)
   (set-tree-sitter! 'joker-mode 'clojure-ts-joker-mode 'clojure)
+
   :config
-  (when (modulep! +lsp)
-    (add-hook! '(clojure-ts-mode-local-vars-hook
-                 clojure-ts-clojurec-mode-local-vars-hook
-                 clojure-ts-clojurescript-mode-local-vars-hook)
-               :append
-               #'+clojure-disable-lsp-indentation-h
-               #'lsp!))
+  (+clojure-common-config '(clojure-ts-mode clojure-ts-clojurec-mode clojure-ts-clojurescript-mode))
 
   ;; HACK: Rely on `major-mode-remap-defaults' instead (upstream also doesn't
   ;;   check if the grammars are ready before adding these entries, which will
@@ -224,7 +242,7 @@
   (setq cider-repl-display-help-banner nil)
 
   (map! (:localleader
-          (:map (clojure-mode-map clojurescript-mode-map clojurec-mode-map)
+          (:map cider-mode-map
             "'"  #'cider-jack-in-clj
             "\"" #'cider-jack-in-cljs
             "c"  #'cider-connect-clj
@@ -313,7 +331,7 @@
   :config
   (set-lookup-handlers! 'clj-refactor-mode
     :references #'cljr-find-usages)
-  (map! :map clojure-mode-map
+  (map! :map cider-mode-map
         :localleader
         :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
@@ -326,18 +344,7 @@
 
 
 (use-package! neil
-  :commands (neil-find-clojure-package)
+  :defer t
   :config
   (setq neil-prompt-for-version-p nil
-        neil-inject-dep-to-project-p t)
-  (map! :map (clojure-mode-map clojurescript-mode-map clojurec-mode-map)
-        :localleader
-        "f"  #'neil-find-clojure-package))
-
-
-(use-package! jet
-  :commands (jet)
-  :config
-  (map! :map (clojure-mode-map clojurescript-mode-map clojurec-mode-map)
-        :localleader
-        "j" #'jet))
+        neil-inject-dep-to-project-p t))
