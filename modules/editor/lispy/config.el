@@ -10,6 +10,7 @@
          (lfe-mode . lispy-mode)
          (dune-mode . lispy-mode)
          (clojure-mode . lispy-mode)
+         (clojure-ts-mode . lispy-mode)
          (fennel-mode . lispy-mode))
   :init
   (add-hook! 'eval-expression-minibuffer-setup-hook

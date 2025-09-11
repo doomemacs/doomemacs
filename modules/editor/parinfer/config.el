@@ -4,6 +4,7 @@
   :when (bound-and-true-p module-file-suffix)
   :hook ((emacs-lisp-mode
           clojure-mode
+          clojure-ts-mode
           scheme-mode
           lisp-mode
           racket-mode
