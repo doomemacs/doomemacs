@@ -138,27 +138,23 @@ outer}-text-objects-map~:
 #+end_src
 
 ** Configuring Tree sitter highlighting
-Highlighting is controlled by the variable =+tree-sitter-hl-enabled-modes=
-This list allows you to whitelist, blacklist, fully enable or fully disable
-tree-sitter highlighting for all major modes
+Doom increases ~treesit-font-lock-level~ from its upstream default of ~3~ to ~4~ for
+maximum syntax highlighting. If this is too busy or slow for you, try reducing
+it:
 
-To use highlighting in select modes add major-modes to
-~+tree-sitter-hl-enabled-modes~. This disables highlighting in all other modes.
-The symbol that should be used is the major mode symbol, *not the package
-symbol*.
-#+begin_src emacs-lisp
-(setq +tree-sitter-hl-enabled-modes '(python-mode go-mode))
+#+begin_src elisp
+;;; add to $DOOMDIR/config.el
+(after! treesit
+  (setq treesit-font-lock-level 3))
+
+;; Alternatively, to only affect specific major modes:
+(after! treesit
+  (setq treesit-font-lock-level
+        '((python-ts-mode . 3)
+          (c-ts-mode . 2)
+          ;; Default to 4 everywhere else
+          (t . 4))))
 #+end_src
-
-If you want to disallow highlighting in certain modes then the car of
-~+tree-sitter-hl-enabled-modes~ should be =not=. This enables highlighting in
-all modes except the ones disallowed.
-#+begin_src emacs-lisp
-(setq +tree-sitter-hl-enabled-modes '(not web-mode typescript-tsx-mode))
-#+end_src
-
-If ~+tree-sitter-hl-enabled-modes~ is set to ~nil~ or ~t~ it will fully disable
-or fully enable highlighting in every tree sitter enabled language respectively.
 
 * Troubleshooting
 [[doom-report:][Report an issue?]]
