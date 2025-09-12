@@ -32,7 +32,25 @@
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
   (when (modulep! +lsp)
-    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append)))
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
+
+  (use-package! flycheck-credo
+    :when (modulep! :checkers syntax -flymake)
+    :config (flycheck-credo-setup))
+
+  (use-package! exunit
+    :defer t
+    :init
+    (add-hook (intern (format "%s-hook" mode)) #'exunit-mode)
+    (map! :localleader
+          :map ,(intern (format "%s-map" mode))
+          :prefix ("t" . "test")
+          "a" #'exunit-verify-all
+          "r" #'exunit-rerun
+          "v" #'exunit-verify
+          "T" #'exunit-toggle-file-and-test
+          "t" #'exunit-toggle-file-and-test-other-window
+          "s" #'exunit-verify-single)))
 
 
 (use-package! elixir-mode
@@ -66,24 +84,3 @@
   :when (modulep! +tree-sitter)
   :when (fboundp 'heex-ts-mode) ; 30.1+ only
   :mode "\\.[hl]?eex\\'")
-
-
-(use-package! flycheck-credo
-  :when (modulep! :checkers syntax -flymake)
-  :after elixir-mode
-  :config (flycheck-credo-setup))
-
-
-(use-package! exunit
-  :hook (elixir-mode . exunit-mode)
-  :init
-  (map! :after elixir-mode
-        :localleader
-        :map elixir-mode-map
-        :prefix ("t" . "test")
-        "a" #'exunit-verify-all
-        "r" #'exunit-rerun
-        "v" #'exunit-verify
-        "T" #'exunit-toggle-file-and-test
-        "t" #'exunit-toggle-file-and-test-other-window
-        "s" #'exunit-verify-single))
