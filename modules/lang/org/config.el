@@ -811,7 +811,7 @@ between the two."
         "#" #'org-update-statistics-cookies
         "'" #'org-edit-special
         "*" #'org-ctrl-c-star
-        "+" #'org-ctrl-c-minus
+        "-" #'org-ctrl-c-minus
         "," #'org-switchb
         "." #'org-goto
         "@" #'org-cite-insert
