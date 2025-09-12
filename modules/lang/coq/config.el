@@ -77,18 +77,15 @@
     :references #'company-coq-grep-symbol
     :documentation #'company-coq-doc)
 
-  (setq company-coq-disabled-features '(hello company-defaults spinner))
+  (setq company-coq-disabled-features '(hello company company-defaults spinner))
 
   (cond ((modulep! :completion corfu)
          ;; HACK: company-coq activates `company-mode', though it's not really
          ;;   needed when we're relying on Corfu, hence these hacks:
          (add-hook! 'coq-mode-local-vars-hook
            (defun +coq-init-capf-completion-h ()
-             (when (bound-and-true-p company-mode)
-               (company-mode -1))
-             (add-hook 'completion-at-point-functions
-                       (cape-company-to-capf 'company-coq-master-backend)
-                       nil t)))
+             (dolist (b '(company-coq-master-backend company-coq-math-symbols-backend))
+               (add-to-list 'completion-at-point-functions (cape-company-to-capf b)))))
          (defadvice! +coq--proof-goto-point-advice (&rest _)
            :override #'company-coq--proof-goto-point-advice
            (when (bound-and-true-p company-candidates)
