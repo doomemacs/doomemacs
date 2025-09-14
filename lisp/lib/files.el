@@ -288,7 +288,7 @@ If BEG and/or END are integers, only that region will be read from FILE."
            (buffer-substring-no-properties (point-min) (point-max)))
           ('read
            (condition-case _ (read (current-buffer)) (end-of-file)))
-          ('(read . ,i)
+          (`(read . ,i)
            (let (forms)
              (condition-case _
                  (dotimes (_ i) (push (read (current-buffer)) forms))
