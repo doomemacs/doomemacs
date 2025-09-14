@@ -12,6 +12,20 @@
         (package! eglot-booster
           :recipe (:host github :repo "jdtsmith/eglot-booster")
           :pin "cab7803c4f0adc7fff9da6680f90110674bb7a22")))
+
+  ;; HACK: Ensure lsp-mode is built with lsp-use-plists on, but also that
+  ;;   `lsp-use-plists' isn't set *before* the package is rebuilt (which would
+  ;;   break things).
+  (defvar lsp-use-plists t)
+  (add-hook 'straight-use-package-pre-build-functions
+            (lambda (package)
+              (when (equal package "lsp-mode")
+                (when lsp-use-plists
+                  (setenv "LSP_USE_PLISTS" "1")  ; ensure the setting propagates to child processes
+                  (add-to-list 'doom-profile-generators
+                               (list "01-envvars.auto.el"
+                                     (fn! `((setenv "LSP_USE_PLISTS" "1")))))))))
+
   (package! lsp-mode :pin "c74a723870f86cf9d1b7aee5e6e2add10d9ce127")
   (package! lsp-ui :pin "030d36960338fd633a98b332bc3734c412c25ca6")
   (when (modulep! :completion ivy)
