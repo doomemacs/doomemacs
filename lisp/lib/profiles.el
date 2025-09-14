@@ -307,7 +307,8 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                       (when (or (doom-context-p 'startup)
                                 (doom-context-p 'reload))
                         ,@(cl-loop for (_ genfn initfn) in doom-profile-generators
-                                   if (fboundp genfn)
+                                   if initfn
+                                   if (functionp genfn)
                                    collect (list initfn))))
                    (current-buffer)))
           (print! (success "Built %s") (filename init-file))))
