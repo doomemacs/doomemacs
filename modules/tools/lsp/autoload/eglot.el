@@ -2,12 +2,17 @@
 ;;;###if (modulep! +eglot)
 
 ;;;###autodef
-(defun set-eglot-client! (mode server-call)
-  "Add SERVER-CALL list as a possible lsp server for given major MODE.
+(defun set-eglot-client! (mode &rest alternatives)
+  "Set ALTERNATIVES as the given eglot lsp server for given major MODE.
 
-Example : (set-eglot-client! 'python-mode `(,(concat doom-data-dir \"lsp/mspyls/Microsoft.Python.LanguageServer\")))"
+MODE and ALTERNATIVES take after MAJOR-MODE and CONTACT in
+`eglot-server-programs'. MODE can be one major mode symbol or a list thereof.
+ALTERNATIVES specifies how to connect to a server in those modes."
   (after! eglot
-    (add-to-list 'eglot-server-programs `(,mode . ,server-call))))
+    (add-to-list 'eglot-server-programs
+                 (cons mode (if (cdr alternatives)
+                                (eglot-alternatives alternatives)
+                              alternatives)))))
 
 ;; HACK Eglot removed `eglot-help-at-point' in joaotavora/eglot@a044dec for a
 ;;      more problematic approach of deferred to eldoc. Here, I've restored it.
