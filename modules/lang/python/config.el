@@ -33,10 +33,7 @@
 
   (when (modulep! +lsp)
     (add-hook 'python-mode-local-vars-hook #'lsp! 'append)
-    (add-hook 'python-ts-mode-local-vars-hook #'lsp! 'append)
-    ;; Use "mspyls" in eglot if in PATH
-    (when (executable-find "Microsoft.Python.LanguageServer")
-      (set-eglot-client! '(python-mode python-ts-mode) '("Microsoft.Python.LanguageServer"))))
+    (add-hook 'python-ts-mode-local-vars-hook #'lsp! 'append))
 
   (set-repl-handler! '(python-mode python-ts-mode) #'+python/open-repl
     :persist t
