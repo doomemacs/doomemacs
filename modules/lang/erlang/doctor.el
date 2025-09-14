@@ -10,5 +10,10 @@
          "This module requires (:tools tree-sitter)")
 
 (when (modulep! :editor format)
-  (unless (and (executable-find "rebar3") (zerop (car (doom-call-process "rebar3" "fmt" "-v"))))
+  (unless (executable-find "erlfmt")
     (warn! "Couldn't find erlfmt. Formatting will be disabled.")))
+
+(when (modulep! :editor format)
+  (unless (and (executable-find "rebar3")
+               (zerop (car (doom-call-process "rebar3" "format"))))
+    (warn! "Couldn't find rebar3 with format plugin installed (needed in Erlang module). Formatting will be disabled.")))
