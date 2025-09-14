@@ -337,7 +337,6 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
                    do (aset newval idx (doom-copy (aref newval idx) t))
                    finally return newval)
         (copy-sequence val))
-    (cl-check-type val (or integer float boolean symbol null))
     val))
 
 (cl-defmethod doom-copy ((val sequence) &optional deep?)
@@ -691,6 +690,138 @@ See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
 
 (pcase-defmacro doom-module (&rest fields)
   `(doom-struct doom-module ,@fields))
+
+
+;;; `doom-rcfile-read'
+
+(defvar doom-rcfile-read-functions
+  `(;;,(lambda (type version alist) (list version body))
+    ,(lambda (type version alist)
+       (pcase type
+         ('profiles
+          (setq alist
+                (mapcar (lambda (p)
+                          (cons (car p)
+                                (doom-rcfile--normalize 'profile version (cdr p))))
+                        (alist-get 'profiles alist))))
+         ('project
+          (setf (alist-get 'profiles alist)
+                (mapcar (lambda (p)
+                          (cons (car p)
+                                (doom-rcfile--normalize 'profile version (cdr p))))
+                        (alist-get 'profiles alist)))
+          (setf (alist-get 'sources alist)
+                (mapcar (lambda (s)
+                          (cons (car s)
+                                (doom-rcfile--normalize 'source version (cdr s))))
+                        (alist-get 'sources alist)))))
+       (list version alist)))
+  "A list of functions to transform files read by `doom-rcfile-read'.
+
+Each function takes three arguments: TYPE VERSION ALIST, and must return
+(VERSION ALIST) to pass to the next function or t/nil (which are ignored). TYPE
+is one of `project', `module', `source', `profile', or `profiles', corresponding
+to each rcfile that Doom recognizes (e.g. .doom, .doommodule, .doomsource, etc).
+
+The primary purpose of functions in this list is to resolve inter-version
+incompatibilities introduced in future versions of Doom.")
+
+(defvar doom-rcfile--cache (make-hash-table :test 'equal))
+
+(defconst doom-rcfile--alist
+  `((".doom" . project)
+    (".doommodule" . module)
+    (".doomsource" . source)
+    (".doomprofile" . profile)
+    (".doomprofiles" . profiles)))
+
+(defun doom-rcfile (type)
+  "Return the filename for rcfile TYPE.
+
+Should be one of the CDRs of `doom-rcfile--alist'."
+  (car (rassq type doom-rcfile--alist)))
+
+(defun doom-rcfile-locate (file dir &optional dir?)
+  "Return the file location of FILE above DIR.
+
+if DIR? is non-nil, treat FILE a directory path."
+  (when (symbolp file)
+    (setq file (doom-rcfile file)))
+  (when-let* ((dir (locate-dominating-file dir file)))
+    (if dir?
+        dir
+      (file-name-concat dir file))))
+
+(defun doom-rcfile--normalize (type compat alist &optional key)
+  "Ensure ALIST is processed through `doom-rcfile-read-functions'.
+
+This ensures any changes to ALIST's spec (according to TYPE) is resolved for the
+current version of Doom."
+  (if key
+      (setf (alist-get key alist)
+            (cl-loop with subalist = (alist-get key alist)
+                     for fn in doom-rcfile-read-functions
+                     if (funcall fn type compat (doom-copy subalist t))
+                     do (when (consp it)
+                          (setq compat (car it))
+                          (setf (alist-get key alist) subalist))
+                     finally return alist))
+    (cl-loop for fn in doom-rcfile-read-functions
+             if (funcall fn type compat (doom-copy alist t))
+             do (if (consp it) (pcase-setq `(,compat ,alist) it))
+             finally return alist)))
+
+(defun doom-rcfile-read (file &optional dir type nocache?)
+  "Return the alist contained in Doom config FILE in or above DIR.
+
+Each of Doom's dotfiles are expected to be in the same format: a version string
+\\=(signifying what version of Doom it was generated from) followed by an
+unquoted alist which may contain comma-interpolated elisp forms which this
+function will evaluate (and cache) before returning it.
+
+FILE can either be a file name (with no directory component), a single absolute
+path (but then TYPE is required), a symbol (one of the keys in
+`doom-rcfile--alist'), or a cons cell (FILE . KEY) where KEY is the alist key
+sub-entry to return. KEY can also be a list of symbols to access a nested
+sub-entry.
+
+DIR is the directory to start searching from, walking up file tree in search of
+FILES. If FILES is an absolute path, its file name will be searched for starting
+from its directory (or otherwise from DIR, if specified).
+
+With TYPE, you can override how this function treats FILE (when passing it to
+`doom-rcfile-read-functions'. It is required if FILE is not a symbol.
+
+If NONCACHE? is non-nil, the cached alist will be ignored and the target FILE
+will be reread (and re-cached).
+
+Consults `doom-rcfile-read-functions' to resolve any inter-version compatibility
+issues"
+  (let (keys)
+    (when (consp file)
+      (setq keys (cdr file)
+            file (car file)))
+    (when (and file (symbolp file))
+      (setq type (or type file)
+            file (doom-rcfile file)))
+    (when-let* ((path (if file (doom-rcfile-locate file dir))))
+      (or (if (not nocache?) (gethash path doom-rcfile--cache))
+          (when-let*
+              ((forms (doom-file-read path :by `(read . 2)))
+               (rc (let ((v (pop forms)) (f (car forms)))
+                     (when (and v (not (stringp v)))
+                       (push v f)
+                       (setq v doom-version))
+                     (cons
+                      v (doom-rcfile--normalize
+                         (or type
+                             (cdr (assoc (file-name-nondirectory file)
+                                         doom-rcfile--alist)))
+                         v (if (listp f) (eval `(backquote ,f) t)))))))
+            (puthash path rc doom-rcfile--cache)
+            (cond ((null keys) rc)
+                  ((symbolp keys) (cdr (assq keys (cdr rc))))
+                  ((listp keys) (map-nested-elt (cdr rc) keys))))))))
 
 
 ;;; Mutation
