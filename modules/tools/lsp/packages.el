@@ -20,11 +20,14 @@
   (add-hook 'straight-use-package-pre-build-functions
             (lambda (package)
               (when (equal package "lsp-mode")
-                (when lsp-use-plists
-                  (setenv "LSP_USE_PLISTS" "1")  ; ensure the setting propagates to child processes
-                  (add-to-list 'doom-profile-generators
-                               (list "01-envvars.auto.el"
-                                     (fn! `((setenv "LSP_USE_PLISTS" "1")))))))))
+                (let ((default-directory (doom-path doom-profile-dir doom-profile-init-dir-name))
+                      (gen-file "01-modules-lsp-use-plists.el"))
+                  (if (not lsp-use-plists)
+                      (when (file-exists-p gen-file)
+                        (delete-file gen-file))
+                    (setenv "LSP_USE_PLISTS" "1")  ; ensure the setting propagates to child processes
+                    (add-to-list 'doom-profile-generators
+                                 (list gen-file (fn! `((setenv "LSP_USE_PLISTS" "1"))))))))))
 
   (package! lsp-mode :pin "c74a723870f86cf9d1b7aee5e6e2add10d9ce127")
   (package! lsp-ui :pin "030d36960338fd633a98b332bc3734c412c25ca6")
