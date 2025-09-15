@@ -18,10 +18,10 @@
             :branch "develop"
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "25e02065419c8f26ad804f80463362862eb23edd")
+  :pin "e6d691d7c5fc0c9b097a6c89d8a4b6aa25a762a1")
 
 ;; doom-ui.el
-(package! nerd-icons :pin "6868c05c6eb56c6625ee7fa38450b514542ab636")
+(package! nerd-icons :pin "3774e0578b1023bd2ae10735e28c0cd1ccf46889")
 (package! hide-mode-line :pin "ddd154f1e04d666cd004bf8212ead8684429350d")
 (package! restart-emacs :pin "1607da2bc657fe05ae01f7fdf26f716eafead02c")
 
@@ -41,7 +41,7 @@
 
 ;; doom-projects.el
 (package! projectile :pin "9325c45e0fd96d5421e75ad901a91ee5353e10ad")
-(package! project :pin "a0ebb2e9cfda339d8ebda77447c9d822fe313c2d")
+(package! project :pin "e8615777cb8bd2e26f2b66d18dbe819bef475c57")
 
 ;; doom-keybinds.el
 (package! general :pin "a48768f85a655fe77b5f45c2880b420da1b1b9c3")
