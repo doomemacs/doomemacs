@@ -1,0 +1,40 @@
+#+title: :tools lsp API demos
+#+property: header-args:elisp :results pp :exports both :eval never-export
+
+* set-eglot-client!
+#+begin_src emacs-lisp
+;; For setting a single server command:
+(set-eglot-client! 'python-mode
+  `(,(concat doom-data-dir \"lsp/mspyls/Microsoft.Python.LanguageServer\")))
+
+;; This is equivalent to
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs `(python-mode . (,(concat doom-data-dir "lsp/mspyls/Microsoft.Python.LanguageServer\")))))
+#+end_src
+
+#+begin_src emacs-lisp
+(set-eglot-client! '(python-mode python-ts-mode)
+                   "pylsp" "pyls"
+                   '("basedpyright" "--stdio")
+                   '("basedpyright-langserver" "--stdio")
+                   '("pyright" "--stdio")
+                   '("pyright-langserver" "--stdio")
+                   '("pyrefly" "lsp")
+                   "jedi-language-server"
+                   '("ruff" "server")
+                   "ruff-lsp")
+
+;; This is equivalent to
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               `(python-mode
+                 . ,(eglot-alternatives '("pylsp" "pyls"
+                                          ("basedpyright" "--stdio")
+                                          ("basedpyright-langserver" "--stdio")
+                                          ("pyright" "--stdio")
+                                          ("pyright-langserver" "--stdio")
+                                          ("pyrefly" "lsp")
+                                          "jedi-language-server"
+                                          ("ruff" "server")
+                                          "ruff-lsp"))))))
+#+end_src
