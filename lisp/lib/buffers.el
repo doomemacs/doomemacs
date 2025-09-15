@@ -53,7 +53,13 @@ scratch buffer. See `doom-fallback-buffer-name' to change this."
     (get-buffer-create doom-fallback-buffer-name)))
 
 ;;;###autoload
-(defalias 'doom-buffer-list #'buffer-list)
+(defun doom-buffer-list (&optional frame)
+  "Return all buffers in the current workspace.
+
+Same as `buffer-list' if workspaces module isn't enabled."
+  (if (bound-and-true-p tabspaces-mode)
+      (tabspaces--buffer-list frame)
+    (buffer-list frame)))
 
 ;;;###autoload
 (defun doom-project-buffer-list (&optional project)

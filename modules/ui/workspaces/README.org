@@ -4,17 +4,9 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module adds support for workspaces, powered by [[doom-package:persp-mode]], as well as a API
-for manipulating them.
-
-#+begin_quote
- 💡 There are many ways to use workspaces. I spawn a workspace per task. Say I'm
-    working in the main workspace, when I realize there is a bug in another part
-    of my project. I open a new workspace and deal with it in there. In the
-    meantime, I need to check my email, so mu4e gets its own workspace.
-
-    Once I've completed the task, I close the workspace and return to main.
-#+end_quote
+This module adds support for workspaces, powered by [[doom-package:tabspaces]] on
+top of tab-bar-mode (built into Emacs 27+), as well as a API for manipulating
+them.
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -22,10 +14,11 @@ for manipulating them.
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +auto ::
+  Automatically resume the last saved workspace on startup.
 
 ** Packages
-- [[doom-package:persp-mode]]
+- [[doom-package:tabspaces]]
 
 ** TODO Hacks
 #+begin_quote
@@ -47,8 +40,8 @@ for manipulating them.
 #+end_quote
 
 ** Isolated buffer-list
-When persp-mode is active, ~doom-buffer-list~ becomes workspace-restricted. You
-can overcome this by using ~buffer-list~.
+When ~tabspaces-mode~ is active, ~doom-buffer-list~ becomes workspace-restricted.
+You can overcome this by using ~buffer-list~ instead.
 
 ** Automatic workspaces
 A workspace is automatically created (and switched to) when you:
