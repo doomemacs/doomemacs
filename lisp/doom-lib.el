@@ -817,7 +817,10 @@ issues"
                          (or type
                              (cdr (assoc (file-name-nondirectory file)
                                          doom-rcfile--alist)))
-                         v (if (listp f) (eval `(backquote ,f) t)))))))
+                         v (when (listp f)
+                             (let ((default-directory
+                                    (directory-file-name (file-name-directory path))))
+                               (eval `(backquote ,f) t))))))))
             (puthash path rc doom-rcfile--cache)
             (cond ((null keys) rc)
                   ((symbolp keys) (cdr (assq keys (cdr rc))))
