@@ -1,29 +1,11 @@
 ;;; tools/tree-sitter/autoload/compat-30.el -*- lexical-binding: t; -*-
-;;;###if (and (fboundp 'treesit-available-p) (version< emacs-version "31.1"))
+;;;###if (and (treesit-available-p) (version< emacs-version "31.1"))
 ;;
 ;; Backported from 31.1
 ;;
 ;;; Code:
 
 (autoload 'treesit-ready-p "treesit")
-
-;; In case of Emacs builds where treesit isn't built in (to avoid void-function
-;; errors and verbose, redundant checks everywhere).
-;;;###autodef
-(unless (fboundp 'treesit-available-p)
-  (defun treesit-available-p ()
-    "Return non-nil if tree-sitter support is built-in and available."
-    nil))
-
-;;;###autoload
-(unless (fboundp 'treesit-library-abi-version)
-  (defun treesit-library-abi-version (&optional _min-compatible)
-    0))
-
-;;;###autoload
-(unless (fboundp 'treesit-language-abi-version)
-  (defun treesit-language-abi-version (&optional _lang)
-    nil))
 
 ;;;###autoload
 (defcustom treesit-auto-install-grammar 'ask

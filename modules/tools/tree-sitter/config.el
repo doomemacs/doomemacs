@@ -4,7 +4,6 @@
 ;;; Packages
 
 (use-package! treesit
-  :when (fboundp 'treesit-available-p)
   :when (treesit-available-p)
   :defer t
   :preface
@@ -48,8 +47,7 @@
     (let ((mode (funcall fn mode)))
       (if-let* ((ts (get mode '+tree-sitter))
                 (fallback-mode (car ts)))
-          (cond ((or (not (fboundp 'treesit-available-p))
-                     (not (treesit-available-p)))
+          (cond ((not (treesit-available-p))
                  (message "Treesit unavailable, falling back to `%S'" fallback-mode)
                  fallback-mode)
                 ((not (fboundp mode))
