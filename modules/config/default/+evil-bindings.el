@@ -286,18 +286,17 @@
        "C-x p" #'+popup/other)
 
       (:when (modulep! :ui workspaces)
-       :n "C-t"   #'+workspace/new
-       :n "C-S-t" #'+workspace/display
-       :g "M-1"   #'+workspace/switch-to-0
-       :g "M-2"   #'+workspace/switch-to-1
-       :g "M-3"   #'+workspace/switch-to-2
-       :g "M-4"   #'+workspace/switch-to-3
-       :g "M-5"   #'+workspace/switch-to-4
-       :g "M-6"   #'+workspace/switch-to-5
-       :g "M-7"   #'+workspace/switch-to-6
-       :g "M-8"   #'+workspace/switch-to-7
-       :g "M-9"   #'+workspace/switch-to-8
-       :g "M-0"   #'+workspace/switch-to-final))
+       :n "C-t"   #'+workspaces/new
+       :g "M-1"   #'+workspaces/switch-to-0
+       :g "M-2"   #'+workspaces/switch-to-1
+       :g "M-3"   #'+workspaces/switch-to-2
+       :g "M-4"   #'+workspaces/switch-to-3
+       :g "M-5"   #'+workspaces/switch-to-4
+       :g "M-6"   #'+workspaces/switch-to-5
+       :g "M-7"   #'+workspaces/switch-to-6
+       :g "M-8"   #'+workspaces/switch-to-7
+       :g "M-9"   #'+workspaces/switch-to-8
+       :g "M-0"   #'+workspaces/switch-to-final))
 
 ;;; :editor
 (map! (:when (modulep! :editor format)
@@ -349,7 +348,7 @@
       :desc "Find file"             "."    #'find-file
       :desc "Switch buffer"         ","    #'switch-to-buffer
       (:when (modulep! :ui workspaces)
-       :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
+       :desc "Switch workspace buffer" "," #'tabspaces-switch-to-buffer
        :desc "Switch buffer"           "<" #'switch-to-buffer)
       :desc "Switch to last buffer" "`"    #'evil-switch-to-windows-last-buffer
       :desc "Resume last search"    "'"
@@ -366,30 +365,29 @@
       ;;; <leader> TAB --- workspace
       (:when (modulep! :ui workspaces)
        (:prefix-map ("TAB" . "workspace")
-        :desc "Display tab bar"           "TAB" #'+workspace/display
-        :desc "Switch workspace"          "."   #'+workspace/switch-to
-        :desc "Switch to last workspace"  "`"   #'+workspace/other
-        :desc "New workspace"             "n"   #'+workspace/new
-        :desc "New named workspace"       "N"   #'+workspace/new-named
-        :desc "Load workspace from file"  "l"   #'+workspace/load
-        :desc "Save workspace to file"    "s"   #'+workspace/save
-        :desc "Kill session"              "x"   #'+workspace/kill-session
-        :desc "Kill this workspace"       "d"   #'+workspace/kill
-        :desc "Delete saved workspace"    "D"   #'+workspace/delete
-        :desc "Rename workspace"          "r"   #'+workspace/rename
-        :desc "Restore last session"      "R"   #'+workspace/restore-last-session
-        :desc "Next workspace"            "]"   #'+workspace/switch-right
-        :desc "Previous workspace"        "["   #'+workspace/switch-left
-        :desc "Switch to 1st workspace"   "1"   #'+workspace/switch-to-0
-        :desc "Switch to 2nd workspace"   "2"   #'+workspace/switch-to-1
-        :desc "Switch to 3rd workspace"   "3"   #'+workspace/switch-to-2
-        :desc "Switch to 4th workspace"   "4"   #'+workspace/switch-to-3
-        :desc "Switch to 5th workspace"   "5"   #'+workspace/switch-to-4
-        :desc "Switch to 6th workspace"   "6"   #'+workspace/switch-to-5
-        :desc "Switch to 7th workspace"   "7"   #'+workspace/switch-to-6
-        :desc "Switch to 8th workspace"   "8"   #'+workspace/switch-to-7
-        :desc "Switch to 9th workspace"   "9"   #'+workspace/switch-to-8
-        :desc "Switch to final workspace" "0"   #'+workspace/switch-to-final))
+        :desc "Switch to workspaces"      "TAB" #'+workspaces/switch-to
+        ;; :desc "Switch to last workspace"  "`"   #'+workspace/other
+        :desc "New workspace"             "n"   #'+workspaces/new
+        :desc "New named workspace"       "N"   #'+workspaces/new-named
+        :desc "Load workspace from file"  "l"   #'+workspaces/load
+        :desc "Save workspace to file"    "s"   #'+workspaces/save
+        :desc "Kill session"              "x"   #'+workspaces/kill-session
+        :desc "Kill this workspace"       "d"   #'+workspaces/kill
+        ;; :desc "Delete saved workspace"    "D"   #'+workspace/delete
+        :desc "Rename workspace"          "r"   #'+workspaces/rename
+        ;; :desc "Restore last session"      "R"   #'+workspace/restore-last-session
+        :desc "Next workspace"            "]"   #'+workspaces/switch-right
+        :desc "Previous workspace"        "["   #'+workspaces/switch-left
+        :desc "Switch to 1st workspace"   "1"   #'+workspaces/switch-to-0
+        :desc "Switch to 2nd workspace"   "2"   #'+workspaces/switch-to-1
+        :desc "Switch to 3rd workspace"   "3"   #'+workspaces/switch-to-2
+        :desc "Switch to 4th workspace"   "4"   #'+workspaces/switch-to-3
+        :desc "Switch to 5th workspace"   "5"   #'+workspaces/switch-to-4
+        :desc "Switch to 6th workspace"   "6"   #'+workspaces/switch-to-5
+        :desc "Switch to 7th workspace"   "7"   #'+workspaces/switch-to-6
+        :desc "Switch to 8th workspace"   "8"   #'+workspaces/switch-to-7
+        :desc "Switch to 9th workspace"   "9"   #'+workspaces/switch-to-8
+        :desc "Switch to final workspace" "0"   #'+workspaces/switch-to-final))
 
       ;;; <leader> b --- buffer
       (:prefix-map ("b" . "buffer")
@@ -397,11 +395,11 @@
        :desc "Previous buffer"             "["   #'previous-buffer
        :desc "Next buffer"                 "]"   #'next-buffer
        (:when (modulep! :ui workspaces)
-        :desc "Switch workspace buffer" "b" #'persp-switch-to-buffer
-        :desc "Switch buffer"           "B" #'switch-to-buffer
-        :desc "ibuffer workspace"       "I" #'+ibuffer/open-for-current-workspace)
+        :desc "Switch workspace buffer"    "b"   #'tabspaces-switch-to-buffer
+        :desc "Switch buffer"              "B"   #'switch-to-buffer
+        :desc "ibuffer workspace"          "I"   #'+ibuffer/open-for-current-workspace)
        (:unless (modulep! :ui workspaces)
-        :desc "Switch buffer"           "b" #'switch-to-buffer)
+        :desc "Switch buffer"              "b"   #'switch-to-buffer)
        :desc "Clone buffer"                "c"   #'clone-indirect-buffer
        :desc "Clone buffer other window"   "C"   #'clone-indirect-buffer-other-window
        :desc "Kill buffer"                 "d"   #'kill-current-buffer

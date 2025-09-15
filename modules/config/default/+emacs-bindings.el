@@ -424,27 +424,26 @@
       ;;; <leader> w --- workspaces/windows
       (:prefix-map ("w" . "workspaces/windows")
        (:when (modulep! :ui workspaces)
-        :desc "Display workspaces"           "d" #'+workspace/display
-        :desc "Rename workspace"             "r" #'+workspace/rename
-        :desc "Create workspace"             "c" #'+workspace/new
-        :desc "Create named workspace"       "C" #'+workspace/new-named
-        :desc "Delete workspace"             "k" #'+workspace/kill
-        :desc "Delete saved workspace"       "K" #'+workspace/delete
-        :desc "Save workspace"               "S" #'+workspace/save
-        :desc "Switch to other workspace"    "o" #'+workspace/other
-        :desc "Switch to left workspace"     "p" #'+workspace/switch-left
-        :desc "Switch to right workspace"    "n" #'+workspace/switch-right
-        :desc "Switch to"                    "w" #'+workspace/switch-to
-        :desc "Switch to workspace 1"        "1" #'+workspace/switch-to-0
-        :desc "Switch to workspace 2"        "2" #'+workspace/switch-to-1
-        :desc "Switch to workspace 3"        "3" #'+workspace/switch-to-2
-        :desc "Switch to workspace 4"        "4" #'+workspace/switch-to-3
-        :desc "Switch to workspace 5"        "5" #'+workspace/switch-to-4
-        :desc "Switch to workspace 6"        "6" #'+workspace/switch-to-5
-        :desc "Switch to workspace 7"        "7" #'+workspace/switch-to-6
-        :desc "Switch to workspace 8"        "8" #'+workspace/switch-to-7
-        :desc "Switch to workspace 9"        "9" #'+workspace/switch-to-8
-        :desc "Switch to last workspace"     "0" #'+workspace/switch-to-final)
+        :desc "Rename workspace"             "r" #'+workspaces/rename
+        :desc "Create workspace"             "c" #'+workspaces/new
+        :desc "Create named workspace"       "C" #'+workspaces/new-named
+        :desc "Delete workspace"             "k" #'+workspaces/kill
+        ;; :desc "Delete saved workspace"       "K" #'+workspace/delete
+        :desc "Save workspace"               "S" #'+workspaces/save
+        ;; :desc "Switch to other workspace"    "o" #'+workspace/other
+        :desc "Switch to left workspace"     "p" #'tab-bar-switch-to-prev-tab
+        :desc "Switch to right workspace"    "n" #'tab-bar-switch-to-next-tab
+        :desc "Switch to"                    "w" #'+workspaces/switch-to
+        :desc "Switch to workspace 1"        "1" #'+workspaces/switch-to-0
+        :desc "Switch to workspace 2"        "2" #'+workspaces/switch-to-1
+        :desc "Switch to workspace 3"        "3" #'+workspaces/switch-to-2
+        :desc "Switch to workspace 4"        "4" #'+workspaces/switch-to-3
+        :desc "Switch to workspace 5"        "5" #'+workspaces/switch-to-4
+        :desc "Switch to workspace 6"        "6" #'+workspaces/switch-to-5
+        :desc "Switch to workspace 7"        "7" #'+workspaces/switch-to-6
+        :desc "Switch to workspace 8"        "8" #'+workspaces/switch-to-7
+        :desc "Switch to workspace 9"        "9" #'+workspaces/switch-to-8
+        :desc "Switch to last workspace"     "0" #'+workspaces/switch-to-final)
        :desc "Autosave session"             "a" #'doom/quicksave-session
        :desc "Save session"                 "s" #'doom/save-session
        :desc "Load session"                 "l" #'doom/load-session
@@ -512,7 +511,7 @@
       "C-x b"       #'switch-to-buffer
       "C-x 4 b"     #'switch-to-buffer-other-window
       (:when (modulep! :ui workspaces)
-        "C-x b"       #'persp-switch-to-buffer
+        "C-x b"       #'tabspaces-switch-to-buffer
         "C-x B"       #'switch-to-buffer
         "C-x 4 B"     #'switch-to-buffer-other-window
         (:when (modulep! :completion ivy)
