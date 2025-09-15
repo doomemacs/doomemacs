@@ -412,12 +412,6 @@ files, so this replace calls to `pp' with the much faster `prin1'."
     (server-start)))
 
 
-(after! vc-hooks
-  (setq vc-ignore-dir-regexp (format "%s\\|%s"
-                                     vc-ignore-dir-regexp
-                                     "[/\\\\]node_modules")))
-
-
 ;;
 ;;; Packages
 

@@ -5,6 +5,11 @@
 ;; 2021, amirite?
 (setq-default vc-handled-backends '(SVN Git Hg))
 
+;; PERF: Ignore node_modules (expensive for vc ops to index).
+(setq-default vc-ignore-dir-regexp (format "%s\\|%s"
+                                           locate-dominating-stop-dir-regexp
+                                           "[/\\\\]node_modules"))
+
 (when (featurep :system 'windows)
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
