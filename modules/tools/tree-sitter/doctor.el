@@ -1,6 +1,6 @@
 ;;; tools/tree-sitter/doctor.el -*- lexical-binding: t; -*-
 
-(unless (fboundp 'module-load)
+(unless (featurep 'dynamic-modules)
   (error! "Emacs not built with dynamic modules support"))
 
 (if (version< emacs-version "29.1")
