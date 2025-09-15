@@ -1,0 +1,61 @@
+:PROPERTIES:
+:ID:       68a51608-e252-421a-bb79-bb1f038fbf5b
+:END:
+#+title:     :emacs tramp
+#+subtitle:  Remote files at your arthritic fingertips
+#+created:   September 14, 2025
+#+since:     25.10.0
+
+* Description :unfold:
+This module provides sensible and performant defaults for TRAMP, a built-in
+Emacs packages that provides remote file editing over various protocols like
+SSH, SCP, FTP, and more.
+
+#+begin_quote
+  The performance enhancements in this module have the greatest effects in
+    later versions of Emacs (at least 30.1 is recommended).
+#+end_quote
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+/This module doesn't install any packages./
+
+** Hacks
+#+begin_quote
+󱌣 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+* Usage
+#+begin_quote
+󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

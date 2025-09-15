@@ -104,8 +104,7 @@ possible."
       delete-old-versions t ; clean up after itself
       kept-old-versions 5
       kept-new-versions 5
-      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
-      tramp-backup-directory-alist backup-directory-alist)
+      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/"))))
 
 ;; But turn on auto-save, so we have a fallback in case of crashes or lost data.
 ;; Use `recover-file' or `recover-session' to recover them.
@@ -116,12 +115,8 @@ possible."
       auto-save-include-big-deletions t
       ;; Keep it out of `doom-emacs-dir' or the local directory.
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
-      tramp-auto-save-directory  (concat doom-cache-dir "tramp-autosave/")
       auto-save-file-name-transforms
-      (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-                  ;; Prefix tramp autosaves to prevent conflicts with local ones
-                  (concat auto-save-list-file-prefix "tramp-\\2") t)
-            (list ".*" auto-save-list-file-prefix t)))
+      (list (list ".*" auto-save-list-file-prefix t)))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
@@ -417,13 +412,9 @@ files, so this replace calls to `pp' with the much faster `prin1'."
     (server-start)))
 
 
-(after! tramp
-  (setq remote-file-name-inhibit-cache 60
-        tramp-completion-reread-directory-timeout 60
-        tramp-verbose 1
-        vc-ignore-dir-regexp (format "%s\\|%s\\|%s"
+(after! vc-hooks
+  (setq vc-ignore-dir-regexp (format "%s\\|%s"
                                      vc-ignore-dir-regexp
-                                     tramp-file-name-regexp
                                      "[/\\\\]node_modules")))
 
 

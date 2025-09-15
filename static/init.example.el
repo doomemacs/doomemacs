@@ -72,6 +72,7 @@
        electric          ; smarter, keyword-based electric-indent
        ;;eww               ; the internet is gross
        ;;ibuffer           ; interactive buffer management
+       tramp             ; remote files at your arthritic fingertips
        undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
