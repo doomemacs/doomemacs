@@ -37,7 +37,7 @@
               (when (stringp entry)
                 (insert entry "\n")))
             (if (null outfile)
-                (print! "%s --" (buffer-string))
+                (print! "%s" (buffer-string))
               (print! (start "Wrote %s") name)
               (unless dryrun?
                 (write-region (buffer-string) nil outfile)))))))))
