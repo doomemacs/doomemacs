@@ -317,9 +317,22 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
 
 (defun doom-profile--generate-vars ()
   `((defun doom--startup-vars ()
-      ,@(cl-loop for var in doom-autoloads-cached-vars
-                 if (boundp var)
-                 collect `(set-default ',var ',(symbol-value var)))
+      (when (doom-context-p 'reload)
+        (set-default-toplevel-value 'load-path (get 'load-path 'initial-value)))
+      ,@(cl-loop for var in '(auto-mode-alist
+                              interpreter-mode-alist
+                              magic-mode-alist
+                              magic-fallback-mode-alist)
+                 collect `(set-default-toplevel-value ',var ',(symbol-value var)))
+      ,@(cl-loop with site-run-dir =
+                 (ignore-errors
+                   (directory-file-name (file-name-directory
+                                         (locate-library site-run-file))))
+                 for path in load-path
+                 unless (and site-run-dir (file-in-directory-p path site-run-dir))
+                 unless (file-in-directory-p path data-directory)
+                 unless (file-equal-p path doom-core-dir)
+                 collect `(add-to-list 'load-path ,path))
       ,@(cl-loop with v = (version-to-list doom-version)
                  with ref = (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "rev-parse" "HEAD")
                  with branch = (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "branch" "--show-current")
@@ -431,15 +444,13 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
            doom-autoloads-excluded-files
            'literal))
       ,@(when-let* ((info-dirs
-                     (cl-loop for key in (hash-table-keys straight--build-cache)
-                              for dir = (straight--build-dir key)
-                              for file = (straight--build-file dir "dir")
-                              if (file-exists-p file)
+                     (cl-loop for dir in load-path
+                              if (file-exists-p (doom-path dir "dir"))
                               collect dir)))
-          `((require 'info)
-            (info-initialize)
-            (setq Info-directory-list
-                  (append ',info-dirs Info-directory-list)))))))
+          `((with-eval-after-load 'info
+              (info-initialize)
+              (dolist (path ',(delete-dups info-dirs))
+                (add-to-list 'Info-directory-list path))))))))
 
 (provide 'doom-lib '(profiles))
 ;;; profiles.el ends here
