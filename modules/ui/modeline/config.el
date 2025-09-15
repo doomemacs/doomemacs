@@ -17,6 +17,7 @@
         doom-modeline-github nil
         doom-modeline-mu4e nil
         doom-modeline-persp-name nil
+        doom-modeline-workspace-name nil
         doom-modeline-minor-modes nil
         doom-modeline-major-mode-icon nil
         doom-modeline-buffer-file-name-style 'relative-from-project
