@@ -1,7 +1,7 @@
 ;;; lang/ada/auoload.el -*- lexical-binding: t; -*-
 
 (defun +ada--barf-unless-project ()
-  (unless (locate-dominating-file defaul-directory "alire.toml")
+  (unless (locate-dominating-file default-directory "alire.toml")
     (user-error "Not inside an Alire project")))
 
 
