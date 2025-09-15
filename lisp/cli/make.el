@@ -30,7 +30,7 @@
                 (unless (equal output "-")
                   (expand-file-name target)))
                (name (file-relative-name (file-truename target) root))
-               (rule (assoc name rc)))
+               (rule (cdr (assoc name rc))))
           (if (null rule)
               (print! (warn "No known make rule for: %s" name))
             (dolist (entry rule)
