@@ -98,11 +98,19 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 
 # Prerequisites
-- Git 2.23+
-- Emacs 27.1–30.2 (30.2 is recommended; some Doom's modules require 29.1+)
-- [ripgrep] 11.0+
-- GNU `find`
-- *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)
+- **Required:**
+  - GNU Emacs 27.1–30.2
+    - 30.2 is recommended (fastest and most stable)
+    - Doom's modules require >=28.1
+      - Tree-sitter support requires >= 29.1
+      - JS(X)/TS(X) support is far better on >= 30.1 (w/ tree-sitter)
+    - Doom's core requires >=27.1
+  - Git >= 2.23
+  - [ripgrep] >= 11.0
+- **Optional, but recommended:**
+  - [fd] 7.3.0+ (used to improve file indexing performance)
+  - GNU variants of `find`, `ls`, and `tar` (on MacOS and BSD *nix)
+  - Symbola font (Emacs' fallback font for glyphs it can't display)
 
 > [!WARNING]
 > Unstable and pre-release builds of Emacs -- which end in `.50`, `.60`, or
