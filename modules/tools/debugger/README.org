@@ -12,16 +12,10 @@ debuggers.
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-- +lsp ::
-  *(This flag is deprecated)* Installs [[doom-package:dap-mode]] and
-  [[doom-package:dap-ui]]. Requires [[doom-module::tools lsp]] (not compatible with
-  Eglot).
+/This module has no flags./
 
 ** Packages
 - [[doom-package:dape]]
-- if [[doom-module:+lsp]]
-  - [[doom-package:dap-mode]] 
-  - [[doom-package:posframe]]
 
 ** Hacks
 /No hacks documented for this module./
