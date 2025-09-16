@@ -32,30 +32,20 @@
 (use-package! ob-jupyter
   :defer t
   :init
-  (after! ob-async
-    (pushnew! ob-async-no-async-languages-alist
-              "jupyter-python"
-              "jupyter-julia"
-              "jupyter-R"))
-
-  (after! org-src
-    (dolist (lang '(python julia R))
-      (cl-pushnew (cons (format "jupyter-%s" lang) lang)
-                  org-src-lang-modes :key #'car)))
+  ;; HACK: ob-juypter don't support ob-async and handles async itself, so
+  ;;   piggyback off of `org-babel-jupyter-make-language-alias' to disable it
+  ;;   for every current and future kernel language.
+  (defadvice! +org-jupyter--suppress-ob-async-a (fn _kernel lang)
+    :before #'org-babel-jupyter-make-language-alias
+    (with-eval-after-load 'ob-async
+      (add-to-list 'ob-async-no-async-languages-alist (concat "jupyter-" lang))))
 
   (add-hook! '+org-babel-load-functions
     (defun +org-babel-load-jupyter-h (lang)
-      (when (string-prefix-p "jupyter-" (symbol-name lang))
-        (require 'jupyter)
-        (let* ((lang-name (symbol-name lang))
-               (lang-tail (string-remove-prefix "jupyter-" lang-name)))
-          (and (not (assoc lang-tail org-src-lang-modes))
-               (require (intern (format "ob-%s" lang-tail))
-                        nil t)
-               (add-to-list 'org-src-lang-modes (cons lang-name (intern lang-tail)))))
-        (with-demoted-errors "Jupyter: %s"
-          (require lang nil t)
-          (require 'ob-jupyter nil t)))))
+      (and (string-prefix-p "jupyter-" (symbol-name lang))
+           (require 'ob-jupyter nil t)
+           (org-babel-jupyter-make-local-aliases))))
+
   :config
   (defadvice! +org--ob-jupyter-initiate-session-a (&rest _)
     :after #'org-babel-jupyter-initiate-session
