@@ -768,14 +768,6 @@ triggering hooks during startup."
   (put sym 'disabled "Doom doesn't support `customize', configure Emacs from $DOOMDIR/config.el instead"))
 (put 'customize-themes 'disabled "Set `doom-theme' or use `load-theme' in $DOOMDIR/config.el instead")
 
-;; These two functions don't exist in terminal Emacs, but some Emacs packages
-;; (internal and external) use it anyway, leading to void-function errors. I
-;; define a no-op substitute to suppress them.
-(unless (fboundp 'define-fringe-bitmap)
-  (fset 'define-fringe-bitmap #'ignore))
-(unless (fboundp 'set-fontset-font)
-  (fset 'set-fontset-font #'ignore))
-
 (after! whitespace
   (defun doom--in-parent-frame-p ()
     "`whitespace-mode' inundates child frames with whitespace markers, so

@@ -7,6 +7,15 @@
 ;;
 ;;; Code:
 
+;; These two functions don't exist in terminal Emacs, but some Emacs packages
+;; (internal and external) use it anyway, leading to void-function errors. I
+;; define a no-op substitute to suppress them.
+(unless (fboundp 'define-fringe-bitmap)
+  (fset 'define-fringe-bitmap #'ignore))
+(unless (fboundp 'set-fontset-font)
+  (fset 'set-fontset-font #'ignore))
+
+
 ;;; From Emacs >= 28
 ;; `format-spec' wasn't autoloaded until 28.1
 (unless (fboundp 'format-spec)
