@@ -1,39 +1,34 @@
 ;;; ui/workspaces/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (modulep! :editor evil)
 
-;;;###autoload (autoload '+workspace:save "ui/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:save (&optional name)
+;;;###autoload (autoload '+workspaces:save "ui/workspaces/autoload/evil" nil t)
+(evil-define-command +workspaces:save (&optional name)
   "Ex wrapper around `+workspace/save-session'."
-  (interactive "<a>") (+workspace/save name))
+  (interactive "<a>") (+workspaces/save name))
 
-;;;###autoload (autoload '+workspace:load "ui/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:load (&optional name)
+;;;###autoload (autoload '+workspaces:load "ui/workspaces/autoload/evil" nil t)
+(evil-define-command +workspaces:load (&optional name)
   "Ex wrapper around `+workspace/load-session'."
-  (interactive "<a>") (+workspace/load name))
+  (interactive "<a>") (+workspaces/load name))
 
-;;;###autoload (autoload '+workspace:new "ui/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:new (bang name)
+;;;###autoload (autoload '+workspaces:new "ui/workspaces/autoload/evil" nil t)
+(evil-define-command +workspaces:new (bang name)
   "Ex wrapper around `+workspace/new'. If BANG, clone the current workspace."
-  (interactive "<!><a>") (+workspace/new name bang))
+  (interactive "<!><a>") (+workspaces/new name bang))
 
-;;;###autoload (autoload '+workspace:rename "ui/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:rename (new-name)
+;;;###autoload (autoload '+workspaces:rename "ui/workspaces/autoload/evil" nil t)
+(evil-define-command +workspaces:rename (new-name)
   "Ex wrapper around `+workspace/rename'."
-  (interactive "<a>") (+workspace/rename new-name))
+  (interactive "<a>") (+workspaces/rename new-name))
 
-;;;###autoload (autoload '+workspace:delete "ui/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:delete ()
-  "Ex wrapper around `+workspace/kill'."
-  (interactive) (+workspace/kill (+workspace-current-name)))
-
-;;;###autoload (autoload '+workspace:switch-next "ui/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:switch-next (&optional count)
+;;;###autoload (autoload '+workspaces:switch-next "ui/workspaces/autoload/evil" nil t)
+(evil-define-command +workspaces:switch-next (&optional count)
   "Switch to next workspace. If COUNT, switch to COUNT-th workspace."
   (interactive "<c>")
-  (if count (+workspace/switch-to count) (+workspace/cycle +1)))
+  (if count (+workspaces/switch-to count) (tab-bar-switch-to-next-tab count)))
 
-;;;###autoload (autoload '+workspace:switch-previous "ui/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:switch-previous (&optional count)
+;;;###autoload (autoload '+workspaces:switch-previous "ui/workspaces/autoload/evil" nil t)
+(evil-define-command +workspaces:switch-previous (&optional count)
   "Switch to previous workspace. If COUNT, switch to COUNT-th workspace."
   (interactive "<c>")
-  (if count (+workspace/switch-to count) (+workspace/cycle -1)))
+  (if count (+workspaces/switch-to count) (tab-bar-switch-to-prev-tab count)))
