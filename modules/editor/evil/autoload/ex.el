@@ -148,8 +148,8 @@ This command understands vim file modifiers (like %:p:h). See
 (evil-define-command +evil:kill-all-buffers (&optional bang)
   "Kill all buffers. If BANG, kill current session too."
   (interactive "<!>")
-  (if (and bang (fboundp '+workspace/kill-session))
-      (+workspace/kill-session)
+  (if (and bang (fboundp '+workspaces/kill-session))
+      (+workspaces/kill-session)
     (call-interactively #'doom/kill-all-buffers)))
 
 ;;;###autoload (autoload '+evil:kill-matching-buffers "editor/evil/autoload/ex" nil t)
