@@ -366,16 +366,18 @@
       (:when (modulep! :ui workspaces)
        (:prefix-map ("TAB" . "workspace")
         :desc "Switch to workspaces"      "TAB" #'+workspaces/switch-to
-        ;; :desc "Switch to last workspace"  "`"   #'+workspace/other
+        :desc "Select recent workspace"   "`"   #'tab-bar-switch-to-recent-tab
+        :desc "Duplicate workspace"       "d"   #'tab-bar-duplicate-tab
+        :desc "Detach workspace"          "D"   #'tab-bar-detach-tab
         :desc "New workspace"             "n"   #'+workspaces/new
         :desc "New named workspace"       "N"   #'+workspaces/new-named
-        :desc "Load workspace from file"  "l"   #'+workspaces/load
-        :desc "Save workspace to file"    "s"   #'+workspaces/save
-        :desc "Kill session"              "x"   #'+workspaces/kill-session
-        :desc "Kill this workspace"       "d"   #'+workspaces/kill
-        ;; :desc "Delete saved workspace"    "D"   #'+workspace/delete
+        :desc "Restore last session"      "R"   #'+workspaces/restore-last-session
+        :desc "Save session"              "s"   #'+workspaces/save-session
+        :desc "Kill this workspace"       "k"   #'+workspaces/kill
+        :desc "Kill other workspaces"     "K"   #'+workspaces/kill-others
+        :desc "Kill session"              "X"   #'+workspaces/kill-session
         :desc "Rename workspace"          "r"   #'+workspaces/rename
-        ;; :desc "Restore last session"      "R"   #'+workspace/restore-last-session
+        :desc "Undo closed workspace"     "u"   #'+workspaces/undo-close
         :desc "Next workspace"            "]"   #'+workspaces/switch-right
         :desc "Previous workspace"        "["   #'+workspaces/switch-left
         :desc "Switch to 1st workspace"   "1"   #'+workspaces/switch-to-0

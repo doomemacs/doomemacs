@@ -427,13 +427,17 @@
         :desc "Rename workspace"             "r" #'+workspaces/rename
         :desc "Create workspace"             "c" #'+workspaces/new
         :desc "Create named workspace"       "C" #'+workspaces/new-named
-        :desc "Delete workspace"             "k" #'+workspaces/kill
-        ;; :desc "Delete saved workspace"       "K" #'+workspace/delete
+        :desc "Duplicate workspace"          "d" #'tab-bar-duplicate-tab
+        :desc "Detach workspace"             "D" #'tab-bar-detach-tab
+        :desc "Kill this workspace"          "k" #'+workspaces/kill
+        :desc "Kill other workspaces"        "K" #'+workspaces/kill-others
+        :desc "Kill other workspaces"        "X" #'+workspaces/kill-others
         :desc "Save workspace"               "S" #'+workspaces/save
-        ;; :desc "Switch to other workspace"    "o" #'+workspace/other
+        :desc "Switch to other workspace"    "o" #'tab-bar-switch-to-recent-tab
         :desc "Switch to left workspace"     "p" #'tab-bar-switch-to-prev-tab
         :desc "Switch to right workspace"    "n" #'tab-bar-switch-to-next-tab
         :desc "Switch to"                    "w" #'+workspaces/switch-to
+        :desc "Undo last closed workspace"   "t" #'+workspaces/undo-close
         :desc "Switch to workspace 1"        "1" #'+workspaces/switch-to-0
         :desc "Switch to workspace 2"        "2" #'+workspaces/switch-to-1
         :desc "Switch to workspace 3"        "3" #'+workspaces/switch-to-2

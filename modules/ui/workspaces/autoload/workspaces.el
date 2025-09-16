@@ -58,10 +58,13 @@
 (defalias '+workspaces/new-named #'tabspaces-switch-or-create-workspace)
 
 ;;;###autoload
-(defalias '+workspaces/save #'tabspaces-save-session)
+(defalias '+workspaces/save-session #'tabspaces-save-session)
 
 ;;;###autoload
-(defalias '+workspaces/load #'tabspaces-restore-session)
+(defalias '+workspaces/restore-last-session #'tabspaces-restore-session)
+
+;;;###autoload
+(defalias '+workspaces/kill-other #'tab-bar-close-other-tabs)
 
 ;;;###autoload
 (defun +workspaces/kill ()
@@ -86,6 +89,9 @@
   (doom/kill-all-buffers (buffer-list))
   (tabspaces-reset-buffer-list)
   (switch-to-buffer (doom-fallback-buffer)))
+
+;;;###autoload
+(defalias '+workspaces/undo-close #'tab-bar-undo-close-tab)
 
 ;;;###autoload
 (defun +workspaces/switch-to (index-or-name)
