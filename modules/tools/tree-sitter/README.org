@@ -55,22 +55,30 @@ It includes:
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module has no direct requirements, but some languages may have their own to
-fulfill before tree-sitter support works for them. Run ~$ doom doctor~ to find
-out what you're missing.
+This module has no direct requirements, but once enabled, tree-sitter support
+requires two additional steps:
+
+1. Support must enabled on a per-language basis. The =:lang= modules that support
+   tree-sitter will accept a =+tree-sitter= flag. E.g.
+   #+begin_src elisp
+  (doom! :lang
+         (cc +tree-sitter)
+         (python +tree-sitter))
+   #+end_src
+
+2. Any associated language grammars must be installed and compiled. When opening
+   your first file for any tree-sitter-enabled language, you'll be prompted to
+   install the associated grammars if they are missing.
+
+   This can be done manually by executing ~M-x treesit-install-language-grammar~
+   (or installing them through your OS package manager, though be aware of
+   version constraints; newer versions of some grammars may not work with older
+   versions of Emacs).
 
 * TODO Usage
 #+begin_quote
  󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
-
-** Language support
-Currently Emacs tree sitter has [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]], and syntax
-highlighting support for [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/queries][these languages]] as well as ~typescript-tsx-mode~.
-
-To enable tree-sitter support for specific languages, add the =+tree-sitter=
-flag to their respective Doom modules. Check the module readme of your language
-for support.
 
 ** Text Objects
 Not all languages support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
