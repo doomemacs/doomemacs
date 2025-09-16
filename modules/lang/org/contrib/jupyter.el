@@ -22,6 +22,13 @@
                 nil t))))
 
 
+(use-package! jupyter-org-client
+  :defer t
+  :config
+  ;; Already handled by `+org--ob-jupyter-initiate-session-a'
+  (remove-hook 'org-mode-hook #'jupyter-org-interaction-mode))
+
+
 (use-package! ob-jupyter
   :defer t
   :init
