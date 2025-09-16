@@ -23,6 +23,14 @@
           (remove-hook 'after-change-major-mode-hook fn)
           (add-hook 'change-major-mode-after-body-hook fn 100)))))
 
+  ;; HACK: Now that Doom doesn't eagerly load `info' anymore, envrc--apply can't
+  ;;   get away with referencing `Info-directory-list' without guards or
+  ;;   deferral. See purcell/envrc#117.
+  ;; REVIEW: Address this upstream.
+  (defadvice! +direnv--load-info-a (&rest _)
+    :before #'envrc--apply
+    (require 'info))
+
   ;; ...However, the above hack causes envrc to trigger in its own, internal
   ;; buffers, causing extra direnv errors.
   (defadvice! +direnv--debounce-update-a (&rest _)
