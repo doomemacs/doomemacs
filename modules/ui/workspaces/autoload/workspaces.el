@@ -74,7 +74,8 @@
         (other-buffers (+workspaces-other-buffer-list)))
     (unwind-protect
         (cl-loop for b in tab-buffers
-                 unless (memq b other-buffers)  ; only kill if not open elsewhere
+                 unless (member b other-buffers)  ; only kill if not open elsewhere
+                 when (buffer-live-p b)
                  do (kill-buffer b))
       (tab-bar-close-tab))))
 
