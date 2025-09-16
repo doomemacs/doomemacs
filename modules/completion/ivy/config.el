@@ -43,7 +43,7 @@ results buffer.")
   (define-key!
     [remap switch-to-buffer]              #'+ivy/switch-buffer
     [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
-    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
+    [remap tabspaces-switch-to-buffer]    #'+ivy/switch-workspace-buffer
     [remap evil-show-jumps]               #'+ivy/jump-list)
 
   ;; Fix #4886: otherwise our remaps are overwritten

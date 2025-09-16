@@ -56,7 +56,7 @@ Can be negative.")
         [remap locate]                    #'helm-locate
         [remap imenu]                     #'helm-semantic-or-imenu
         [remap noop-show-kill-ring]       #'helm-show-kill-ring
-        [remap persp-switch-to-buffer]    #'+helm/workspace-mini
+        [remap tabspaces-switch-to-buffer] #'+helm/workspace-mini
         [remap switch-to-buffer]          #'helm-buffers-list
         [remap projectile-find-file]      #'+helm/projectile-find-file
         [remap projectile-recentf]        #'helm-projectile-recentf

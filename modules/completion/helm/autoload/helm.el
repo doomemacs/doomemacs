@@ -21,7 +21,7 @@ current workspace."
   (unless (modulep! :ui workspaces)
     (user-error "This command requires the :ui workspaces module"))
   (with-no-warnings
-    (with-persp-buffer-list nil (helm-buffers-list))))
+    (with-workspace-buffers (helm-buffers-list))))
 
 ;;;###autoload
 (defun +helm/workspace-mini ()
@@ -31,7 +31,7 @@ workspace."
   (unless (modulep! :ui workspaces)
     (user-error "This command requires the :ui workspaces module"))
   (with-no-warnings
-    (with-persp-buffer-list nil (helm-mini))))
+    (with-workspace-buffers (helm-mini))))
 
 
 ;;

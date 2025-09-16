@@ -119,7 +119,7 @@ orderless."
     [remap switch-to-buffer-other-window] #'consult-buffer-other-window
     [remap switch-to-buffer-other-frame]  #'consult-buffer-other-frame
     [remap yank-pop]                      #'consult-yank-pop
-    [remap persp-switch-to-buffer]        #'+vertico/switch-workspace-buffer)
+    [remap tabspaces-switch-to-buffer]    #'+vertico/switch-workspace-buffer)
   :config
   (defadvice! +vertico--consult-recentf-a (&rest _args)
     "`consult-recent-file' needs to have `recentf-mode' on to work correctly.

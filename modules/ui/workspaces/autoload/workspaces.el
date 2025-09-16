@@ -5,6 +5,14 @@
 ;;; Public
 
 ;;;###autoload
+(defmacro with-workspace-buffers (&rest body)
+  "Evaluate BODY with the buffer list scoped to the current workspace."
+  `(if (bound-and-true-p tabspaces-mode)
+       (letf! ((#'buffer-list #'tabspaces--buffer-list))
+         ,@body)
+     ,@body))
+
+;;;###autoload
 (cl-defun +workspaces-list (&optional (frames t))
   "Return all open tabs in FRAMES (defaults to current frame)."
   (let (workspaces)
@@ -46,6 +54,42 @@
     (buffer &optional (tab t) (buffer-list (+workspaces-buffer-list tab)))
   "Return non-nil if BUFFEr is in TAB."
   (memq buffer buffer-list))
+
+;;;###autoload
+(defun +workspaces-get (name &optional frame)
+  "TODO"
+  (when-let* ((idx (tab-bar--tab-index-by-name name nil frame))
+              (tab (nth idx (funcall tab-bar-tabs-function frame))))
+    (if (eq (car tab) 'current-tab)
+        (tab-bar--tab frame)
+      tab)))
+
+;;;###autoload
+(defalias '+workspaces-exists-p #'tab-bar--tab-index-by-name)
+
+;;;###autoload
+(defun +workspaces-current ()
+  "Return the current workspace."
+  (tab-bar--current-tab-find (tab-bar-tabs)))
+
+;;;###autoload
+(defun +workspaces-current-name ()
+  "Return the name of the current workspace."
+  (alist-get 'name (+workspaces-current)))
+
+;;;###autoload
+(defun +workspaces-switch (name &optional required?)
+  "Switch to a workspace named NAME or create it.
+
+If REQUIRED? is non-nil, throw an error instead of auto-creating a non-existent
+workspace."
+  (let ((workspaces (mapcar (lambda (tab)
+                              (alist-get 'name tab))
+                            (tab-bar--tabs-recent))))
+    (unless (member name workspaces)
+      (when required?
+        (user-error "No workspace: %s" name)))
+    (tab-bar-select-tab-by-name name)))
 
 
 ;;

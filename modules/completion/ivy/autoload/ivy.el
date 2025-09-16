@@ -4,14 +4,14 @@
   (let ((buffer (car buffer)))
     (when (stringp buffer)
       (setq buffer (get-buffer buffer)))
-    (+workspace-contains-buffer-p buffer)))
+    (+workspaces-contain-buffer-p buffer)))
 
 (defun +ivy--is-workspace-other-buffer-p (buffer)
   (let ((buffer (car buffer)))
     (when (stringp buffer)
       (setq buffer (get-buffer buffer)))
     (and (not (eq buffer (current-buffer)))
-         (+workspace-contains-buffer-p buffer))))
+         (+workspaces-contain-buffer-p buffer))))
 
 ;;;###autoload
 (defun +ivy-rich-buffer-name (candidate)
