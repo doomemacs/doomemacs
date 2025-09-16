@@ -69,6 +69,14 @@ pre-Emacs 31."
   (let (auto-mode-alist interpreter-mode-alist)
     (apply fn args)))
 
-;;; TODO: Backwards compatibility
+;;;###autoload
+(defun +tree-sitter/doctor ()
+  "Test if the current buffer is correctly tree-sitter-enabled."
+  (interactive)
+  (unless (treesit-available-p)
+    (user-error "This Emacs install wasn't built with treesit support!"))
+  (unless (treesit-parser-list)
+    (user-error "No tree-sitter parsers are active in this buffer; are the grammars properly installed?"))
+  (message "Tree-sitter is functioning in this buffer!"))
 
 ;;; tree-sitter.el ends here

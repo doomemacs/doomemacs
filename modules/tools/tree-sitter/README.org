@@ -75,6 +75,9 @@ requires two additional steps:
    version constraints; newer versions of some grammars may not work with older
    versions of Emacs).
 
+To test whether tree-sitter is functioning in the current buffer, execute ~M-x
++tree-sitter/doctor~.
+
 * TODO Usage
 #+begin_quote
  󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
