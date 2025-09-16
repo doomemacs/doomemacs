@@ -16,6 +16,13 @@
   "Ex wrapper around `+workspace/new'. If BANG, clone the current workspace."
   (interactive "<!><a>") (+workspaces/new name bang))
 
+;;;###autoload (autoload '+workspaces:edit "ui/workspaces/autoload/evil" nil t)
+(evil-define-command +workspaces:edit (file)
+  "Open FILE in a new workspace."
+  (interactive "<f>")
+  (+workspaces/new)
+  (find-file file))
+
 ;;;###autoload (autoload '+workspaces:rename "ui/workspaces/autoload/evil" nil t)
 (evil-define-command +workspaces:rename (new-name)
   "Ex wrapper around `+workspace/rename'."

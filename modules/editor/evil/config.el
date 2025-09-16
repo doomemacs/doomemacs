@@ -456,10 +456,10 @@ don't offer any/enough real value to users.")
        :m "]t"   #'hl-todo-next
        :m "[t"   #'hl-todo-previous)
       (:when (modulep! :ui workspaces)
-       :n "gt"   #'+workspace:switch-next
-       :n "gT"   #'+workspace:switch-previous
-       :n "]w"   #'+workspace/switch-right
-       :n "[w"   #'+workspace/switch-left)
+       :n "gt"   #'+workspaces:switch-next
+       :n "gT"   #'+workspaces:switch-previous
+       :n "]w"   #'tab-bar-switch-to-next-tab
+       :n "[w"   #'tab-bar-switch-to-prev-tab)
       (:when (modulep! :ui tabs)
        :n "gt"   #'+tabs:next-or-goto
        :n "gT"   #'+tabs:previous-or-goto)
