@@ -20,9 +20,9 @@
    :desc "Switch to last buffer" "²" #'evil-switch-to-windows-last-buffer
    (:when (modulep! :ui workspaces)
     (:prefix-map ("TAB" . "workspace")
-     :desc "Switch to last workspace" "²" #'+workspace/other
-     :desc "Previous workspace" "é" #'+workspace/switch-left
-     :desc "Next workspace" "è" #'+workspace/switch-right))
+     :desc "Switch to last workspace" "²" #'tab-bar-switch-to-recent-tab
+     :desc "Previous workspace" "é" #'tab-bar-switch-to-prev-tab
+     :desc "Next workspace" "è" #'tab-bar-switch-to-next-tab))
    (:prefix-map ("b" . "buffer")
     :desc "Previous buffer" "é" #'previous-buffer
     :desc "Next buffer" "è" #'next-buffer)
@@ -54,8 +54,8 @@
          :m "èt"   #'hl-todo-next
          :m "ét"   #'hl-todo-previous)
         (:when (modulep! :ui workspaces)
-         :n "èw"   #'+workspace/switch-right
-         :n "éw"   #'+workspace/switch-left)
+         :n "èw"   #'tab-bar-switch-to-next-tab
+         :n "éw"   #'tab-bar-switch-to-prev-tab)
         :m  "è#"    #'+evil/next-preproc-directive
         :m  "é#"    #'+evil/previous-preproc-directive
         :m  "èa"    #'evil-forward-arg
