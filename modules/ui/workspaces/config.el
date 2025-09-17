@@ -20,18 +20,6 @@
     [remap delete-window] #'+workspaces/close-window-or-workspace
     [remap evil-window-delete] #'+workspaces/close-window-or-workspace)
 
-  ;; Per-workspace `winner-mode' history
-  (add-to-list 'window-persistent-parameters '(winner-ring . t))
 
-  (defadvice! +workspaces--evil-alternate-buffer-a (&optional window)
-    "Make `evil-alternate-buffer' ignore buffers outside the current workspace."
-    :override #'evil-alternate-buffer
-    (let* ((prev-buffers
-            (if persp-mode
-                (cl-remove-if-not #'tabspaces--local-buffer-p (window-prev-buffers)
-                                  :key #'car)
-              (window-prev-buffers)))
-           (head (car prev-buffers)))
-      (if (eq (car head) (window-buffer window))
-          (cadr prev-buffers)
-        head))))
+  ;; Per-workspace `winner-mode' history
+  (add-to-list 'window-persistent-parameters '(winner-ring . t)))
