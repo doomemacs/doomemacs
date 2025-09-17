@@ -303,10 +303,6 @@
        :desc "Search project"              "s" #'+default/search-project
        :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
        :desc "Switch to project scratch buffer" "X" #'doom/switch-to-project-scratch-buffer
-       (:when (and (modulep! :tools taskrunner)
-                   (or (modulep! :completion ivy)
-                       (modulep! :completion helm)))
-        :desc "List project tasks"         "z" #'+taskrunner/project-tasks)
        ;; later expanded by projectile
        (:prefix ("4" . "in other window"))
        (:prefix ("5" . "in other frame")))

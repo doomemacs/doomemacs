@@ -785,11 +785,7 @@
        :desc "Save project files"           "s" #'projectile-save-project-buffers
        :desc "Test project"                 "T" #'projectile-test-project
        :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
-       :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-       (:when (and (modulep! :tools taskrunner)
-                   (or (modulep! :completion ivy)
-                       (modulep! :completion helm)))
-        :desc "List project tasks"          "z" #'+taskrunner/project-tasks))
+       :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer)
 
       ;;; <leader> q --- quit/session
       (:prefix-map ("q" . "quit/session")
