@@ -16,25 +16,19 @@
         tramp-backup-directory-alist backup-directory-alist
         tramp-auto-save-directory  (concat doom-cache-dir "tramp-autosave/"))
 
-  ;; the ssh method is faster tha nthe default ssh on Windows
   (unless (featurep :system 'windows)
-    (setq tramp-default-method "ssh")))
+    (setq tramp-default-method "ssh")))  ; faster than scp on Windows
 
 
-;; PERF: When creating a new process in Emacs, you have two options: synchronous
-;;   or asynchronous. Async processes have historically been really slow over
-;;   TRAMP, because it has to create a new connection for every async process.
-;;   However recent version of TRAMP have added a feature called direct async
-;;   process that makes this significantly faster. This feature alone will take
-;;   many packages (like magit or git-gutter) from completely unusable to
-;;   bearable over TRAMP. Here is how you configure it with TRAMP 2.7.
-(connection-local-set-profile-variables
- 'remote-direct-async-process
- '((tramp-direct-async-process . t)))
+;; See https://coredumped.dev/2025/06/18/making-tramp-go-brrrr.
+(after! files-x
+  (connection-local-set-profile-variables
+   'remote-direct-async-process
+   '((tramp-direct-async-process . t)))
 
-(connection-local-set-profiles
- `(:application tramp :protocol "scp")
- 'remote-direct-async-process)
+  (connection-local-set-profiles
+   `(:application tramp :protocol "scp")
+   'remote-direct-async-process))
 
 
 ;; See magit/magit#5220
