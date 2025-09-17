@@ -367,6 +367,7 @@
        (:prefix-map ("TAB" . "workspace")
         :desc "Switch to workspaces"      "TAB" #'+workspaces/switch-to
         :desc "Select recent workspace"   "`"   #'tab-bar-switch-to-recent-tab
+        :desc "Switch to buffer's workspace" "b" #'tabspaces-switch-buffer-and-tab
         :desc "Duplicate workspace"       "d"   #'tab-bar-duplicate-tab
         :desc "Detach workspace"          "D"   #'tab-bar-detach-tab
         :desc "New workspace"             "n"   #'+workspaces/new

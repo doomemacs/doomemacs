@@ -425,6 +425,7 @@
       (:prefix-map ("w" . "workspaces/windows")
        (:when (modulep! :ui workspaces)
         :desc "Rename workspace"             "r" #'+workspaces/rename
+        :desc "Switch to buffer's workspace" "b" #'tabspaces-switch-buffer-and-tab
         :desc "Create workspace"             "c" #'+workspaces/new
         :desc "Create named workspace"       "C" #'+workspaces/new-named
         :desc "Duplicate workspace"          "d" #'tab-bar-duplicate-tab
