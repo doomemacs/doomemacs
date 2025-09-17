@@ -294,13 +294,7 @@ Also adds support for a `:sync' parameter to override `:async'."
                      (if (string-match-p "\\<i?python[23]?$" python-shell-interpreter)
                          (replace-regexp-in-string
                           "\\(^\\| \\)-i\\( \\|$\\)" " " python-shell-interpreter-args)
-                       python-shell-interpreter-args))))))
-
-  (after! ob-ditaa
-    ;; TODO Should be fixed upstream
-    (let ((default-directory (org-find-library-dir "org-contribdir")))
-      (setq org-ditaa-jar-path     (expand-file-name "scripts/ditaa.jar")
-            org-ditaa-eps-jar-path (expand-file-name "scripts/DitaaEps.jar")))))
+                       python-shell-interpreter-args)))))))
 
 
 (defun +org-init-babel-lazy-loader-h ()
