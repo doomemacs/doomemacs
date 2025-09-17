@@ -14,9 +14,9 @@
         tabspaces-remove-to-default nil)
 
   ;; Delete the current workspace if closing the last open window
-  ;; (define-key! persp-mode-map
-  ;;   [remap delete-window] #'+workspace/close-window-or-workspace
-  ;;   [remap evil-window-delete] #'+workspace/close-window-or-workspace)
+  (define-key! tabspaces-mode-map
+    [remap delete-window] #'+workspaces/close-window-or-workspace
+    [remap evil-window-delete] #'+workspaces/close-window-or-workspace)
 
   ;; Per-workspace `winner-mode' history
   (add-to-list 'window-persistent-parameters '(winner-ring . t))

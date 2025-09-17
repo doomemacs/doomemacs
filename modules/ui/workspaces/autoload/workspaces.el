@@ -162,4 +162,18 @@ A negative number will start from the end of the workspace list."
 ;;;###autoload
 (defalias '+workspaces/switch-to-final #'tab-bar-switch-to-last-tab)
 
+;;;###autoload
+(defun +workspaces/close-window-or-workspace ()
+  "Close the selected window, tab, or frame.
+
+If it's the last window in the workspace, either close the workspace (as well as
+its associated frame, if one exists) and move to the next."
+  (interactive)
+  (cond ((or (window-parent)
+             (window-dedicated-p)
+             (not (bound-and-true-p tabspaces-mode)))
+         (funcall (if (featurep 'evil) #'evil-window-delete #'delete-window)))
+        ((cdr (tab-bar-tabs)) (+workspaces/kill))
+        ((user-error "Can't delete last workspace"))))
+
 ;;; workspaces.el ends here
