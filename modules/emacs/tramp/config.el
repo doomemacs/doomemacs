@@ -33,7 +33,7 @@
 
 ;; See magit/magit#5220
 (after! magit
-  (setq magit-tramp-pipe-stty-setings 'pty))
+  (setq magit-tramp-pipe-stty-settings 'pty))
 
 
 ;; PERF: Newer versions of TRAMP will use SSH connection sharing for much faster
