@@ -16,6 +16,9 @@ them.
 ** Module flags
 - +auto ::
   Automatically resume the last saved workspace on startup.
+- +tabs ::
+  Use tab-bar to display active workspaces as tabs at the top of the frame.
+  Without this, active workspaces are displayed in the echo-area instead.
 
 ** Packages
 - [[doom-package:tabspaces]]

@@ -3,8 +3,10 @@
 (use-package! tabspaces
   :hook (doom-init-ui . tabspaces-mode)
   :init
-  (setq tabspaces-session-file (file-name-concat doom-profile-data-dir "workspaces.el")
-        tab-bar-show 1)  ; hide if only one workspace
+  (setq tabspaces-session-file (file-name-concat doom-profile-data-dir "workspaces.el"))
+  (if (modulep! +tabs)
+      (setq tab-bar-show 1)  ; hide if only one workspace
+    (setq tabspaces-echo-area-enable t))
 
   :config
   (setq tabspaces-session t
