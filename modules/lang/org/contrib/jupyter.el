@@ -52,7 +52,7 @@
   ;; HACK: ob-juypter don't support ob-async and handles async itself, so
   ;;   piggyback off of `org-babel-jupyter-make-language-alias' to disable it
   ;;   for every current and future kernel language.
-  (defadvice! +org-jupyter--suppress-ob-async-a (fn _kernel lang)
+  (defadvice! +org-jupyter--suppress-ob-async-a (_kernel lang)
     :before #'org-babel-jupyter-make-language-alias
     (with-eval-after-load 'ob-async
       (add-to-list 'ob-async-no-async-languages-alist (concat "jupyter-" lang))))
