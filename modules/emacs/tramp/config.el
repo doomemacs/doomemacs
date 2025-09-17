@@ -63,3 +63,48 @@
 ;;   back on.
 (after! (tramp compile)
   (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options))
+
+
+;;
+;;; Memoization
+
+;; PERF: Calls over TRAMP are expensive, so reduce the number of calls by more
+;;   aggressively caching some common data. Inspired by
+;;   https://coredumped.dev/2025/06/18/making-tramp-go-brrrr.
+(defun +tramp--memoize (key cache fn &rest args)
+  "Memoize a value if the key is a remote path."
+  (if (and key (file-remote-p key))
+      (if-let* ((current (assoc key (symbol-value cache))))
+          (cdr current)
+        (let ((current (apply fn args)))
+          (set cache (cons (cons key current) (symbol-value cache)))
+          current))
+    (apply fn args)))
+
+;;;###package magit
+(defvar +tramp--magit-toplevel-cache nil)
+(defadvice! +tramp--memoized-magit-toplevel-a (orig &optional directory)
+  :around #'magit-toplevel
+  (+tramp--memoize (or directory default-directory)
+                   '+tramp--magit-toplevel-cache orig directory))
+
+;;;###package project
+(defvar +tramp--project-current-cache nil)
+(defadvice! +tramp--memoized-project-current (fn &optional prompt directory)
+  :around #'project-current
+  (+tramp--memoize (or directory
+                       project-current-directory-override
+                       default-directory)
+                   '+tramp--project-current-cache fn prompt directory))
+
+;;;###package vc-git
+(defvar +tramp--vc-git-root-cache nil)
+(defadvice! +tramp--memoized-vc-git-root-a (fn file)
+  :around #'vc-git-root
+  (let ((value
+         (+tramp--memoize (file-name-directory file)
+                          '+tramp--vc-git-root-cache fn file)))
+    ;; sometimes vc-git-root returns nil even when there is a root there
+    (unless (cdar +tramp--vc-git-root-cache)
+      (setq +tramp--vc-git-root-cache (cdr +tramp--vc-git-root-cache)))
+    value))
