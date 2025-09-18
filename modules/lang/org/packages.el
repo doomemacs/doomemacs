@@ -89,7 +89,7 @@
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
-    :recipe (:host github :repo "anler/centered-window-mode")
+    :recipe (:host github :repo "emacsmirror/centered-window")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
   (package! org-re-reveal :pin "4eb0f7147447c956231f5c178fa454b7cb76741b")
