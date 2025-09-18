@@ -284,17 +284,7 @@ Also adds support for a `:sync' parameter to override `:async'."
         (save-excursion
           (when-let ((beg (org-babel-where-is-src-block-result))
                      (end (progn (goto-char beg) (forward-line) (org-babel-result-end))))
-            (org-display-inline-images nil nil (min beg end) (max beg end)))))))
-
-  (after! ob-python
-    (when (equal org-babel-python-command-nonsession "python")
-      (setq org-babel-python-command-nonsession
-            (string-trim
-             (concat python-shell-interpreter " "
-                     (if (string-match-p "\\<i?python[23]?$" python-shell-interpreter)
-                         (replace-regexp-in-string
-                          "\\(^\\| \\)-i\\( \\|$\\)" " " python-shell-interpreter-args)
-                       python-shell-interpreter-args)))))))
+            (org-display-inline-images nil nil (min beg end) (max beg end))))))))
 
 
 (defun +org-init-babel-lazy-loader-h ()
