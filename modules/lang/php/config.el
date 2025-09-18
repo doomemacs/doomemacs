@@ -82,7 +82,23 @@
       html css            ; requires :lang (web +tree-sitter)
       javascript jsdoc))  ; requires :lang (javascript +tree-sitter)
   :config
-  (+php-common-config 'php-ts-mode))
+  (+php-common-config 'php-ts-mode)
+
+  ;; HACK: This advice fixes PSR-2/12 indentation of chained methods and makes
+  ;;   room for any future corrections.
+  ;; REVIEW: PR these corrections upstream.
+  (defadvice! +php--correct-indent-styles-a (fn &rest args)
+    :around #'php-ts-mode--get-indent-style
+    (let ((rules (apply fn args)))
+      (if (functionp php-ts-mode-indent-style)
+          rules
+        `((php
+           ,@(pcase php-ts-mode-indent-style
+               (`psr2
+                `(((parent-is "member_call_expression") parent-bol php-ts-mode-indent-offset)))
+               ;; Room for other corrections
+               )
+           ,@(cadr rules)))))))
 
 
 (use-package! php-refactor-mode
