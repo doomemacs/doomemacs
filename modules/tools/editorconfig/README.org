@@ -4,9 +4,9 @@
 #+since:    0.9
 
 * Description :unfold:
-This module integrates [[https://editorconfig.org/][EditorConfig]] into Emacs, allowing users to dictate code
-style on a per-project basis with an =.editorconfig= file ([[https://editorconfig-specification.readthedocs.io/][formal
-specification]]).
+This module adds [[https://editorconfig.org/][EditorConfig]] support to Emacs, allowing users to dictate code
+style on a per-project basis with =.editorconfig= files ([[https://editorconfig-specification.readthedocs.io/][formal specification]]),
+with or without the native editorconfig binary.
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -33,12 +33,12 @@ specification]]).
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module has one optional dependency: the ~editorconfig~ native binary.
-Without it, a built-in elisp implementation will be used, but it has fewer
-features and can be a bit slower.
+This module has one optional dependency: the native ~editorconfig~ binary.
+Without it, a built-in elisp implementation will be used, which is claimed to be
+faster and more secure.
 
-The editorconfig binary has [[https://github.com/editorconfig#contributing][many implementations]] you can choose from, typically
-available through your OS package manager (or build it yourself).
+If you choose to install the binary, [[https://github.com/editorconfig#contributing][many implementations]] are available, usually
+through your OS package manager (if not built from source yourself).
 
 * Usage
 You will need to write an ~.editorconfig~ file in your project (this is usually
