@@ -20,10 +20,6 @@ specification]]).
 - [[doom-package:editorconfig-emacs]]
  
 ** Hacks
-- Added logic to guess an extension-less file's type from its shebang line. For
-  example, editorconfig rules for =*.py= files will apply to =bin/myscript=
-  assuming its first line is ~#!/usr/bin/env python~. See
-  ~+editorconfig-mode-alist~ for adding support for more languages.
 - *Special integration for =dtrt-indent=:* If the local editorconfig file
   specifies ~indent_style~ or ~indent_size~, the [[doom-package:dtrt-indent]] (which tries to
   guess your indent settings by analyzing your text file) will bow out.
