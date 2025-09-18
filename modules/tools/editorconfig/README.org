@@ -41,8 +41,9 @@ If you choose to install the binary, [[https://github.com/editorconfig#contribut
 through your OS package manager (if not built from source yourself).
 
 * Usage
-You will need to write an ~.editorconfig~ file in your project (this is usually
-in the root of your project) you can find out about all the properties [[https://editorconfig.org/#example-file][here]].
+A ~.editorconfig~ file in your project (usually in the root directory of the
+project) is needed to configure code style for files in the same directory or
+below. Documentation on editorconfig's properties can be found [[https://editorconfig.org/#example-file][here]].
 
 * TODO Configuration
 #+begin_quote
