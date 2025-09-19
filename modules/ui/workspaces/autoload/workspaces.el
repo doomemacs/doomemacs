@@ -43,10 +43,14 @@
    #'buffer-live-p
    (if tabs
        (cl-remove-duplicates
-        (cl-loop for tab in tabs
-                 if (and tab (not (eq (car-safe tab) 'current-tab)))
-                 nconc (alist-get 'wc-bl tab)
-                 nconc (alist-get 'wc-bbl tab))
+        (cl-loop for tab in (delq nil tabs)
+                 for ws = (if (numberp tab) (nth tab (tab-bar-tabs)) tab)
+                 if (eq (car-safe ws) 'current-tab)
+                 append (append (frame-parameter nil 'buffer-list)
+                                (frame-parameter nil 'bured-buffer-list))
+                 else
+                 append (append (alist-get 'wc-bl (cdr ws))
+                                (alist-get 'wc-bbl (cdr ws))))
         :test #'eq)
      (append (frame-parameter nil 'buffer-list)
              (frame-parameter nil 'buried-buffer-list)
