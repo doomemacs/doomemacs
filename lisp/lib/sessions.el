@@ -12,8 +12,10 @@
 ;;;###autoload
 (defun doom-session-file (&optional name)
   "TODO"
-  (cond ((require 'persp-mode nil t)
-         (expand-file-name (or name persp-auto-save-fname) persp-save-dir))
+  (cond ((require 'tabspaces nil t)
+         (if name
+             (expand-file-name name +workspaces-dir)
+           tabspaces-session-file))
         ((require 'desktop nil t)
          (if name
              (expand-file-name name (file-name-directory (desktop-full-file-name)))
@@ -24,10 +26,11 @@
 (defun doom-save-session (&optional file)
   "TODO"
   (setq file (expand-file-name (or file (doom-session-file))))
-  (cond ((require 'persp-mode nil t)
-         (unless persp-mode (persp-mode +1))
-         (setq persp-auto-save-opt 0)
-         (persp-save-state-to-file file))
+  (cond ((require 'tabspaces nil t)
+         (unless tabspaces-mode
+           (tabspaces-mode +1))
+         (let ((tabspaces-session-file file))
+           (tabspaces-save-session)))
         ((and (require 'frameset nil t)
               (require 'restart-emacs nil t))
          (let ((frameset-filter-alist (append '((client . restart-emacs--record-tty-file))
@@ -49,14 +52,10 @@
   (message "Attempting to load %s" file)
   (cond ((not (file-readable-p file))
          (message "No session file at %S to read from" file))
-        ((require 'persp-mode nil t)
-         (unless persp-mode
-           (persp-mode +1))
-         (let ((allowed (persp-list-persp-names-in-file file)))
-           (cl-loop for name being the hash-keys of *persp-hash*
-                    unless (member name allowed)
-                    do (persp-kill name))
-           (persp-load-state-from-file file)))
+        ((require 'tabspaces nil t)
+         (unless tabspaces-mode
+           (tabspaces-mode +1))
+         (tabspaces-restore-session file))
         ((and (require 'frameset nil t)
               (require 'restart-emacs nil t))
          (restart-emacs--restore-frames-using-desktop file))
