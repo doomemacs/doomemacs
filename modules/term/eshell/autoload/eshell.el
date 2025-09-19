@@ -101,8 +101,8 @@
   (let ((eshell-buffer
          (get-buffer-create
           (format "*doom:eshell-popup:%s*"
-                  (if (bound-and-true-p persp-mode)
-                      (safe-persp-name (get-current-persp))
+                  (if (bound-and-true-p tabspaces-mode)
+                      (+workspaces-current-name)
                     "main"))))
         confirm-kill-processes
         current-prefix-arg)
@@ -329,13 +329,8 @@ delete."
                             return (select-window win))))))))))
 
 ;;;###autoload
-(defun +eshell-switch-workspace-fn (type &rest _)
-  (when (eq type 'frame)
-    (setq +eshell-buffers
-          (or (persp-parameter 'eshell-buffers)
-              (make-ring 25)))))
-
-;;;###autoload
-(defun +eshell-save-workspace-fn (_workspace target)
-  (when (framep target)
-    (set-persp-parameter 'eshell-buffers +eshell-buffers)))
+(defun +eshell-switch-workspace-fn (from-tab to-tab)
+  "TODO"
+  (setf (alist-get '+eshell-buffers from-tab) +eshell-buffers)
+  (setq +eshell-buffers (or (alist-get '+eshell-buffers to-tab)
+                            (make-ring 25))))

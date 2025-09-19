@@ -18,8 +18,8 @@ If prefix ARG, recreate the term buffer."
   (let ((multi-term-dedicated-select-after-open-p t)
         (multi-term-dedicated-buffer-name
          (format "doom:term-popup:%s"
-                 (if (bound-and-true-p persp-mode)
-                     (safe-persp-name (get-current-persp))
+                 (if (bound-and-true-p tabspaces-mode)
+                     (+workspaces-current-name)
                    "main"))))
     (let* ((buffer (multi-term-get-buffer nil t))
            (window (get-buffer-window buffer)))

@@ -119,8 +119,8 @@ You should use `set-eshell-alias!' to change this.")
 
   ;; Persp-mode/workspaces integration
   (when (modulep! :ui workspaces)
-    (add-hook 'persp-activated-functions #'+eshell-switch-workspace-fn)
-    (add-hook 'persp-before-switch-functions #'+eshell-save-workspace-fn))
+    (add-to-list 'window-persistent-parameters '(+eshell-buffers . t))
+    (add-hook 'tab-bar-tab-post-select-functions #'+eshell-switch-workspace-fn))
 
   ;; UI enhancements
   (add-hook! 'eshell-mode-hook

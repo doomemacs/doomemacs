@@ -15,8 +15,8 @@ Returns the vterm buffer."
    (lambda ()
      (let ((buffer-name
             (format "*doom:vterm-popup:%s*"
-                    (if (bound-and-true-p persp-mode)
-                        (safe-persp-name (get-current-persp))
+                    (if (bound-and-true-p tabspaces-mode)
+                        (+workspaces-current-name)
                       "main")))
            confirm-kill-processes
            current-prefix-arg)
