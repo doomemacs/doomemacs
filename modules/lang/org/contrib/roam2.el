@@ -47,6 +47,21 @@ In case of failure, fail gracefully."
     (advice-remove 'org-roam-db-query #'+org-roam-try-init-db-a)
     (org-roam-db-sync))
 
+  (defadvice! +org-roam-node-insert-after-point-a (fn &rest args)
+    "If in evil normal mode and cursor is on a whitespace character, insert the
+link after the whitespace rather than before. If at EOL, add a space before
+inserting the link."
+    :around #'org-roam-node-insert
+    (if (and (bound-and-true-p evil-local-mode)
+             (not (evil-insert-state-p))
+             (or (looking-at-p "[[:blank:]]")
+                 (evil-eolp)))
+        (evil-with-state 'insert
+          (unless (eolp) (forward-char))
+          (if (evil-eolp) (insert " "))
+          (apply fn args))
+      (apply fn args)))
+
   (setq org-roam-directory
         (thread-first (or org-roam-directory "roam")
           (expand-file-name org-directory)
