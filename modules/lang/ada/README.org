@@ -20,8 +20,8 @@ This module adds support for the Ada and SPARK programming languages.
 ** Module flags
 # Flags should be in alphanumerical order.
 - +lsp ::
-  Enable LSP support for ~ada-mode~ / ~ada-ts-mode~. Requires [[doom-module::tools lsp]]
-  and a langserver (supports [[https://github.com/AdaCore/ada_language_server][ada_language_server]]).
+  Enable LSP support for ~ada-mode~ / ~ada-ts-mode~, ~gpr-mode~ / ~gpr-ts-mode~.
+  Requires [[doom-module::tools lsp]] and a langserver (supports [[https://github.com/AdaCore/ada_language_server][ada_language_server]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]] and Emacs 29.1+.
@@ -29,6 +29,8 @@ This module adds support for the Ada and SPARK programming languages.
 ** Packages
 - [[doom-package:ada-mode]]
 - [[doom-package:ada-ts-mode]] if [[doom-module:+tree-sitter]]
+- [[doom-package:gpr-mode]]
+- [[doom-package:gpr-ts-mode]] if [[doom-module:+tree-sitter]]
 
 ** Hacks
 - ~ada-ts-mode~ has been advised not to set ~treesit-language-source-alist~ and
