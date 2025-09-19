@@ -5,7 +5,7 @@
 (defun +irc-setup-wconf (&optional inhibit-workspace)
   (when (and (modulep! :ui workspaces)
              (not inhibit-workspace))
-    (+workspace-switch +irc--workspace-name 'auto-create))
+    (+workspaces-switch +irc--workspace-name))
   (let ((buffers (doom-buffers-in-mode 'circe-mode nil t)))
     (if (not (member (window-buffer) buffers))
         (if buffers
@@ -59,8 +59,8 @@ workspace for it."
       (disable-circe-notifications))
     (mapc #'kill-buffer (doom-buffers-in-mode 'circe-mode (buffer-list) t))
     (when (modulep! :ui workspaces)
-      (when (equal (+workspace-current-name) +irc--workspace-name)
-        (+workspace/kill +irc--workspace-name)))))
+      (when-let* ((ws (+workspaces-get +irc--workspace-name)))
+        (+workspaces/kill (tab-bar--tab-index-by-name +irc--workspace-name))))))
 
 ;;;###autoload
 (defun +irc/jump-to-channel (&optional this-server)
@@ -100,14 +100,14 @@ argument) is non-nil only show channels in current server."
     (derived-mode-p 'circe-mode)))
 
 ;;;###autoload
-(defun +irc--add-circe-buffer-to-persp-h ()
+(defun +irc--add-circe-buffer-to-workspace-h ()
   (when (and (bound-and-true-p persp-mode)
-             (+workspace-exists-p +irc--workspace-name))
-    (let ((persp (get-current-persp))
-          (buf (current-buffer)))
+             (+workspaces-exists-p +irc--workspace-name))
+    (let ((buf (current-buffer)))
       ;; Add a new circe buffer to irc workspace when we're in another workspace
-      (unless (eq (safe-persp-name persp) +irc--workspace-name)
-        ;; Add new circe buffers to the persp containing circe buffers
-        (persp-add-buffer buf (persp-get-by-name +irc--workspace-name))
-        ;; Remove new buffer from accidental workspace
-        (persp-remove-buffer buf persp)))))
+      (unless (eq (+workspaces-current-name) +irc--workspace-name)
+        (let ((ws (+workspaces-get +irc--workspace-name)))
+          ;; Add new circe buffers to the persp containing circe buffers
+          (+workspaces-add-buffer-to-tab buf ws)
+          ;; Remove new buffer from accidental workspace
+          (+workspaces-remove-buffer-from-tab buf ws))))))
