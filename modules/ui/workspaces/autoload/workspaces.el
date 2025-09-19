@@ -5,6 +5,18 @@
 ;;; Public
 
 ;;;###autoload
+(defmacro with-current-workspace (ws &rest body)
+  "Evaluate BODY while WS is the active workspace."
+  (declare (indent defun))
+  `(let ((--tab-- ,ws)
+         (--last-tab-- (+workspaces-current-name)))
+     (tab-bar-select-tab-by-name (alist-get 'name --tab--))
+     (unwind-protect
+         (progn
+           ,@body)
+       (tab-bar-select-tab-by-name --last-tab--))))
+
+;;;###autoload
 (defmacro with-workspace-buffers (&rest body)
   "Evaluate BODY with the buffer list scoped to the current workspace."
   `(if (bound-and-true-p tabspaces-mode)
@@ -29,17 +41,16 @@
   "Return a list of buffers associated with TAB."
   (seq-filter
    #'buffer-live-p
-   (if (null tabs)
-       (append (frame-parameter nil 'buffer-list)
-               (frame-parameter nil 'buried-buffer-list))
-     (cl-delete-duplicates
-      (cl-loop for tab in tabs
-               if (and tab (not (eq (car-safe tab) 'current-tab)))
-               nconc (or (cdr (assq 'wc-bl tab))
-                         (mapcar #'get-buffer
-                                 (car (cdr (assq #'tabspaces--buffer-list
-                                                 (assq 'ws tab)))))))
-      :test #'eq))))
+   (if tabs
+       (cl-remove-duplicates
+        (cl-loop for tab in tabs
+                 if (and tab (not (eq (car-safe tab) 'current-tab)))
+                 nconc (alist-get 'wc-bl tab)
+                 nconc (alist-get 'wc-bbl tab))
+        :test #'eq)
+     (append (frame-parameter nil 'buffer-list)
+             (frame-parameter nil 'buried-buffer-list)
+             nil))))
 
 ;;;###autoload
 (defun +workspaces-other-buffer-list ()
@@ -56,13 +67,21 @@
   (memq buffer buffer-list))
 
 ;;;###autoload
-(defun +workspaces-get (name &optional frame)
-  "TODO"
-  (when-let* ((idx (tab-bar--tab-index-by-name name nil frame))
-              (tab (nth idx (funcall tab-bar-tabs-function frame))))
-    (if (eq (car tab) 'current-tab)
-        (tab-bar--tab frame)
-      tab)))
+(defun +workspaces-get (name &optional frame noerror?)
+  "Return a full tab data structure for NAME in FRAME.
+
+NAME can be a string representing a named tab or a number representing it's
+index. If NOERROR? is omitted, throws an error if NAME doesn't exist."
+  (if-let* ((idx (if (numberp name)
+                     name
+                   (tab-bar--tab-index-by-name name nil frame)))
+            (tab (nth idx (funcall tab-bar-tabs-function frame))))
+      (if (eq (car tab) 'current-tab)
+          (let (tab-bar-select-restore-context)
+            (tab-bar--tab frame))
+        tab)
+    (unless noerror?
+      (user-error "No workspace found: %s" name))))
 
 ;;;###autoload
 (defalias '+workspaces-exists-p #'tab-bar--tab-index-by-name)
@@ -85,11 +104,34 @@ If REQUIRED? is non-nil, throw an error instead of auto-creating a non-existent
 workspace."
   (let ((workspaces (mapcar (lambda (tab)
                               (alist-get 'name tab))
-                            (tab-bar--tabs-recent))))
+                            (tab-bar-tabs))))
     (unless (member name workspaces)
       (when required?
         (user-error "No workspace: %s" name)))
     (tab-bar-select-tab-by-name name)))
+
+;;;###autoload
+(defun +workspaces-add-buffer-to-tab (buffer tab)
+  "Add BUFFER to TAB."
+  (cl-check-type buffer buffer)
+  (let ((tab-names (mapcar
+                    (lambda (tab) (alist-get 'name tab))
+                    (funcall tab-bar-tabs-function))))
+    ;; add buffer to default tabspace
+    (tab-bar-select-tab-by-name (alist-get 'name tab))
+    (display-buffer buffer)
+    (switch-to-buffer buffer t nil)
+    (if (one-window-p t)
+        (previous-buffer)
+      (delete-window))
+    (tab-bar-switch-to-recent-tab)))
+
+;;;###autoload
+(defun +workspaces-remove-buffer-from-tab (buffer tab)
+  "Remove BUFFER from TAB."
+  (cl-check-type buffer buffer)
+  (with-current-workspace tab
+    (tabspaces-remove-buffer buffer)))
 
 
 ;;
@@ -111,17 +153,25 @@ workspace."
 (defalias '+workspaces/kill-other #'tab-bar-close-other-tabs)
 
 ;;;###autoload
-(defun +workspaces/kill ()
+(cl-defun +workspaces/kill (&optional (tab-number (tab-bar--current-tab-index)))
   "Kill all buffers in the workspace and then close the workspace itself."
-  (interactive)
-  (let ((tab-buffers (+workspaces-buffer-list))
-        (other-buffers (+workspaces-other-buffer-list)))
+  (interactive "P")
+  (unless tab-number
+    (user-error "No tab number specified"))
+  (let* ((current-idx (tab-bar--current-tab-index))
+         (tab-idx (or tab-number current-idx))
+         (tab-buffers (+workspaces-buffer-list tab-idx (selected-frame)))
+         (other-buffers
+          (delete-dups
+           (cl-loop for ws in (tab-bar-tabs)
+                    unless (eq (car ws) 'current-tab)
+                    append (+workspaces-buffer-list ws)))))
     (unwind-protect
         (cl-loop for b in tab-buffers
                  unless (member b other-buffers)  ; only kill if not open elsewhere
                  when (buffer-live-p b)
                  do (kill-buffer b))
-      (tab-bar-close-tab))))
+      (tab-bar-close-tab tab-idx))))
 
 ;;;###autoload
 (defalias '+workspaces/rename #'tab-bar-rename-tab)
