@@ -131,10 +131,12 @@ workspace."
     (tab-bar-switch-to-recent-tab)))
 
 ;;;###autoload
-(defun +workspaces-remove-buffer-from-tab (buffer tab)
+(defun +workspaces-remove-buffer-from-tab (buffer &optional tab)
   "Remove BUFFER from TAB."
   (cl-check-type buffer buffer)
-  (with-current-workspace tab
+  (if tab
+      (with-current-workspace tab
+        (tabspaces-remove-buffer buffer))
     (tabspaces-remove-buffer buffer)))
 
 
