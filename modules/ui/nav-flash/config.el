@@ -31,9 +31,9 @@
   ;; `org'
   (add-hook 'org-follow-link-hook #'+nav-flash-delayed-blink-cursor-h)
 
-  ;; `persp-mode'
-  (after! persp-mode
-    (add-hook 'persp-activated-functions #'+nav-flash-delayed-blink-cursor-h))
+  ;; `tabspaces'
+  (add-hook 'tab-bar-tab-post-select-functions #'+nav-flash-delayed-blink-cursor-h)
+  (add-hook 'tab-bar-tab-post-open-functions #'+nav-flash-delayed-blink-cursor-h)
 
   ;; `saveplace'
   (advice-add #'save-place-find-file-hook :after #'+nav-flash-blink-cursor-a)
