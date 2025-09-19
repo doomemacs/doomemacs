@@ -8,8 +8,8 @@
 
 * Description :unfold:
 This module provides sensible and performant defaults for TRAMP, a built-in
-Emacs packages that provides remote file editing over various protocols like
-SSH, SCP, FTP, and more.
+Emacs package that provides remote file editing over various protocols like SSH,
+SCP, FTP, and more.
 
 #+begin_quote
   The performance enhancements in this module have the greatest effects in
@@ -28,9 +28,11 @@ SSH, SCP, FTP, and more.
 /This module doesn't install any packages./
 
 ** Hacks
-#+begin_quote
-󱌣 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
-#+end_quote
+- Turns on tramp-direct-async-process globally (for improved performance), but
+  disables it for lsp-mode/eglot connections to LSP servers.
+- In remote buffers, several functions are memoized to reduce I/O over TRAMP and
+  improve performance. Currently, these functions are ~magit-toplevel~,
+  ~project-current~, and ~vc-git-root~.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
@@ -38,6 +40,8 @@ SSH, SCP, FTP, and more.
 
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
 
 * Usage
 #+begin_quote
