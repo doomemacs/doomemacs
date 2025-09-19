@@ -42,7 +42,7 @@
   (when (modulep! :ui workspaces)
     (define-ibuffer-filter workspace-buffers
         "Filter for workspace buffers"
-      (:reader (+workspace-get (read-string "workspace name: "))
+      (:reader (+workspaces-get (read-string "workspace name: "))
        :description "workspace")
       (memq buf (+workspace-buffer-list qualifier)))
 
