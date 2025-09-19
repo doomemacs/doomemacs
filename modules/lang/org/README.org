@@ -161,8 +161,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - The window is recentered when following links.
 - The breadcrumbs displayed in eldoc when hovering over an org headline has been
   reworked to strip out link syntax and normalize font-size disparities.
-- If [[doom-module::ui workspaces]] is enabled, persp-mode won't register org agenda buffers
-  that are temporarily opened in the background.
+- If [[doom-module::ui workspaces]] is enabled, ~tabspaces-mode~ won't register org
+  agenda buffers that are temporarily opened in the background.
 - Temporary org agenda files aren't added to recentf.
 - =file:= links are highlighted with the [[face:error]] face if they are broken.
 - TAB was changed to toggle only the visibility state of the current subtree,

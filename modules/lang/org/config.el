@@ -717,12 +717,9 @@ mutating hooks on exported output, like formatters."
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
       "Don't associate temporary agenda buffers with current workspace."
       (when (and org-agenda-new-buffers
-                 (bound-and-true-p persp-mode)
+                 (bound-and-true-p tabspaces-mode)
                  (not org-agenda-sticky))
-        (let (persp-autokill-buffer-on-remove)
-          (persp-remove-buffer org-agenda-new-buffers
-                               (get-current-persp)
-                               nil)))))
+        (mapc #'+workspaces-remove-buffer-from-tab org-agenda-new-buffers))))
 
   (defadvice! +org--restart-mode-before-indirect-buffer-a (&optional buffer _)
     "Restart `org-mode' in buffers in which the mode has been deferred (see
