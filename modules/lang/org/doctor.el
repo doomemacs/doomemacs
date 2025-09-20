@@ -5,11 +5,8 @@
   (unless (executable-find "gnuplot")
     (warn! "Couldn't find gnuplot. org-plot/gnuplot will not work")))
 
-(when (modulep! +roam)
-  (warn! "You are using org-roam-v1. This version is unmaintained Doom support for it will eventually be removed.\
-Migrate your notes to org-roam-v2 and switch to the +roam2 flag (see the module readme).")
-  (unless (executable-find "sqlite3")
-    (warn! "Couldn't find the sqlite3 executable. org-roam will not work.")))
+(when (modulep! +roam2)
+  (warn! "+roam2 is deprecated; use +roam instead (they install the same version)"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
   (unless (executable-find "dot")

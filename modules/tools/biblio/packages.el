@@ -10,7 +10,8 @@
 (when (modulep! :completion vertico)
   (package! citar :pin "75a85d8d8612ec2097248524eecff3d096fc5dd5")
   (package! citar-embark :pin "75a85d8d8612ec2097248524eecff3d096fc5dd5")
-  (when (modulep! :lang org +roam2)
+  (when (or (modulep! :lang org +roam)
+            (modulep! :lang org +roam2))
     (package! citar-org-roam :pin "9750cfbbf330ab3d5b15066b65bd0a0fe7c296fb")))
 
 (package! parsebib :pin "7bfde4e4679413424a9a9af099203d5c23e32cd2")

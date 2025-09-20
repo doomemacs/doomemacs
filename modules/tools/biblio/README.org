@@ -23,7 +23,7 @@ selected so it should be possible to use without modifications.
 - [[doom-package:parsebib]] if [[doom-module::completion ivy]] or [[doom-module::completion helm]] or [[doom-module::completion vertico]]
 - [[doom-package:citar]] if [[doom-module::completion vertico]]
 - [[doom-package:citar-embark]] if [[doom-module::completion vertico]]
-- [[doom-package:citar-org-roam]] if [[doom-module::completion vertico]] and [[doom-module::lang org +roam2]]
+- [[doom-package:citar-org-roam]] if [[doom-module::completion vertico]] and [[doom-module::lang org +roam]]
 - [[doom-package:helm-bibtex]] if [[doom-module::completion helm]]
 - [[doom-package:ivy-bibtex]] if [[doom-module::completion ivy]]
 

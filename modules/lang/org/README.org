@@ -79,11 +79,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   highlighting for latex. Keep in mind: this can be expensive. If org becomes
   too slow, it'd be wise to disable this flag.
 - +roam ::
-  Enable integration with [[https://github.com/org-roam/org-roam-v1][org-roam v1]]. This requires ~sqlite3~ to be installed
-  on your system. /Incompatible with [[doom-module:+roam2]]./
-- +roam2 ::
-  Enable integration with [[https://github.com/org-roam/org-roam][org-roam v2]]. This requires ~sqlite3~ to be installed
-  on your system. /Incompatible with [[doom-module:+roam]]./
+  Enable integration with [[https://github.com/org-roam/org-roam][org-roam v2]].
 
 ** Packages
 - [[doom-package:htmlize]]
@@ -122,9 +118,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   - [[doom-package:org-appear]]
   - [[doom-package:org-modern]]
 - [[doom-module:+roam]]
-  - [[doom-package:org-roam]] (v1)
-- [[doom-module:+roam2]]
-  - [[doom-package:org-roam]] (v2)
+  - [[doom-package:org-roam]]
 
 *** From Modules
 - [[doom-module::editor evil]]
@@ -203,7 +197,8 @@ use Org's more esoteric features:
   dependencies are met, e.g. install the [[doom-executable:ruby]] executable for ruby support. To
   use ~jupyter kernels~ you need the [[doom-module:+jupyter]] flag, the associated kernel as
   well as the [[doom-executable:jupyter]] program.
-- [[doom-package:org-roam]] (with [[doom-module:+roam]] or [[doom-module:+roam2]] flag) requires [[doom-executable:sqlite3]] to be installed.
+- [[doom-package:org-roam]] (with the [[doom-module:+roam]] flag) requires Emacs to be
+  built with sqlite support.
 
 ** MacOS
 #+begin_src sh
@@ -293,44 +288,7 @@ For =evil-mode= users, an overview of org-mode keybindings is provided [[https:/
 #+end_src
 
 * Troubleshooting
-[[doom-report:][Report an issue?]]
-
-** =org-roam=
-*** Should I go with =+roam= (v1) or =+roam2= (v2)?
-Long story short: if you're new to [[doom-package:org-roam]] and haven't used it, then you should
-go with [[doom-module:+roam2]]; if you already have an ~org-roam-directory~ with the v1 files in
-it, then you can keep use [[doom-module:+roam]] for the time being, but it will eventually be
-removed, so you should [[https://www.orgroam.com/manual.html#How-to-migrate-from-Org_002droam-v1_003f][migrate]] at your earliest convenience.
-
-V1 isn't actively maintained anymore and is now basically EOL. This means that
-the feature disparity between the both will continue to grow, while its existing
-bugs and problems won't be addressed, at least by the main maintainers. V2 can
-be considered as a complete rewrite of the package so it comes with a lot of
-breaking changes.
-
-To learn more about v2 you can use the next resources:
-- [[https://github.com/org-roam/org-roam/blob/master/doc/org-roam.org][Org-roam v2 Official Manual]]
-- [[https://github.com/org-roam/org-roam/wiki/Hitchhiker's-Rough-Guide-to-Org-roam-V2][Hitchhiker's Rough Guide to Org roam V2]]
-- [[https://blog.jethro.dev/posts/org_roam_v2/][Releasing Org-roam v2 - Jethro Kuan's blog]]
-- [[https://org-roam.discourse.group/t/org-roam-major-redesign/1198][Thread about the redesign from Org-Roam Discourse]]
-
-*** Migrating your existing files from v1 (=+roam=) to v2 (=+roam2=)
-V2 comes with a migration wizard for v1 users. It's new, which means issues can
-appear during the migration process. Because of that, *don't forget to backup*
-your ~org-roam-directory~ before attempting to migrate.
-
-In order to migrate from v1 to v2 using Doom follow the next steps:
-1. Enable [[doom-module:+roam2]] flag (and disable [[doom-module:+roam]] if it was previously enabled) in your
-   =init.el=.
-2. Ensure your ~org-roam-directory~ points to a directory with your v1 files.
-3. Run ~$ doom sync -u~ in your shell.
-4. Restart Emacs (if it was previously opened) and run ~org-roam-migrate-wizard~
-   command (~M-x org-roam-migrate-wizard RET~). The wizard will automatically
-   attempt to backup your previous ~org-roam-directory~ to =org-roam.bak=, but
-   just in case backup it yourself too.
-4. After the wizard is done you should be good to go. Verify the integrity of
-   your data and whether it did everything as expected. In case of failure
-   [[https://github.com/org-roam/org-roam/issues][report]] your issue.
+/There are no known problems with this module./ [[doom-report:][Report one?]]
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

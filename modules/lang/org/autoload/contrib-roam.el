@@ -1,8 +1,8 @@
-;;; lang/org/autoload/contrib-roam2.el -*- lexical-binding: t; -*-
-;;;###if (modulep! +roam2)
+;;; lang/org/autoload/contrib-roam.el -*- lexical-binding: t; -*-
+;;;###if (or (modulep! +roam) (modulep! +roam2))
 
 ;;; Custom node accessors
-;;;###autoload (autoload 'org-roam-node-doom-filetitle "lang/org/autoload/contrib-roam2" nil t)
+;;;###autoload (autoload 'org-roam-node-doom-filetitle "lang/org/autoload/contrib-roam" nil t)
 (cl-defmethod org-roam-node-doom-filetitle ((node org-roam-node))
   "Return the value of \"#+title:\" (if any) from file that NODE resides in.
 If there's no file-level title in the file, return empty string."
@@ -11,7 +11,7 @@ If there's no file-level title in the file, return empty string."
         (org-roam-node-file-title node))
       ""))
 
-;;;###autoload (autoload 'org-roam-node-doom-hierarchy "lang/org/autoload/contrib-roam2" nil t)
+;;;###autoload (autoload 'org-roam-node-doom-hierarchy "lang/org/autoload/contrib-roam" nil t)
 (cl-defmethod org-roam-node-doom-hierarchy ((node org-roam-node))
   "Return hierarchy for NODE, constructed of its file title, OLP and direct title.
 If some elements are missing, they will be stripped out."
@@ -31,7 +31,7 @@ If some elements are missing, they will be stripped out."
                  separator (propertize (string-join olp separator) 'face '(shadow italic))
                  separator title)))))
 
-;;;###autoload (autoload 'org-roam-node-doom-subdirs "lang/org/autoload/contrib-roam2" nil t)
+;;;###autoload (autoload 'org-roam-node-doom-subdirs "lang/org/autoload/contrib-roam" nil t)
 (cl-defmethod org-roam-node-doom-subdirs ((node org-roam-node))
   "Return subdirectories of `org-roam-directory' in which NODE resides in.
 If there's none, return an empty string."
@@ -41,7 +41,7 @@ If there's none, return an empty string."
     (file-relative-name org-roam-directory)
     (file-name-directory)))
 
-;;;###autoload (autoload 'org-roam-node-doom-tags "lang/org/autoload/contrib-roam2" nil t)
+;;;###autoload (autoload 'org-roam-node-doom-tags "lang/org/autoload/contrib-roam" nil t)
 (cl-defmethod org-roam-node-doom-tags ((node org-roam-node))
   "Return tags formatted in the same way how they appear in org files."
   (cl-remove-if (doom-rpartial
@@ -52,7 +52,7 @@ If there's none, return an empty string."
                                 (bound-and-true-p org-num-skip-tags))))
                 (org-roam-node-tags node)))
 
-;;;###autoload (autoload 'org-roam-node-doom-type "lang/org/autoload/contrib-roam2" nil t)
+;;;###autoload (autoload 'org-roam-node-doom-type "lang/org/autoload/contrib-roam" nil t)
 (cl-defmethod org-roam-node-doom-type ((node org-roam-node))
   "Return the directory relative to `org-roam-directory' as a note's \"type\"."
   (when-let (dir (thread-first
