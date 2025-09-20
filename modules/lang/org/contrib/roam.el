@@ -29,9 +29,6 @@ of org-mode to properly utilize ID links.")
   (doom-load-packages-incrementally
    '(ansi-color dash f rx seq magit-section emacsql))
 
-  ;; Don't display warning message dedicated for v1 users. Need to be set early.
-  (setq org-roam-v2-ack t)
-
   :config
   (defun +org-init-roam-h ()
     "Setup `org-roam' but don't immediately initialize its database.
