@@ -72,7 +72,6 @@ inserting the link."
                 (propertize "${doom-type:12}" 'face 'font-lock-keyword-face)
                 (propertize "${doom-tags:42}" 'face '(:inherit org-tag :box nil)))
         org-roam-completion-everywhere t
-        org-roam-db-gc-threshold most-positive-fixnum
         ;; Reverse the default to favor faster searchers over slower ones.
         org-roam-list-files-commands '(fd fdfind rg find))
 
