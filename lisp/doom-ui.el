@@ -526,7 +526,12 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
              nerd-icons-devicon
              nerd-icons-ipsicon
              nerd-icons-pomicon
-             nerd-icons-powerline))
+             nerd-icons-powerline)
+  :config
+  ;; REVIEW: Remove when rainstormstudio/nerd-icons#120 is merged.
+  (cl-callf2 assoc-delete-all "go" nerd-icons-dir-icon-alist)
+  (setf (alist-get "^go$" nerd-icons-dir-icon-alist nil nil #'equal)
+        '(nerd-icons-devicon "nf-dev-go")))
 
 ;; Hide the mode line in completion popups and MAN pages because they serve
 ;; little purpose there, and is better hidden.
