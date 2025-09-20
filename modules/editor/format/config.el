@@ -79,8 +79,11 @@ This is controlled by `+format-on-save-disabled-modes'."
 
   ;; Use clang-format for cuda and protobuf files.
   (add-to-list 'apheleia-mode-alist '(cuda-mode . clang-format))
+  (add-to-list 'apheleia-mode-alist '(cuda-ts-mode . clang-format))
   (add-to-list 'apheleia-mode-alist '(protobuf-mode . clang-format))
   (add-to-list 'apheleia-formatters-mode-extension-assoc '(cuda-mode . ".cu"))
+  (add-to-list 'apheleia-formatters-mode-extension-assoc '(cuda-ts-mode . ".cu"))
+  (add-to-list 'apheleia-formatters-mode-extension-assoc '(glsl-ts-mode . ".glsl"))
   (add-to-list 'apheleia-formatters-mode-extension-assoc '(protobuf-mode . ".proto"))
 
   ;; Apheleia's default clang-format config doesn't respect `c-basic-offset', so
