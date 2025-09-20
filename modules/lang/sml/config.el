@@ -41,5 +41,6 @@
 (use-package! company-mlton
   :when (modulep! :completion company)
   :hook (sml-mode . company-mlton-init)
+  :hook (sml-ts-mode . company-mlton-init)
   :config
-  (set-company-backend! 'sml-mode company-mlton-grouped-backend))
+  (set-company-backend! '(sml-mode sml-ts-mode) company-mlton-grouped-backend))
