@@ -15,7 +15,11 @@ This holy module brings the Vim editing model to Emacs.
 - +everywhere ::
   Enable evilified keybinds everywhere possible. Uses the [[https://github.com/emacs-evil/evil-collection][evil-collection]] plugin
   as a foundation.
-
+- +respect-visual ::
+  Whether movement commands respect ~visual-line-mode~.If enabled, motions such
+  as j and k navigate by visual lines (on the screen) rather than "physical"
+  lines (defined by newline characters).  If nil, the setting of
+  ~visual-line-mode~ is ignored.
 ** Packages
 - [[doom-package:evil]]
 - [[doom-package:evil-args]]
