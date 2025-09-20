@@ -122,6 +122,14 @@ directives. By default, this only recognizes C directives.")
         (evil-ex-nohighlight)
         t)))
 
+  ;; REVIEW: Remove if emacs-evil/evil#1971 is addressed.
+  (when evil-respect-visual-line-mode
+    (evil-define-minor-mode-key 'motion 'visual-line-mode
+      [up]   #'evil-previous-visual-line
+      [down] #'evil-next-visual-line
+      [home] #'evil-beginning-of-visual-line
+      [end]  #'evil-end-of-visual-line))
+
 
   ;; --- evil hacks -------------------------
   (after! eldoc
