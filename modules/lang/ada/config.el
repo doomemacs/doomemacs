@@ -8,14 +8,25 @@
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
   (map! :map ,(intern (format "%s-map" mode))
+        [remap newline] #'reindent-then-newline-and-indent ; Non-Evil
+        :i "RET" #'reindent-then-newline-and-indent ; Evil
         :localleader
         :desc "Build Alire Project" "b" #'+ada/alr-build
         :desc "Run Alire Project"   "r" #'+ada/alr-run
         :desc "Clean Alire Project" "c" #'+ada/alr-clean))
 
 
+(defun +gpr-common-config (mode)
+  (when (modulep! +lsp)
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
+
+  (map! :map ,(intern (format "%s-map" mode))
+        [remap newline] #'reindent-then-newline-and-indent ; Non-Evil
+        :i "RET" #'reindent-then-newline-and-indent)) ; Evil
+
+
 (use-package! ada-mode
-  :mode "\\.gpr\\'"
+  :defer t
   :config
   (+ada-common-config 'ada-mode))
 
@@ -42,3 +53,19 @@
     :after #'ada-ts-mode
     (kill-local-variable 'treesit-language-source-alist)
     (kill-local-variable 'eglot-server-programs)))
+
+
+(use-package! gpr-mode
+  :defer t
+  :config
+  (+gpr-common-config 'gpr-mode))
+
+
+(use-package! gpr-ts-mode
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'gpr-mode 'gpr-ts-mode
+    '((gpr :url "https://github.com/brownts/tree-sitter-gpr")))
+  :config
+  (+gpr-common-config 'gpr-ts-mode))
