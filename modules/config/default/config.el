@@ -520,7 +520,9 @@ Continues comments if executed from a commented line."
            :filter ,(lambda (cmd)
                       (pcase +corfu-want-ret-to-confirm
                         ('nil (corfu-quit) nil)
-                        ('t (if (>= corfu--index 0) cmd))
+                        ('t (if (or (>= corfu--index 0)
+                                    (and prefix-arg (bound-and-true-p corfu-indexed-mode)))
+                                cmd))
                         ('both (funcall-interactively cmd) nil)
                         ('minibuffer
                          (if (minibufferp nil t)
