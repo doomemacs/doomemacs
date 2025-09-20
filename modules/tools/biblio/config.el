@@ -105,3 +105,11 @@
   :defer t
   :config
   (add-to-list 'ivy-re-builders-alist '(ivy-bibtex . ivy--regex-plus)))
+
+
+(use-package! helm-bibtex
+  :when (modulep! :completion helm)
+  :defer t
+  :config
+  ;; helm and org-cite don't get along (#8462)
+  (add-to-list 'helm-completing-read-handlers-alist '(org-cite-insert)))
