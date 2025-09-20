@@ -1229,6 +1229,8 @@ between the two."
 
   ;;; Custom org modules
   (dolist (flag (doom-module :lang 'org :flags))
+    (when (eq flag '+roam2)  ; REVIEW: remove in v3
+      (setq flag '+roam))
     (load! (concat "contrib/" (substring (symbol-name flag) 1)) nil t))
 
   ;; Add our general hooks after the submodules, so that any hooks the
