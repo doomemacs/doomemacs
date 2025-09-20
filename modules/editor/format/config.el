@@ -47,8 +47,7 @@ This is controlled by `+format-on-save-disabled-modes'."
 
   ;; UX: Use prefix-arg on `save-buffer' or `basic-save-buffer' to inhibit
   ;;   format-on-save behavior.
-  (define-key apheleia-mode-map [remap basic-save-buffer] #'+format/save-buffer-no-reformat)
-  (define-key apheleia-mode-map [remap save-buffer] #'+format/save-buffer)
+  (define-key apheleia-mode-map [remap basic-save-buffer] #'+format/save-buffer)
 
   ;; HACK: Apheleia suppresses notifications that the current buffer has
   ;;   changed, so plugins that listen for them need to be manually informed:
