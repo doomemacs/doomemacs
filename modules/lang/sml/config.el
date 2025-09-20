@@ -1,20 +1,19 @@
 ;;; lang/sml/config.el -*- lexical-binding: t; -*-
 
-(use-package! sml-mode
-  :mode "\\.s\\(?:ml\\|ig\\)\\'"
-  :config
-  (set-repl-handler! '(sml-mode sml-ts-mode) #'run-sml)
-  (set-formatter! 'smlformat '("smlformat") :modes '(sml-mode sml-ts-mode))
+
+(defun +sml-common-config (mode)
+  (set-repl-handler! mode #'run-sml)
+  (set-formatter! 'smlformat '("smlformat") :modes mode)
 
   (when (modulep! +lsp)
-    (add-hook 'sml-mode-local-vars-hook #'lsp! 'append))
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
   ;; don't auto-close apostrophes (type 'a = foo) and backticks (`Foo)
-  (sp-with-modes '(sml-mode sml-ts-mode)
+  (sp-with-modes mode
     (sp-local-pair "'" nil :actions nil)
     (sp-local-pair "`" nil :actions nil))
 
-  (map! :map sml-mode-map
+  (map! :map ,(intern (format "%s-map" mode))
         :i "RET"   #'reindent-then-newline-and-indent
         :i "S-SPC" #'sml-electric-space
         :i "|"     #'sml-electric-pipe
@@ -26,7 +25,12 @@
         :desc "Run region"                  "r" #'sml-prog-proc-send-region))
 
 
-;; TODO: Mirror sml-mode keybinds to ts-mode
+(use-package! sml-mode
+  :mode "\\.s\\(?:ml\\|ig\\)\\'"
+  :config
+  (+sml-common-config 'sml-mode))
+
+
 (use-package! sml-ts-mode
   :when (modulep! +tree-sitter)
   :defer t
@@ -34,8 +38,7 @@
   (set-tree-sitter! 'sml-mode 'sml-ts-mode
     '((sml :url "https://github.com/MatthewFluet/tree-sitter-sml")))
   :config
-  (when (modulep! +lsp)
-    (add-hook 'sml-ts-mode-local-vars-hook #'lsp! 'append)))
+  (+sml-common-config 'sml-ts-mode))
 
 
 (use-package! company-mlton
