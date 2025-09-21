@@ -87,6 +87,9 @@
                   package-archives ',package-archives)
             (with-eval-after-load 'doom
               (run-hooks 'doom-before-init-hook))
+            (with-eval-after-load 'treesit
+              (add-to-list 'treesit-extra-load-path
+                           ,(file-name-concat doom-profile-data-dir "tree-sitter")))
             (with-eval-after-load 'undo-tree
               ;; HACK `undo-tree' sometimes throws errors because
               ;;      `buffer-undo-tree' isn't correctly initialized.
