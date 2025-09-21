@@ -296,5 +296,71 @@ However, in batch mode, print to stdout instead of stderr."
        (error "Package was not properly cloned due to a connection failure, please try again later")
      (signal (car e) (cdr e))))))
 
+
+;; HACK: Straight can sometimes fail to clone/update a repo, leaving behind an
+;;   empty directory which, in future invocations, it will assume indicates a
+;;   successful clone (causing load errors later).
+(defvar +doom-straight-retries 3
+  "How many times to retry VC operations.")
+
+(defvar +doom-straight-retry-methods
+  '(clone
+    normalize
+    fetch-from-remote
+    fetch-from-upstream
+    merge-from-remote
+    merge-from-upstream)
+  "Which `straight-vc' methods to retry, if they fail.")
+
+(defadvice! doom-straight--retry-a (fn method type &rest args)
+  :around #'straight-vc
+  (if (or (not noninteractive)
+          (memq type '(nil built-in))
+          (not (memq method +doom-straight-retry-methods)))
+      (apply fn method type args)
+    (let ((n +doom-straight-retries)
+          res)
+      (while (> n 0)
+        (condition-case err
+            (setq res (apply fn method type args)
+                  n 0)
+          (error
+           (cl-decf n)
+           (when (= n 0)
+             (signal (car err) (cdr err)))
+           (print! (warn "Failed %S %S operation, retrying (attempt %d/%d)...")
+                   type method (- (1+ +doom-straight-retries) n)
+                   +doom-straight-retries)
+           (sleep-for 1))))
+      res)))
+
+;; HACK: In some edge cases, either Straight or git silently fails to clone a
+;;   package without triggering an catchable error (and thus evading the
+;;   auto-retry logic in `doom-straight--retry-a') and leaves behind an empty
+;;   directory. This detects this an forces straight to emit a catchable error.
+(defadvice! doom-straight--clone-emit-error-a (fn recipe)
+  :around #'straight-vc-clone
+  (prog1 (funcall fn recipe)
+    (when noninteractive
+      (straight--with-plist recipe (package type local-repo)
+        (let* ((local-repo (or local-repo package))
+               (repo-dir (straight--repos-dir local-repo))
+               (build-dir (straight--build-dir local-repo)))
+          (when (file-in-directory-p repo-dir straight-base-dir)
+            (unless (or (file-directory-p (doom-path repo-dir ".git"))
+                        (file-exists-p (doom-path repo-dir ".straight-commit")))
+              (delete-directory repo-dir t)
+              (delete-directory build-dir t)
+              (error "Failed to clone %S..." package))))))))
+
+;; HACK: Line encoding issues can plague repos with dirty worktree prompts when
+;;   updating packages or "Local variables entry is missing the suffix" errors
+;;   when installing them (see #2637), so have git handle conversion by force.
+(when doom--system-windows-p
+  (add-hook! 'straight-vc-git-post-clone-hook
+    (lambda! (&key repo-dir)
+      (let ((default-directory repo-dir))
+        (straight--process-run "git" "config" "core.autocrlf" "true")))))
+
 (provide 'doom-straight)
 ;;; doom-packages.el ends here

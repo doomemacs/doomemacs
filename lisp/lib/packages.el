@@ -997,37 +997,13 @@ Must be run from a magit diff buffer."
                      (condition-case-unless-debug e
                          (let ((straight-vc-git-post-clone-hook
                                 (cons (lambda! (&key commit)
-                                        (if-let* ((pin (cdr (assoc package pinned))))
-                                            (print! (item "%s: pinned to %s") package pin)
-                                          (when commit
-                                            (print! (item "%s: checked out %s") package commit))))
+                                        (print-group!
+                                          (if-let* ((pin (cdr (assoc package pinned))))
+                                              (print! (item "%s: pinned to %s") package pin)
+                                            (when commit
+                                              (print! (item "%s: checked out %s") package commit)))))
                                       straight-vc-git-post-clone-hook)))
-                           (straight-use-package (intern package))
-                           (when (file-in-directory-p repo-dir straight-base-dir)
-                             ;; HACK: Straight can sometimes fail to clone a
-                             ;;   repo, leaving behind an empty directory which,
-                             ;;   in future invocations, it will assume
-                             ;;   indicates a successful clone (causing load
-                             ;;   errors later).
-                             (let ((try 0))
-                               (while (not (or (file-directory-p (doom-path repo-dir ".git"))
-                                               (file-exists-p (doom-path repo-dir ".straight-commit"))))
-                                 (when (= try 3)
-                                   (error "Failed to clone package"))
-                                 (print! (warn "Failed to clone %S, trying again (attempt #%d)...") package (1+ try))
-                                 (delete-directory repo-dir t)
-                                 (delete-directory build-dir t)
-                                 (straight-use-package (intern package))
-                                 (cl-incf try)))
-                             ;; HACK: Line encoding issues can plague repos with
-                             ;;   dirty worktree prompts when updating packages
-                             ;;   or "Local variables entry is missing the
-                             ;;   suffix" errors when installing them (see
-                             ;;   #2637), so have git handle conversion by
-                             ;;   force.
-                             (when doom--system-windows-p
-                               (let ((default-directory repo-dir))
-                                 (straight--process-run "git" "config" "core.autocrlf" "true")))))
+                           (straight-use-package (intern package)))
                        (error
                         (signal 'doom-package-error (list package e))))))))
           (progn
@@ -1108,7 +1084,7 @@ Must be run from a magit diff buffer."
                     ((file-exists-p ".straight-commit")
                      (print! (start "\r(%d/%d) Downloading %s...%s") i total package esc)
                      (delete-directory default-directory t)
-                     (straight-vc-git-clone recipe target-ref)
+                     (straight-vc 'clone 'git recipe target-ref)
                      (doom-packages--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
 
                     ((if (straight-vc-commit-present-p recipe target-ref)
