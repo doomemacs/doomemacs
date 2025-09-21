@@ -21,7 +21,7 @@
   :pin "e6d691d7c5fc0c9b097a6c89d8a4b6aa25a762a1")
 
 ;; doom-ui.el
-(package! nerd-icons :pin "3774e0578b1023bd2ae10735e28c0cd1ccf46889")
+(package! nerd-icons :pin "4036893c42050426e3a76ec96ef54a661d3cb97f")
 (package! hide-mode-line :pin "ddd154f1e04d666cd004bf8212ead8684429350d")
 (package! restart-emacs :pin "1607da2bc657fe05ae01f7fdf26f716eafead02c")
 
