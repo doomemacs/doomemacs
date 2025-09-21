@@ -6,7 +6,46 @@
 ;; expects a noninteractive session, so take care when testing code!
 ;;
 ;;; Code:
+;;;
+;; Monkey-patch straight to add retries for errors.
+(defvar +straight-retry-count 10
+  "Amount of retries for `straight' operations.")
 
+(defun +straight-with-retry (orig-fn &rest args)
+  "Wrapper around ORIG-FN supporting retries.
+
+ORIG-FN is called with ARGS and retried
+`+straight-retry-count' times."
+  (let ((n +straight-retry-count)
+        (res nil))
+    (while (> n 0)
+      (condition-case err
+          (progn
+            (setq res (apply orig-fn args))
+            (setq n 0))
+        (error
+         (setq n (- n 1))
+         (when (< n 0)
+           (signal (car err) (cdr err)))
+         (print! (warn "straight: retrying %d/%d …"
+                       (- +straight-retry-count n)
+                       +straight-retry-count))
+         (sleep-for 1))))
+    res))
+
+(after! straight
+  (advice-add #'straight-vc
+              :around
+              #'+straight-with-retry)
+  ;; Other candidate functions to advise:
+  ;; - #'straight-fetch-package
+  ;; - #'straight--clone-repository
+  ;; - #'straight--process-run
+  ;;   This function doesn't throw an error, it returns the exit code as the car of its returned list. We can check this using the following code, but the problem is that some commands are supposed to return non-zero and it's not always an error.
+  ;;     (when (not (= 0 (car res)))
+  ;;       (user-error (format "straight: returned non-zero: %s" res)))
+  )
+;;;
 (defgroup doom-cli nil
   "Doom's command-line interface framework."
   :link '(url-link "https://doomemacs.org/cli")
