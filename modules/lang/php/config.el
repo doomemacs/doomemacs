@@ -98,7 +98,7 @@
                 `(((parent-is "member_call_expression") parent-bol php-ts-mode-indent-offset)))
                ;; Room for other corrections
                )
-           ,@(cadr rules)))))))
+           ,@(cdar rules)))))))
 
 
 (use-package! php-refactor-mode
