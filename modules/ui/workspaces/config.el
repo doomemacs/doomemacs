@@ -55,6 +55,12 @@
     (or (doom-project-root)
         (apply fn args)))
 
+  ;; HACK: Fix tabspaces-session-file living in a directory that doesn't exist.
+  ;; REVIEW: PR this upstream!
+  (defadvice! +workspaces--mkdir-before-save-a (&rest _)
+    :before #'tabspaces-save-session
+    (make-directory (file-name-directory tabspaces-session-file) t))
+
   ;; HACK: `tabspaces-open-or-create-project-and-workspace' has *so* much
   ;;   hardcoded and opinionated behavior, so I replace it with a version that
   ;;   cooperates with projectile/project, the dashboard, our custom
