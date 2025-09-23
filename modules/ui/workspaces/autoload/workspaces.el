@@ -88,6 +88,15 @@ index. If NOERROR? is omitted, throws an error if NAME doesn't exist."
       (user-error "No workspace found: %s" name))))
 
 ;;;###autoload
+(defun +workspaces-get-by-id (id)
+  "Return the tab by unique ID."
+  (catch 'result
+    (dolist (fr (frame-list))
+      (dolist (tab (tab-bar-tabs fr))
+        (when (equal id (alist-get 'id tab))
+          (throw 'result tab))))))
+
+;;;###autoload
 (defalias '+workspaces-exists-p #'tab-bar--tab-index-by-name)
 
 ;;;###autoload
@@ -138,6 +147,43 @@ workspace."
       (with-current-workspace tab
         (tabspaces-remove-buffer buffer))
     (tabspaces-remove-buffer buffer)))
+
+;;;###autoload
+(defun +workspaces-parameter (workspace param &optional default)
+  "Return a WORKSPACE's PARAM, otherwise DEFAULT."
+  (if-let* ((table (gethash (alist-get 'id (or workspace (+workspaces-current)))
+                            +workspaces--parameters)))
+      (gethash param table default)
+    default))
+
+;;;###autoload
+(defun +workspaces-parameter-set (workspace param val)
+  "Set a WORKSPACE's PARAM to VAL"
+  (let* ((workspace (or workspace (+workspaces-current)))
+         (id (or (alist-get 'id workspace)
+                 (error "Workspace has no id attribute: %S" workspace))))
+    (puthash param val (or (gethash id +workspaces--parameters)
+                           (error "Invalid workspace ID: %s" id)))))
+
+
+;;
+;;; Hooks
+
+;;;###autoload
+(defun +workspaces-init-parameters-h (tab)
+  "Initialize the current workspace's parameters."
+  (puthash (alist-get 'id tab) (make-hash-table :test 'eq)
+           +workspaces--parameters))
+
+;;;###autoload
+(defun +workspaces-cleanup-parameters-h (_tab _last-tab?)
+  "Cleanup workspace parameters for forgotten workspaces."
+  (dolist (id (hash-table-keys +workspaces--parameters))
+    (or (cl-loop for tab in tab-bar-closed-tabs
+                 for tid = (map-nested-elt tab '(tab id))
+                 unless (eq (gethash tid +workspaces--parameters t) t)
+                 return t)
+        (remhash id +workspaces--parameters))))
 
 
 ;;

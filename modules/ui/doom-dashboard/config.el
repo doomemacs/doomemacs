@@ -122,11 +122,8 @@ PLIST can have the following properties:
     (add-hook 'doom-switch-buffer-hook #'+doom-dashboard-reload-maybe-h)
     (add-hook 'delete-frame-functions #'+doom-dashboard-reload-frame-h)
     ;; Update `default-directory' in dashboard when switching workspaces
-    (add-hook 'tab-bar-tab-post-select-functions #'+doom-dashboard--tab-detect-project-fn)
-    ;; HACK Fix #2219 where, in GUI daemon frames, the dashboard loses center
-    ;;      alignment after switching (or killing) workspaces.
-    (when (daemonp)
-      (add-hook 'tab-bar-tab-post-select-functions #'+doom-dashboard-reload-maybe-h))))
+    ;; (add-hook 'tab-bar-tab-pre-select-functions #'+doom-dashboard--record-project-h)
+    (add-hook 'tab-bar-tab-post-select-functions #'+doom-dashboard--record-project-h)))
 
 (add-hook 'doom-init-ui-hook #'+doom-dashboard-init-h 'append)
 
@@ -288,37 +285,18 @@ whose dimensions may not be fully initialized by the time this is run."
                         (car +doom-dashboard-banner-padding))
                      ?\n))))))))
 
-(defun +doom-dashboard--tab-detect-project-fn (from-tab to-tab &rest _)
+(defun +doom-dashboard--record-project-h (from-tab to-tab &rest _)
   "Set dashboard's PWD to current persp's `last-project-root', if it exists.
 
-This and `+doom-dashboard--tab-record-project-h' provides `persp-mode'
+This and `+doom-dashboard--persp-record-project-h' provides `persp-mode'
 integration with the Doom dashboard. It ensures that the dashboard is always in
 the correct project (which may be different across perspective)."
   (when (bound-and-true-p tabspaces-mode)
-    (setf (alist-get 'last-project-root from-tab)
-          (doom-project-root))
-    (when-let* ((pwd (alist-get 'last-project-root to-tab)))
+    (ignore-errors
+      (+workspaces-parameter-set (+workspaces-get-by-id (alist-get 'id from-tab))
+                                 'last-project-root (doom-project-root)))
+    (when-let* ((pwd (+workspaces-parameter to-tab 'last-project-root)))
       (+doom-dashboard-update-pwd-h pwd))))
-
-;; (defun +doom-dashboard--persp-detect-project-h (&rest _)
-;;   "Set dashboard's PWD to current persp's `last-project-root', if it exists.
-
-;; This and `+doom-dashboard--persp-record-project-h' provides `persp-mode'
-;; integration with the Doom dashboard. It ensures that the dashboard is always in
-;; the correct project (which may be different across perspective)."
-;;   (when (bound-and-true-p persp-mode)
-;;     (when-let (pwd (persp-parameter 'last-project-root))
-;;       (+doom-dashboard-update-pwd-h pwd))))
-
-;; (defun +doom-dashboard--persp-record-project-h (&optional persp &rest _)
-;;   "Record the last `doom-project-root' for the current persp.
-;; See `+doom-dashboard--persp-detect-project-h' for more information."
-;;   (when (bound-and-true-p persp-mode)
-;;     (set-persp-parameter
-;;      'last-project-root (doom-project-root)
-;;      (if (persp-p persp)
-;;          persp
-;;        (get-current-persp)))))
 
 
 ;;

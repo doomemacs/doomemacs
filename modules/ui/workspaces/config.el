@@ -3,6 +3,8 @@
 (defvar +workspaces-dir (file-name-concat doom-profile-data-dir "workspaces/")
   "The directory where workspace session files are stored.")
 
+(defvar +workspaces--parameters (make-hash-table :test 'equal))
+
 
 ;;
 ;;; Packages
@@ -37,9 +39,25 @@
     [remap delete-window] #'+workspaces/close-window-or-workspace
     [remap evil-window-delete] #'+workspaces/close-window-or-workspace)
 
-
   ;; Per-workspace `winner-mode' history
   (add-to-list 'window-persistent-parameters '(winner-ring . t))
+
+
+  ;; HACK: Emacs tabs don't offer an easy way to associate data with a tab,
+  ;; since tab names aren't unique, so these advice is dedicated to providing
+  ;; that:
+  (autoload 'uuidgen-1 "uuidgen")
+  (defadvice! +workspaces--embed-id-a (tab)
+    :filter-return #'tab-bar--tab
+    :filter-return #'tab-bar--current-tab-make
+    (unless (alist-get 'id tab)
+      (setq tab (append tab `((id . ,(uuidgen-1))))))
+    tab)
+  (add-to-list 'window-persistent-parameters '(id . writable))
+
+  (add-hook 'tab-bar-tab-post-open-functions #'+workspaces-init-parameters-h)
+  (add-hook 'tab-bar-tab-pre-close-functions #'+workspaces-cleanup-parameters-h)
+
 
   ;; HACK: Tabspaces is hardcoded to equate the root of a version controlled
   ;;   project as the only kind of project root, and lacks integration with
