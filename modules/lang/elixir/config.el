@@ -32,6 +32,14 @@
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
   (when (modulep! +lsp)
+    ;; HACK: lsp-elixir is hardcoded to use the server `lsp-install-server'
+    ;;   installs, ignoring any system-provided executables. This fixes that, so
+    ;;   long as the user hasn't changed `lsp-elixir-server-command' themselves,
+    (when (and (member lsp-elixir-server-command
+                       '(("language_server.bat")
+                         ("language_server.sh")))
+               (executable-find "elixir-ls"))
+      (setq lsp-elixir-server-command "elixir-ls"))
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
   (use-package! flycheck-credo
