@@ -415,7 +415,10 @@ also be a list of module keys."
         (unless (or (null local-repo)
                     (eq type 'built-in))
           (push recipe recipes))))
-    (nreverse recipes)))
+    ;; FIXME: Depending on a hash table's load order? Straight to jail.
+    (if (< emacs-major-version 29)
+        (nreverse recipes)
+      recipes)))
 
 ;;;###autoload
 (defun doom-package-homepage (package)
