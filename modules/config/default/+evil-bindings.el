@@ -374,6 +374,7 @@
         :desc "New named workspace"       "N"   #'+workspaces/new-named
         :desc "Restore last session"      "R"   #'+workspaces/restore-last-session
         :desc "Save session"              "s"   #'+workspaces/save-session
+        :desc "Open project workspace"    "p"   #'+workspaces/open-in-project
         :desc "Kill this workspace"       "k"   #'+workspaces/kill
         :desc "Kill other workspaces"     "K"   #'+workspaces/kill-others
         :desc "Kill session"              "X"   #'+workspaces/kill-session

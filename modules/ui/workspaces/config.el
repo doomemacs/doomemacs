@@ -38,4 +38,26 @@
 
 
   ;; Per-workspace `winner-mode' history
-  (add-to-list 'window-persistent-parameters '(winner-ring . t)))
+  (add-to-list 'window-persistent-parameters '(winner-ring . t))
+
+  ;; HACK: Tabspaces is hardcoded to equate the root of a version controlled
+  ;;   project as the only kind of project root, and lacks integration with
+  ;;   project.el or projectile. This fixes that.
+  ;; REVIEW: PR this upstream!
+  (defadvice! +workspaces--project-root-a (fn &rest args)
+    :around #'tabspaces-save-current-project-session
+    :around #'tabspaces--get-project-session-file
+    (letf! ((#'vc-root-dir #'doom-project-root))
+      (apply fn args)))
+  (defadvice! +workspaces--project-name-a (fn &rest args)
+    :around #'tabspaces--project-name
+    (or (doom-project-root)
+        (apply fn args)))
+
+  ;; HACK: `tabspaces-open-or-create-project-and-workspace' has *so* much
+  ;;   hardcoded and opinionated behavior, so I replace it with a version that
+  ;;   cooperates with projectile/project, the dashboard, our custom
+  ;;   `tabspaces-session-project-session-store', and fixes its bugs.
+  ;; REVIEW: Issues should be raised upstream!
+  (advice-add #'tabspaces-open-or-create-project-and-workspace
+              :override #'+workspaces/open-in-project))
