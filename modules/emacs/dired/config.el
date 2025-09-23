@@ -161,21 +161,7 @@ Fixes #3939: unsortable dired entries on Windows."
         (:prefix ("s" . "symlinks")
          :n "s"   #'dirvish-symlink
          :n "S"   #'dirvish-relative-symlink
-         :n "h"   #'dirvish-hardlink))
-
-  ;; HACK: Kill Dirvish session before switching projects/workspaces, otherwise
-  ;;   it errors out on trying to delete/change dedicated windows.
-  (add-hook! '(persp-before-kill-functions
-               persp-before-switch-functions
-               projectile-before-switch-project-hook)
-    (defun +dired--cleanup-dirvish-h (&rest _)
-      (when-let ((dv (cl-loop for w in (window-list)
-                              if (window-dedicated-p w)
-                              if (with-current-buffer (window-buffer w) (dirvish-curr))
-                              return it)))
-        (let (dirvish-reuse-session)
-          (with-selected-window (dv-root-window dv)
-            (dirvish-quit)))))))
+         :n "h"   #'dirvish-hardlink)))
 
 
 (use-package! diredfl
