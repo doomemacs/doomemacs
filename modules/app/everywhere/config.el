@@ -40,8 +40,4 @@
            help-echo "This is an Emacs Everywhere window"))))
     (add-hook! 'emacs-everywhere-mode-hook
       (defun +everywhere-set-modeline ()
-        (doom-modeline-set-modeline 'emacs-everywhere))))
-  (add-hook! 'emacs-everywhere-init-hooks
-    (defun +everywhere-clear-persp-info-h ()
-      (when (bound-and-true-p persp-mode)
-        (setq persp-emacsclient-init-frame-behaviour-override nil)))))
+        (doom-modeline-set-modeline 'emacs-everywhere)))))
