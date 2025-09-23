@@ -20,7 +20,8 @@
         tabspaces-session-auto-restore (modulep! +auto)
         tabspaces-use-filtered-buffers-as-default t
         tabspaces-default-tab "Main"
-        tabspaces-remove-to-default nil)
+        tabspaces-remove-to-default nil
+        tabspaces-fully-resolve-paths t)
 
   ;; Centralize project sessions rather than pollute projects with more dotfiles
   ;; (the default behavior).
