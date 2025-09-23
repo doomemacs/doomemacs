@@ -107,7 +107,6 @@ PLIST can have the following properties:
     ;; Ensure the dashboard becomes Emacs' go-to buffer when there's nothing
     ;; else to show.
     (setq doom-fallback-buffer-name +doom-dashboard-name
-          tab-bar-new-tab-choice #'doom-fallback-buffer
           initial-buffer-choice #'doom-fallback-buffer)
     (unless fancy-splash-image
       (setq fancy-splash-image

@@ -223,6 +223,13 @@ the frame through some other means.")
 ;;
 ;;; Buffers
 
+;; Open to the fallback buffer on new tabs, but don't set
+;; `initial-buffer-choice' here because that has startup performance
+;; implications. Leave that to :ui doom-dashboard.
+(setq tab-line-new-tab-choice #'doom-fallback-buffer
+      tab-bar-new-tab-choice #'doom-fallback-buffer
+      tab-bar-close-last-tab-choice (lambda (_) (doom/kill-all-buffers)))
+
 (defadvice! doom--switch-to-fallback-buffer-maybe-a (&rest _)
   "Switch to `doom-fallback-buffer' if on last real buffer.
 
