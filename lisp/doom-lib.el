@@ -1601,7 +1601,7 @@ For more about modules and flags, see `doom!'."
 ;;; `doom-package'
 
 (cl-defmacro package!
-    (name &rest plist &key built-in recipe ignore _type _pin _disable)
+    (name &rest plist &key built-in recipe ignore _type _pin _disable _env)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -1638,6 +1638,9 @@ Accepts the following properties:
    inform help commands like `doom/help-packages' that this is a built-in
    package. If set to 'prefer, the package will not be installed if it is
    already provided by Emacs.
+ :env ALIST
+   Parameters and envvars to set while the package is building. If these values
+   change, the package will be rebuilt on next 'doom sync'.
 
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."

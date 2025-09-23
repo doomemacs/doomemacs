@@ -965,8 +965,14 @@ Must be run from a magit diff buffer."
       (if-let* ((built
                  (doom-packages--with-recipes recipes (package local-repo recipe)
                    (let ((repo-dir (straight--repos-dir (or local-repo package)))
-                         (build-dir (straight--build-dir package)))
+                         (build-dir (straight--build-dir package))
+                         (build-file ".doompackage"))
                      (unless force-p
+                       ;; Ensure packages w/ a changed :env are rebuilt
+                       (when-let* ((plist (alist-get (intern package) doom-packages)))
+                         (unless (equal (plist-get plist :env)
+                                        (doom-file-read (doom-path build-dir build-file) :by 'read :noerror t))
+                           (puthash package t straight--packages-to-rebuild)))
                        ;; Ensure packages w/ outdated files/bytecode are rebuilt
                        (let* ((build (if (plist-member recipe :build)
                                          (plist-get recipe :build)
@@ -1005,7 +1011,25 @@ Must be run from a magit diff buffer."
                                               (print! (item "%s: pinned to %s") package pin)
                                             (when commit
                                               (print! (item "%s: checked out %s") package commit)))))
-                                      straight-vc-git-post-clone-hook)))
+                                      straight-vc-git-post-clone-hook))
+                               (straight-use-package-prepare-functions
+                                (cons (lambda (package &rest _)
+                                        (when-let* ((plist (alist-get (intern package) doom-packages))
+                                                    (env (plist-get plist :env)))
+                                          (cl-loop for (var . val) in env
+                                                   if (and (symbolp var)
+                                                           (string-prefix-p "_" (symbol-name var)))
+                                                   do (set-default var val)
+                                                   else if (and (stringp var) val)
+                                                   do (setenv var val))))
+                                      straight-use-package-prepare-functions))
+                               (straight-use-package-post-build-functions
+                                (cons (lambda (package &rest _)
+                                        (when-let* ((plist (alist-get (intern package) doom-packages))
+                                                    (env (plist-get plist :env)))
+                                          (with-temp-file (straight--build-file package build-file)
+                                            (prin1 env (current-buffer)))))
+                                      straight-use-package-post-build-functions)))
                            (straight-use-package (intern package)))
                        (error
                         (signal 'doom-package-error (list package e))))))))

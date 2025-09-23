@@ -61,6 +61,7 @@ Can be changed externally by setting $DOOMPROFILELOADFILE.")
 ;;; Profile storage variables
 (defvar doom-profile-generators
   '(("05-vars.auto.el"              doom-profile--generate-vars               doom--startup-vars)
+    ("20-package-envs.auto.el"      doom-profile--generate-package-envs)
     ("80-loaddefs.auto.el"          doom-profile--generate-loaddefs-doom      doom--startup-loaddefs-doom)
     ("90-loaddefs-packages.auto.el" doom-profile--generate-loaddefs-packages  doom--startup-loaddefs-packages)
     ("95-modules.auto.el"           doom-profile--generate-load-modules       doom--startup-modules))
@@ -421,6 +422,16 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                             if (doom-glob dir "autoload/*.el") append it)
                    (mapcan #'doom-glob doom-autoloads-files))
            nil)))))
+
+(defun doom-profile--generate-package-envs ()
+  (cl-loop for (_ . plist) in doom-packages
+           if (plist-get plist :env)
+           append (cl-loop for (var . val) in it
+                           if (and (stringp var) val)
+                           collect `(setenv ,var ,val)
+                           else if (and (symbolp var)
+                                        (string-prefix-p "_" (symbol-name var)))
+                           collect `(setq-default ,var ,val))))
 
 (defun doom-profile--generate-loaddefs-packages ()
   `((defun doom--startup-loaddefs-packages ()
