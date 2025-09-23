@@ -974,21 +974,19 @@ considered as well."
                    (string-match-p (regexp-quote straight-process-buffer)
                                    (error-message-string data)))
                (with-current-buffer (straight--process-buffer)
-                 (split-string (buffer-string) "\n" t))))
+                 (save-excursion
+                   (goto-char (point-max))
+                   (buffer-substring (if (re-search-backward "^\\[Return code: 0\\]$" nil t)
+                                         (point-at-bol 2)
+                                       (point-min))
+                                     (point-max))))))
          (error-file (doom-cli--output-file 'error context)))
     (cond
      (straight-error
       (print! (error "The package manager threw an error"))
       (print! (error "Last %d lines of straight's error log:")
               doom-cli-log-straight-error-lines)
-      (print-group!
-        (print!
-         "%s" (string-join
-               (seq-subseq straight-error
-                           (max 0 (- (length straight-error)
-                                     doom-cli-log-straight-error-lines))
-                           (length straight-error))
-               "\n")))
+      (print-group! (print! "%s" straight-error))
       (print! (warn "Wrote extended straight log to %s")
               (path (let ((coding-system-for-write 'utf-8-auto))
                       (with-file-modes #o600
