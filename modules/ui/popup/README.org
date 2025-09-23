@@ -35,8 +35,6 @@ clean up after itself and kill off buffers I mark as transient.
   before entering the popup, rather than in a new window.
 - [[doom-package:wgrep]] buffers are advised to close themselves when aborting or committing
   changes.
-- [[doom-package:persp-mode]] is advised to restore popup windows when loading a session from
-  file.
 - Interactive calls to ~windmove-*~ commands (used by ~evil-window-*~ commands)
   will ignore the ~no-other-window~ window parameter, allowing you to switch to
   popup windows as if they're ordinary windows.

@@ -332,7 +332,7 @@ orderless."
             '(doom/find-file-in-private-config . file)
             '(doom/describe-active-minor-mode . minor-mode)
             '(flycheck-error-list-set-filter . builtin)
-            '(persp-switch-to-buffer . buffer)
+            '(tabspaces-switch-to-buffer . buffer)
             '(projectile-find-file . project-file)
             '(projectile-recentf . project-file)
             '(projectile-switch-to-buffer . buffer)

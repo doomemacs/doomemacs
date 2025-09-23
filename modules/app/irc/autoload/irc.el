@@ -101,7 +101,7 @@ argument) is non-nil only show channels in current server."
 
 ;;;###autoload
 (defun +irc--add-circe-buffer-to-workspace-h ()
-  (when (and (bound-and-true-p persp-mode)
+  (when (and (modulep! :ui workspaces)
              (+workspaces-exists-p +irc--workspace-name))
     (let ((buf (current-buffer)))
       ;; Add a new circe buffer to irc workspace when we're in another workspace

@@ -295,15 +295,6 @@ Ugh, such an ugly hack."
     (apply fn args)))
 
 
-;;;###package persp-mode
-(defadvice! +popup--persp-mode-restore-popups-a (&rest _)
-  "Restore popup windows when loading a perspective from file."
-  :after #'persp-load-state-from-file
-  (dolist (window (window-list))
-    (when (+popup-parameter 'popup window)
-      (+popup--init window nil))))
-
-
 (after! pdf-tools
   (setq tablist-context-window-display-action
         '((+popup-display-buffer-stacked-side-window-fn)
