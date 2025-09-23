@@ -22,6 +22,15 @@
         tabspaces-default-tab "Main"
         tabspaces-remove-to-default nil)
 
+  ;; Centralize project sessions rather than pollute projects with more dotfiles
+  ;; (the default behavior).
+  (setq tabspaces-session-project-session-store
+        (lambda (proot)
+          (doom-path +workspaces-dir "projects"
+                     (format "%s.%s.session.el"
+                             (doom-project-name proot)
+                             (sha1 (file-truename proot))))))
+
   ;; Delete the current workspace if closing the last open window
   (define-key! tabspaces-mode-map
     [remap delete-window] #'+workspaces/close-window-or-workspace
