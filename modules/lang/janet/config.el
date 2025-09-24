@@ -7,9 +7,6 @@
   :mode "\\.\\(jdn\\|janet\\)\\'"
   :interpreter "janet[0-9]*\\'"
   :config
-  (after! dtrt-indent
-    (add-to-list 'dtrt-indent-hook-mapping-list '(janet-mode janet janet-indent)))
-
   ;; HACK: janet-mode calls `janet--set-indentation' each time it's activated,
   ;;   making its (global) side-effects unnecessarily difficult to change, so I
   ;;   disable it and call it manually (and once).

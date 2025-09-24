@@ -1,0 +1,68 @@
+:PROPERTIES:
+:ID:       abf2da25-88b2-41d7-9d9d-3f12ba193f94
+:END:
+#+title:     :editor whitespace
+#+subtitle:  a butler for your whitespace
+#+created:   September 24, 2025
+#+since:     25.10.0
+
+* Description :unfold:
+Replace this with a short (1-2 sentence) description of what this module does.
+This is displayed in the module index.
+
+Then a longer, multiple paragraph description goes here, which should explain
+the purpose of the module and the features/technology(ies) it provides.
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +guess ::
+  Use heuristics to automatically detect and set indent style and width settings
+  for non-project files (or all files if ~+whitespace-guess-in-projects~ is set).
+- +trim ::
+  Automatically strips trailing whitespace at EOL or EOF, but only in regions of
+  the file that have been touched in the current session (as to not too
+  aggressively adjust whitespace in parts of a codebase you aren't responsible
+  for).
+
+** Packages
+- [[doom-package:dtrt-indent]] if [[doom-module:+guess]]
+- [[doom-package:ws-butler]] if [[doom-module:+trim]]
+
+** Hacks
+#+begin_quote
+󱌣 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* Usage
+#+begin_quote
+󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

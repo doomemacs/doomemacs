@@ -9,9 +9,6 @@
   (set-company-backend! 'graphviz-dot-mode 'company-graphviz-dot-backend)
   (set-formatter! 'graphviz-dot #'+graphviz-formatter :modes '(graphviz-dot-mode))
 
-  (after! dtrt-indent
-    (add-to-list 'dtrt-indent-hook-mapping-list '(graphviz-mode graphviz-dot-indent-width)))
-
   (when (modulep! :checkers syntax -flymake)
     (after! flycheck
       (eval '(flycheck-define-checker graphviz-dot

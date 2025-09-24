@@ -359,7 +359,7 @@ Respects `require-final-newline'."
   "Change the indentation size to WIDTH of the current buffer.
 
 The effectiveness of this command is significantly improved if you have
-editorconfig or dtrt-indent installed."
+editorconfig installed."
   (interactive
    (list (if (integerp current-prefix-arg)
              current-prefix-arg
@@ -390,20 +390,6 @@ editorconfig or dtrt-indent installed."
 
 ;;
 ;;; Hooks
-
-;;;###autoload
-(defun doom-enable-delete-trailing-whitespace-h ()
-  "Enables the automatic deletion of trailing whitespaces upon file save.
-
-i.e. enables `ws-butler-mode' in the current buffer."
-  (ws-butler-mode +1))
-
-;;;###autoload
-(defun doom-disable-delete-trailing-whitespace-h ()
-  "Disables the automatic deletion of trailing whitespaces upon file save.
-
-i.e. disables `ws-butler-mode' in the current buffer."
-  (ws-butler-mode -1))
 
 ;;;###autoload
 (defun doom-enable-show-trailing-whitespace-h ()

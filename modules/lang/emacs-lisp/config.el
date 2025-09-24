@@ -79,10 +79,6 @@ See `+emacs-lisp-non-package-mode' for details.")
   ;; Introduces logic to improve plist indentation in emacs-lisp-mode.
   (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
 
-  ;; Variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
-  ;; and `editorconfig' would force fixed indentation on elisp.
-  (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode)
-
   (add-hook! '(emacs-lisp-mode-hook lisp-data-mode-local-vars-hook)
              ;; Allow folding of outlines in comments
              #'outline-minor-mode

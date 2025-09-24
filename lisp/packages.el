@@ -27,17 +27,7 @@
 
 ;; doom-editor.el
 (package! better-jumper :pin "b1bf7a3c8cb820d942a0305e0e6412ef369f819c")
-(package! dtrt-indent :pin "9108979357e8c9a1015baa5d37c0b596e2dda11b")
 (package! smartparens :pin "b629b4e893ba21ba5a381f6c0054bb72f8e96df2")
-(package! ws-butler
-  ;; REVIEW: emacsmirror/nongnu_elpa serves this package from a branch. To stop
-  ;;   Straight from clobbering a single repo for multiple packages, we must be
-  ;;   explicit to force it to clone it multiple times.
-  :recipe (:host github
-           :repo "emacsmirror/nongnu_elpa"
-           :branch "elpa/ws-butler"
-           :local-repo "ws-butler")
-  :pin "67c49cfdf5a5a9f28792c500c8eb0017cfe74a3a")
 
 ;; doom-projects.el
 (package! projectile :pin "9325c45e0fd96d5421e75ad901a91ee5353e10ad")

@@ -13,7 +13,7 @@
   ;; expecting it to be used.
   (setq editorconfig-get-properties-function #'editorconfig-get-properties)
 
-  (when (require 'ws-butler nil t)
+  (when (modulep! :editor whitespace +trim)
     (setq editorconfig-trim-whitespaces-mode 'ws-butler-mode))
 
   ;; Fix #5057 archives don't need editorconfig settings, and they may otherwise
@@ -26,10 +26,11 @@
     (defun +editorconfig-disable-indent-detection-h (props)
       "Inhibit `dtrt-indent' if an explicit indent_style and indent_size is
 specified by editorconfig."
-      (when (and (not doom-inhibit-indent-detection)
+      (when (and (modulep! :editor whitespace +guess)
+                 (not +whitespace-guess-inhibit)
                  (or (gethash 'indent_style props)
                      (gethash 'indent_size props)))
-        (setq doom-inhibit-indent-detection 'editorconfig)))
+        (setq +whitespace-guess-inhibit 'editorconfig)))
     ;; I use a hook over `editorconfig-exclude-modes' because the option
     ;; inhibits all settings, and I only want to inhibit indent_size. Plus modes
     ;; in that option won't apply to derived modes, so we'd have to add *all*

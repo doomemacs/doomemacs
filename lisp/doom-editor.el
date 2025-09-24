@@ -2,19 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(defvar doom-detect-indentation-excluded-modes
-  '(pascal-mode
-    so-long-mode
-    ;; Automatic indent detection in org files is meaningless. Not to mention, a
-    ;; non-standard `tab-width' causes an error in org-mode.
-    org-mode)
-  "A list of major modes where indentation shouldn't be auto-detected.")
-
-(defvar-local doom-inhibit-indent-detection nil
-  "A buffer-local flag that indicates whether `dtrt-indent' should try to detect
-indentation settings or not. This should be set by editorconfig if it
-successfully sets indent_style/indent_size.")
-
 (defvar doom-inhibit-large-file-detection nil
   "If non-nil, inhibit large/long file detection when opening files.")
 
@@ -468,50 +455,6 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   (advice-add #'imenu :around #'doom-set-jump-a))
 
 
-(use-package! dtrt-indent
-  ;; Automatic detection of indent settings
-  :unless noninteractive
-  ;; I'm not using `global-dtrt-indent-mode' because it has hard-coded and rigid
-  ;; major mode checks, so I implement it in `doom-detect-indentation-h'.
-  :hook ((change-major-mode-after-body read-only-mode) . doom-detect-indentation-h)
-  :config
-  (defun doom-detect-indentation-h ()
-    (unless (or (not after-init-time)
-                doom-inhibit-indent-detection
-                doom-large-file-p
-                (eq major-mode 'fundamental-mode)
-                (member (substring (buffer-name) 0 1) '(" " "*"))
-                (apply #'derived-mode-p doom-detect-indentation-excluded-modes))
-      ;; Don't display messages in the echo area, but still log them
-      (let ((inhibit-message (not init-file-debug)))
-        (dtrt-indent-mode +1))))
-
-  ;; Enable dtrt-indent even in smie modes so that it can update `tab-width',
-  ;; `standard-indent' and `evil-shift-width' there as well.
-  (setq dtrt-indent-run-after-smie t)
-  ;; Reduced from the default of 5000 for slightly faster analysis
-  (setq dtrt-indent-max-lines 2000)
-
-  ;; always keep tab-width up-to-date
-  (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
-
-  (defvar dtrt-indent-run-after-smie)
-  (defadvice! doom--fix-broken-smie-modes-a (fn &optional arg)
-    "Some smie modes throw errors when trying to guess their indentation, like
-`nim-mode'. This prevents them from leaving Emacs in a broken state."
-    :around #'dtrt-indent-mode
-    (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
-      (letf! ((defun symbol-config--guess (beg end)
-                (funcall symbol-config--guess beg (min end 10000)))
-              (defun smie-config-guess ()
-                (condition-case e (funcall smie-config-guess)
-                  (error (setq dtrt-indent-run-after-smie t)
-                         (message "[WARNING] Indent detection: %s"
-                                  (error-message-string e))
-                         (message ""))))) ; warn silently
-        (funcall fn arg)))))
-
-
 (use-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
@@ -635,18 +578,6 @@ on."
       flycheck-mode
       smartparens-mode
       smartparens-strict-mode)))
-
-
-(use-package! ws-butler
-  ;; a less intrusive `delete-trailing-whitespaces' on save
-  :hook (doom-first-buffer . ws-butler-global-mode)
-  :config
-  (pushnew! ws-butler-global-exempt-modes
-            'special-mode
-            'comint-mode
-            'term-mode
-            'eshell-mode
-            'diff-mode))
 
 (provide 'doom-editor)
 ;;; doom-editor.el ends here

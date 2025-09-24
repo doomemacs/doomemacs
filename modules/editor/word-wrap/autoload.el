@@ -64,14 +64,15 @@ wrapped at `fill-column' by configuring `+word-wrap-fill-style'."
               (eq +word-wrap-fill-style 'soft)))
 
         (unless +word-wrap--major-mode-is-visual
-          (require 'dtrt-indent) ; for dtrt-indent--search-hook-mapping
-          (setq-local +word-wrap--major-mode-indent-var
-                      (let ((indent-var (caddr (dtrt-indent--search-hook-mapping major-mode))))
-                        (if (listp indent-var)
-                            (car indent-var)
-                          indent-var)))
-
-          (advice-add #'adaptive-wrap-fill-context-prefix :around #'+word-wrap--adjust-extra-indent-a))
+          (when (require 'dtrt-indent nil t)
+            ;; for dtrt-indent--search-hook-mapping
+            ;; TODO: Generalize this?
+            (setq-local +word-wrap--major-mode-indent-var
+                        (let ((indent-var (caddr (dtrt-indent--search-hook-mapping major-mode))))
+                          (if (listp indent-var)
+                              (car indent-var)
+                            indent-var)))
+            (advice-add #'adaptive-wrap-fill-context-prefix :around #'+word-wrap--adjust-extra-indent-a)))
 
         (when +word-wrap--enable-adaptive-wrap-mode
           (adaptive-wrap-prefix-mode +1))

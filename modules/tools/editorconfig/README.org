@@ -20,9 +20,6 @@ with or without the native editorconfig binary.
 - [[doom-package:editorconfig-emacs]]
  
 ** Hacks
-- *Special integration for =dtrt-indent=:* If the local editorconfig file
-  specifies ~indent_style~ or ~indent_size~, the [[doom-package:dtrt-indent]] (which tries to
-  guess your indent settings by analyzing your text file) will bow out.
 - *Special integration for =ws-butler=:* this module will use [[doom-package:ws-butler]] to
   enforce ~trim_trailing_whitespace~.
 

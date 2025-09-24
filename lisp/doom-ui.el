@@ -502,17 +502,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         show-paren-when-point-in-periphery t))
 
 
-;;;###package whitespace
-(setq whitespace-line-column nil
-      whitespace-style
-      '(face indentation tabs tab-mark spaces space-mark newline newline-mark
-        trailing lines-tail)
-      whitespace-display-mappings
-      '((tab-mark ?\t [?› ?\t])
-        (newline-mark ?\n [?¬ ?\n])
-        (space-mark ?\  [?·] [?.])))
-
-
 ;;
 ;;; Third party packages
 
@@ -767,13 +756,6 @@ triggering hooks during startup."
                customize-changed-options customize-save-customized))
   (put sym 'disabled "Doom doesn't support `customize', configure Emacs from $DOOMDIR/config.el instead"))
 (put 'customize-themes 'disabled "Set `doom-theme' or use `load-theme' in $DOOMDIR/config.el instead")
-
-(after! whitespace
-  (defun doom--in-parent-frame-p ()
-    "`whitespace-mode' inundates child frames with whitespace markers, so
-disable it to fix all that visual noise."
-    (null (frame-parameter nil 'parent-frame)))
-  (add-function :before-while whitespace-enable-predicate #'doom--in-parent-frame-p))
 
 (provide 'doom-ui)
 ;;; doom-ui.el ends here
