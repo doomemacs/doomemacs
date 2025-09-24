@@ -39,4 +39,7 @@ specified by editorconfig."
       "A tab-width != 8 is an error state in org-mode, so prevent changing it."
       (when (and (gethash 'indent_size props)
                  (derived-mode-p 'org-mode))
-        (setq tab-width 8)))))
+        ;; REVIEW: Org already does this in recent versions, so this is
+        ;;   preserved only for users pinning to older versions.
+        (unless (fboundp 'org--set-tab-width)
+          (setq tab-width 8))))))
