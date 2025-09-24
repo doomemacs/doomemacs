@@ -17,7 +17,7 @@
 :args LIST
   Arguments to be appended to `consult-ripgrep-args'."
   (declare (indent defun))
-  (unless (executable-find "rg")
+  (unless (executable-find "rg" t)
     (user-error "Couldn't find ripgrep in your PATH"))
   (require 'consult)
   (setq deactivate-mark t)
