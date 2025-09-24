@@ -14,7 +14,7 @@ Is nil if no executable is found in your PATH during startup.")
 
 Is nil if no executable is found in your PATH during startup.")
 
-(defvar doom-projectile-cache-dir (file-name-concat doom-profile-cache-dir "projectile/")
+(defvar doom-project-cache-dir (file-name-concat doom-profile-cache-dir "projectile/")
   "The directory where per-project projectile file index caches are stored.
 
 Must end with a slash.")
@@ -51,7 +51,7 @@ Must end with a slash.")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-kill-buffers-filter 'kill-only-files
         projectile-ignored-projects '("~/")
-        projectile-known-projects-file (concat doom-projectile-cache-dir "projects.eld")
+        projectile-known-projects-file (concat doom-project-cache-dir "projects.eld")
         projectile-ignored-project-function #'doom-project-ignored-p
         projectile-fd-executable doom-fd-executable)
 
@@ -59,7 +59,7 @@ Must end with a slash.")
   (global-set-key [remap find-tag]         #'projectile-find-tag)
 
   :config
-  (make-directory doom-projectile-cache-dir t)
+  (make-directory doom-project-cache-dir t)
 
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
@@ -102,7 +102,7 @@ Must end with a slash.")
            (projectile-cache-file
             (expand-file-name
              (format "%s-%s" (doom-project-name proot) (sha1 proot))
-             doom-projectile-cache-dir)))
+             doom-project-cache-dir)))
       (funcall fn proot)))
 
   ;; HACK: `projectile-ensure-project' operates on the current value of
