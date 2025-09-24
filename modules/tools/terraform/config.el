@@ -14,6 +14,7 @@
   (setq-hook! 'terraform-mode-hook compile-command +terraform-runner)
 
   (when (modulep! +lsp)
+    (set-eglot-client! 'terraform-mode '("tofu-ls" "serve") '("terraform-ls" "serve"))
     (add-hook 'terraform-mode-local-vars-hook #'lsp! 'append))
 
   (map! :map terraform-mode-map
