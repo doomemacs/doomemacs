@@ -109,7 +109,7 @@ hoist buggy forms into autoloads.")
                        (list (pcase definer
                                (`defun 'defmacro)
                                (`cl-defun `cl-defmacro)
-                               (_ type))
+                               (_ definer))
                              symbol arglist
                              (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
                                      module (if (stringp (car body))
