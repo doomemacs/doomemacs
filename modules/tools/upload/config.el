@@ -29,7 +29,10 @@
       (when (and (bound-and-true-p ssh-deploy-root-remote)
                  (integerp ssh-deploy-on-explicit-save)
                  (> ssh-deploy-on-explicit-save 0))
-        (ssh-deploy-upload-handler ssh-deploy-force-on-explicit-save))))
+        (ssh-deploy-upload-handler ssh-deploy-force-on-explicit-save)
+        (when (or ssh-deploy-root-remote
+                  ssh-deploy-root-local)
+          (ssh-deploy-line-mode +1)))))
 
   ;; Enable ssh-deploy if variables are set, and check for changes on open file
   ;; (if possible)
@@ -40,4 +43,7 @@
         (unless ssh-deploy-root-local
           (setq ssh-deploy-root-local (doom-project-root)))
         (when ssh-deploy-automatically-detect-remote-changes
-          (ssh-deploy-remote-changes-handler))))))
+          (ssh-deploy-remote-changes-handler))
+        (when (or ssh-deploy-root-remote
+                  ssh-deploy-root-local)
+          (ssh-deploy-line-mode +1))))))
