@@ -6,11 +6,14 @@
 * Description :unfold:
 Uses ~ssh-deploy~ to map a local folder to a remote one.
 
-From the [[https://github.com/cjohansson/emacs-ssh-deploy/blob/master/README.md][ssh-deploy README]]:
 #+begin_quote
-The ssh-deploy plug-in for Emacs makes it possible to effortlessly deploy local files and directories to remote hosts via Tramp (including but not limited to SSH, SFTP, FTP). It tries to provide functions that can be easily used by custom scripts.
+ 󰝗 The ssh-deploy plug-in for Emacs makes it possible to effortlessly deploy
+    local files and directories to remote hosts via Tramp (including but not
+    limited to SSH, SFTP, FTP). It tries to provide functions that can be easily
+    used by custom scripts.
 
-The idea for this plug-in was to mimic the behavior of PhpStorm deployment functionality.
+    The idea for this plug-in was to mimic the behavior of PhpStorm deployment
+    functionality. —[[https://github.com/emacsmirror/ssh-deploy][ssh-deploy README]]
 #+end_quote
 
 ** Maintainers
@@ -36,23 +39,34 @@ The idea for this plug-in was to mimic the behavior of PhpStorm deployment funct
 
 /This module has no external requirements./
 
-* TODO Usage
-#+begin_quote
- 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
-#+end_quote
+* Usage
+There are two ways to map a local directory to a remote one:
 
-Uses ~ssh-deploy~ to map a local folder to a remote one. Set
-~ssh-deploy-root-remote~ and ~ssh-deploy-root-local~ in a =.dir-locals.el= file
-to establish this mapping. E.g.
-#+begin_src emacs-lisp
-((nil . ((ssh-deploy-root-local . "/local/path/to/project/")
-         (ssh-deploy-root-remote . "/ssh:user@server:/remote/project/")
-         (ssh-deploy-on-explicit-save . 1))))
-#+end_src
+1. With a =.dir-locals.el= file at the root of your project/directory. E.g.
+   #+begin_src emacs-lisp
+   ((nil . ((ssh-deploy-root-local . "/local/path/to/project/")
+            (ssh-deploy-root-remote . "/ssh:user@server:/remote/project/")
+            (ssh-deploy-on-explicit-save . 1))))
+   #+end_src
+
+2. In file-local variables in the commented header at the top of a file:
+   #+begin_src emacs-lisp
+   ;; -*- ssh-deploy-root-remote: "/ssh:user@server:/remote/project/"; ssh-deploy-on-explicit-save: 1 -*-
+   #+end_src
+
+   Or in a commented block at the bottom of the file:
+   #+begin_src emacs-lisp
+   ;; -*-
+   ;; Local Variables:
+   ;; ssh-deploy-root-local: "/local/path/to/project/"
+   ;; ssh-deploy-root-remote: "/ssh:user@server:/remote/project/"
+   ;; ssh-deploy-on-explicit-save: 1
+   ;; End:
+   #+end_src
 
 #+begin_quote
- 󰐃 ~ssh-deploy-root-local~ is optional, and will resort to ~doom-project-root~
-    if unspecified.
+ 󰐃 ~ssh-deploy-root-local~ is optional, and will resort to ~doom-project-root~ if
+    unspecified.
 #+end_quote
 
 * TODO Configuration
