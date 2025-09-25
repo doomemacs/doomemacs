@@ -55,18 +55,7 @@
       ;; no affect on packages that are pinned, however (run 'doom sync --gc' to
       ;; compact those after-the-fact). Some packages break when shallow cloned
       ;; (like magit and org), but we'll deal with that elsewhere.
-      straight-vc-git-default-clone-depth '(1 single-branch)
-      ;; Install archives from forges instead of cloning them. Much faster and
-      ;; lighter.
-      straight-vc-use-snapshot-installation
-      ;; REVIEW: Add GNU tar checks here?
-      (and (executable-find "tar")
-           ;; Windows and BSD Linux are certain to have incompatible versions of
-           ;; tar out of the box, and straight gives us no way to customize the
-           ;; tar executable it uses, so we simply opt out of snapshots there.
-           (not (featurep :system 'windows))
-           (not (featurep :system 'bsd))
-           t))
+      straight-vc-git-default-clone-depth '(1 single-branch))
 
 (with-eval-after-load 'straight
   ;; HACK: Doom relies on deferred compilation, which spares the user 20-50min
