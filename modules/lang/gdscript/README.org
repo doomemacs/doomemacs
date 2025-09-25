@@ -14,6 +14,9 @@ engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mo
 - +lsp ::
   Enable LSP support for ~gdscript-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (Godot ~3.2.1~ or newer).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires Emacs 29.1+ and [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:gdscript-mode]]
