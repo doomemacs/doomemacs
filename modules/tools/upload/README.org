@@ -40,7 +40,7 @@ Uses ~ssh-deploy~ to map a local folder to a remote one.
 /This module has no external requirements./
 
 * Usage
-There are two ways to map a local directory to a remote one:
+There are three ways to map a local directory to a remote one:
 
 1. With a =.dir-locals.el= file at the root of your project/directory. E.g.
    #+begin_src emacs-lisp
@@ -63,6 +63,9 @@ There are two ways to map a local directory to a remote one:
    ;; ssh-deploy-on-explicit-save: 1
    ;; End:
    #+end_src
+
+3. Manually, on a per-buffer basis, with the ~M-x +upload/register-remote~
+   command. Use ~M-x +upload/unregister-all-remotes~ to undo all manual remotes.
 
 #+begin_quote
  󰐃 ~ssh-deploy-root-local~ is optional, and will resort to ~doom-project-root~ if
