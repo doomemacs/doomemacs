@@ -50,4 +50,55 @@
         (unless ssh-deploy-root-local
           (setq ssh-deploy-root-local (doom-project-root)))
         (when ssh-deploy-automatically-detect-remote-changes
-          (ssh-deploy-remote-changes-handler))))))
+          (ssh-deploy-remote-changes-handler)))))
+
+  (defvar +upload-local-mappings nil
+    "Global alist to store local to remote mappings (local-file . remote-path).
+Each entry maps an absolute local file path to its corresponding remote path
+for ssh-deploy functionality.")
+
+  (defun +upload-clear-mappings ()
+    "Clear all ssh-deploy mappings and remove buffer-local variables.
+Iterates through all stored mappings in +upload-local-mappings and clears
+ssh-deploy buffer-local variables for any open buffers, then clears the
+global mapping list."
+    (interactive)
+    ;; For each mapping, find open buffers and clear their local variables
+    (dolist (mapping +upload-local-mappings)
+      (let* ((local-file (car mapping))
+             (buffer (get-file-buffer local-file)))
+        (when buffer
+          (message "Unregistering ssh-deploy mapping from %s" buffer)
+          (with-current-buffer buffer
+            (setq-local ssh-deploy-root-local nil
+                        ssh-deploy-root-remote nil)))))
+    ;; Clear the global alist
+    (setq +upload-local-mappings nil))
+
+  (defun +upload-register-mapping (&optional remote-path)
+    "Register or unregister ssh-deploy mapping for current buffer.
+With C-u prefix, unregisters the current buffer's mapping and removes it
+from the global +upload-local-mappings list. Otherwise prompts for REMOTE-PATH
+and registers the mapping, storing it in both buffer-local variables and the
+global mapping list. Updates or replaces any existing mapping for the current file."
+    (interactive (if current-prefix-arg
+                     (list nil)  ; Don't prompt when unregistering
+                   (list (expand-file-name (read-file-name "Remote path: ")))))
+    (require 'ssh-deploy)
+    (let ((local-file (expand-file-name (buffer-file-name))))
+      (if current-prefix-arg
+          (progn
+            (message "Unregistering ssh-deploy for this buffer")
+            (setq-local ssh-deploy-root-local nil
+                        ssh-deploy-root-remote nil)
+            ;; Remove mapping from global alist
+            (setq +upload-local-mappings
+                  (assoc-delete-all local-file +upload-local-mappings)))
+        (progn
+          (setq-local ssh-deploy-root-local local-file
+                      ssh-deploy-root-remote remote-path)
+          (message "registered ssh-deploy for this buffer to %s" ssh-deploy-root-remote)
+          ;; Add/update mapping in global alist
+          (setq +upload-local-mappings
+                (cons (cons local-file remote-path)
+                      (assoc-delete-all local-file +upload-local-mappings))))))))
