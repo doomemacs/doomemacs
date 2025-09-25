@@ -12,7 +12,7 @@
 ;;; Packages
 
 (use-package! gdscript-mode
-  :defer t
+  :interpreter "gdscript[0-9.]*"
   :config
   (set-lookup-handlers! 'gdscript-mode
     :documentation '(gdscript-docs-browse-symbol-at-point :async t))
