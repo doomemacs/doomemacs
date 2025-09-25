@@ -78,36 +78,6 @@
     (setq woman-manpath path)))
 
 
-;;;###package tramp
-(unless (featurep :system 'windows)
-  (setq tramp-default-method "ssh")) ; faster than the default scp
-
-
-;;;###package whitespace
-(add-hook! 'after-change-major-mode-hook :append
-  (defun +emacs-highlight-non-default-indentation-h ()
-    "Highlight whitespace at odds with `indent-tabs-mode'.
-That is, highlight tabs if `indent-tabs-mode' is `nil', and highlight spaces at
-the beginnings of lines if `indent-tabs-mode' is `t'. The purpose is to make
-incorrect indentation in the current buffer obvious to you.
-
-Does nothing if `whitespace-mode' or `global-whitespace-mode' is already active
-or if the current buffer is read-only or not file-visiting."
-    (unless (or (eq major-mode 'fundamental-mode)
-                (bound-and-true-p global-whitespace-mode)
-                (null buffer-file-name)
-                buffer-read-only)
-      (require 'whitespace)
-      (set (make-local-variable 'whitespace-style)
-           (cl-union (if indent-tabs-mode
-                         '(indentation)
-                       '(tabs tab-mark))
-                     (when whitespace-mode
-                       (remq 'face whitespace-active-style))))
-      (cl-pushnew 'face whitespace-style) ; must be first
-      (whitespace-mode +1))))
-
-
 ;;
 ;;; Smartparens config
 
