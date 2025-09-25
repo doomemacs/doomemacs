@@ -17,8 +17,9 @@
         tramp-backup-directory-alist backup-directory-alist
         tramp-auto-save-directory  (concat doom-cache-dir "tramp-autosave/"))
 
+  ;; The ssh method is faster than scp (the default) on Windows
   (unless (featurep :system 'windows)
-    (setq tramp-default-method "ssh")))  ; faster than scp on Windows
+    (setq tramp-default-method "ssh")))
 
 
 ;; See https://coredumped.dev/2025/06/18/making-tramp-go-brrrr.
