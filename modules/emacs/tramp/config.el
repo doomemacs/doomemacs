@@ -17,8 +17,10 @@
         tramp-backup-directory-alist backup-directory-alist
         tramp-auto-save-directory  (concat doom-cache-dir "tramp-autosave/"))
 
-  ;; The ssh method is faster than scp (the default) on Windows
   (unless (featurep :system 'windows)
+    ;; On windows pscp/scp > ssh, everywhere else ssh is better. sshx is even
+    ;; better but only with known, pubkey-authed hosts.
+    ;; REVIEW: Test this >5 year old assumption again.
     (setq tramp-default-method "ssh")))
 
 
