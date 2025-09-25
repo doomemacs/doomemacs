@@ -14,7 +14,11 @@
         (append (if (modulep! :checkers syntax -flymake)
                     '(flymake))
                 (if (modulep! :completion company)
-                    '(company))))
+                    '(company)))
+        ;; Margin indicator may increase line height due to glyph display
+        ;; failures or emoji font height differences; I also think the eldoc
+        ;; hint is enough.
+        eglot-code-action-indications '(eldoc-hint))
 
   :config
   (set-popup-rule! "^\\*eglot-help" :size 0.15 :quit t :select t)
