@@ -27,6 +27,7 @@
   (add-hook! 'after-save-hook
     (defun +upload-init-after-save-h ()
       (when (and (bound-and-true-p ssh-deploy-root-remote)
+                 (require 'ssh-deploy nil t)
                  (integerp ssh-deploy-on-explicit-save)
                  (> ssh-deploy-on-explicit-save 0))
         (ssh-deploy-upload-handler ssh-deploy-force-on-explicit-save)
@@ -38,8 +39,8 @@
   ;; (if possible)
   (add-hook! 'find-file-hook
     (defun +upload-init-find-file-h ()
-      (when (bound-and-true-p ssh-deploy-root-remote)
-        (require 'ssh-deploy)
+      (when (and (bound-and-true-p ssh-deploy-root-remote)
+                 (require 'ssh-deploy nil t))
         (unless ssh-deploy-root-local
           (setq ssh-deploy-root-local (doom-project-root)))
         (when ssh-deploy-automatically-detect-remote-changes
