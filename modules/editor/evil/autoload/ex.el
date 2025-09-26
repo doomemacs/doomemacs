@@ -182,6 +182,13 @@ non-nil, a search is preformed against Doom's manual (with
              (funcall (or (command-remapping #'describe-function)
                           #'describe-function)
                       (evil-ex-completed-binding (match-string 1 query))))
+            ((or (string-match "^ *[^a-z0-9-_]$" query)
+                 (condition-case nil
+                     (ignore (string-match-p query ""))
+                   (invalid-regexp t)))
+             (user-error "Invalid query: %S" query))
+            ((< (string-width query) 3)
+             (user-error "Query too short (must be > 2 characters): %S" query))
             ((message "Searching for %S, this may take a while..." query)
              (apropos query t))))))
 
