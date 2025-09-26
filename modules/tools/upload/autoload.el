@@ -24,9 +24,10 @@ command was used."
         (progn
           (message "ssh-deploy: mapping %S to %S (in %S)"
                    local remote (buffer-name buffer))
-          (setq-local +upload--old-local ssh-deploy-root-local
-                      +upload--old-remote ssh-deploy-root-remote
-                      ssh-deploy-root-local local
+          (unless (local-variable-p '+upload--old-remote)
+            (setq-local +upload--old-local ssh-deploy-root-local
+                        +upload--old-remote ssh-deploy-root-remote))
+          (setq-local ssh-deploy-root-local local
                       ssh-deploy-root-remote remote))
       (if (or +upload--old-local
               +upload--old-remote)
