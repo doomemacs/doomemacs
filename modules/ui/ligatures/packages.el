@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; ui/ligeratures/packages.el
+;;; ui/ligatures/packages.el
 
 (when (and (or (featurep 'ns)
                (featurep 'harfbuzz))
