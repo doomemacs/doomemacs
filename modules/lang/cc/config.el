@@ -35,6 +35,12 @@ This is ignored by ccls.")
     (set-tree-sitter! 'c++-mode 'c++-ts-mode
       '((cpp :url "https://github.com/tree-sitter/tree-sitter-cpp"
              :rev "v0.23.4"))))
+
+  (after! ffap
+    (add-to-list 'ffap-alist '(c-mode . ffap-c-mode))
+    (add-to-list 'ffap-alist '(c-ts-mode . ffap-c-mode))
+    (add-to-list 'ffap-alist '(c++-ts-mode . ffap-c++-mode)))
+
   :config
   ;; HACK: cc-mode adds null entries to `major-mode-remap-defaults', which
   ;;   overrides our tree-sitter remappings, causing the first remap to succeed,

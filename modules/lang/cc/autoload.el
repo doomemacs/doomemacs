@@ -145,17 +145,17 @@ the children of class at point."
   "Takes the local project include paths and registers them with ffap.
 This way, `find-file-at-point' (and `+lookup/file') will know where to find most
 header files."
-  (when-let (project-root (and (featurep 'lsp)
-                               (or (lsp-workspace-root)
-                                   (doom-project-root))))
+  (when-let* ((project-root (or (and (fboundp 'lsp-workspace-root)
+                                     (lsp-workspace-root))
+                                (doom-project-root))))
     (require 'ffap)
     (make-local-variable 'ffap-c-path)
     (make-local-variable 'ffap-c++-path)
     (cl-loop for dir in (or (cdr (assoc project-root +cc--project-includes-alist))
                             (+cc-resolve-include-paths))
              do (add-to-list (pcase major-mode
-                               (`c-mode 'ffap-c-path)
-                               (`c++-mode 'ffap-c++-path))
+                               ((or `c-mode `c-ts-mode) 'ffap-c-path)
+                               ((or `c++-mode `c++-ts-mode) 'ffap-c++-path))
                              (expand-file-name dir project-root)))))
 
 
