@@ -89,8 +89,8 @@
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
-    :recipe (:host github :repo "emacsmirror/centered-window")
-    :pin "80965f6c6afe8d918481433984b493de72af5399")
+    :recipe (:host github :repo "nullvec/centered-window-mode")
+    :pin "701f56cd1d2b68352d29914f05ca1b0037bb2595")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
   (package! org-re-reveal :pin "4eb0f7147447c956231f5c178fa454b7cb76741b")
   (package! revealjs
