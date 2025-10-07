@@ -37,8 +37,8 @@ and drag to scroll along the buffer, or right-click anywhere to jump to there.
  󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-There are a number of options provided by the =minimap.el= package this module
-is based on. The easiest way to see all of them is [[kbd:][SPC h v minimap]].
+There are a number of options provided by the =demap.el= package this module
+is based on. The easiest way to see all of them is [[kbd:][SPC h v demap]].
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
