@@ -55,6 +55,15 @@ by default it is set to ="**Minimap**"=.
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
 * TODO Appendix
-#+begin_quote
- 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
-#+end_quote
+** Variables
+- demap-minimap-change-major-mode-hook
+- demap-minimap-default-name
+- demap-minimap-window-width
+- demap-minimap-window-side
+- demap-minimap-kill-hook
+- demap-minimap-construct-hook
+- demap-minimap-window-set-hook
+- demap-minimap-change-functions
+- demap-minimap-window-sleep-hook
+- demap-minimap-protected-variables
+- demap-minimap-close-kill-minimap-p
