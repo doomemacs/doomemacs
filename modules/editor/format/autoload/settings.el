@@ -87,5 +87,5 @@ Advanced examples:
                         (t args))))
         (setf (alist-get name apheleia-formatters) formatter))
       (when modes
-        (dolist (mode modes)
+        (dolist (mode (ensure-list modes))
           (setf (alist-get mode apheleia-mode-alist) name))))))
