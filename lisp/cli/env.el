@@ -27,8 +27,8 @@
     ;; XDG variables that are best not persisted.
     "^XDG_CURRENT_DESKTOP$" "^XDG_RUNTIME_DIR$"
     "^XDG_\\(VTNR$\\|SEAT$\\|BACKEND$\\|SESSION_\\)"
-    ;; Socket envvars, like I3SOCK, GREETD_SOCK, SEATD_SOCK, SWAYSOCK, etc.
-    "SOCK$"
+    ;; Socket envvars, like I3SOCK, GREETD_SOCK, SEATD_SOCK, SWAYSOCK, NIRI_SOCKET, etc.
+    "SOCK\\(ET\\)?$"
     ;; ssh and gpg variables that could quickly become stale if persisted.
     "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$" "^\\(SSH\\|GPG\\)_TTY$"
     "^GPG_AGENT_INFO$"
