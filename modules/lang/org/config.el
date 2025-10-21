@@ -217,6 +217,13 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (after! ob
     (add-to-list 'org-babel-default-lob-header-args '(:sync)))
 
+  (defadvice! +org--exclude-expand-noweb-references-a (fn &rest args)
+    :around #'ob-async-org-babel-execute-src-block
+    (let ((async-inject-variables-exclude-regexps
+           (cons "\\`org-babel-expand-noweb-references--cache-buffer\\'"
+                 async-inject-variables-exclude-regexps)))
+      (apply fn args)))
+
   (defadvice! +org-babel-disable-async-maybe-a (fn &optional orig-fn arg info params)
     "Use ob-comint where supported, disable async altogether where it isn't.
 
