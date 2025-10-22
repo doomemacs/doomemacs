@@ -298,11 +298,11 @@ Also adds support for a `:sync' parameter to override `:async'."
   "Load babel libraries lazily when babel blocks are executed."
   (defun +org--babel-lazy-load (lang &optional async)
     (cl-check-type lang (or symbol null))
+    ;; ob-async has its own agenda for lazy loading packages (in the child
+    ;; process), so we only need to make sure it's loaded.
+    (when async
+      (require 'ob-async nil t))
     (unless (cdr (assq lang org-babel-load-languages))
-      (when async
-        ;; ob-async has its own agenda for lazy loading packages (in the child
-        ;; process), so we only need to make sure it's loaded.
-        (require 'ob-async nil t))
       (prog1 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
                  (require (intern (format "ob-%s" lang)) nil t)
                  (require lang nil t))
