@@ -324,8 +324,8 @@ Continues comments if executed from a commented line."
         "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
         "s-v" #'yank
         "s-s" #'save-buffer
-        "s-x" #'execute-extended-command
-        :v "s-x" #'kill-region
+        "s-x" (cmds! (doom-region-active-p) #'kill-region
+                     #'execute-extended-command)
         "s-0" #'doom/reset-font-size
         ;; Global font scaling
         "s-=" #'doom/increase-font-size
