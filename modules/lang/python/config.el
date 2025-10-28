@@ -35,12 +35,9 @@
     (add-hook 'python-mode-local-vars-hook #'lsp! 'append)
     (add-hook 'python-ts-mode-local-vars-hook #'lsp! 'append)
 
-    ;; REVIEW: PR this upstream, which assumes the wrong names for the
-    ;;   (based)pyright executables.
     (set-eglot-client! '(python-mode python-ts-mode)
                        "pylsp" "pyls"
                        '("basedpyright-langserver" "--stdio")
-                       '("pyright" "--stdio")
                        '("pyright-langserver" "--stdio")
                        '("pyrefly" "lsp")
                        "jedi-language-server"
