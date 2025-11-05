@@ -552,6 +552,15 @@ on."
                (bound-and-true-p comment-use-syntax)))
           (so-long-detected-long-line-p))))
     (setq so-long-predicate #'doom-buffer-has-long-lines-p))
+
+  ;; HACK: so-long triggers in places where we don't want it, like special
+  ;;   buffers (e.g. magit status) or temp buffers.
+  (defadvice! doom--exclude-special-modes-a (&rest _)
+    :before-while #'so-long-statistics-excessive-p
+    :before-while #'so-long-detected-long-line-p
+    (not (or (doom-temp-buffer-p (current-buffer))
+             (doom-special-buffer-p (current-buffer)))))
+
   ;; Don't disable syntax highlighting and line numbers, or make the buffer
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing
   ;; experience in them, at least. It will remain off in `so-long-mode',
