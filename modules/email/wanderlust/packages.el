@@ -9,14 +9,14 @@
   :pin "2383abfd3a27c094ae9095b05103167cf810379b")
 (package! flim
   :recipe (:host github :repo "wanderlust/flim" :branch "flim-1_14-wl")
-  :pin "56e3e0fd02168136fb954ac8273cc315621c3364")
+  :pin "392c29de0acdd5d309023c9f15df49eeb063a2fa")
 (package! semi
   :recipe (:host github :repo "wanderlust/semi" :branch "semi-1_14-wl")
-  :pin "813892fe2c18b88a71012d36a9c90b0c5f06e0c5")
+  :pin "ddc1626783d0b49f0fe5294f56bb48156b0e0185")
 
 (package! wanderlust
   :recipe (:host github :repo "wanderlust/wanderlust")
-  :pin "70427e9c841d5253380e028a5bd01beac10574b9")
+  :pin "06ec9fa3979d6ff3f691bed0989e2a79fef71116")
 
 (when (modulep! +xface)
   (package! x-face-e21
