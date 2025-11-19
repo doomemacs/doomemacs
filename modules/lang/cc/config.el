@@ -45,8 +45,9 @@ This is ignored by ccls.")
   ;; HACK: cc-mode adds null entries to `major-mode-remap-defaults', which
   ;;   overrides our tree-sitter remappings, causing the first remap to succeed,
   ;;   but future remaps to fail.
-  (dolist (mode '(c-mode c++-mode c-or-c++-mode))
-    (cl-callf2 delete (list mode) major-mode-remap-defaults))
+  (when (modulep! +tree-sitter)
+    (dolist (mode '(c-mode c++-mode c-or-c++-mode))
+      (cl-callf2 delete (list mode) major-mode-remap-defaults)))
 
   (set-docsets! '(c-mode c-ts-mode) "C")
   (set-docsets! '(c++-mode c++-ts-mode) "C++" "Boost")
