@@ -66,7 +66,7 @@ current project. Otherwise list them for the current buffer"
            (flycheck-list-errors)))
         ((bound-and-true-p flymake-mode)
          (if (modulep! :completion vertico)
-             (consult-flymake)
+             (consult-flymake t)
            (flymake-show-diagnostics-buffer)))
         (t
          (user-error "No diagnostics backend detected. Enable flycheck or \
