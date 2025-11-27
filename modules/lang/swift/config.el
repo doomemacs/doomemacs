@@ -5,7 +5,8 @@
   :init
   (when (modulep! +tree-sitter)
     (set-tree-sitter! 'swift-mode 'swift-ts-mode
-      '((swift :url "https://github.com/alex-pinkus/tree-sitter-swift"))))
+      '((swift :url "https://github.com/alex-pinkus/tree-sitter-swift"
+               :rev "0.7.1-with-generated-files"))))
 
   :config
   (set-repl-handler! 'swift-mode #'run-swift)
