@@ -19,6 +19,8 @@
 (package! pyvenv :pin "31ea715f2164dd611e7fc77b26390ef3ca93509b")
 (when (modulep! +pyenv)
   (package! pyenv-mode :pin "364bddb8f0c8ec022796210d8d3625a520e984b0"))
+(when (modulep! +uv)
+  (package! uv-mode :pin "7e7f9b90832210b65823c3d58e3255cd164394b7"))
 (when (modulep! +conda)
   (package! conda :pin "8a1a934a2de576d4158b1b12329be4f5be931a4a"))
 (when (modulep! +poetry)

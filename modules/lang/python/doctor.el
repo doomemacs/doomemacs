@@ -26,6 +26,10 @@
     (unless (split-string (shell-command-to-string "pyenv versions --bare") "\n" t)
       (warn! "No versions of python are available via pyenv, did you forget to install one?"))))
 
+(when (modulep! +uv)
+  (unless (executable-find "uv")
+    (warn! "Couldn't find uv in your PATH")))
+
 (when (modulep! +conda)
   (unless (executable-find "conda")
     (warn! "Couldn't find conda in your PATH")))

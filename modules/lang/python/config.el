@@ -216,6 +216,17 @@
   (add-hook 'doom-switch-buffer-hook #'+python-pyenv-mode-set-auto-h))
 
 
+(use-package! uv-mode
+  :when (modulep! +uv)
+  :after python
+  :config
+  (when (executable-find "uv")
+    (uv-mode +1))
+  (add-hook! '(python-mode-local-vars-hook python-ts-mode-local-vars-hook)
+             #'+python-uv-mode-set-auto-h)
+  (add-hook 'doom-switch-buffer-hook #'+python-uv-mode-set-auto-h))
+
+
 (use-package! conda
   :when (modulep! +conda)
   :after python

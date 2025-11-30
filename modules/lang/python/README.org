@@ -30,6 +30,8 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
   support via [[https://python-poetry.org/][Poetry]].
 - +pyenv ::
   Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
+- +uv ::
+  Enable Python virtual environment support via [[https://github.com/astral-sh/uv][uv]]
 - +pyright ::
   Add support for the pyright LSP server (requires [[doom-module:+lsp]]).
 - +tree-sitter ::
@@ -44,6 +46,7 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
 - [[doom-package:pip-requirements]]
 - [[doom-package:poetry]] if [[doom-module:+poetry]]
 - [[doom-package:pyenv]]
+- [[doom-package:uv-mode]] if [[doom-module:+uv]]
 - [[doom-package:pyimport]]
 - [[doom-package:py-isort]]
 - [[doom-package:python-pytest]]
@@ -74,6 +77,7 @@ This module has no hard requirements, but softly depends on:
 - [[doom-package:py-isort]] requires [[https://github.com/timothycrosley/isort][isort]] to be installed: ~pip install isort~
 - Python virtual environments install instructions at:
   - [[https://github.com/pyenv/pyenv][pyenv]]
+  - [[https://github.com/astral-sh/uv][uv]]
   - [[https://conda.io/en/latest/][Conda]]
   - [[https://python-poetry.org/][Poetry]]
   - [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
