@@ -7,45 +7,28 @@ body:
 - type: markdown
   attributes:
     value: |
-      > [!WARNING]
-      > Please do not post feature requests or general user support here. Those belong on [our Github discussion board](https://doomemacs.org/discuss) or [our Discord server](https://doomemacs.org/discord) instead!
-
       > [!IMPORTANT]
-      > Keep in mind that issues that are unactionable, vague, and/or cannot be reproduced in a reasonable amount of time (or is otherwise unhelpful to posterity) **will be closed and eventually deleted**. Please understand that issues (however trivial) take a lot of time to process and address, and Emacs' complexity produces *many* false positives that pollute our issue tracker, making it harder for users, contributors, and maintainers to find or track issues relevant to them.
+      > Before you fill out this bug report, please be aware of the following:
       >
-      > If you suspect your issue might not make the cut, post them to [the issues category of our Github Discussions board](https://github.com/orgs/doomemacs/discussions/categories/issues) instead.
-- type: checkboxes
-  attributes:
-    label: "I confirm that..."
-    options:
-      - label: >
-          I searched the issue tracker and found no similar issues.
-        required: true
-      - label: >
-          I searched the [documentation](https://docs.doomemacs.org), [FAQ](https://docs.doomemacs.org/-/faq), [discussion board](https://doomemacs.org/discuss), and [Google](https://google.com) for solutions to my issue.
-        required: true
-      - label: >
-          I read [the debugging guide](https://doomemacs.org/d/how2debug) and researched the issue to the best of my ability.
-        required: true
-      - label: >
-          My issue can be observed on the latest available commit of Doom.
-        required: true
-      - label: >
-          My issue can be observed on a stable release of Emacs (i.e. doesn't end in `.50`, `.60`, or `.90`–`.99`)
-        required: true
+      > - This is not the place for feature requests, general user support, PSAs, or discussions/RFCs. Those belong on [our Github discussion board](https://doomemacs.org/discuss) or [our Discord server](https://doomemacs.org/discord) — whichever you prefer.
+      > - Make sure your issue hasn't already been reported or addressed: search the issue tracker, [documentation](https://docs.doomemacs.org), [FAQ](https://docs.doomemacs.org/-/faq), [discussion board](https://doomemacs.org/discuss), and [Google](https://google.com).
+      > - Read [the debugging guide](https://discourse.doomemacs.org/t/55) for ways to extract more information from your issue.
+      > - Include [backtraces](https://discourse.doomemacs.org/t/85) for any reported error messages.
+      >
+      > Bug reports that are unactionable, vague, or too broad (or are otherwise unhelpful to posterity) **will be closed and queued for deletion**. Please understand that Emacs' complexity produces *many* false positives and open-ended bug reports that we lack the manpower to investigate at length, and keeping them around only pollutes search engines indices and makes it harder for users and maintainers to follow legitimate issues.
 - type: textarea
   attributes:
     label: Describe your issue
     description: |
       Please try to include as much information as possible. Such as:
 
-      - A [backtrace](https://doomemacs.org/d/how2backtrace) for any error messages.
+      - **A [backtrace](https://discourse.doomemacs.org/t/85) for any error messages.**
       - Any recent errors/warnings in the \*Messages\* buffer (`C-h e` to open it).
       - Better explanations than "X does not work".
       - Any attempts you made to resolve the issue yourself, and their result.
       - Screenshots or screencasts, if possible.
 
-      **Please take the time to properly format code and text dumps with [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks), or use a [pastebin](https://pastebin.com) (or similar) service.**
+      **Take the time to properly format code and text dumps with [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) or use a [pastebin](https://pastebin.com) (or similar) service.**
     placeholder: |
       When I do X, it should do Y, but it does Z instead, which throws an error. Here is the backtrace:
 
@@ -77,10 +60,25 @@ body:
   attributes:
     label: System information
     description: |
-      Execute `M-x doom/info` or `$EMACSDIR/bin/doom info`, post their output to [pastebin](https://pastebin.com) (or a similar service), and paste the link to it below. **Please do not paste multi-line output directly into this text box! It pollutes our search engine results and makes it harder for others to find issues!**
+      Execute `M-x doom/info` or `$EMACSDIR/bin/doom info`, post their output to [pastebin](https://pastebin.com) (or a similar service with pastebins that don't expire), and paste the link to it below. **Please do not paste multi-line output directly into this text box! It pollutes our search engine results and makes it harder for others to find issues!**
     placeholder: https://pastebin.com/fakeurl
   validations:
     required: true
+- type: checkboxes
+  attributes:
+    label: Disclosures
+    description:
+      Please check off any that apply. These disclosures help us assess your issue(s) faster and more accurately.
+    options:
+      - label: >
+          This issue was written by AI.
+      - label: >
+          I used AI extensively to investigate this issue.
+      - label: >
+          My issue was observed on a stable and supported release of GNU Emacs (must not end in `.50`, `.60`, or `.90`–`.99`, e.g. `30.0.50`).
+      - label: >
+          A [backtrace](https://discourse.doomemacs.org/t/85) is provided for each error I've reported (if any).
+        required: true
 - type: markdown
   attributes:
     value: |
