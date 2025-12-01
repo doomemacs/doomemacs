@@ -1,13 +1,13 @@
 blank_issues_enabled: false
 contact_links:
   - name: 📝 Feature Request
-    url: https://github.com/orgs/doomemacs/discussions/new?category=ideas
+    url: https://doomemacs.org/discuss/new?category=ideas
     about: "Suggest or request a new feature or change"
   - name: 📝 User Support
     url: https://doomemacs.org/discuss/new?category=questions
     about: "Ask the community for help"
   - name: 📝 Bump Request
-    url: https://github.com/orgs/doomemacs/discussions/new?category=re-modules&title=[Bump Request] &body=%23%23%23%20Packages%20to%20bump%0A%0A-%20PackageA%0A-%20PackageB%0A-%20PackageB%0A%0A%23%23%23%20Why%20should%20they%20be%20bumped%20outside%20of%20the%20typical%20bump%20schedule%3F%0A%0ABecause%20...%3F
+    url: https://doomemacs.org/discuss/new?category=re-modules&title=[Bump Request] &body=%23%23%23%20Packages%20to%20bump%0A%0A-%20PackageA%0A-%20PackageB%0A-%20PackageB%0A%0A%23%23%23%20Why%20should%20they%20be%20bumped%20outside%20of%20the%20normal%20bump%20schedule%3F%0A%0ABecause%20...%3F
     about: "Request a pinned package be bumped"
   - name: 📣 Announcements
     url: https://github.com/doomemacs/community/discussions/categories/announcements
