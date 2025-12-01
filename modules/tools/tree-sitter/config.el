@@ -101,12 +101,13 @@
   :config
   ;; HACK: Keep $EMACSDIR clean by installing grammars to the active profile.
   (add-to-list 'treesit-extra-load-path (file-name-concat doom-profile-data-dir "tree-sitter"))
-  (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
-    "Write grammars to `doom-profile-data-dir'."
+  (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn lang &optional outdir &rest args)
+    "Write grammars to `doom-profile-data-dir' instead."
     :around #'treesit-install-language-grammar
     :around #'treesit--build-grammar
-    (let ((user-emacs-directory doom-profile-data-dir))
-      (apply fn args)))
+    (apply fn lang
+           (or outdir (file-name-concat doom-profile-data-dir "tree-sitter"))
+           args))
 
   ;; TODO: Move most of these out to modules
   (dolist (map '((awk "https://github.com/Beaglefoot/tree-sitter-awk" nil nil nil nil)
