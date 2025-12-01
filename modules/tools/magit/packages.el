@@ -4,7 +4,7 @@
 ;; HACK: Fixes magit/magit#5462. Remove when addressed upstream.
 (defvar magit-auto-revert-mode nil)
 
-(package! transient :pin "053d56e4de2dd78bf32f7af7ed5f289a91cdb6ac") ; 0.10.1
+(package! transient :pin "0d3f8d4fb6d41b841126820a06ecc98579bd8265") ; 0.11.0
 (package! magit :pin "b828afbb4b45641998fb6483a08effb1efb214e1") ; 4.4.2
 (when (modulep! +forge)
   (package! forge
