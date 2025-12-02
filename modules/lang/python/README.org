@@ -29,9 +29,11 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
   Enable Python packaging, dependency management, and virtual environment
   support via [[https://python-poetry.org/][Poetry]].
 - +pyenv ::
-  Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
+  Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]. Cannot be used together
+  with [[doom-module:+uv]].
 - +uv ::
-  Enable Python virtual environment support via [[https://github.com/astral-sh/uv][uv]]
+  Enable Python virtual environment support via [[https://github.com/astral-sh/uv][uv]]. Cannot be used together
+  with [[doom-module:+pyenv]].
 - +pyright ::
   Add support for the pyright LSP server (requires [[doom-module:+lsp]]).
 - +tree-sitter ::

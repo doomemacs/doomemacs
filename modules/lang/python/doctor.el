@@ -12,6 +12,9 @@
              (fboundp 'python-ts-mode))
          "Can't find `python-ts-mode'; Emacs 29.1+ is required")
 
+(assert! (not (and (modulep! +pyenv) (modulep! +uv)))
+         "The +pyenv and +uv flags cannot be used together")
+
 (if (not (or (executable-find "python")
              (executable-find "python3")))
     (error! "Couldn't find python in your PATH")
