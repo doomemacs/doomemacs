@@ -22,7 +22,7 @@
   (when (modulep! +tree-sitter)
     (set-tree-sitter! 'python-mode 'python-ts-mode
       `((python :url "https://github.com/tree-sitter/tree-sitter-python"
-         :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.6" "v0.25.0")))))
+                :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.6" "v0.25.0")))))
 
   :config
   ;; HACK: `python-base-mode' (and `python-ts-mode') don't exist on pre-29
@@ -44,22 +44,22 @@
     "Python 3" "NumPy" "SciPy" "Pandas")
 
   (set-ligatures! '(python-mode python-ts-mode)
-                  ;; Functional
-                  :def "def"
-                  :lambda "lambda"
-                  ;; Types
-                  :null "None"
-                  :true "True" :false "False"
-                  :int "int" :str "str"
-                  :float "float"
-                  :bool "bool"
-                  :tuple "tuple"
-                  ;; Flow
-                  :not "not"
-                  :in "in" :not-in "not in"
-                  :and "and" :or "or"
-                  :for "for"
-                  :return "return" :yield "yield")
+    ;; Functional
+    :def "def"
+    :lambda "lambda"
+    ;; Types
+    :null "None"
+    :true "True" :false "False"
+    :int "int" :str "str"
+    :float "float"
+    :bool "bool"
+    :tuple "tuple"
+    ;; Flow
+    :not "not"
+    :in "in" :not-in "not in"
+    :and "and" :or "or"
+    :for "for"
+    :return "return" :yield "yield")
 
   ;; Stop the spam!
   (setq python-indent-guess-indent-offset-verbose nil)
