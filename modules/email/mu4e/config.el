@@ -277,6 +277,14 @@ is non-nil."
                    (< (frame-width) +mu4e-min-header-frame-width))
           (set-frame-width frame +mu4e-min-header-frame-width)))))
 
+  ;; Fix columns misalignment in Headers buffers
+  (add-hook! 'mu4e-headers-mode-hook
+    (defun +mu4e-headers-fix-alignment-h ()
+      "Header line face inherits from the default face"
+      (header-line-indent-mode 1)
+      (push (propertize " " 'display '(space :align-to header-line-indent-width)) header-line-format)
+      (face-remap-add-relative 'header-line '(:inherit (mu4e-header-face default)))))
+
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
