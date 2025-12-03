@@ -99,15 +99,19 @@
         mode)))
 
   :config
-  ;; HACK: Keep $EMACSDIR clean by installing grammars to the active profile.
-  (add-to-list 'treesit-extra-load-path (file-name-concat doom-profile-data-dir "tree-sitter"))
-  (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn lang &optional outdir &rest args)
-    "Write grammars to `doom-profile-data-dir' instead."
-    :around #'treesit-install-language-grammar
-    :around #'treesit--build-grammar
-    (apply fn lang
-           (or outdir (file-name-concat doom-profile-data-dir "tree-sitter"))
-           args))
+  ;; HACK: Keep $EMACSDIR clean by installing grammars to central location (the
+  ;;   active profile).
+  (let ((data-dir (file-name-concat doom-profile-data-dir "tree-sitter")))
+    (add-to-list 'treesit-extra-load-path data-dir)
+    ;; Treesit's API saw major changes in 30.x.
+    (if (< emacs-major-version 30)
+        (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn out-dir &rest args)
+          :around #'treesit--install-language-grammar-1
+          (apply fn (or out-dir data-dir) args))
+      (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn lang &optional out-dir &rest args)
+        :around #'treesit-install-language-grammar
+        :around #'treesit--build-grammar
+        (apply fn lang (or out-dir data-dir) args))))
 
   ;; TODO: Move most of these out to modules
   (dolist (map '((awk "https://github.com/Beaglefoot/tree-sitter-awk" nil nil nil nil)
