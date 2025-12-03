@@ -4,6 +4,7 @@
 :; [ "x$EMACS" = xemacs ] && { type emacs >/dev/null 2>&1 || err=1; }
 :; [ "x$err" = x ] || { echo "Error: failed to run Emacs with command '$EMACS'"; echo; echo "Are you sure Emacs is installed and in your \$PATH?"; exit 1; } >&2
 :; emacs="$EMACS ${DEBUG:+--debug-init} -q --no-site-file --batch"
+:; export EMACS_PLUS_NO_PATH_INJECTION=1
 :; export __DOOMPID="${__DOOMPID:-$$}"
 :; export __DOOMSTEP="${__DOOMSTEP:-0}"
 :; export __DOOMGEOM="${__DOOMGEOM:-`tput cols 2>/dev/null`x`tput lines 2>/dev/null`}"
