@@ -1659,6 +1659,7 @@ You have four options when it comes to launching the sandbox:
 All new instances will inherit your ~load-path~ so you can access any packages
 you have installed.
 #+END_QUOTE
+
 *** Testing packages in the sandbox
 Instances of Emacs launched from the sandbox have inherited your ~load-path~.
 This means you can load packages -- even in Vanilla Emacs -- without worrying
@@ -1672,4 +1673,22 @@ sandbox. e.g.
 #+END_SRC
 
 ** TODO Bisecting your private config
+
+You can put the following fragment anywhere in your ~config.el~
+to only load it until that point.
+
+#+begin_src elisp
+(with-current-buffer " *load*"
+  (goto-char (point-max)))
+#+end_src
+
+By progressively moving it and restarting,
+you can hunt down any configuration issues.
+
+Upon identifying the culprit,
+you may try reproducing the issue
+by running it on a minimal configuration with ~M-:~.
+
 ** TODO Bisecting Doom Emacs
+
+
