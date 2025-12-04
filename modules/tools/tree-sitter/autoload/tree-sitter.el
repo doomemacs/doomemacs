@@ -43,7 +43,9 @@ pre-Emacs 31."
                           ;; COMPAT: 31.1 introduced a COMMIT recipe argument. On
                           ;;   <=30.x, extra arguments will trigger an arity error
                           ;;   when installing grammars.
-                          (if (eq (cdr (func-arity 'treesit--install-language-grammar-1))
+                          (if (eq (cdr (func-arity
+                                        (advice--cd*r
+                                         (advice--symbol-function 'treesit--install-language-grammar-1))))
                                   'many)
                               (list commit))))))))))
 
