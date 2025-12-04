@@ -5,9 +5,7 @@
   "Name of the workspace created by `=calendar', dedicated to calfw.")
 
 (defun +calendar--init ()
-  (if-let* ((win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
-                             (doom-visible-windows)
-                             :key #'window-buffer)))
+  (if-let* ((win (get-buffer-window calfw-calendar-buffer-name)))
       (select-window win)
     (call-interactively +calendar-open-function)))
 
@@ -20,8 +18,8 @@
         (+workspace-switch +calendar-workspace-name t)
         (unless (memq (buffer-local-value 'major-mode
                                           (window-buffer (selected-window)))
-                      '(cfw:details-mode
-                        cfw:calendar-mode))
+                      '(calfw-details-mode
+                        calfw-calendar-mode))
           (doom/switch-to-scratch-buffer)
           (+calendar--init))
         (+workspace/display))
@@ -46,24 +44,24 @@
 (defun +calendar/open-calendar ()
   "TODO"
   (interactive)
-  (cfw:open-calendar-buffer
-   ;; :custom-map cfw:my-cal-map
+  (calfw-open-calendar-buffer
+   ;; :custom-map calfw-my-cal-map
    :contents-sources
    (list
-    (cfw:org-create-source (face-foreground 'default))  ; orgmode source
+    (calfw-org-create-source (face-foreground 'default))  ; orgmode source
     )))
 
 ;;;###autoload
-(defun +calendar-cfw:render-button-a (title command &optional state)
+(defun +calendar-calfw-render-button-a (title command &optional state)
   "render-button
  TITLE
  COMMAND
  STATE"
   (let ((text (concat " " title " "))
         (keymap (make-sparse-keymap)))
-    (cfw:rt text (if state 'cfw:face-toolbar-button-on
-                   'cfw:face-toolbar-button-off))
+    (calfw-rt text (if state 'calfw-face-toolbar-button-on
+                   'calfw-face-toolbar-button-off))
     (define-key keymap [mouse-1] command)
-    (cfw:tp text 'keymap keymap)
-    (cfw:tp text 'mouse-face 'highlight)
+    (calfw-tp text 'keymap keymap)
+    (calfw-tp text 'mouse-face 'highlight)
     text))

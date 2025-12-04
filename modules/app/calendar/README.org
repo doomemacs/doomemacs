@@ -16,6 +16,8 @@ support.
 ** Packages
 - [[doom-package:calfw]]
 - [[doom-package:calfw-org]]
+- [[doom-package:calfw-cal]]
+- [[doom-package:calfw-ical]]
 - [[doom-package:org-gcal]]
   
 ** Hacks
@@ -48,15 +50,15 @@ calendar data from:
 #+begin_src emacs-lisp
 (defun my-open-calendar ()
   (interactive)
-  (cfw:open-calendar-buffer
+  (calfw-open-calendar-buffer
    :contents-sources
    (list
-    (cfw:org-create-source "Green")  ; org-agenda source
-    (cfw:org-create-file-source "cal" "/path/to/cal.org" "Cyan")  ; other org source
-    (cfw:howm-create-source "Blue")  ; howm source
-    (cfw:cal-create-source "Orange") ; diary source
-    (cfw:ical-create-source "Moon" "~/moon.ics" "Gray")  ; ICS source1
-    (cfw:ical-create-source "gcal" "https://..../basic.ics" "IndianRed") ; google calendar ICS
+    (calfw-org-create-source "Green")  ; org-agenda source
+    (calfw-org-create-file-source "cal" "/path/to/cal.org" "Cyan")  ; other org source
+    (calfw-howm-create-source "Blue")  ; howm source
+    (calfw-cal-create-source "Orange") ; diary source
+    (calfw-ical-create-source "Moon" "~/moon.ics" "Gray")  ; ICS source1
+    (calfw-ical-create-source "gcal" "https://..../basic.ics" "IndianRed") ; google calendar ICS
    )))
 #+end_src
 
