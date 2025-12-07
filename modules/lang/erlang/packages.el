@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/erlang/packages.el
 
-(package! erlang :pin "2a970bf7257c6571536cc998fe01ff69b874e1c1")
+(package! erlang :pin "e281016db92701ade29290e4f244c8f68fa53f6b")
 
 (when (and (modulep! +tree-sitter) (treesit-available-p))
-  (package! erlang-ts :pin "eb579dd55fbb2cf721290939e7b3a50be19c0305"))
+  (package! erlang-ts :pin "959907d26d32f7d23bdcbb6f9d06ccb2a5db54c3"))
