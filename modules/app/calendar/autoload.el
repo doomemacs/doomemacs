@@ -5,6 +5,7 @@
   "Name of the workspace created by `=calendar', dedicated to calfw.")
 
 (defun +calendar--init ()
+  (require 'calfw)
   (if-let* ((win (get-buffer-window calfw-calendar-buffer-name)))
       (select-window win)
     (call-interactively +calendar-open-function)))
@@ -41,15 +42,11 @@
   (doom-kill-matching-buffers "^\\*cfw[:-]"))
 
 ;;;###autoload
-(defun +calendar/open-calendar ()
+(defun +calendar/open-calendar (&rest args)
   "TODO"
   (interactive)
-  (calfw-open-calendar-buffer
-   ;; :custom-map calfw-my-cal-map
-   :contents-sources
-   (list
-    (calfw-org-create-source (face-foreground 'default))  ; orgmode source
-    )))
+  (apply #'calfw-org-open-calendar nil "org-agenda" (face-foreground 'default)
+         args))
 
 ;;;###autoload
 (defun +calendar-calfw-render-button-a (title command &optional state)
