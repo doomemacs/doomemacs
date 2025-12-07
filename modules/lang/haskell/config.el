@@ -28,6 +28,10 @@
              #'haskell-collapse-mode ; support folding haskell code blocks
              #'interactive-haskell-mode)
 
+  (when (modulep! +lsp)
+    (add-hook 'haskell-mode-local-vars-hook #'lsp! 'append)
+    (add-hook 'haskell-literate-mode-local-vars-hook #'lsp! 'append))
+
   (add-to-list 'completion-ignored-extensions ".hi")
 
   (map! :map haskell-mode-map
@@ -52,15 +56,14 @@
     '((haskell :url "https://github.com/tree-sitter/tree-sitter-haskell")))
   :config
   (set-repl-handler! 'haskell-ts-mode #'run-haskell :persist t)
-  (set-eglot-client! 'haskell-ts-mode '("haskell-language-server-wrapper" "--lsp")))
+  (set-eglot-client! 'haskell-ts-mode '("haskell-language-server-wrapper" "--lsp"))
+  (when (modulep! +lsp)
+    (add-hook 'haskell-ts-mode-local-vars-hook #'lsp! 'append)))
 
 
 (use-package! lsp-haskell
   :when (modulep! +lsp)
   :defer t
-  :init
-  (add-hook 'haskell-mode-local-vars-hook #'lsp! 'append)
-  (add-hook 'haskell-literate-mode-local-vars-hook #'lsp! 'append)
   :config
   ;; Does some strange indentation if it pastes in the snippet
   (setq-hook! 'haskell-mode-hook yas-indent-line 'fixed))

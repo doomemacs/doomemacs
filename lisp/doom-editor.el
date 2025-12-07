@@ -91,7 +91,8 @@ possible."
       delete-old-versions t ; clean up after itself
       kept-old-versions 5
       kept-new-versions 5
-      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/"))))
+      backup-directory-alist `(("." . ,(concat doom-cache-dir "backup/")))
+      tramp-backup-directory-alist backup-directory-alist)
 
 ;; But turn on auto-save, so we have a fallback in case of crashes or lost data.
 ;; Use `recover-file' or `recover-session' to recover them.
@@ -102,8 +103,8 @@ possible."
       auto-save-include-big-deletions t
       ;; Keep it out of `doom-emacs-dir' or the local directory.
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
-      auto-save-file-name-transforms
-      (list (list ".*" auto-save-list-file-prefix t)))
+      auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
+      tramp-auto-save-directory (concat doom-cache-dir "tramp-autosave/"))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()

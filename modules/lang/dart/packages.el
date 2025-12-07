@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/dart/packages.el
 
-(package! dart-mode :pin "edb45cb7095b1e4f62eaae33e56fe9af5b010213")
+(package! dart-mode :pin "9fbf703e1f8f32be4f864bc532490c6bcd71a746")
 
 (when (and (modulep! +tree-sitter) (treesit-available-p))
   (package! dart-ts-mode
@@ -11,7 +11,7 @@
 
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
-  (package! lsp-dart :pin "34e2a1191f723792d5f366b314cd6b07de4f1566"))
+  (package! lsp-dart :pin "fd8239518026041a07305e88c15ad40faf3c3038"))
 
 (when (modulep! +flutter)
   (package! flutter :pin "e71235d400787d977da7ed792709437899c2a03c")

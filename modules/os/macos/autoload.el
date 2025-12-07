@@ -1,8 +1,10 @@
 ;;; os/macos/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defun +macos-defaults (action &rest args)
   (apply #'doom-call-process "defaults" action args))
 
+;;;###autoload
 (defun +macos-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
   (interactive)

@@ -3,8 +3,8 @@
 
 (package! hideshow :built-in t)
 
-(package! vimish-fold :pin "a6501cbfe3db791f9ca17fd986c7202a87f3adb8")
+(package! vimish-fold :pin "f71f374d28a83e5f15612fa64aac1b2e78be2dcd")
 (when (modulep! :editor evil)
   (package! evil-vimish-fold :pin "b6e0e6b91b8cd047e80debef1a536d9d49eef31a"))
 (when (modulep! :tools tree-sitter)
-  (package! treesit-fold :pin "67b3e63eacd9fd6fdd3834dbc77fe776702a96b2"))
+  (package! treesit-fold :pin "8182ae243a57c3f418ea64ac1e594a210f5dcf16"))

@@ -8,83 +8,83 @@
 ;; Packages
 
 (use-package! calfw
-  :commands cfw:open-calendar-buffer
+  :commands calfw-open-calendar-buffer
   :config
   ;; better frame for calendar
-  (setq cfw:face-item-separator-color nil
-        cfw:render-line-breaker 'cfw:render-line-breaker-none
-        cfw:fchar-junction ?╋
-        cfw:fchar-vertical-line ?┃
-        cfw:fchar-horizontal-line ?━
-        cfw:fchar-left-junction ?┣
-        cfw:fchar-right-junction ?┫
-        cfw:fchar-top-junction ?┯
-        cfw:fchar-top-left-corner ?┏
-        cfw:fchar-top-right-corner ?┓)
+  (setq calfw-face-item-separator-color nil
+        calfw-render-line-breaker 'calfw-render-line-breaker-none
+        calfw-fchar-junction ?╋
+        calfw-fchar-vertical-line ?┃
+        calfw-fchar-horizontal-line ?━
+        calfw-fchar-left-junction ?┣
+        calfw-fchar-right-junction ?┫
+        calfw-fchar-top-junction ?┯
+        calfw-fchar-top-left-corner ?┏
+        calfw-fchar-top-right-corner ?┓)
 
-  (set-popup-rule! "^\\*cfw:details" :quit t :ttl 0 :select t :size 0.4)
+  (set-popup-rule! "^\\*calfw-details" :quit t :ttl 0 :select t :size 0.4)
 
-  (define-key cfw:calendar-mode-map "q" #'+calendar/quit)
+  (define-key calfw-calendar-mode-map "q" #'+calendar/quit)
   (when (modulep! :editor evil +everywhere)
-    (set-evil-initial-state! '(cfw:calendar-mode cfw:details-mode) 'motion)
-    (add-hook! '(cfw:calendar-mode-hook cfw:details-mode-hook) #'evil-normalize-keymaps)
-    (map! (:map cfw:calendar-mode-map
+    (set-evil-initial-state! '(calfw-calendar-mode calfw-details-mode) 'motion)
+    (add-hook! '(calfw-calendar-mode-hook calfw-details-mode-hook) #'evil-normalize-keymaps)
+    (map! (:map calfw-calendar-mode-map
            :m "q"   #'+calendar/quit
-           :m "SPC" #'cfw:show-details-command
-           :m "RET" #'cfw:show-details-command
-           :m "TAB"     #'cfw:navi-prev-item-command
-           :m [tab]     #'cfw:navi-prev-item-command
-           :m [backtab] #'cfw:navi-next-item-command
-           :m "$"   #'cfw:navi-goto-week-end-command
-           :m "."   #'cfw:navi-goto-today-command
-           :m "<"   #'cfw:navi-previous-month-command
-           :m ">"   #'cfw:navi-next-month-command
-           :m "C-h" #'cfw:navi-previous-month-command
-           :m "C-l" #'cfw:navi-next-month-command
-           :m "D"   #'cfw:change-view-day
-           :m "M"   #'cfw:change-view-month
-           :m "T"   #'cfw:change-view-two-weeks
-           :m "W"   #'cfw:change-view-week
-           :m "^"   #'cfw:navi-goto-week-begin-command
-           :m "gr"  #'cfw:refresh-calendar-buffer
-           :m "h"   #'cfw:navi-previous-day-command
-           :m "H"   #'cfw:navi-goto-first-date-command
-           :m "j"   #'cfw:navi-next-week-command
-           :m "k"   #'cfw:navi-previous-week-command
-           :m "l"   #'cfw:navi-next-day-command
-           :m "L"   #'cfw:navi-goto-last-date-command
-           :m "t"   #'cfw:navi-goto-today-command)
-          (:map cfw:details-mode-map
-           :m "SPC" #'cfw:details-kill-buffer-command
-           :m "RET" #'cfw:details-kill-buffer-command
-           :m "TAB"     #'cfw:details-navi-prev-item-command
-           :m [tab]     #'cfw:details-navi-prev-item-command
-           :m [backtab] #'cfw:details-navi-next-item-command
-           :m "q"   #'cfw:details-kill-buffer-command
-           :m "C-h" #'cfw:details-navi-prev-command
-           :m "C-l" #'cfw:details-navi-next-command
-           :m "C-k" #'cfw:details-navi-prev-item-command
-           :m "C-j" #'cfw:details-navi-next-item-command)))
+           :m "SPC" #'calfw-show-details-command
+           :m "RET" #'calfw-show-details-command
+           :m "TAB"     #'calfw-navi-prev-item-command
+           :m [tab]     #'calfw-navi-prev-item-command
+           :m [backtab] #'calfw-navi-next-item-command
+           :m "$"   #'calfw-navi-goto-week-end-command
+           :m "."   #'calfw-navi-goto-today-command
+           :m "<"   #'calfw-navi-previous-month-command
+           :m ">"   #'calfw-navi-next-month-command
+           :m "C-h" #'calfw-navi-previous-month-command
+           :m "C-l" #'calfw-navi-next-month-command
+           :m "D"   #'calfw-change-view-day
+           :m "M"   #'calfw-change-view-month
+           :m "T"   #'calfw-change-view-two-weeks
+           :m "W"   #'calfw-change-view-week
+           :m "^"   #'calfw-navi-goto-week-begin-command
+           :m "gr"  #'calfw-refresh-calendar-buffer
+           :m "h"   #'calfw-navi-previous-day-command
+           :m "H"   #'calfw-navi-goto-first-date-command
+           :m "j"   #'calfw-navi-next-week-command
+           :m "k"   #'calfw-navi-previous-week-command
+           :m "l"   #'calfw-navi-next-day-command
+           :m "L"   #'calfw-navi-goto-last-date-command
+           :m "t"   #'calfw-navi-goto-today-command)
+          (:map calfw-details-mode-map
+           :m "SPC" #'calfw-details-kill-buffer-command
+           :m "RET" #'calfw-details-kill-buffer-command
+           :m "TAB"     #'calfw-details-navi-prev-item-command
+           :m [tab]     #'calfw-details-navi-prev-item-command
+           :m [backtab] #'calfw-details-navi-next-item-command
+           :m "q"   #'calfw-details-kill-buffer-command
+           :m "C-h" #'calfw-details-navi-prev-command
+           :m "C-l" #'calfw-details-navi-next-command
+           :m "C-k" #'calfw-details-navi-prev-item-command
+           :m "C-j" #'calfw-details-navi-next-item-command)))
 
-  (add-hook 'cfw:calendar-mode-hook #'doom-mark-buffer-as-real-h)
-  (add-hook 'cfw:calendar-mode-hook #'hide-mode-line-mode)
+  (add-hook 'calfw-calendar-mode-hook #'doom-mark-buffer-as-real-h)
+  (add-hook 'calfw-calendar-mode-hook #'hide-mode-line-mode)
 
-  (advice-add #'cfw:render-button :override #'+calendar-cfw:render-button-a))
+  (advice-add #'calfw-render-button :override #'+calendar-calfw-render-button-a))
 
 
 (use-package! calfw-org
-  :commands (cfw:open-org-calendar
-             cfw:org-create-source
-             cfw:org-create-file-source
-             cfw:open-org-calendar-withkevin))
+  :commands (calfw-open-org-calendar
+             calfw-org-create-source
+             calfw-org-create-file-source
+             calfw-open-org-calendar-withkevin))
 
 
 (use-package! calfw-cal
-  :commands (cfw:cal-create-source))
+  :commands (calfw-cal-create-source))
 
 
 (use-package! calfw-ical
-  :commands (cfw:ical-create-source))
+  :commands (calfw-ical-create-source))
 
 
 (use-package! org-gcal

@@ -3,7 +3,7 @@
 
 (if (modulep! +eglot)
     (progn
-      (package! eglot :pin "a35ebe774d09421ea891593f8cb671b1656f8b86")
+      (package! eglot :pin "fa8907c1e579b9376b58bfab1ace202f9c4f51b7")
       (when (modulep! :completion vertico)
         (package! consult-eglot :pin "d8b444aac39edfc6473ffbd228df3e9119451b51"))
       (when (modulep! :checkers syntax -flymake)
@@ -18,12 +18,12 @@
   (eval-and-compile (defvar lsp-use-plists t))
 
   (package! lsp-mode
-    :pin "c3b5fea5d6c3227801a69ea14080be29b6c3080e"
+    :pin "4c5360b451cc339c503f210eb8693fc2422c9666"
     :env `(("LSP_USE_PLISTS" . ,(and lsp-use-plists "1"))))
-  (package! lsp-ui :pin "8547cd6abf3b474b3111911bc8ee1452afdfec8f")
+  (package! lsp-ui :pin "e5e38f3058bc6c3a108742ffa1048eebda6e5055")
   (when (modulep! :completion ivy)
-    (package! lsp-ivy :pin "2927cbc776477e23d4a1062568d55793eed33c51"))
+    (package! lsp-ivy :pin "8e0b8fdec086375fd7560857a84cd78f5047ad9d"))
   (when (modulep! :completion helm)
-    (package! helm-lsp :pin "95f21f3f672a3260806531878e7684cde23616b2"))
+    (package! helm-lsp :pin "027897a957032e8752780600b21d2c0ea0cf3201"))
   (when (modulep! :completion vertico)
     (package! consult-lsp :pin "d11102c9db33c4ca7817296a2edafc3e26a61117")))

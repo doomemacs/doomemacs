@@ -12,4 +12,4 @@
     ;;   upstream, but for now:
     (unless (alist-get 'lsp-treemacs doom-packages)
       (package! lsp-treemacs :pin "3e5550f278db74f15ebe34add0138b138207ec08"))
-    (package! lsp-java :pin "9230a0007c79a661028c142f35c7b8d1f9f55453")))
+    (package! lsp-java :pin "acbc074f307a450d44d4285b6475620e394c9f21")))

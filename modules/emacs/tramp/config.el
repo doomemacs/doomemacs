@@ -13,9 +13,7 @@
         remote-file-name-inhibit-auto-save-visited t
         tramp-copy-size-limit (* 1024 1024) ; 1mb
         tramp-use-scp-direct-remote-copying t
-        tramp-completion-reread-directory-timeout 60
-        tramp-backup-directory-alist backup-directory-alist
-        tramp-auto-save-directory  (concat doom-cache-dir "tramp-autosave/"))
+        tramp-completion-reread-directory-timeout 60)
 
   (unless (featurep :system 'windows)
     ;; On windows pscp/scp > ssh, everywhere else ssh is better. sshx is even

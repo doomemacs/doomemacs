@@ -13,4 +13,4 @@
     (package! lsp-julia :pin "c869b2f6c05a97e5495ed3cc6710a33b4faf41a2")))
 
 (when (modulep! +snail)
-  (package! julia-snail :pin "cacf52e4c8db76706e6aa336d38746d15a2b6fe2"))
+  (package! julia-snail :pin "7b50882f5aec33aa9c120f89c2e604f71bdd7a26"))
