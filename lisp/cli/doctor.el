@@ -170,6 +170,15 @@ in."
 
   (print! (start "Checking for common environmental issues..."))
   (print-group!
+    (unless (file-writable-p temporary-file-directory)
+      (print! (error "Your temporary file directory is not writable!"))
+      (explain! "Emacs and Doom uses this directory to store temporary files. It is currently "
+                "set to:\n\n"
+                (format "  %s\n\n" temporary-file-directory)
+                "Set $TMPDIR to a writable directory to fix this. If it is not resolved, Doom "
+                "CLI commands and various Emacs components will unpredictably throw file "
+                "permissions errors at unpredictable times."))
+
     (when (or (string-match-p "/fish$" shell-file-name)
               (string-match-p "/nu\\(?:\\.exe\\)?$" shell-file-name))
       (print! (warn "Detected a non-POSIX $SHELL"))
