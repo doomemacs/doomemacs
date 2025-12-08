@@ -22,4 +22,4 @@
 
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
-  (package! ccls :pin "34251b799eba70739664c5022c37ddc0a14de872"))
+  (package! ccls :pin "12b43b357e834d59191d30d1941bf6bffaee677a"))

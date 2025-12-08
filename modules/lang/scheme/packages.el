@@ -6,7 +6,7 @@
     :recipe (:host gitlab :repo "flatwhatson/scheme-mode")
     :pin "a713b253d2ff5bbaeef400a7d495f7dfe918a641"))
 
-(when (package! geiser :pin "c8b862f00e208f2c09bf2a2b2436af0a466a2531")
+(when (package! geiser :pin "43b9a034aa12d0fd9f27cfdbe7d35affaaf9c19b")
   (package! macrostep-geiser :pin "f6a2d5bb96ade4f23df557649af87ebd0cc45125")
   (when (modulep! +chez)
     (package! geiser-chez :pin "605a81ff7b2d2b275a3ec68e3ce7e5b50f85014d"))
