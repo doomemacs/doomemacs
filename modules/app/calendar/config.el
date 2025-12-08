@@ -73,7 +73,7 @@
 
 
 (use-package! calfw-org
-  :commands (calfw-open-org-calendar
+  :commands (calfw-org-open-calendar
              calfw-org-create-source
              calfw-org-create-file-source
              calfw-open-org-calendar-withkevin))
