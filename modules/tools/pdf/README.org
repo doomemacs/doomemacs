@@ -12,7 +12,7 @@ PDF files. The key difference being pages are not pre-rendered, but instead
 rendered on-demand and stored in memory; a much faster approach, especially for
 larger PDFs.
 
-Displaying PDF files is just one function of [[doom-package:pdf-tools]]. See [[https://github.com/politza/pdf-tools][its project website]]
+Displaying PDF files is just one function of [[doom-package:pdf-tools]]. See [[https://github.com/vedang/pdf-tools][its project website]]
 for details and videos.
 
 ** Maintainers
