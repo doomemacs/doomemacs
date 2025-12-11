@@ -13,22 +13,23 @@ body:
       > - This is not the place for feature requests, general user support, PSAs, or discussions/RFCs. Those belong on [our Github discussion board](https://doomemacs.org/discuss) or [our Discord server](https://doomemacs.org/discord) — whichever you prefer.
       > - Make sure your issue hasn't already been reported or addressed: search the issue tracker, [documentation](https://docs.doomemacs.org), [FAQ](https://docs.doomemacs.org/-/faq), [discussion board](https://doomemacs.org/discuss), and [Google](https://google.com).
       > - Read [the debugging guide](https://discourse.doomemacs.org/t/55) for ways to extract more information from your issue.
-      > - Include [backtraces](https://discourse.doomemacs.org/t/85) for any reported error messages.
+      > - Include [backtraces](https://discourse.doomemacs.org/t/85) for any error messages.
       >
-      > Bug reports that are unactionable, vague, or too broad (or are otherwise unhelpful to posterity) **will be closed and queued for deletion**. Please understand that Emacs' complexity produces *many* false positives and open-ended bug reports that we lack the manpower to investigate at length, and keeping them around only pollutes search engines indices and makes it harder for users and maintainers to follow legitimate issues.
+      > Bug reports that are unactionable, vague, or too broad (or are otherwise unhelpful to posterity) **will be closed and queued for deletion**, with notice. Please understand that we get *many* false positives and open-ended bug reports that we lack the manpower to investigate at length. Keeping them around only pollutes search engines indices and makes it harder to find and follow legitimate issues.
 - type: textarea
   attributes:
     label: Describe your issue
     description: |
-      Please try to include as much information as possible. Such as:
+      Include as much information as possible. Such as:
 
       - **A [backtrace](https://discourse.doomemacs.org/t/85) for any error messages.**
       - Any recent errors/warnings in the \*Messages\* buffer (`C-h e` to open it).
       - Better explanations than "X does not work".
       - Any attempts you made to resolve the issue yourself, and their result.
       - Screenshots or screencasts, if possible.
+      - Please disclose what parts are written by AI.
 
-      **Take the time to properly format code and text dumps with [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) or use a [pastebin](https://pastebin.com) (or similar) service.**
+      **Please format code and large text dumps with [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) or use [pastebin](https://pastebin.com) (or similar).**
     placeholder: |
       When I do X, it should do Y, but it does Z instead, which throws an error. Here is the backtrace:
 
@@ -45,14 +46,13 @@ body:
 - type: textarea
   attributes:
     label: Steps to reproduce
-    description: >
-      Walk us through a minimal test case. Please spell out any keybinds and assume the reader knows little about Doom and/or Emacs.
     placeholder: |
-      1. Open Emacs
-      2. `M-x doom/info` and be prompted to visit pastebin.com
-      3. Press `y` to open pastebin.com in browser
-      4. Paste the contents of my clipboard into text box
-      5. Click "Create New Paste"
+      1. Open Emacs,
+      2. `M-x doom/info` and be prompted to visit pastebin.com,
+      3. Press `y` to open pastebin.com in browser,
+      4. Paste the contents of my clipboard into text box,
+      5. Click "Create New Paste,"
+      6. Post it in the "System information" text box below.
   validations:
     required: true
 - type: input
@@ -60,7 +60,7 @@ body:
   attributes:
     label: System information
     description: |
-      Execute `M-x doom/info` or `$EMACSDIR/bin/doom info`, post their output to [pastebin](https://pastebin.com) (or a similar service with pastebins that don't expire), and paste the link to it below. **Please do not paste multi-line output directly into this text box! It pollutes our search engine results and makes it harder for others to find issues!**
+      Grab the output from `M-x doom/info` or `$EMACSDIR/bin/doom info` and post it to [pastebin](https://pastebin.com) (or similar), then paste the link below. **Please do not paste your `doom-info` directly into this text box!**
     placeholder: https://pastebin.com/fakeurl
   validations:
     required: true
@@ -68,17 +68,9 @@ body:
   attributes:
     label: Disclosures
     description:
-      Please check off any that apply. These disclosures help us assess your issue(s) faster and more accurately.
+      Check off any that apply to help us assess your issue(s) more accurately.
     options:
-      - label: >
-          This issue was written by AI.
-      - label: >
-          I used AI extensively to investigate this issue.
-      - label: >
-          My issue was observed on a stable and supported release of GNU Emacs (must not end in `.50`, `.60`, or `.90`–`.99`, e.g. `30.0.50`).
-      - label: >
-          A [backtrace](https://discourse.doomemacs.org/t/85) is provided for each error I've reported (if any).
-        required: true
+      - label: This issue was written with/by AI.
 - type: markdown
   attributes:
     value: |
