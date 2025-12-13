@@ -7,6 +7,7 @@
 (package! transient :pin "0d3f8d4fb6d41b841126820a06ecc98579bd8265") ; 0.11.0
 (package! magit :pin "b828afbb4b45641998fb6483a08effb1efb214e1") ; 4.4.2
 (when (modulep! +forge)
+  (package! closql :pin "4a60723ae4bfe809a9affcf3306cb40e0ca1ca6c") ; 2.3.2
   (package! forge
     :pin "71910a26e360bfe88eb81b47f377f7694161fe9b" ; 0.6.2
     ;; forge depends on ghub, which requires Emacs 29.1+
