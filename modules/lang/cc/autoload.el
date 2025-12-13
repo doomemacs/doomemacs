@@ -25,14 +25,14 @@
        '++))
 
 ;;;###autoload
-(defun +cc-lineup-arglist-close (langlem)
+(defun +cc-lineup-arglist-close (langelem)
   "Line up the closing brace in an arglist with the opening brace IF cursor is
 preceded by the opening brace or a comma (disregarding whitespace in between)."
   (when (save-excursion
           (save-match-data
             (skip-chars-backward " \t\n" (c-langelem-pos langelem))
             (memq (char-before) (list ?, ?\( ?\;))))
-    (c-lineup-arglist langlem)))
+    (c-lineup-arglist langelem)))
 
 (defun +cc--re-search-for (regexp)
   (save-excursion
