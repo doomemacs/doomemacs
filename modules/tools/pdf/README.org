@@ -12,7 +12,7 @@ PDF files. The key difference being pages are not pre-rendered, but instead
 rendered on-demand and stored in memory; a much faster approach, especially for
 larger PDFs.
 
-Displaying PDF files is just one function of [[doom-package:pdf-tools]]. See [[https://github.com/politza/pdf-tools][its project website]]
+Displaying PDF files is just one function of [[doom-package:pdf-tools]]. See [[https://github.com/vedang/pdf-tools][its project website]]
 for details and videos.
 
 ** Maintainers
@@ -60,7 +60,7 @@ build the =epdfinfo= program on Windows.
 3. Install PDF tools in Emacs, but do not try to compile the server. Instead,
    get a separate copy of the source somewhere else:
    #+begin_src sh
-   git clone https://github.com/politza/pdf-tools
+   git clone https://github.com/vedang/pdf-tools
    #+end_src
 
 4. Open mingw64 shell (Note: You must use mingw64.exe and not msys2.exe)
