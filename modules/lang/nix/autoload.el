@@ -27,6 +27,7 @@
        (save-excursion
          (skip-chars-forward "^ ")
          (point))))))
+  (require 'nixos-options)
   (cond ((modulep! :completion helm)
          (require 'helm-nixos-options)
          ;; REVIEW We reimplment `helm-nixos-options' so we can supply
@@ -35,7 +36,6 @@
                :buffer "*helm-nixos-options*"
                :input initial-input))
         ((modulep! :completion ivy)
-         (require 'nixos-options)
          (ivy-read "NixOS options: "
                    nixos-options
                    :require-match t

@@ -32,6 +32,7 @@ Includes:
 - [[doom-package:nix-mode]]
 - [[doom-package:nix-ts-mode]] if [[doom-module:+tree-sitter]]
 - [[doom-package:nix-update]]
+- [[doom-package:nixos-options]]
 
 ** Hacks
 /No hacks documented for this module./
