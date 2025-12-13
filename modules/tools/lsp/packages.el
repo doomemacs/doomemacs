@@ -18,7 +18,7 @@
   (eval-and-compile (defvar lsp-use-plists t))
 
   (package! lsp-mode
-    :pin "4c5360b451cc339c503f210eb8693fc2422c9666"
+    :pin "596e6dadef1a8e1a3552e44f118d6d0c7b7d1c54"
     :env `(("LSP_USE_PLISTS" . ,(and lsp-use-plists "1"))))
   (package! lsp-ui :pin "e5e38f3058bc6c3a108742ffa1048eebda6e5055")
   (when (modulep! :completion ivy)
