@@ -72,7 +72,7 @@
                          '(("language_server.bat")
                            ("language_server.sh")))
                  (executable-find "elixir-ls"))
-        (setq lsp-elixir-server-command "elixir-ls"))))
+        (setq lsp-elixir-server-command '("elixir-ls")))))
   :config
   (+elixir-common-config 'elixir-mode))
 
