@@ -88,6 +88,13 @@ Respects `diff-hl-disable-on-remote'."
   ;; UX: get realtime feedback in diffs after staging/unstaging hunks.
   (setq diff-hl-show-staged-changes nil)
 
+  ;; PERF: MacOS appears to struggle with async processes, causing Emacs to slow
+  ;;   to a crawl/freeze. Possibly because diff-hl fires off too many git
+  ;;   processes, so we tone it down there.
+  (when (featurep :system 'macos)
+    (setq diff-hl-update-async nil
+          diff-hl-flydiff-delay 2.0))
+
   ;; UX: Update diffs when it makes sense too, without being too slow
   (when (modulep! :editor evil)
     (map! :after diff-hl-show-hunk
