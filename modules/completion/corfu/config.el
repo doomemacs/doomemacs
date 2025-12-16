@@ -41,7 +41,10 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
   :hook (doom-first-input . global-corfu-mode)
   :config
   (setq corfu-auto t
-        corfu-auto-delay 0.24
+        corfu-auto-delay
+        (if (featurep :system 'macos)
+            0.4  ; MacOS is slower, so go easy on it
+          0.24)
         corfu-auto-prefix 2
         global-corfu-modes
         '((not erc-mode

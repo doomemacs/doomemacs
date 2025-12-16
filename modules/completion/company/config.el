@@ -11,7 +11,10 @@
         company-tooltip-limit 14
         company-tooltip-align-annotations t
         company-require-match 'never
-        company-idle-delay 0.26
+        company-idle-delay
+        (if (featurep :system 'macos)
+            0.4  ; MacOS is slower, so go easy on it
+          0.26)
         company-global-modes
         '(not erc-mode
               circe-mode
