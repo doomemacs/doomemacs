@@ -28,6 +28,19 @@ the first, fresh scratch buffer you create. This accepts:
 (defvar doom-scratch-buffer-hook ()
   "The hooks to run after a scratch buffer is created.")
 
+(defun doom--scratch-buffer-initial-mode ()
+  "Return the initial major mode for a new scratch buffer.
+Respects `doom-scratch-initial-major-mode' configuration."
+  (cond ((eq doom-scratch-initial-major-mode t)
+         (unless (or buffer-read-only
+                     (derived-mode-p 'special-mode)
+                     (string-match-p "^ ?\\*" (buffer-name)))
+           major-mode))
+        ((null doom-scratch-initial-major-mode)
+         nil)
+        ((symbolp doom-scratch-initial-major-mode)
+         doom-scratch-initial-major-mode)))
+
 
 (defun doom--load-persistent-scratch-buffer (project-name)
   (setq-local doom-scratch-current-project
@@ -134,15 +147,7 @@ If PROJECT-P is non-nil, open a persistent scratch buffer associated with the
        #'pop-to-buffer)
      (doom-scratch-buffer
       arg
-      (cond ((eq doom-scratch-initial-major-mode t)
-             (unless (or buffer-read-only
-                         (derived-mode-p 'special-mode)
-                         (string-match-p "^ ?\\*" (buffer-name)))
-               major-mode))
-            ((null doom-scratch-initial-major-mode)
-             nil)
-            ((symbolp doom-scratch-initial-major-mode)
-             doom-scratch-initial-major-mode))
+      (doom--scratch-buffer-initial-mode)
       default-directory
       (when project-p
         (doom-project-name))))))
@@ -171,6 +176,31 @@ window.
 If passed the prefix ARG, do not restore the last scratch buffer."
   (interactive "P")
   (doom/open-project-scratch-buffer arg 'same-window))
+
+;;;###autoload
+(defun doom/toggle-scratch-buffer (&optional arg project-p same-window-p)
+  "Toggle a persistent scratch buffer.
+
+If the scratch buffer is visible, close its window. Otherwise, open it.
+If passed the prefix ARG, do not restore the last scratch buffer.
+If PROJECT-P is non-nil, use a project-associated scratch buffer."
+  (interactive "P")
+  (let* ((project-name (when project-p (doom-project-name)))
+         (buf (doom-scratch-buffer arg (doom--scratch-buffer-initial-mode)
+                                   default-directory project-name))
+         (win (get-buffer-window buf)))
+    (if win
+        (delete-window win)
+      (funcall (if same-window-p #'switch-to-buffer #'pop-to-buffer) buf))))
+
+;;;###autoload
+(defun doom/toggle-project-scratch-buffer (&optional arg same-window-p)
+  "Toggle the project-associated scratch buffer.
+
+If the scratch buffer is visible, close its window. Otherwise, open it.
+If passed the prefix ARG, do not restore the last scratch buffer."
+  (interactive "P")
+  (doom/toggle-scratch-buffer arg 'project same-window-p))
 
 ;;;###autoload
 (defun doom/revert-scratch-buffer ()
