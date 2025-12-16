@@ -3,6 +3,11 @@
 #+created:  April 11, 2018
 #+since:    21.12.0 (#524)
 
+#+begin_quote
+  *This module is deprecated* and will be replaced with a new module based on
+    [[https://github.com/astoff/code-cells.el][code-cells.el]]. Consider looking in that if you need an alternative.
+#+end_quote
+
 * Description :unfold:
 Adds [[https://jupyter.org/][Jupyter]] notebook integration into Emacs.
 
