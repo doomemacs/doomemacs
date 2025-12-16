@@ -5,6 +5,11 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(when (and (modulep! +tree-sitter)
+           (treesit-available-p)
+           (< emacs-major-version 31))
+  (warn! "Tree-sitter support before Emacs 31 is rudimentary. Upgrade to 31+ for better support"))
+
 (when (require 'markdown-mode nil t)
   (cond ((eq markdown-command #'+markdown-compile)
          (unless (cl-loop for (exe . cmd) in (list (cons "marked" '+markdown-compile-marked)

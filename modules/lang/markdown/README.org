@@ -35,8 +35,9 @@ for Markdown's syntax is the format of plain text email. -- John Gruber
   previews of your markdown (or org) files.
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]]. Note that tree-sitter
-  support on Emacs 31 is superior to 30 and under.
+  editing. Requires [[doom-module::tools tree-sitter]]. Tree-sitter support for
+  Markdown is rudimentary in Emacs 30 or older. Upgrade to 31 for better
+  support.
 
 ** Packages
 - [[doom-package:edit-indirect]]
@@ -60,6 +61,8 @@ for Markdown's syntax is the format of plain text email. -- John Gruber
 This module requires:
 - A linter (requires [[doom-module::checkers syntax]])
 - A markdown compiler, for previewing Markdown
+- Tree-sitter support in Emacs 30 and older is rudimentary. Upgrade to Emacs 31+
+  for better (and native) support.
 
 ** Linters
 Out of the box, flycheck recognizes these checkers for markdown-mode and
