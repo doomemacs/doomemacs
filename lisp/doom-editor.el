@@ -103,7 +103,11 @@ possible."
       auto-save-include-big-deletions t
       ;; Keep it out of `doom-emacs-dir' or the local directory.
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
-      auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
+      auto-save-file-name-transforms
+      `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+         ;; Prefix tramp autosaves to prevent conflicts with local ones
+         ,(concat auto-save-list-file-prefix "tramp-\\2") t)
+        (".*" ,auto-save-list-file-prefix t))
       tramp-auto-save-directory (concat doom-cache-dir "tramp-autosave/"))
 
 (add-hook! 'after-save-hook
