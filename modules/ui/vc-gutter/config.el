@@ -107,13 +107,18 @@ Respects `diff-hl-disable-on-remote'."
   (add-hook! '(doom-escape-hook doom-switch-window-hook doom-switch-frame-hook) :append
     (defun +vc-gutter-update-h (&rest _)
       "Return nil to prevent shadowing other `doom-escape-hook' hooks."
-      (ignore (and (or (bound-and-true-p diff-hl-mode)
-                       (bound-and-true-p diff-hl-dir-mode))
-                   (or (null +vc-gutter--last-state)
-                       (not (equal +vc-gutter--last-state
-                                   (symbol-plist (intern (expand-file-name buffer-file-name)
-                                                         vc-file-prop-obarray)))))
-                   (diff-hl-update)))))
+      (and (or (bound-and-true-p diff-hl-mode)
+               (bound-and-true-p diff-hl-dir-mode))
+           (buffer-file-name (buffer-base-buffer))
+           (not ; debouncing
+            (equal +vc-gutter--last-state
+                   (setq +vc-gutter--last-state
+                         (cons (point)
+                               (copy-sequence
+                                (symbol-plist
+                                 (intern (expand-file-name buffer-file-name)
+                                         vc-file-prop-obarray)))))))
+           (ignore (diff-hl-update)))))
   ;; UX: Update diff-hl when magit alters git state.
   (when (modulep! :tools magit)
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
