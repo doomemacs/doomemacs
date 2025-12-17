@@ -75,9 +75,8 @@
 (eval-when-compile (require 'subr-x))
 
 (eval-and-compile
-  ;; Doom core supports Emacs 27.1 and newer. However, keep in mind that modules
-  ;; may have different requirements (e.g. the official module library requires
-  ;; 29.x or newer).
+  ;; Doom core supports Emacs 27.1+. However, keep in mind that modules may have
+  ;; different requirements (e.g. the official module library requires 28.1+).
   (when (< emacs-major-version 27)
     (user-error
      (concat
@@ -576,19 +575,19 @@ uses a straight or package.el command directly).")
 ;;   trouble of setting a million directory/file variables.
 (setq user-emacs-directory doom-profile-cache-dir)
 
-;; ...However, this may surprise packages (and users) that read
+;; ...However, this can surprise packages (and users) that read
 ;; `user-emacs-directory' expecting to find the location of your Emacs config,
 ;; such as server.el!
 (setq server-auth-dir (file-name-concat doom-emacs-dir "server/"))
 
-;; Packages with file/dir settings that don't use `user-emacs-directory' or
-;; `locate-user-emacs-file' to initialize will need to set explicitly, to stop
-;; them from littering in ~/.emacs.d/.
+;; If a packages doesn't use `user-emacs-directory' or `locate-user-emacs-file'
+;; to set their file/dir variables, then we need to set them ourselves to avoid
+;; littering in ~/.emacs.d/.
 (setq desktop-dirname  (file-name-concat doom-profile-state-dir "desktop")
       pcache-directory (file-name-concat doom-profile-cache-dir "pcache/"))
 
-;; Allow the user to store custom.el-saved settings and themes in their Doom
-;; config (e.g. ~/.doom.d/).
+;; Write custom.el settings to $DOOMDIR/custom.el instead of $EMACSDIR/init.el,
+;; allowing users to version control them and not interfere with Doom init.
 (setq custom-file (file-name-concat doom-user-dir "custom.el"))
 
 (define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)
@@ -611,18 +610,17 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
   (setq native-comp-async-report-warnings-errors init-file-debug
         native-comp-warning-on-missing-source init-file-debug)
 
-  ;; HACK: `native-comp-deferred-compilation-deny-list' is replaced in later
-  ;;   versions of Emacs 29, and with no deprecation warning. I alias them to
-  ;;   ensure backwards compatibility for packages downstream that may have not
-  ;;   caught up yet. I avoid marking it obsolete because obsolete warnings are
-  ;;   unimportant to end-users. It's the package devs that should be informed.
+  ;; HACK: `native-comp-deferred-compilation-deny-list' is replaced in Emacs 29,
+  ;;   and with no deprecation warning. This alias ensures backwards
+  ;;   compatibility for packages downstream. I don't mark it obsolete because
+  ;;   those warnings should be shown to package devs not end-users.
   (unless (boundp 'native-comp-deferred-compilation-deny-list)
     (defvaralias 'native-comp-deferred-compilation-deny-list 'native-comp-jit-compilation-deny-list))
 
-  ;; UX: By default, native-comp uses 100% of half your cores. If you're
-  ;;   expecting this this should be no issue, but the sudden (and silent) spike
-  ;;   of CPU and memory utilization can alarm folks, overheat laptops, or
-  ;;   overwhelm less performant systems.
+  ;; UX: By default, native-comp uses half your cores (and tends to saturate
+  ;;   them). The sudden (and silent) spike of CPU and memory utilization alarms
+  ;;   folks, overheats laptops, and overwhelms less performant systems, so
+  ;;   default to 1/4 of cores instead.
   (define-advice comp-effective-async-max-jobs (:before (&rest _) set-default-cpus)
     "Default to 1/4 of cores in interactive sessions and all of them otherwise."
     (and (null comp-num-cpus)
@@ -631,9 +629,9 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
                (max 1 (/ (num-processors) (if noninteractive 1 4))))))
 
   (define-advice comp-run-async-workers (:around (fn &rest args) dont-litter-tmpdir)
-    "Normally, native-comp writes a ton to /tmp. This advice forces it to write
-to `doom-profile-cache-dir' instead, so it can be safely cleaned up as part of
-'doom sync' or 'doom gc'."
+    "Normally, native-comp writes a ton to /tmp. This advice redirects this IO
+to `doom-profile-cache-dir' instead, so it doesn't OOM tmpfs users and can be
+safely cleaned up with 'doom sync' or 'doom gc'."
     (let ((temporary-file-directory (expand-file-name "comp/" doom-profile-cache-dir)))
       (make-directory temporary-file-directory t)
       (apply fn args)))
