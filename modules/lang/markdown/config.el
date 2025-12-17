@@ -132,9 +132,19 @@ capture, the end position, and the output buffer.")
 
 (use-package! markdown-ts-mode  ; 31+ only
   :when (modulep! +tree-sitter)
+  ;; Emacs 31+ provides `markdown-ts-mode', but for pre-31 users, I use
+  ;; LionyxML/markdown-ts-mode, which neither autoloads the modes nor defines
+  ;; the `markdown' and `markdown-inline' grammars, so redundancy here is fine.
+  :commands (markdown-ts-mode)
   :defer t
   :init
-  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode '(markdown markdown-inline)))
+  (set-tree-sitter! 'markdown-mode 'markdown-ts-mode
+    `((markdown :url "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+                :rev ,(if (< (treesit-library-abi-version) 15) "v0.4.1" "v0.5.1")
+                :source-dir "tree-sitter-markdown/src")
+      (markdown-inline :url "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+                       :rev ,(if (< (treesit-library-abi-version) 15) "v0.4.1" "v0.5.1")
+                       :source-dir "tree-sitter-markdown-inline/src"))))
 
 
 (use-package! evil-markdown
