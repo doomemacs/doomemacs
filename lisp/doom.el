@@ -75,8 +75,9 @@
 (eval-when-compile (require 'subr-x))
 
 (eval-and-compile
-  ;; Doom core supports Emacs 27.1+. However, keep in mind that modules may have
-  ;; different requirements (e.g. the official module library requires 28.1+).
+  ;; Doom core supports Emacs 27.1+, but its official module library requires
+  ;; 28.1+. Also keep in mind that certain modules may have stricter
+  ;; requirements (e.g.  tree-sitter needs 29.1+).
   (when (< emacs-major-version 27)
     (user-error
      (concat

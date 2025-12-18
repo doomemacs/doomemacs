@@ -99,12 +99,10 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 # Prerequisites
 - **Required:**
-  - GNU Emacs 27.1–30.2
-    - 30.2 is recommended (fastest and most stable)
-    - Doom's modules require >=28.1
-      - Tree-sitter support requires >= 29.1
-      - JS(X)/TS(X) support is far better on >= 30.1 (w/ tree-sitter)
-    - Doom's core requires >=27.1
+  - GNU Emacs 27.1–30.2 (30.2 is recommended)
+    - If only using Doom's core, 27.1+ is required.
+    - If using Doom's modules, 28.1+ is required.
+    - Tree-sitter support requires 29.1+, but much improved in 30.1+.
   - Git >= 2.23
   - [ripgrep] >= 11.0
 - **Optional, but recommended:**
@@ -113,10 +111,10 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
   - Symbola font (Emacs' fallback font for glyphs it can't display)
 
 > [!WARNING]
-> Unstable and pre-release builds of Emacs -- which end in `.50`, `.60`, or
-> `.9X` (e.g. `28.1.91`) -- **are not officially supported**. There *is* some
-> effort to support Emacs HEAD, however. [Follow this Discourse
-> post](https://discourse.doomemacs.org/t/3241) for details.
+> **Avoid unstable and pre-release builds of Emacs.** These end in `.50`, `.60`,
+> or `.9X` (e.g. `28.1.91`). Doom should generally work on Emacs HEAD (the
+> maintainer dogfoods it), but support lags behind the bleeding edge by at least
+> a month or so.
  
 > [!IMPORTANT]
 > Doom is comprised of [~150 optional modules][Modules], some of which may have
