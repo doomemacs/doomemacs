@@ -35,7 +35,8 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
   Add support for the pyright LSP server (requires [[doom-module:+lsp]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]]. Support is much improved on
+  Emacs 30 and newer.
 
 ** Packages
 - [[doom-package:anaconda-mode]]
