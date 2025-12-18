@@ -98,6 +98,13 @@ variable ([[kbd:][SPC h v system-configuration-options]]).
   =emacsPackagesFor= from =unstable= or another channel. Otherwise arbitrary
   functionality of =vterm= might not work.
 
+- Guix: ~guix install emacs-vterm~
+
+  =emacs-vterm= contains a version of vterm-module.so, so you don't need to
+  compile it.
+  You can also install this package through system packages or home packages
+  and it will work.
+
 ** Compilation tools for vterm-module.so
 When you first load vterm, it will compile =vterm-module.so= for you. For this
 to succeed, you need the following:
