@@ -103,12 +103,14 @@ possible."
       auto-save-include-big-deletions t
       ;; Keep it out of `doom-emacs-dir' or the local directory.
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
+      ;; Emacs generates long file paths for its auto-save files; long =
+      ;; `auto-save-list-file-prefix' + `buffer-file-name'. If too long, some
+      ;; filesystems will murder your family. The `sha1' compresses the path
+      ;; into a ~40 character hash. 28+ only!
       auto-save-file-name-transforms
       `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-         ;; Prefix tramp autosaves to prevent conflicts with local ones
-         ,(concat auto-save-list-file-prefix "tramp-\\2") t)
-        (".*" ,auto-save-list-file-prefix t))
-      tramp-auto-save-directory (concat doom-cache-dir "tramp-autosave/"))
+         ,(concat auto-save-list-file-prefix "tramp/") sha1)
+        (".*" ,auto-save-list-file-prefix sha1)))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
@@ -130,30 +132,8 @@ tell you about it. Very annoying. This prevents that."
   (letf! ((#'sit-for #'ignore))
     (apply fn args)))
 
-;; HACK: Emacs generates long file paths for its auto-save files; long =
-;;   `auto-save-list-file-prefix' + `buffer-file-name'. If too long, the
-;;   filesystem will murder your family. To appease it, I compress
-;;   `buffer-file-name' to a stable 40 characters.
-;; TODO: PR this upstream; should be a universal issue!
-(defadvice! doom-make-hashed-auto-save-file-name-a (fn)
-  "Compress the auto-save file name so paths don't get too long."
-  :around #'make-auto-save-file-name
-  (let ((buffer-file-name
-         (if (or
-              ;; Don't do anything for non-file-visiting buffers. Names
-              ;; generated for those are short enough already.
-              (null buffer-file-name)
-              ;; If an alternate handler exists for this path, bow out. Most of
-              ;; them end up calling `make-auto-save-file-name' again anyway, so
-              ;; we still achieve this advice's ultimate goal.
-              (find-file-name-handler buffer-file-name
-                                      'make-auto-save-file-name))
-             buffer-file-name
-           (sha1 buffer-file-name))))
-    (funcall fn)))
-
-;; HACK: ...does the same for Emacs backup files, but also packages that use
-;;   `make-backup-file-name-1' directly (like undo-tree).
+;; HACK: Make sure backup files (like undo-tree's) don't have ridiculously long
+;;   file names that some filesystems will refuse.
 (defadvice! doom-make-hashed-backup-file-name-a (fn file)
   "A few places use the backup file name so paths don't get too long."
   :around #'make-backup-file-name-1
