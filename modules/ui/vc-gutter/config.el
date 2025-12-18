@@ -89,6 +89,15 @@ Respects `diff-hl-disable-on-remote'."
   ;; UX: get realtime feedback in diffs after staging/unstaging hunks.
   (setq diff-hl-show-staged-changes nil)
 
+  ;; HACK: diff-hl exploits the auto-save mechanism to generate its temp file
+  ;;   paths in /tmp (in `diff-hl-diff-buffer-with-reference'), which triggers
+  ;;   an "autosave file in local temp dir, do you want to continue?" prompt
+  ;;   anytime diff-hl wants to save one for TRAMP buffers.
+  ;; REVIEW: PR a better default upstream?
+  (defadvice! +vc-gutter--silence-temp-file-prompts-a (fn &rest args)
+    :around #'diff-hl-diff-buffer-with-reference
+    (let ((tramp-allow-unsafe-temporary-files t))
+      (apply fn args)))
 
   ;; UX: Update diffs when it makes sense too, without being too slow
   (when (modulep! :editor evil)
