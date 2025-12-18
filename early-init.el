@@ -51,7 +51,7 @@
   ;;   startup more verbose sooner.
   (let ((debug (getenv-internal "DEBUG")))
     (when (stringp debug)
-      (if (string-empty-p debug)
+      (if (string= debug "")
           (setenv "DEBUG" nil)
         (setq init-file-debug t
               debug-on-error t))))
