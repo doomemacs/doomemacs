@@ -122,7 +122,7 @@ Respects `diff-hl-disable-on-remote'."
                (bound-and-true-p diff-hl-dir-mode))
            (buffer-file-name (buffer-base-buffer))
            (not ; debouncing
-            (equal +vc-gutter--last-state
+            (equal (cons (point) +vc-gutter--last-state)
                    (setq +vc-gutter--last-state
                          (cons (point)
                                (copy-sequence
