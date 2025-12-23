@@ -103,14 +103,22 @@ possible."
       auto-save-include-big-deletions t
       ;; Keep it out of `doom-emacs-dir' or the local directory.
       auto-save-list-file-prefix (concat doom-profile-cache-dir "autosave/")
-      ;; Emacs generates long file paths for its auto-save files; long =
-      ;; `auto-save-list-file-prefix' + `buffer-file-name'. If too long, some
-      ;; filesystems will murder your family. The `sha1' compresses the path
-      ;; into a ~40 character hash. 28+ only!
+      ;; This resolves two issue while ensuring auto-save files are still
+      ;; reasonably recognizable at a glance:
+      ;;
+      ;; 1. Emacs generates long file paths for its auto-save files; long =
+      ;;    `auto-save-list-file-prefix' + `buffer-file-name'. If too long, some
+      ;;    filesystems (*cough*Windows) will murder your family. `sha1'
+      ;;    compresses the path into a ~40 character hash (Emacs 28+ only)!
+      ;; 2. The default transform rule writes TRAMP auto-save files to
+      ;;    `temporary-file-directory', which TRAMP doesn't like! It'll prompt
+      ;;    you about it every time an auto-save file is written, unless
+      ;;    `tramp-allow-unsafe-temporary-files' is set. A more sensible default
+      ;;    transform is better:
       auto-save-file-name-transforms
       `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-         ,(concat auto-save-list-file-prefix "tramp/") sha1)
-        (".*" ,auto-save-list-file-prefix sha1)))
+         ,(file-name-concat auto-save-list-file-prefix "tramp" "\\2-") sha1)
+        ("\\([^/]+\\)\\'" ,(file-name-concat auto-save-list-file-prefix "\\1-") sha1)))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
@@ -134,6 +142,8 @@ tell you about it. Very annoying. This prevents that."
 
 ;; HACK: Make sure backup files (like undo-tree's) don't have ridiculously long
 ;;   file names that some filesystems will refuse.
+;; REVIEW: PR this upstream, like they have with the UNIQUIFY argument in
+;;   `auto-save-file-name-transforms' entries.
 (defadvice! doom-make-hashed-backup-file-name-a (fn file)
   "A few places use the backup file name so paths don't get too long."
   :around #'make-backup-file-name-1
