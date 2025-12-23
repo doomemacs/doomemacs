@@ -1,12 +1,5 @@
 ;;; emacs/tramp/config.el -*- lexical-binding: t; -*-
 
-;; Prefix tramp autosaves to prevent conflicts with local ones
-(cl-pushnew (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-                  (concat auto-save-list-file-prefix "tramp-\\2") t)
-            auto-save-file-name-transforms
-            :test #'equal)
-
-
 (after! tramp
   (setq remote-file-name-inhibit-cache 60
         remote-file-name-inhibit-locks t
