@@ -117,8 +117,13 @@ possible."
       ;;    transform is better:
       auto-save-file-name-transforms
       `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-         ,(file-name-concat auto-save-list-file-prefix "tramp" "\\2-") sha1)
+         ,(file-name-concat auto-save-list-file-prefix "tramp-\\2-") sha1)
         ("\\([^/]+\\)\\'" ,(file-name-concat auto-save-list-file-prefix "\\1-") sha1)))
+
+(add-hook! 'auto-save-hook
+  (defun doom-ensure-auto-save-prefix-exists-h ()
+    (with-file-modes #o700
+      (make-directory auto-save-list-file-prefix t))))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
