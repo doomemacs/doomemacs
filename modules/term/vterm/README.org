@@ -84,20 +84,8 @@ module support.
   might not work.
 - Guix: ~$ guix install emacs-vterm~
 
-  =emacs-vterm= provides a pre-built =vterm-module.so=, so you don't have to compile
-  it yourself, but you'll need to symlink it somewhere in Emacs' ~load-path~. E.g.
-  #+begin_src sh
-  $ guix install emacs-vterm
-  $ cd ~/.config/doom
-  $ mkdir lib
-  $ ln -s ~/.guix-profile/lib/vterm-module.so lib/
-  #+end_src
-
-  Then tell Emacs how to find it:
-  #+begin_src elisp
-  ;; add to $DOOMDIR/config.el
-  (add-to-list 'load-path (expand-file-name "lib/" doom-user-dir))
-  #+end_src
+  [[https://packages.guix.gnu.org/packages/emacs-vterm/][emacs-vterm]] provides a pre-built =vterm-module.so=, so you don't have to
+  compile it yourself. It can also be installed through system or home packages.
 
 ** Compilation tools for vterm-module.so
 When you first load vterm, it will attempt to compile =vterm-module.so= for you.

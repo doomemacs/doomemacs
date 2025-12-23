@@ -45,16 +45,7 @@ build the =epdfinfo= program on Windows.
 Build instructions for various OSes can be found [[https://github.com/vedang/pdf-tools?tab=readme-ov-file#installing-the-epdfinfo-server-from-package-managers][on the pdf-tools README]].
 
 ** Building epdfinfo on Guix
-The emacs-pdf-tools package provides a prebuilt =epdfinfo=:
-#+begin_src sh
-$ guix install emacs-pdf-tools
-#+end_src
-
-The =pdf-tools= package needs to be told where to find it:
-#+begin_src elisp
-;;; add to $DOOMDIR/config.el
-(setq pdf-info-epdfinfo-program "~/.guix-profile/bin/epdfinfo")
-#+end_src
+The [[https://packages.guix.gnu.org/packages/emacs-pdf-tools][emacs-pdf-tools]] package provides a prebuilt =epdfinfo=.
 
 ** Building =epdfinfo= on Windows
 1. [[https://www.msys2.org/][Install MSYS2]] and update the package database and core packages using the
