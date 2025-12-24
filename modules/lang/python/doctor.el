@@ -12,13 +12,9 @@
              (fboundp 'python-ts-mode))
          "Can't find `python-ts-mode'; Emacs 29.1+ is required")
 
-(if (not (or (executable-find "python")
-             (executable-find "python3")))
-    (error! "Couldn't find python in your PATH")
-  (unless (modulep! +lsp)
-    (unless (or (zerop (shell-command "python -c 'import setuptools'"))
-                (zerop (shell-command "python3 -c 'import setuptools'")))
-      (warn! "setuptools wasn't detected, which anaconda-mode requires"))))
+(unless (or (executable-find "python")
+            (executable-find "python3"))
+  (error! "Couldn't find python in your PATH"))
 
 (when (modulep! +pyenv)
   (if (not (executable-find "pyenv"))

@@ -39,7 +39,6 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
   Emacs 30 and newer.
 
 ** Packages
-- [[doom-package:anaconda-mode]]
 - [[doom-package:conda]]
 - [[doom-package:nose]]
 - [[doom-package:pipenv]]
@@ -57,8 +56,7 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
     - [[doom-package:lsp-pyright]]
 
 ** Hacks
-- [[doom-package:anaconda-mode]] is configured to activate when [[doom-package:lsp-mode]] (or [[doom-package:eglot]]) don't -- or
-  fail to.
+/No hacks documented for this module./
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
