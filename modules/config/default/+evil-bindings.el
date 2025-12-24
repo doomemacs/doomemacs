@@ -337,7 +337,7 @@
 (map! :leader
       :desc "Eval expression"       ";"    #'pp-eval-expression
       :desc "M-x"                   ":"    #'execute-extended-command
-      :desc "Pop up scratch buffer" "x"    #'doom/open-scratch-buffer
+      :desc "Toggle scratch buffer" "x"    #'doom/toggle-scratch-buffer
       :desc "Org Capture"           "X"    #'org-capture
       ;; C-u is used by evil
       :desc "Universal argument"    "u"    #'universal-argument
@@ -770,7 +770,7 @@
        :desc "Run project"                  "R" #'projectile-run-project
        :desc "Save project files"           "s" #'projectile-save-project-buffers
        :desc "Test project"                 "T" #'projectile-test-project
-       :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
+       :desc "Toggle scratch buffer"        "x" #'doom/toggle-project-scratch-buffer
        :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer)
 
       ;;; <leader> q --- quit/session
