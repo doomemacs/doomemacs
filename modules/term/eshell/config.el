@@ -285,7 +285,7 @@ Return nil if there is none."
             (all-completions "" (pcomplete-completions))))))
 
 
-(use-package eshell-syntax-highlighting
+(use-package! eshell-syntax-highlighting
   :hook (eshell-mode . eshell-syntax-highlighting-mode)
   :config
   (defadvice! +eshell-filter-history-from-highlighting-a (&rest _)
