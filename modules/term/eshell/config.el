@@ -115,7 +115,7 @@ You should use `set-eshell-alias!' to change this.")
                              '(read-only t)))))
 
   ;; Enable autopairing in eshell
-  (add-hook 'eshell-mode-hook #'smartparens-mode)
+  (add-hook 'eshell-mode-hook #'electric-pair-local-mode)
 
   ;; Persp-mode/workspaces integration
   (when (modulep! :ui workspaces)
