@@ -47,8 +47,11 @@ Supports Git, Svn, Hg, and Bzr.
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module requires any of Git, Svn, Hg, and/or Bazaar to get gutter diffs in
-projects version controlled by them.
+This module requires:
+
+- Any of Git, Svn, Hg, and/or Bazaar to get gutter diffs in version controlled
+  projects.
+- The GNU variant of ~diff~
 
 * TODO Usage
 #+begin_quote
