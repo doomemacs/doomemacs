@@ -42,8 +42,7 @@
   :when (modulep! +tree-sitter)
   :defer t
   :init
-  ;; REVIEW: maxxnino/tree-sitter-zig is unmaintained; waiting for alternatives.
   (set-tree-sitter! 'zig-mode 'zig-ts-mode
-    '((zig :url "https://github.com/maxxnino/tree-sitter-zig")))
+    '((zig :url "https://github.com/tree-sitter-grammars/tree-sitter-zig")))
   :config
   (+zig-common-config 'zig-ts-mode))
