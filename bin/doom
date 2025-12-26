@@ -222,7 +222,8 @@ SEE ALSO:
       (when debug?
         (setenv "DEBUG" "1")
         (setq init-file-debug t)
-        (push "--debug" omit))
+        (push "--debug" omit)
+        (push "-D" omit))
       (when profile
         (setenv "DOOMPROFILE" profile)
         (push "--profile=" omit))
