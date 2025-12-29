@@ -22,7 +22,7 @@ This module adds support for the Clojure(Script) language.
   and a langserver (supports [[https://clojure-lsp.io/][clojure-lsp]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module::tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]] and Emacs 30.1 or newer.
 
 ** Packages
 - [[doom-package:cider]]

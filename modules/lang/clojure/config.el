@@ -57,6 +57,7 @@
 
 (use-package! clojure-ts-mode
   :when (modulep! +tree-sitter)
+  :when (> emacs-major-version 29)  ; package requires 30.1+
   :defer t
   :init
   (setq clojure-ts-auto-remap nil)  ; we do it ourselves

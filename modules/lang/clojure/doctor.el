@@ -5,6 +5,10 @@
              (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
+(when (and (modulep! +tree-sitter)
+           (< emacs-major-version 30))
+  (error! "Tree-sitter support in Clojure requires 30.1 or newer"))
+
 (when (and (modulep! :checkers syntax)
            (modulep! -lsp))
   (unless (executable-find "clj-kondo")

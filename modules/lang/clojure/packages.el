@@ -15,7 +15,9 @@
 
 ;;; Core packages
 (package! clojure-mode :pin "28dc02114ae70db6bb68d537ea77985f272120bc")
-(when (and (modulep! +tree-sitter) (treesit-available-p))
+(when (and (modulep! +tree-sitter)
+           (treesit-available-p)
+           (> emacs-major-version 29))  ; requires 30+
   (package! clojure-ts-mode :pin "96fdffcbe9e1b8ebf9ad14e23b06f62cc3422e22"))
 (package! clj-refactor :pin "362cb46bf808dc42d2aaf022afe93048439680c4")
 (package! cider :pin "fb7aa888125dfd5f174b6c208deca66d3fc129ab")
