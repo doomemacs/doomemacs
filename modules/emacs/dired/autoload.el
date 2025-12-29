@@ -31,21 +31,5 @@ sidebars)."
         (setq win nil))
       (unless win
         (call-interactively #'dirvish-side))
-      (when-let* (((not (dirvish-curr)))
-                  ((not (active-minibuffer-window)))
-                  (win (dirvish-side--session-visible-p))
-                  (dv (with-selected-window win (dirvish-curr)))
-                  (dir (or (dirvish--get-project-root) default-directory))
-                  (prev (with-selected-window win (dirvish-prop :index)))
-                  (curr buffer-file-name)
-                  ((not (string-suffix-p "COMMIT_EDITMSG" curr)))
-                  ((not (equal prev curr))))
-        (with-selected-window win
-          (when dir
-            (setq dirvish--this dv)
-            (let (buffer-list-update-hook) (dirvish-find-entry-a dir))
-            (if dirvish-side-auto-expand (dirvish-subtree-expand-to file)
-              (dired-goto-file curr))
-            (dirvish-prop :cus-header 'dirvish-side-header)
-            (dirvish-update-body-h))))))
+      (dirvish-side--auto-jump)))
   (select-window (dirvish-side--session-visible-p)))

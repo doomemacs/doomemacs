@@ -70,7 +70,7 @@ Fixes #3939: unsortable dired entries on Windows."
 
 
 (use-package! dirvish
-  :commands dirvish-find-entry-a dirvish-dired-noselect-a
+  :commands dirvish-dired-noselect-a
   :general (dired-mode-map "C-c C-r" #'dirvish-rsync)
   :init
   (setq dirvish-cache-dir (file-name-concat doom-cache-dir "dirvish/"))
