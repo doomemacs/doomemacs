@@ -12,6 +12,9 @@
              (fboundp 'python-ts-mode))
          "Can't find `python-ts-mode'; Emacs 29.1+ is required")
 
+(assert! (not (and (modulep! +pyenv) (modulep! +uv)))
+         "The +pyenv and +uv flags cannot be used together")
+
 (unless (or (executable-find "python")
             (executable-find "python3"))
   (error! "Couldn't find python in your PATH"))
@@ -21,6 +24,10 @@
       (warn! "Couldn't find pyenv in your PATH")
     (unless (split-string (shell-command-to-string "pyenv versions --bare") "\n" t)
       (warn! "No versions of python are available via pyenv, did you forget to install one?"))))
+
+(when (modulep! +uv)
+  (unless (executable-find "uv")
+    (warn! "Couldn't find uv in your PATH")))
 
 (when (modulep! +conda)
   (unless (executable-find "conda")

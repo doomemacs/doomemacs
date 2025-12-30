@@ -89,7 +89,7 @@
         (setq-local flycheck-python-pylint-executable "pylint")
         (setq-local flycheck-python-flake8-executable "flake8"))))
 
-  ;; Affects pyenv and conda
+  ;; Affects pyenv, uv, and conda
   (when (modulep! :ui modeline)
     (advice-add #'pythonic-activate :after-while #'+modeline-update-env-in-all-windows-h)
     (advice-add #'pythonic-deactivate :after #'+modeline-clear-env-in-all-windows-h))
@@ -214,6 +214,19 @@
   (add-hook! '(python-mode-local-vars-hook python-ts-mode-local-vars-hook)
              #'+python-pyenv-mode-set-auto-h)
   (add-hook 'doom-switch-buffer-hook #'+python-pyenv-mode-set-auto-h))
+
+
+(use-package! uv-mode
+  :when (modulep! +uv)
+  :after python
+  :config
+  ;; HACK: A faster (cached) version of the mode-line segment. See
+  ;;   `+python-uv-mode-set-auto-h'.
+  (setq uv-mode-mode-line-format '(+python--uv-version ("UV:" +python--uv-version " ")))
+  (if (executable-find "uv") (uv-mode +1))
+  (add-hook! '(python-mode-local-vars-hook python-ts-mode-local-vars-hook)
+             #'+python-uv-mode-set-auto-h)
+  (add-hook 'doom-switch-buffer-hook #'+python-uv-mode-set-auto-h))
 
 
 (use-package! conda

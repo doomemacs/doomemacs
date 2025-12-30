@@ -30,21 +30,26 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
   Enable Python packaging, dependency management, and virtual environment
   support via [[https://python-poetry.org/][Poetry]].
 - +pyenv ::
-  Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
+  Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]. Cannot be used together
+  with [[doom-module:+uv]].
 - +pyright ::
   Add support for the pyright LSP server (requires [[doom-module:+lsp]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]]. Support is much improved on
   Emacs 30 and newer.
+- +uv ::
+  Enable Python virtual environment support via [[https://github.com/astral-sh/uv][uv]]. Cannot be used together with
+  [[doom-module:+pyenv]].
 
 ** Packages
-- [[doom-package:conda]]
+- [[doom-package:conda]] if [[doom-module:+conda]]
 - [[doom-package:nose]]
 - [[doom-package:pipenv]]
 - [[doom-package:pip-requirements]]
 - [[doom-package:poetry]] if [[doom-module:+poetry]]
-- [[doom-package:pyenv]]
+- [[doom-package:pyenv]] if [[doom-module:+pyenv]]
+- [[doom-package:uvenv]] if [[doom-module:+uv]]
 - [[doom-package:pyimport]]
 - [[doom-package:py-isort]]
 - [[doom-package:python-pytest]]
@@ -74,6 +79,7 @@ This module has no hard requirements, but softly depends on:
 - [[doom-package:py-isort]] requires [[https://github.com/timothycrosley/isort][isort]] to be installed: ~pip install isort~
 - Python virtual environments install instructions at:
   - [[https://github.com/pyenv/pyenv][pyenv]]
+  - [[https://github.com/astral-sh/uv][uv]]
   - [[https://conda.io/en/latest/][Conda]]
   - [[https://python-poetry.org/][Poetry]]
   - [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
