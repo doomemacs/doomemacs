@@ -5,7 +5,7 @@
   :mode ("/rebar\\.config\\(?:\\.script\\)?\\'" . erlang-mode)
   :mode ("/\\(?:app\\|sys\\)\\.config\\'" . erlang-mode)
   :config
-  (set-formatter! 'erlfmt '("rebar3" "fmt" "-")
+  (set-formatter! 'erlfmt '("rebar3" "format")
     :modes '(erlang-mode erlang-ts-mode))
   (when (modulep! +lsp)
     (add-hook 'erlang-mode-local-vars-hook #'lsp! 'append)))
