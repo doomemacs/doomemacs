@@ -4,16 +4,24 @@
 #+since:    21.12.0 (#1759)
 
 * Description :unfold:
-This module adds support for the [[https://leanprover.github.io/about/][Lean programming language]] to Doom Emacs.
+This module adds support for the [[https://leanprover.github.io/about/][Lean programming language]] to Doom Emacs. It
+supports Lean 4 by default (powered by [[doom-package:nael]]), with optional support
+for Lean 3 behind a [[doom-module:+v3]] flag.
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +lsp ::
+  Enable LSP support for ~nael-mode~ (Lean 4). Requires [[doom-module::tools lsp]] and
+  an LSP server (e.g. [[https://github.com/leanprover/lean4/tree/master/src/lake][Lake]]). There no LSP support for Lean 3.
+- +v3 ::
+  Include Lean 3 support, powered by [[doom-package:lean-mode]].
 
 ** Packages
-- [[doom-package:lean-mode]]
+- [[doom-package:lean-mode]] if [[doom-module:+v3]]
+- [[doom-package:nael]]
+- [[doom-package:nael-lsp]] if [[doom-module:+lsp]] + [[doom-module::tools lsp -eglot]]
 
 ** TODO Hacks
 #+begin_quote
@@ -30,6 +38,11 @@ This module adds support for the [[https://leanprover.github.io/about/][Lean pro
 #+begin_quote
  󱌣 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
 #+end_quote
+
+- Lean 4 requires the ~lean4~ executable (and ~lake~ if LSP support is wanted) in
+  your ~$PATH~.
+- Lean 3 requires the ~lean3~ and ~leanpkg~ executables.
+- For LSP support,
 
 * TODO Usage
 #+begin_quote
