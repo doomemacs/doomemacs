@@ -99,7 +99,7 @@
     :pin "becc9bd19e418b75027b541c41952105a1425c96"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
-  (package! org-roam :pin "f4ba41cf3d59084e182a5186d432afc9aa3fc423"))
+  (package! org-roam :pin "b2634a17f8b6f30b332774ed18b165966bd11906"))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
