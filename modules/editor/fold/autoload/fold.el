@@ -142,11 +142,10 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-toggle))
           ((+fold--outline-fold-p)
-           (cl-letf (((symbol-function #'outline-hide-subtree)
-                      (symbol-function #'outline-hide-entry)))
+           (letf! ((#'outline-hide-subtree #'outline-hide-entry))
              (outline-toggle-children)))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding)))
-          ((+fold--treesit-fold-p) (treesit-fold-toggle)))))
+          ((+fold--treesit-fold-p) (treesit-fold-toggle))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding))))))
 
 ;;;###autoload
 (defun +fold/open-rec ()
@@ -168,8 +167,8 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
           ((+fold--outline-fold-p)
            (outline-show-branches)
            (outline-show-entry))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
-          ((+fold--treesit-fold-p) (treesit-fold-open)))))
+          ((+fold--treesit-fold-p) (treesit-fold-open))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block))))))
 
 ;;;###autoload
 (defun +fold/close ()
@@ -180,8 +179,8 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-refold))
           ((+fold--outline-fold-p) (outline-hide-subtree))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-hide-block)))
-          ((+fold--treesit-fold-p) (treesit-fold-close)))))
+          ((+fold--treesit-fold-p) (treesit-fold-close))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-hide-block))))))
 
 ;;;###autoload
 (defun +fold/open-all (&optional level)
