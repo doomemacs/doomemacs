@@ -157,12 +157,10 @@ if it's callable, `apropos' otherwise."
 ;;; Commands
 
 ;;;###autoload
-(defun +emacs-lisp/change-working-buffer (buffer &optional clear?)
-  "Change what buffer to run `+emacs-lisp-eval' in.
-
-If given the prefix arg (CLEAR?), clears the current working buffer."
+(defun +emacs-lisp/change-working-buffer (buffer)
+  "Change what buffer to run `+emacs-lisp-eval-fn' in."
   (interactive
-   (list (read-buffer "Set working buffer to: ")
+   (list (read-buffer "Set working buffer to: " (list (current-buffer)))
          current-prefix-arg))
   (let ((buffer (get-buffer buffer)))
     (if (and buffer (buffer-live-p buffer))
