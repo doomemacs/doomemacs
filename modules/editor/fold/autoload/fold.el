@@ -56,12 +56,12 @@ Return non-nil if successful in doing so."
                                   (if (> count 0) 1 -1))
           (unless (invisible-p (point))
             (end-of-line)
-            (when (hs-already-hidden-p)
+            (when (ignore-errors (hs-already-hidden-p))
               (push (point) points)
               (when (>= (length points) count)
                 (throw 'abort nil))))
           (forward-line (if (> count 0) 1 -1)))))
-    points))
+    (nreverse points)))
 
 (defmacro +fold-from-eol (&rest body)
   "Perform action after moving to the end of the line."
@@ -224,69 +224,60 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
 
 ;;;###autoload
 (defun +fold/next (count)
-  "Jump to the next vimish fold, folded outline heading or folded
-region."
+  "Jump to the next COUNT-th folded region."
   (interactive "p")
   (cl-loop with orig-pt = (point)
-           for fn
-           in (list (lambda ()
-                      (when (bound-and-true-p hs-block-start-regexp)
-                        (car (+fold--invisible-points count))))
-                    (lambda ()
-                      (when (featurep 'vimish-fold)
-                        (if (> count 0)
-                            (dotimes (_ count) (vimish-fold-next-fold))
-                          (dotimes (_ count)
-                            (vimish-fold-previous-fold (- count)))))
-                      (if (/= (point) orig-pt) (point)))
-                    (lambda ()
-                      (when (or (bound-and-true-p outline-minor-mode)
-                                (derived-mode-p 'outline-mode))
-                        (cl-destructuring-bind
-                            (count fn bound-fn)
-                            (if (> count 0)
-                                (list count
-                                      #'outline-next-visible-heading #'eobp)
-                              (list (- count)
-                                    #'outline-previous-visible-heading #'bobp))
-                          (dotimes (_ count)
-                            (funcall fn 1)
-                            (outline-end-of-heading)
-                            (while (and (not (funcall bound-fn))
-                                        (not (outline-invisible-p)))
-                              (funcall fn 1)
-                              (outline-end-of-heading))))
-                        (point)))
-                    (lambda ()
-                      ;; {ts,treesit}-fold does not define movement functions so
-                      ;; we need to do it ourselves
-                      (when (+fold--treesit-fold-p)
-                        (let* ((arg-list (if (> count 0) ;; depending on direction we need to change the ranges
-                                             (list (point) (point-max))
-                                           (list (point-min) (point))))
-                               (comp-fun (if (> count 0) ;; also depending on direction we need to change how we sort the list
-                                             #'<
-                                           #'>))
-                               (ovs (cl-remove-if-not
-                                     (lambda (ov)
-                                       (eq (overlay-get ov 'creator) 'treesit-fold))
-                                     ;; `overlays-in' does not provide a list
-                                     ;; that is sorted (in the way we need it
-                                     ;; atleast) so we need to sort it based on
-                                     ;; direction
-                                     (cl-sort (apply #'overlays-in arg-list) comp-fun :key #'overlay-start))))
-                          (if (and ovs (<= (abs count) (length ovs)))
-                              (goto-char (overlay-start (nth (- (abs count) 1) ovs))))))))
+           for fn in
+           (list (lambda ()
+                   (when (and (bound-and-true-p hs-block-start-regexp)
+                              (bound-and-true-p hs-minor-mode))
+                     (+fold--invisible-points count)))
+                 (lambda ()
+                   (when (featurep 'vimish-fold)
+                     (let (pts)
+                       (dotimes (_ count)
+                         (if (> count 0)
+                             (vimish-fold-next-fold)
+                           (vimish-fold-previous-fold))
+                         (push (point) pts))
+                       (nreverse pts))))
+                 (lambda ()
+                   (when (or (bound-and-true-p outline-minor-mode)
+                             (derived-mode-p 'outline-mode))
+                     (cl-destructuring-bind (count fn bound-fn)
+                         (if (> count 0)
+                             `(,count outline-next-visible-heading eobp)
+                           `(,(- count) outline-previous-visible-heading bobp))
+                       (let (pts)
+                         (while (and (not (funcall bound-fn))
+                                     (funcall fn count)
+                                     (or (not (outline-invisible-p (pos-eol)))
+                                         (prog1 (>= (cl-decf count) 0)
+                                           (push (point) pts)))))
+                         (nreverse pts)))))
+                 (lambda ()
+                   ;; `treesit-fold' does not define movement functions so we
+                   ;; need to do it ourselves.
+                   (when (+fold--treesit-fold-p)
+                     (mapcar
+                      #'overlay-start
+                      (cl-delete-if (lambda (ov)
+                                      (or (not (eq (overlay-get ov 'creator) 'treesit-fold))
+                                          (if (> count 0)
+                                              (<= (1- (overlay-start ov)) orig-pt)
+                                            (>= (overlay-end ov) orig-pt))))
+                                    (if (> count 0)
+                                        (overlays-in (point) (point-max))
+                                      (overlays-in (point-min) (point))))))))
            if (save-excursion (funcall fn))
-           collect it into points
+           nconc it into points
            finally do
-           (if-let* ((pt (car (sort points (if (> count 0) #'< #'>)))))
+           (if-let* ((pt (nth (1- (abs count)) (sort points (if (> count 0) #'< #'>)))))
                (goto-char pt)
-             (message "No more folds %s point" (if (> count 0) "after" "before"))
-             (goto-char orig-pt))))
+             (user-error "No more folds %s point" (if (> count 0) "after" "before")))))
 
 ;;;###autoload
 (defun +fold/previous (count)
-  "Jump to the previous vimish fold, outline heading or folded region."
+  "Jump to the previous COUNT-th folded region."
   (interactive "p")
   (+fold/next (- count)))
