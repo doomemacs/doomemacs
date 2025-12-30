@@ -38,8 +38,10 @@
                desktop-file-modtime)
            (make-directory desktop-dirname t)
            ;; Prevents confirmation prompts
-           (let ((desktop-file-modtime (nth 5 (file-attributes (desktop-full-file-name)))))
-             (desktop-save desktop-dirname t))))
+           (let ((desktop-file-modtime
+                  (file-attribute-modification-time
+                   (file-attributes (desktop-full-file-name)))))
+             (desktop-save desktop-dirname))))
         ((error "No session backend to save session with"))))
 
 ;;;###autoload
@@ -59,7 +61,30 @@
            (persp-load-state-from-file file)))
         ((and (require 'frameset nil t)
               (require 'restart-emacs nil t))
-         (restart-emacs--restore-frames-using-desktop file))
+         (let* ((file (expand-file-name (doom-session-file)))
+                desktop-file-modtime
+                (desktop-dirname (file-name-directory file))
+                (desktop-base-file-name (file-name-nondirectory file))
+                (desktop-base-lock-name (concat desktop-base-file-name ".lock"))
+                (desktop-restore-reuses-frames nil)
+                ;; Add filter for tty frames, the filter simply logs a message
+                ;; on the parent ttys of the frame
+                (frameset-filter-alist (append '((tty . restart-emacs--frameset-tty-filter))
+                                               frameset-filter-alist))
+                ;; Disable prompts for safe variables during restoration
+                (enable-local-variables :safe)
+                ;; We mock these two functions while restoring frames Calls to
+                ;; `display-color-p' blocks Emacs in daemon mode (possibly)
+                ;; because the call fails
+                (display-color-p (symbol-function 'display-color-p))
+                ;; We mock `display-graphic-p' since desktop mode has changed to
+                ;; not restore frames when we are not on graphic display
+                (display-graphic-p (symbol-function 'display-graphic-p)))
+           (if (daemonp)
+               (letf! ((#'display-color-p #'ignore)
+                       (#'display-graphic-p #'ignore))
+                 (desktop-read desktop-dirname))
+             (desktop-read desktop-dirname))))
         ((error "No session backend to load session with"))))
 
 
