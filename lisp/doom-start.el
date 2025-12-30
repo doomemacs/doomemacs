@@ -160,7 +160,17 @@
                " " (buffer-name (or (buffer-base-buffer)
                                     (current-buffer)))))
     (setq-local doom-inhibit-local-var-hooks t)
-    (doom-run-hooks (intern-soft (format "%s-local-vars-hook" major-mode)))))
+    ;; Show some rudimentary documentation for anyone wanting to understand
+    ;; where these hooks came from.
+    (let* ((hook-var (intern (format "%s-local-vars-hook" major-mode))))
+      (unless (boundp hook-var)
+        (set hook-var nil))
+      (unless (get hook-var 'variable-documentation)
+        (put hook-var 'variable-documentation
+             (format (concat "Hooks to run after file/dir local variables are set in `%s', well after `%s-hook'.\n\n"
+                             "These hooks are defined and executed by `doom-run-local-var-hooks-h'.")
+                     major-mode major-mode)))
+      (doom-run-hooks hook-var))))
 
 ;; If the user has disabled `enable-local-variables', then
 ;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
