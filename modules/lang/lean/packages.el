@@ -7,4 +7,9 @@
 (package! nael :pin "101726eb47fc2562f49e9e7c1de4fc959229ca0c")
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
-  (package! nael-lsp :pin "101726eb47fc2562f49e9e7c1de4fc959229ca0c"))
+  (package! nael-lsp
+    ;; HACK: Upstream autoloads a `keymap-set' call on `nael-mode-map' but it's
+    ;;   unlikely `nael' will be loaded at that point.
+    ;; REVIEW: Address this upstream!
+    :recipe (:build (:not autoloads))
+    :pin "101726eb47fc2562f49e9e7c1de4fc959229ca0c"))
