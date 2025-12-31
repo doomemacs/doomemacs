@@ -79,27 +79,27 @@
 (when (modulep! +jupyter)
   (package! jupyter :pin "de89cbeca890db51ba84aee956658f89aaa0b642"))
 (when (modulep! +journal)
-  (package! org-journal :pin "c72d7c75f8a05d1032250e307d35797ceee7e578"))
+  (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
 (when (modulep! +noter)
   (package! org-noter :pin "aafa08a49c4c3311d9b17864629aceeff02d33da"))
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-modern :pin "567b702ad0aedbab3451a9e064abb23d1bb275c2")
+  (package! org-modern :pin "55b5bbeb1eb9483d0cb43f4803615c380bf3b1ed")
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
     :recipe (:host github :repo "nullvec/centered-window-mode")
     :pin "701f56cd1d2b68352d29914f05ca1b0037bb2595")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
-  (package! org-re-reveal :pin "fea255aef79169f0dcb2ff049ace35523cfc4bcd")
+  (package! org-re-reveal :pin "72c24637820f9dafa96d4ad23a0802c47de7651e")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "becc9bd19e418b75027b541c41952105a1425c96"))
+    :pin "33bfe3b233f1a840cd70e834b609ec6f04494a40"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
-  (package! org-roam :pin "f4ba41cf3d59084e182a5186d432afc9aa3fc423"))
+  (package! org-roam :pin "b2634a17f8b6f30b332774ed18b165966bd11906"))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -141,6 +141,6 @@
 (when (modulep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "a907ea95145fd1abee608028796cd079a925eb02"))
+    :pin "b7dc44dc28911b9d8e3055a18deac16c3b560b03"))
 (when (modulep! :lang rst)
   (package! ox-rst :pin "b73eff187eebac24b457688bfd27f09eff434860"))
