@@ -52,20 +52,8 @@
         (setq nael-prepare-lsp nil)
       (setq nael-prepare-eglot nil))
     (add-hook 'nael-mode-local-vars-hook #'lsp! 'append))
-  (map! :map lean-mode-map
+  (map! :map nael-mode-map
         :localleader
         "a" #'nael-abbrev-help
-        "b" #'project-build     ; REVIEW: redundant with '<leader> p'?
-        "e" #'eldoc-doc-buffer  ; REVIEW: redundant with +lookup/documentation?
-        (:prefix ("s" . "server")
-                 "r" #'lean-server-restart
-                 "s" #'lean-server-stop
-                 "v" #'lean-server-switch-version)
-        (:prefix ("p" . "leanpkg")
-                 "t" #'lean-leanpkg-test
-                 "b" #'lean-leanpkg-build
-                 "c" #'lean-leanpkg-configure)
-        "f" #'lean-fill-placeholder
-        "h" #'lean-hole
-        "m" #'lean-message-boxes-toggle
-        "e" #'lean-execute))
+        "b" #'project-build      ; REVIEW: redundant with '<leader> p'?
+        "e" #'eldoc-doc-buffer)) ; REVIEW: redundant with +lookup/documentation?
