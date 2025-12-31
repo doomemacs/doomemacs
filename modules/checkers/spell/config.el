@@ -132,7 +132,7 @@
               font-lock-variable-name-face)))
         "Faces in certain major modes that spell-fu will not spellcheck.")
 
-      (setq spell-fu-directory (concat doom-data-dir "spell-fu"))
+      (setq spell-fu-directory (file-name-concat doom-profile-data-dir "spell-fu"))
       (when (modulep! +everywhere)
         (add-hook! '(yaml-mode-hook
                      conf-mode-hook

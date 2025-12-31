@@ -70,7 +70,7 @@
 (use-package! rake
   :defer t
   :init
-  (setq rake-cache-file (concat doom-cache-dir "rake.cache"))
+  (setq rake-cache-file (file-name-concat doom-profile-cache-dir "rake.cache"))
   (setq rake-completion-system 'default)
   (map! :after ruby-mode
         :localleader

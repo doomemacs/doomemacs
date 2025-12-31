@@ -91,7 +91,7 @@ possible."
       delete-old-versions t ; clean up after itself
       kept-old-versions 5
       kept-new-versions 5
-      backup-directory-alist `(("." . ,(concat doom-profile-cache-dir "backup/")))
+      backup-directory-alist `(("." . ,(file-name-concat doom-profile-cache-dir "backup/")))
       tramp-backup-directory-alist backup-directory-alist)
 
 ;; But turn on auto-save, so we have a fallback in case of crashes or lost data.
@@ -102,7 +102,7 @@ possible."
       ;; just deleted, but I believe that's VCS's jurisdiction, not ours.
       auto-save-include-big-deletions t
       ;; Keep it out of `doom-emacs-dir' or the local directory.
-      auto-save-list-file-prefix (concat doom-profile-cache-dir "autosave/")
+      auto-save-list-file-prefix (file-name-concat doom-profile-cache-dir "autosave/")
       ;; This resolves two issue while ensuring auto-save files are still
       ;; reasonably recognizable at a glance:
       ;;
@@ -280,7 +280,7 @@ tell you about it. Very annoying. This prevents that."
 
 
 ;;;###package bookmark
-(setq bookmark-default-file (concat doom-profile-data-dir "bookmarks"))
+(setq bookmark-default-file (file-name-concat doom-profile-data-dir "bookmarks"))
 
 
 (use-package! recentf
@@ -288,7 +288,7 @@ tell you about it. Very annoying. This prevents that."
   :defer-incrementally easymenu tree-widget timer
   :hook (doom-first-file . recentf-mode)
   :commands recentf-open-files
-  :custom (recentf-save-file (concat doom-profile-cache-dir "recentf"))
+  :custom (recentf-save-file (file-name-concat doom-profile-cache-dir "recentf"))
   :config
   (setq recentf-auto-cleanup nil     ; Don't. We'll auto-cleanup on shutdown
         recentf-max-saved-items 200) ; default is 20
@@ -329,7 +329,7 @@ tell you about it. Very annoying. This prevents that."
   ;; persist variables across sessions
   :defer-incrementally custom
   :hook (doom-first-input . savehist-mode)
-  :custom (savehist-file (concat doom-profile-cache-dir "savehist"))
+  :custom (savehist-file (file-name-concat doom-profile-cache-dir "savehist"))
   :config
   (setq savehist-save-minibuffer-history t
         savehist-autosave-interval nil     ; save on kill only
@@ -363,7 +363,7 @@ the unwritable tidbits."
 (use-package! saveplace
   ;; persistent point location in buffers
   :hook (doom-first-file . save-place-mode)
-  :custom (save-place-file (concat doom-profile-cache-dir "saveplace"))
+  :custom (save-place-file (file-name-concat doom-profile-cache-dir "saveplace"))
   :config
   (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."

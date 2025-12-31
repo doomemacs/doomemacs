@@ -554,7 +554,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;; Theme & font
 
 ;; User themes should live in $DOOMDIR/themes, not ~/.emacs.d
-(setq custom-theme-directory (concat doom-user-dir "themes/"))
+(setq custom-theme-directory (file-name-concat doom-user-dir "themes/"))
 
 ;; Third party themes add themselves to `custom-theme-load-path', but the themes
 ;; living in $DOOMDIR/themes should always have priority.

@@ -45,7 +45,7 @@ stored in `persp-save-dir'.")
         persp-reset-windows-on-nil-window-conf nil
         persp-nil-hidden t
         persp-auto-save-fname "autosave"
-        persp-save-dir (concat doom-data-dir "workspaces/")
+        persp-save-dir (file-name-concat doom-profile-data-dir "workspaces/")
         persp-set-last-persp-for-new-frames t
         persp-switch-to-added-buffer nil
         persp-kill-foreign-buffer-behaviour 'kill

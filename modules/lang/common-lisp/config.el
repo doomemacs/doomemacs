@@ -43,7 +43,7 @@
   (add-hook! 'after-init-hook (after! sly (sly-setup)))
 
   :config
-  (setq sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history")
+  (setq sly-mrepl-history-file-name (file-name-concat doom-profile-cache-dir "sly-mrepl-history")
         sly-kill-without-query-p t
         sly-net-coding-system 'utf-8-unix
         ;; Doom defaults to non-fuzzy search, because it is faster and more

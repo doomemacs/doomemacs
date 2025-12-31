@@ -3,7 +3,7 @@
 ;; This little library abstracts the process of writing arbitrary elisp values
 ;; to a 2-tiered file store (in `doom-store-dir'/`doom-store-location').
 
-(defvar doom-store-dir (concat doom-data-dir "store/")
+(defvar doom-store-dir (file-name-concat doom-profile-data-dir "store/")
   "Directory to look for and store data accessed through this API.")
 
 (defvar doom-store-persist-alist ()

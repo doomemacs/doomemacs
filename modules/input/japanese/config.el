@@ -8,7 +8,7 @@
         migemo-user-dictionary nil
         migemo-regex-dictionary nil
         migemo-coding-system 'utf-8-unix
-        migemo-directory (concat doom-data-dir "migemo/")
+        migemo-directory (file-name-concat doom-profile-data-dir "migemo/")
         migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
   :config
   (when (executable-find migemo-command)

@@ -161,7 +161,7 @@
 
 
 (after! multiple-cursors-core
-  (setq mc/list-file (concat doom-data-dir "mc-lists.el"))
+  (setq mc/list-file (file-name-concat doom-profile-data-dir "mc-lists.el"))
 
   ;; Can't use `mc/cmds-to-run-once' because mc-lists.el overwrites it
   (add-to-list 'mc--default-cmds-to-run-once 'swiper-mc)

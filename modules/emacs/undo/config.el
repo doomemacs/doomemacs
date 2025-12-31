@@ -44,7 +44,7 @@
 (use-package! undo-fu-session
   :unless (modulep! +tree)
   :hook (undo-fu-mode . global-undo-fu-session-mode)
-  :custom (undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/"))
+  :custom (undo-fu-session-directory (file-name-concat doom-profile-cache-dir "undo-fu-session/"))
   :config
   (setq undo-fu-session-incompatible-files '("\\.gpg$" "/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
 
@@ -79,7 +79,7 @@
   :when (modulep! +tree)
   ;; Branching & persistent undo
   :hook (doom-first-buffer . global-undo-tree-mode)
-  :custom (undo-tree-history-directory-alist `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
+  :custom (undo-tree-history-directory-alist `(("." . ,(file-name-concat doom-profile-cache-dir "undo-tree-hist/"))))
   :config
   (setq undo-tree-visualizer-diff t
         undo-tree-auto-save-history t

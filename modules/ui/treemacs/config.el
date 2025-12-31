@@ -23,8 +23,8 @@ This must be set before `treemacs' has loaded.")
   (setq treemacs-follow-after-init t
         treemacs-is-never-other-window t
         treemacs-sorting 'alphabetic-case-insensitive-asc
-        treemacs-persist-file (concat doom-cache-dir "treemacs-persist")
-        treemacs-last-error-persist-file (concat doom-cache-dir "treemacs-last-error-persist"))
+        treemacs-persist-file (file-name-concat doom-profile-cache-dir "treemacs-persist")
+        treemacs-last-error-persist-file (file-name-concat doom-profile-cache-dir "treemacs-last-error-persist"))
   :config
   ;; Don't follow the cursor (it's more disruptive/jarring than helpful as a default)
   (treemacs-follow-mode -1)

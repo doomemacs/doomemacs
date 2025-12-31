@@ -17,7 +17,7 @@
     :after #'ido-mode
     (run-hooks 'ido-mode-hook))
   :init
-  (setq ido-save-directory-list-file (concat doom-cache-dir "ido.last"))
+  (setq ido-save-directory-list-file (file-name-concat doom-profile-cache-dir "ido.last"))
   :config
   (pushnew! ido-ignore-files "\\`.DS_Store$" "Icon\\?$")
   (setq ido-ignore-buffers

@@ -1031,7 +1031,7 @@ between the two."
 (use-package! org-clock ; built-in
   :commands org-clock-save
   :init
-  (setq org-clock-persist-file (concat doom-data-dir "org-clock-save.el"))
+  (setq org-clock-persist-file (file-name-concat doom-profile-data-dir "org-clock-save.el"))
   (defadvice! +org--clock-load-a (&rest _)
     "Lazy load org-clock until its commands are used."
     :before '(org-clock-in
@@ -1213,9 +1213,9 @@ between the two."
   (defvar org-attach-id-dir nil)
   (defvar org-babel-python-command nil)
 
-  (setq org-persist-directory (concat doom-cache-dir "org/persist/")
-        org-publish-timestamp-directory (concat doom-cache-dir "org/timestamps/")
-        org-preview-latex-image-directory (concat doom-cache-dir "org/latex/")
+  (setq org-persist-directory (file-name-concat doom-profile-cache-dir "org" "persist/")
+        org-publish-timestamp-directory (file-name-concat doom-profile-cache-dir "org" "timestamps/")
+        org-preview-latex-image-directory (file-name-concat doom-profile-cache-dir "org" "latex/")
         ;; Recognize a), A), a., A., etc -- must be set before org is loaded.
         org-list-allow-alphabetical t)
 

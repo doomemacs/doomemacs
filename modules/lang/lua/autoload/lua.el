@@ -1,7 +1,7 @@
 ;;; lang/lua/autoload/lua.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defvar +lua-lsp-dir (concat doom-data-dir "lsp/lua-language-server/")
+(defvar +lua-lsp-dir (file-name-concat doom-profile-data-dir "lsp" "lua-language-server/")
   "Absolute path to the directory of sumneko's lua-language-server.
 
 This directory MUST contain the 'main.lua' file and be the in-source build of

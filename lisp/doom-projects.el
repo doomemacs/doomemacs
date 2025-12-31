@@ -51,7 +51,7 @@ Must end with a slash.")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-kill-buffers-filter 'kill-only-files
         projectile-ignored-projects '("~/")
-        projectile-known-projects-file (concat doom-project-cache-dir "projects.eld")
+        projectile-known-projects-file (file-name-concat doom-project-cache-dir "projects.eld")
         projectile-ignored-project-function #'doom-project-ignored-p
         projectile-fd-executable doom-fd-executable)
 

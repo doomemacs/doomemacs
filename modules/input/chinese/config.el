@@ -3,7 +3,7 @@
 (use-package! pyim
   :after-call after-find-file pre-command-hook
   :init
-  (setq pyim-dcache-directory (concat doom-cache-dir "pyim/"))
+  (setq pyim-dcache-directory (file-name-concat doom-profile-cache-dir "pyim/"))
   :config
   (setq pyim-page-tooltip t
         default-input-method "pyim")

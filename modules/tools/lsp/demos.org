@@ -5,11 +5,11 @@
 #+begin_src emacs-lisp
 ;; For setting a single server command:
 (set-eglot-client! 'python-mode
-  `(,(concat doom-data-dir \"lsp/mspyls/Microsoft.Python.LanguageServer\")))
+  `(,(file-name-concat doom-profile-data-dir \"lsp/mspyls/Microsoft.Python.LanguageServer\")))
 
 ;; This is equivalent to
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs `(python-mode . (,(concat doom-data-dir "lsp/mspyls/Microsoft.Python.LanguageServer\")))))
+  (add-to-list 'eglot-server-programs `(python-mode . (,(file-name-concat doom-profile-data-dir "lsp/mspyls/Microsoft.Python.LanguageServer\")))))
 #+end_src
 
 #+begin_src emacs-lisp

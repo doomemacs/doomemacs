@@ -24,7 +24,7 @@
   ;; default, so we change it to {org-directory}/journal (we expand it after
   ;; org-journal is loaded).
   (setq org-journal-dir "journal/"
-        org-journal-cache-file (concat doom-cache-dir "org-journal"))
+        org-journal-cache-file (file-name-concat doom-profile-cache-dir "org-journal"))
 
   :config
   ;; Remove the orginal journal file detector and rely on `+org-journal-p'

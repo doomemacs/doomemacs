@@ -399,7 +399,7 @@ workable results ripgrep produces, despite the error."
       (ivy-prescient-re-builder str)))
 
   ;; NOTE prescient config duplicated with `company'
-  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el")))
+  (setq prescient-save-file (file-name-concat doom-profile-cache-dir "prescient-save.el")))
 
 
 ;;;###package swiper
@@ -407,4 +407,4 @@ workable results ripgrep produces, despite the error."
 
 
 ;;;###package amx
-(setq amx-save-file (concat doom-cache-dir "amx-items"))  ; used by `counsel-M-x'
+(setq amx-save-file (file-name-concat doom-profile-cache-dir "amx-items"))  ; used by `counsel-M-x'

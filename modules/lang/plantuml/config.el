@@ -3,7 +3,7 @@
 (use-package! plantuml-mode
   :commands plantuml-download-jar
   :init
-  (setq plantuml-jar-path (concat doom-data-dir "plantuml.jar"))
+  (setq plantuml-jar-path (file-name-concat doom-profile-data-dir "plantuml.jar"))
   :config
   (set-popup-rule! "^\\*PLANTUML" :size 0.4 :select nil :ttl 0)
   (setq plantuml-default-exec-mode
