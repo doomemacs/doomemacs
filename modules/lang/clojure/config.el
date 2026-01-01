@@ -41,8 +41,17 @@
       :init
       (map! :map ,keymaps
             :localleader
-            "j" #'jet))))
+            "j" #'jet))
 
+    (use-package! cider-mode
+      :defer t
+      :init
+      (map! :map ,keymaps
+            :localleader
+            "'"  #'cider-jack-in-clj
+            "\"" #'cider-jack-in-cljs
+            "c"  #'cider-connect-clj
+            "C"  #'cider-connect-cljs))))
 
 
 (defun +clojure-disable-lsp-indentation-h ()
@@ -87,8 +96,6 @@
 ;; reconfiguration in many cases.
 (use-package! cider-mode
   ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
-  :hook (clojure-mode-local-vars . cider-mode)
-  :hook (clojure-ts-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode
     (set-repl-handler! '(clojure-mode clojure-ts-mode
@@ -185,8 +192,19 @@
 
           ;; Prevent evil-snipe from overriding evil-collection
           (add-hook! 'cider--debug-mode-hook
-                     #'turn-off-evil-snipe-mode
-                     #'turn-off-evil-snipe-override-mode))
+            (defun +clojure-toggle-evil-snipe-in-debug-mode-h ()
+              "Disable evil-snipe in cider-debug-mode, and restore it when disabling the mode."
+              (if cider--debug-mode
+                  (progn
+                    (when (bound-and-true-p evil-snipe-local-mode)
+                      (evil-snipe-local-mode -1))
+                    (when (bound-and-true-p evil-snipe-override-local-mode)
+                      (evil-snipe-override-local-mode -1)))
+                (progn
+                  (when (bound-and-true-p evil-snipe-mode)
+                    (evil-snipe-local-mode 1))
+                  (when (bound-and-true-p evil-snipe-override-mode)
+                    (evil-snipe-override-local-mode 1)))))))
 
       ;; When in cider-debug-mode, override evil keys to not interfere with debug keys
       (add-hook! 'cider--debug-mode-hook
@@ -242,12 +260,20 @@
   ;; supposed to be make visible.
   (setq cider-repl-display-help-banner nil)
 
+  (after! which-key
+    (which-key-add-key-based-replacements
+      (concat doom-localleader-key " d") "debug"
+      (concat doom-localleader-key " e") "eval"
+      (concat doom-localleader-key " g") "goto"
+      (concat doom-localleader-key " h") "help"
+      (concat doom-localleader-key " i") "inspect"
+      (concat doom-localleader-key " n") "namespace"
+      (concat doom-localleader-key " p") "print"
+      (concat doom-localleader-key " r") "repl"
+      (concat doom-localleader-key " t") "test"))
+
   (map! (:localleader
           (:map cider-mode-map
-            "'"  #'cider-jack-in-clj
-            "\"" #'cider-jack-in-cljs
-            "c"  #'cider-connect-clj
-            "C"  #'cider-connect-cljs
             "m"  #'cider-macroexpand-1
             "M"  #'cider-macroexpand-all
             (:prefix ("d" . "debug")
