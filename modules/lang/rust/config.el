@@ -8,28 +8,10 @@
 ;;
 ;;; Packages
 
-;; HACK: `rust-mode' and `rustic' add entries to `auto-mode-alist', but package
-;;   load order makes which gets precedence unpredictable. By removing them
-;;   early, we rely on our own entries in `auto-mode-alist' and
-;;   `major-mode-remap-defaults' to ensure correct order.
-(cl-callf2 rassq-delete-all 'rust-mode auto-mode-alist)
-(cl-callf2 rassq-delete-all 'rustic-mode auto-mode-alist)
-
-
 (use-package! rust-mode
   :defer t
-  :preface
-  ;; Ensure rust-mode derives from rust-ts-mode, b/c rustic-mode derives from
-  ;; rust-mode. This way, rustic-mode is the only major mode we have to worry
-  ;; about.
-  (setq rust-mode-treesitter-derive (modulep! +tree-sitter))
-
   :config
-  (setq rust-indent-method-chain t)
-
-  ;; Load order is important for these two packages.
-  (let (auto-mode-alist)
-    (require 'rustic nil t)))
+  (setq rust-indent-method-chain t))
 
 
 (use-package! rustic

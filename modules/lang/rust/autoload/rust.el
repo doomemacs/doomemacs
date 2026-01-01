@@ -1,6 +1,4 @@
-;;; lang/rust/autoload.el -*- lexical-binding: t; -*-
-
-;; TODO (defun +rust/run-cargo () (interactive))
+;;; lang/rust/autoload/rust.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +rust-cargo-project-p ()
