@@ -4,7 +4,7 @@
 (if (modulep! -flyspell)
     (package! spell-fu
       :recipe (:host github :repo "emacsmirror/spell-fu")
-      :pin "6c7cdc971d232096ae22c9bdbdcf21cfcdaeb755")
+      :pin "ab256835ea9d2c2fe346d0386c7b3acf2700f335")
   (package! flyspell-correct :pin "a5cc88cdee20624fb0989ae227d4499178bb2820")
   (cond ((modulep! :completion ivy)
          (package! flyspell-correct-ivy))
