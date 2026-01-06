@@ -55,6 +55,7 @@
       (:prefix ("i" . "insert")
         "c" #'coq-insert-command
         "e" #'coq-end-Section
+        "g" #'coq-insert-named-goal-selectors
         "i" #'coq-insert-intros
         "r" #'coq-insert-requires
         "s" #'coq-insert-section-or-module
