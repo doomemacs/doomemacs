@@ -3,4 +3,4 @@
 
 (package! indent-bars
   :recipe (:host github :repo "jdtsmith/indent-bars")
-  :pin "c3384ec7ff6250f78b118c452458f1a7121841cf")
+  :pin "d32cdba5b136c9697fbfd1d231d31a33c5dabf0e")
