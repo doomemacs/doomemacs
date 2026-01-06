@@ -5,4 +5,4 @@
 ;; tramp-container (included with Emacs 29+) replaces docker-tramp
 (when (< emacs-major-version 29)
   (package! docker-tramp :pin "19d0771db4e6b89e19c00af5806438e315779c15"))
-(package! dockerfile-mode :pin "8135740bfc6ad96ab82d39d9fe68dbce56180f4c")
+(package! dockerfile-mode :pin "97733ce074b1252c1270fd5e8a53d178b66668ed")

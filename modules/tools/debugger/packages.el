@@ -5,5 +5,5 @@
 
 ;; DEPRECATED
 (when (modulep! +lsp)
-  (package! dap-mode :pin "f63a301f585bcf0ab334551fc323ce06178673d0")
+  (package! dap-mode :pin "ded79ff0637f0ceb04380926a5ce4c40ef0a4f4c")
   (package! posframe :pin "d93828bf6c36383c365bd564ad3bab5a4403804c"))
