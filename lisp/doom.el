@@ -216,7 +216,7 @@
 
 (defgroup doom nil
   "A development framework for Emacs configurations and Emacs Lisp projects."
-  :link '(url-link "https://doomemacs.org")
+  :link '(url-link :tag "Website" "https://doomemacs.org")
   :group 'emacs)
 
 (defconst doom-version "3.0.0-pre"
