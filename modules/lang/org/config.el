@@ -1331,10 +1331,12 @@ between the two."
   (setq org-effort-property "EFFORT")
 
   ;; HACK `org-id' doesn't check if `org-id-locations-file' exists or is
-  ;;      writeable before trying to read/write to it.
-  (defadvice! +org--fail-gracefully-a (&rest _)
-    :before-while '(org-id-locations-save org-id-locations-load)
-    (file-writable-p org-id-locations-file))
+  ;;      writeable before trying to read/write to it, potentially throwing a
+  ;;      file-error if it doesn't, which can leave Org in a broken state.
+  (defadvice! +org--fail-gracefully-a (fn &rest args)
+    :around '(org-id-locations-save org-id-locations-load)
+    (with-demoted-errors "org-id-locations: %s"
+      (apply fn args)))
 
   (add-hook 'org-open-at-point-functions #'doom-set-jump-h)
   ;; HACK For functions that dodge `org-open-at-point-functions', like
