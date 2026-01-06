@@ -41,11 +41,6 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
   :hook (doom-first-input . global-corfu-mode)
   :config
   (setq corfu-auto t
-        corfu-auto-delay
-        (if (featurep :system 'macos)
-            0.4  ; MacOS is slower, so go easy on it
-          0.24)
-        corfu-auto-prefix 2
         global-corfu-modes
         '((not erc-mode
                circe-mode
@@ -65,7 +60,6 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
         tab-always-indent 'complete)
 
   (add-to-list 'completion-category-overrides `(lsp-capf (styles ,@completion-styles)))
-  (add-to-list 'corfu-auto-commands #'lispy-colon)
   (add-to-list 'corfu-continue-commands #'+corfu/move-to-minibuffer)
   (add-to-list 'corfu-continue-commands #'+corfu/smart-sep-toggle-escape)
   (add-hook 'evil-insert-state-exit-hook #'corfu-quit)
@@ -107,18 +101,6 @@ This function respects the value of `+corfu-want-minibuffer-completion':
 
   (setq global-corfu-minibuffer #'+corfu-enable-in-minibuffer-p)
 
-  ;; HACK: Augments Corfu to respect `+corfu-inhibit-auto-functions'.
-  (defadvice! +corfu--post-command-a (fn &rest args)
-    "Refresh Corfu after last command."
-    (let ((corfu-auto
-           (if corfu-auto
-               (not (run-hook-with-args-until-success '+corfu-inhibit-auto-functions)))))
-      (apply fn args)))
-
-  (when (modulep! :editor evil)
-    ;; Modifying the buffer while in replace mode can be janky.
-    (add-to-list '+corfu-inhibit-auto-functions #'evil-replace-state-p))
-
   ;; HACK: If you want to update the visual hints after completing minibuffer
   ;;   commands with Corfu and exiting, you have to do it manually.
   (defadvice! +corfu--insert-before-exit-minibuffer-a ()
@@ -151,6 +133,31 @@ This function respects the value of `+corfu-want-minibuffer-completion':
        (message "Auto-disabling `text-mode-ispell-word-completion'")
        (setq text-mode-ispell-word-completion nil)
        (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t)))))
+
+
+(use-package! corfu-auto
+  :defer t
+  :config
+  (setq corfu-auto-delay
+        (if (featurep :system 'macos)
+            0.4  ; MacOS is slower, so go easy on it
+          0.24)
+        corfu-auto-prefix 2)
+  (add-to-list 'corfu-auto-commands #'lispy-colon)
+
+  (when (modulep! :editor evil)
+    ;; Modifying the buffer while in replace mode can be janky.
+    (add-to-list '+corfu-inhibit-auto-functions #'evil-replace-state-p))
+
+  ;; HACK: Augments Corfu to respect `+corfu-inhibit-auto-functions'.
+  (defadvice! +corfu--post-command-a (fn &rest args)
+    "Refresh Corfu after last command."
+    :around #'corfu--popup-support-p
+    (let ((corfu-auto
+           (if corfu-auto
+               (not (run-hook-with-args-until-success '+corfu-inhibit-auto-functions)))))
+      (apply fn args))))
+
 
 (use-package! cape
   :defer t
