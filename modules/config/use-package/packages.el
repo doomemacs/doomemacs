@@ -6,6 +6,6 @@
   ;;   lisp-data-mode, which doesn't exist prior to Emacs 28.x, so bind-key will
   ;;   fail to build for those users. Until we drop 27.x support, we omit it.
   :recipe (:files ("bind-key.el"))
-  :pin "ec9d0505febe2556b47457355763f5f1408a35ac")
+  :pin "e9ead409b17d8cf7c221f6c28e115a8c051be9e3")
 
-(package! use-package :pin "c95bceeadad393ef5e9c85e3172e3434f9fbaaca")
+(package! use-package :pin "039b721a4d24b93adc3170e39a6cba7a8200ed43")

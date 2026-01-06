@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; input/chinese/packages.el
 
-(package! pyim :pin "bc85ecc3b2521d05c7585df97939f7c0ec5b1496")
+(package! pyim :pin "a56c8d992c872addcfc295c409a7bae70d00af87")
 (package! fcitx :pin "b399482ed8db5893db2701df01db4c38cccda495")
 (package! ace-pinyin :pin "47662c0b05775ba353464b44c0f1a037c85e746e")
 (package! pangu-spacing :pin "6509df9c90bbdb9321a756f7ea15bb2b60ed2530")

@@ -22,7 +22,7 @@
 (when (modulep! +org)
   (package! org-mime :pin "ffaad784a8597ee52842a578c01bd347d3e0281d"))
 (when (modulep! :lang org)
-  (package! ol-notmuch :pin "51deac09857cb6b329cf2c3b899332deba28bad2"))
+  (package! ol-notmuch :pin "8f717329388935538fe433b9a15f1599edd9fcd5"))
 (when (modulep! :completion ivy)
   (package! counsel-notmuch :pin "a4a1562935e4180c42524c51609d1283e9be0688"))
 (when (modulep! :completion helm)
