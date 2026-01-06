@@ -41,8 +41,6 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-- +brain ::
-  Enable [[doom-package:org-brain]] integration.
 - +contacts ::
   Enable [[doom-package:org-contacts]] integration.
 - +dragndrop ::

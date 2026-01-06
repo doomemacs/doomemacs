@@ -69,8 +69,6 @@
   (package! orgit :pin "e0b3fca9f328065af52b81a619445b6a45a3ab25")
   (when (modulep! :tools magit +forge)
     (package! orgit-forge :pin "15f8e91083969117cb14521b9b8b9e7af2016771")))
-(when (modulep! +brain)
-  (package! org-brain :pin "2bad7732aae1a3051e2a14de2e30f970bbe43c25"))
 (when (modulep! +dragndrop)
   (package! org-download :pin "c8be2611786d1d8d666b7b4f73582de1093f25ac"))
 (when (modulep! +gnuplot)
