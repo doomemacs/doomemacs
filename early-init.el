@@ -26,27 +26,28 @@
 ;;
 ;;; Code:
 
+;; PERF: Garbage collection is a big contributor to startup times in both
+;;   interactive and CLI sessions, so I defer it.
+(if noninteractive  ; in CLI sessions
+    ;; PERF: GC deferral is less important in the CLI, but still helps script
+    ;;   startup times. Just don't set it too high to avoid runaway memory usage
+    ;;   in long-running elisp shell scripts.
+    (setq gc-cons-threshold 134217728  ; 128mb
+          ;; Backported from 29 (see emacs-mirror/emacs@73a384a98698)
+          gc-cons-percentage 1.0)
+  ;; PERF: Doom relies on `gcmh-mode' to reset this while the user is idle, so I
+  ;;   effectively disable GC during startup. DON'T COPY THIS BLINDLY! If it's
+  ;;   not reset later there will be stuttering, freezes, and crashes.
+  (setq gc-cons-threshold most-positive-fixnum)
+  ;; PERF: Don't waste precious startup time checking mtimes on elisp bytecode.
+  ;;   Ensuring correctness is 'doom sync's job.
+  (setq load-prefer-newer nil))
+
+
+;; PERF: Many elisp file API calls consult `file-name-handler-alist' (like
+;;   `expand-file-name'). Emacs makes thousands of these calls, and can be sped
+;;   up by setting it to nil (its functionality is unneeded this early, anyway).
 (let (file-name-handler-alist)
-  ;; PERF: Garbage collection is a big contributor to startup times in both
-  ;;   interactive and CLI sessions, so I defer it.
-  (if noninteractive  ; in CLI sessions
-      ;; PERF: GC deferral is less important in the CLI, but still helps script
-      ;;   startup times. Just don't set it too high to avoid runaway memory
-      ;;   usage in long-running elisp shell scripts.
-      (setq gc-cons-threshold 134217728  ; 128mb
-            ;; Backported from 29 (see emacs-mirror/emacs@73a384a98698)
-            gc-cons-percentage 1.0)
-    ;; PERF: Doom relies on `gcmh-mode' to reset this while the user is idle, so
-    ;;   I effectively disable GC during startup. DON'T COPY THIS BLINDLY! If
-    ;;   it's not reset later there will be stuttering, freezes, and crashes.
-    (setq gc-cons-threshold most-positive-fixnum))
-
-  ;; PERF: Don't use precious startup time to check mtimes on elisp bytecode.
-  ;;   Ensuring correctness is 'doom sync's job. Although stale byte-code will
-  ;;   heavily impact startup times, performance is unimportant when Emacs is in
-  ;;   an error state.
-  (setq load-prefer-newer noninteractive)
-
   ;; UX: Respect DEBUG envvar as an alternative to --debug-init, and to make
   ;;   startup more verbose sooner.
   (let ((debug (getenv-internal "DEBUG")))
@@ -104,14 +105,14 @@
   ;;   amounts to at least one file op, which is normally very fast, but can add
   ;;   up over the hundreds/thousands of files Emacs loads.
   ;;
-  ;;   To reduce that burden -- and since Doom doesn't load any dynamic modules
-  ;;   this early -- I remove `.so' from `load-suffixes' and pass the
-  ;;   `must-suffix' arg to `load'. See the docs of `load' for details.
+  ;;   Doom doesn't load dynamic modules this early, so ".so" is removed from
+  ;;   `load-suffixes' to reduce the burden (and MUST-SUFFIX is passed to `load'
+  ;;   where possible).
   (if (let ((load-suffixes '(".elc" ".el"))
             (doom (expand-file-name "lisp/doom" user-emacs-directory)))
-        ;; I avoid `load's NOERROR argument because it suppresses other,
-        ;; legitimate errors (like permission or IO errors), which gets
-        ;; incorrectly interpreted as "this is not a Doom config".
+        ;; Don't use `load's NOERROR argument because it suppresses other,
+        ;; legitimate errors (like permission or IO errors), which should not be
+        ;; interpreted as "this is not a Doom config".
         (if (file-exists-p (concat doom ".el"))
             ;; Load the heart of Doom Emacs.
             (load doom nil (not init-file-debug) nil 'must-suffix)
