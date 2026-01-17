@@ -66,9 +66,9 @@
 (when (modulep! :tools pdf)
   (package! org-pdftools :pin "2b3357828a4c2dfba8f87c906d64035d8bf221f2"))
 (when (modulep! :tools magit)
-  (package! orgit :pin "e0b3fca9f328065af52b81a619445b6a45a3ab25")
+  (package! orgit :pin "24c8fe48c477d561c2ce1720223f8c5aec664f4e") ; v2.1.1
   (when (modulep! :tools magit +forge)
-    (package! orgit-forge :pin "15f8e91083969117cb14521b9b8b9e7af2016771")))
+    (package! orgit-forge :pin "c2116b8701498bd11d8674065a5429d844985e46"))) ; v1.1.1
 (when (modulep! +dragndrop)
   (package! org-download :pin "c8be2611786d1d8d666b7b4f73582de1093f25ac"))
 (when (modulep! +gnuplot)
@@ -79,25 +79,25 @@
 (when (modulep! +journal)
   (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
 (when (modulep! +noter)
-  (package! org-noter :pin "aafa08a49c4c3311d9b17864629aceeff02d33da"))
+  (package! org-noter :pin "81765d267e51efd8b4f5b7276000332ba3eabbf5"))
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-modern :pin "55b5bbeb1eb9483d0cb43f4803615c380bf3b1ed")
+  (package! org-modern :pin "9bbc44cc7e085dea24e96f0cc0332ed7fcf349ca")
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
     :recipe (:host github :repo "nullvec/centered-window-mode")
     :pin "701f56cd1d2b68352d29914f05ca1b0037bb2595")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
-  (package! org-re-reveal :pin "72c24637820f9dafa96d4ad23a0802c47de7651e")
+  (package! org-re-reveal :pin "8245facfdca168a728f3761d863af28ee05af171")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
     :pin "33bfe3b233f1a840cd70e834b609ec6f04494a40"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
-  (package! org-roam :pin "b2634a17f8b6f30b332774ed18b165966bd11906"))
+  (package! org-roam :pin "c72702cf27891899ea6321fe6505ff04befaf43e"))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -135,7 +135,7 @@
 
 ;;; Export
 (when (modulep! +pandoc)
-  (package! ox-pandoc :pin "5766c70b6db5a553829ccdcf52fcf3c6244e443d"))
+  (package! ox-pandoc :pin "1caeb56a4be26597319e7288edbc2cabada151b4"))
 (when (modulep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)

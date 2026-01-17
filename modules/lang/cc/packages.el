@@ -3,7 +3,7 @@
 
 (package! cmake-mode
   :recipe (:host github :repo "emacsmirror/cmake-mode" :files (:defaults "*"))
-  :pin "b08b5d9045308362a623a4f576896d55ffecfd52")
+  :pin "25340a7d12c2a4b7f514a3792f3e89af32c55dfa")
 (package! demangle-mode :pin "04f545adab066708d6151f13da65aaf519f8ac4e")
 (package! disaster :pin "0299c129d4153e3a794358159737c3ff9d155654")
 (package! opencl-mode :pin "6464abf969d916aba83e393b5206b147ac416da3")
