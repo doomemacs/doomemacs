@@ -70,12 +70,16 @@
 
 (use-package! php-ts-mode
   :when (modulep! +tree-sitter)
+  :when (fboundp 'php-ts-mode) ; 30.1+ only
   :defer t
   :init
   (set-tree-sitter! '(php-mode php-mode-maybe) 'php-ts-mode
-    '((php :url "https://github.com/tree-sitter/tree-sitter-php"
+    `((php :url "https://github.com/tree-sitter/tree-sitter-php"
            :rev "v0.23.11"
-           :commit "f7cf7348737d8cff1b13407a0bfedce02ee7b046"
+           :commit ,(if (and (treesit-available-p)
+                             (< (treesit-library-abi-version) 15))
+                        "f7cf7348737d8cff1b13407a0bfedce02ee7b046"
+                      "5b5627faaa290d89eb3d01b9bf47c3bb9e797dea")
            :source-dir "php/src")
       (phpdoc :url "https://github.com/claytonrcarter/tree-sitter-phpdoc"
               :commit "03bb10330704b0b371b044e937d5cc7cd40b4999")
