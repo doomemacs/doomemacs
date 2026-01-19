@@ -463,6 +463,11 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; serve much purpose when the selection is so much more visible.
   (defvar doom--hl-line-mode nil)
 
+  ;; Don't display line highlights in non-focused windows, for performance sake
+  ;; and to reduce UI clutter.
+  (setq hl-line-sticky-flag nil
+        global-hl-line-sticky-flag 'window)
+
   (add-hook! 'hl-line-mode-hook
     (defun doom-truly-disable-hl-line-h ()
       (unless hl-line-mode
