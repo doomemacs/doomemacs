@@ -636,6 +636,8 @@ safely cleaned up with 'doom sync' or 'doom gc'."
     (let ((temporary-file-directory (expand-file-name "comp/" doom-profile-cache-dir)))
       (make-directory temporary-file-directory t)
       (apply fn args)))
+  ;; This is renamed in newer versions of Emacs.
+  (advice-add #'comp--run-async-workers :around #'comp-run-async-workers@dont-litter-tmpdir)
 
   (with-eval-after-load 'comp
     ;; HACK: On Emacs 30.0.92, `native-comp-jit-compilation-deny-list' was moved
