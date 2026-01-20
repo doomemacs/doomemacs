@@ -451,7 +451,8 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   ;; interactively killed buffers.
   (add-hook 'kill-buffer-hook #'doom-set-jump-h)
 
-  ;; Create a jump point before jumping with imenu.
+  ;; Manual support for specific commands:
+  (advice-add #'outline-up-heading :around #'doom-set-jump-a)
   (advice-add #'imenu :around #'doom-set-jump-a))
 
 
