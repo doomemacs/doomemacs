@@ -28,7 +28,7 @@
 
 ;; Testing frameworks
 (package! nose :pin "f8528297519eba911696c4e68fa88892de9a7b72")
-(package! python-pytest :pin "ed2ecee09d1cccb4245842860d91940cb2fda769")
+(package! python-pytest :pin "78b5ea1d19c7e365ac00649d13c733954b11f822")
 
 ;; Import managements
 (package! pyimport :pin "4398ce8dd64fa0f685f4bf8683a35087649346d3")

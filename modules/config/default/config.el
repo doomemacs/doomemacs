@@ -544,9 +544,9 @@ Continues comments if executed from a commented line."
           :gi "TAB" cmds-tab
           :gi [tab] cmds-tab))
 
-  ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
-  ;; Pressing it again will send you to the true bol. Same goes for C-e, except
-  ;; it will ignore comments+trailing whitespace before jumping to eol.
+  ;; Smarter readline keybinds (C-a/C-e) for both Emacs and Evil. Changes C-a to
+  ;; also cycle between true BOL and BOI (indentation). Same for C-e, but with
+  ;; EOL and EOI (ignoring comments+trailing whitespace).
   (map! :gi "C-a" #'doom/backward-to-bol-or-indent
         :gi "C-e" #'doom/forward-to-last-non-comment-or-eol
         ;; Standardizes the behavior of modified RET to match the behavior of
@@ -559,12 +559,9 @@ Continues comments if executed from a commented line."
         ;; C-<mouse-scroll-down> = text scale decrease
         [C-down-mouse-2] (cmd! (text-scale-set 0))
 
-        ;; auto-indent on newline by default
-        :gi [remap newline] #'newline-and-indent
-        ;; insert literal newline
-        :i  "S-RET"         #'+default/newline
-        :i  [S-return]      #'+default/newline
-        :i  "C-j"           #'+default/newline
+        ;; Do opposite of `electric-indent-mode'
+        :i "S-RET"         #'electric-newline-and-maybe-indent
+        :i [S-return]      #'electric-newline-and-maybe-indent
 
         ;; Add new item below current (without splitting current line).
         :gi "C-RET"         #'+default/newline-below

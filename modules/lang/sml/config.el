@@ -6,6 +6,9 @@
   (set-formatter! 'smlformat '("smlformat") :modes mode)
 
   (when (modulep! +lsp)
+    (after! lsp-mode
+      ;; REVIEW: PR this upstream!
+      (add-to-list 'lsp-language-id-configuration `(,mode . "sml")))
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
   ;; don't auto-close apostrophes (type 'a = foo) and backticks (`Foo)
@@ -38,6 +41,8 @@
   (set-tree-sitter! 'sml-mode 'sml-ts-mode
     '((sml :url "https://github.com/MatthewFluet/tree-sitter-sml")))
   :config
+  ;; REVIEW: add to `eglot-server-programs' upstream!
+  (set-eglot-client! 'sml-ts-mode (alist-get 'sml-mode eglot-server-programs))
   (+sml-common-config 'sml-ts-mode))
 
 

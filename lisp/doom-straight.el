@@ -55,7 +55,10 @@
       ;; no affect on packages that are pinned, however (run 'doom sync --gc' to
       ;; compact those after-the-fact). Some packages break when shallow cloned
       ;; (like magit and org), but we'll deal with that elsewhere.
-      straight-vc-git-default-clone-depth '(1 single-branch))
+      straight-vc-git-default-clone-depth '(1 single-branch)
+      ;; Straight emits an intrusive warning if package.el is present and
+      ;; loaded. Silence it.
+      straight-package--warning-displayed t)
 
 (with-eval-after-load 'straight
   ;; HACK: Doom relies on deferred compilation, which spares the user 20-50min

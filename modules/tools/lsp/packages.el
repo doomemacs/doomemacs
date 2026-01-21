@@ -3,11 +3,11 @@
 
 (if (modulep! +eglot)
     (progn
-      (package! eglot :pin "f110d26e0356983d07d94d38a1b384a0f79b6b8c")
+      (package! eglot :pin "78bd85f1b50a7256e9c6171094544fd68f0a0b0c")
       (when (modulep! :completion vertico)
         (package! consult-eglot :pin "d8b444aac39edfc6473ffbd228df3e9119451b51"))
       (when (modulep! :checkers syntax -flymake)
-        (package! flycheck-eglot :pin "f617b68699f00e7fe271bbf6daaddde7e3b2fdb2"))
+        (package! flycheck-eglot :pin "39dd981cc56c7cb8df510510bb8f3a17380980ee"))
       (when (modulep! +booster)
         (package! eglot-booster
           :recipe (:host github :repo "jdtsmith/eglot-booster")
@@ -18,7 +18,7 @@
   (eval-and-compile (defvar lsp-use-plists t))
 
   (package! lsp-mode
-    :pin "2315fdec79e5ce638a26a385d7744c57949f4560"
+    :pin "7642778d595f0158d17740e40a47646cfecbe96a"
     :env `(("LSP_USE_PLISTS" . ,(and lsp-use-plists "1"))))
   (package! lsp-ui :pin "ff349658ed69086bd18c336c8a071ba15f7fd574")
   (when (modulep! :completion ivy)

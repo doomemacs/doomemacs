@@ -6,7 +6,7 @@
     :recipe (:host gitlab :repo "flatwhatson/scheme-mode")
     :pin "a713b253d2ff5bbaeef400a7d495f7dfe918a641"))
 
-(when (package! geiser :pin "43b9a034aa12d0fd9f27cfdbe7d35affaaf9c19b")
+(when (package! geiser :pin "8842104d1521a00c182ce78e9d50d394e9ba86f5")
   (package! macrostep-geiser :pin "f6a2d5bb96ade4f23df557649af87ebd0cc45125")
   (when (modulep! +chez)
     (package! geiser-chez :pin "605a81ff7b2d2b275a3ec68e3ce7e5b50f85014d"))
@@ -17,7 +17,7 @@
   (when (modulep! +gambit)
     (package! geiser-gambit :pin "381d74ca5059b44fe3d8b5daf42214019c6d1a88"))
   (when (modulep! +gauche)
-    (package! geiser-gauche :pin "9eb8b35f0c3bf44ae7990be707591ed8498b6fa3"))
+    (package! geiser-gauche :pin "b8197c6288020371d2a27ca734940564876d5d98"))
   (when (modulep! +guile)
     (package! geiser-guile :pin "a0f111f8dedd31c593c4ed12c0b99745f3c1340f")
     (when (modulep! :checkers syntax -flymake)

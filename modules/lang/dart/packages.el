@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/dart/packages.el
 
-(package! dart-mode :pin "9fbf703e1f8f32be4f864bc532490c6bcd71a746")
+(package! dart-mode :pin "773e9ebc74a258af2db395b01febfb652a42f3ab")
 
 (when (and (modulep! +tree-sitter) (treesit-available-p))
   (package! dart-ts-mode

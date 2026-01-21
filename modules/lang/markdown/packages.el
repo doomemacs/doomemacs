@@ -2,7 +2,7 @@
 ;;; lang/markdown/packages.el
 
 (package! markdown-mode :pin "92802fae9ebbc8c2e4c281c06dcdbd74b8bca80e")
-(package! markdown-toc :pin "d3324cb6bc1001b1c820f04cc0e45e99ee16a0c8")
+(package! markdown-toc :pin "29e5c0f33ed026a5f993e4211f52debd7c02b3ba")
 
 ;; Required by `markdown-mode', or it will install it via package.el if it isn't
 ;; present when you call `markdown-edit-code-block'.

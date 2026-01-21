@@ -14,16 +14,16 @@
 (package! parseedn :pin "3407e4530a367b6c2b857dae261cdbb67a440aaa")
 
 ;;; Core packages
-(package! clojure-mode :pin "28dc02114ae70db6bb68d537ea77985f272120bc")
+(package! clojure-mode :pin "467922210962061777e00d6cc46f5db2d00fb3ef")
 (when (and (modulep! +tree-sitter)
            (treesit-available-p)
            (> emacs-major-version 29))  ; requires 30+
   (package! clojure-ts-mode :pin "96fdffcbe9e1b8ebf9ad14e23b06f62cc3422e22"))
 (package! clj-refactor :pin "362cb46bf808dc42d2aaf022afe93048439680c4")
-(package! cider :pin "fb7aa888125dfd5f174b6c208deca66d3fc129ab")
+(package! cider :pin "15bd3b02658cb8789ad9725fce829c3218bf77a9")
 (when (modulep! :checkers syntax -flymake)
   (package! flycheck-clj-kondo :pin "e38c67ba9db1ea1cbe1b61ab39b506c05efdcdbf"))
 (package! jet :pin "c9a92675efd802f37df5e3eab7858dbbeced6ea4")
 (package! neil
   :recipe (:host github :repo "babashka/neil" :files ("*.el"))
-  :pin "0b7373dd1b5a0dc7f8aff83b8e65d75d7d5e23bc")
+  :pin "8d5ccdbd8185fb2e03bd7de04b3d190e90331709")

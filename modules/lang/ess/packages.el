@@ -1,9 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/ess/packages.el
 
-(package! ess :pin "7b9123669cccb26f346624fc82f7e2ff74b5dc62")
-(package! ess-view-data :pin "5ec1c7206f1431c7b24f0990497ecc7e0fb33939")
-(package! polymode :pin "25ba9463a443f0e904147138f226284e437248d3")
+(package! ess :pin "f8c464dc1b017b5397f8ec9955f7856493af1179")
+(package! ess-view-data :pin "7dcbd23d4cef2030753d16e1ca1811d3466484e7")
+(package! polymode :pin "14b1fd8d2a183f11b123f62e02801dc1139da9c1")
 (package! poly-R :pin "fee0b6e99943fa49ca5ba8ae1a97cbed5ed51946")
 (package! quarto-mode :pin "a7b974f7d22ef939eaed8b9919434bcf20b1438f")
 
@@ -17,4 +17,4 @@
 
 (when (< emacs-major-version 29)
   ;; See emacs-ess/ESS#1193
-  (package! xterm-color :pin "ce82e87ea3d277c7e4fc48ce390d540fbd78f6d1"))
+  (package! xterm-color :pin "86fab1d247eb5ebe6b40fa5073a70dfa487cd465"))
