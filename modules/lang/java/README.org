@@ -40,7 +40,7 @@ This module requires:
 
 ** OpenJDK 11
 *** Ubuntu
-#+begin-src sh
+#+begin_src sh
 apt-get install openjdk-11-jdk-headless
 #+end_src
 
