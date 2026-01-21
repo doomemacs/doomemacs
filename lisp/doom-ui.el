@@ -446,44 +446,54 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       org-agenda-mode dired-mode)
     "What modes to enable `hl-line-mode' in.")
   :config
-  ;; HACK I reimplement `global-hl-line-mode' so we can white/blacklist modes in
-  ;;      `global-hl-line-modes' _and_ so we can use `global-hl-line-mode',
-  ;;      which users expect to control hl-line in Emacs.
-  (define-globalized-minor-mode global-hl-line-mode hl-line-mode
-    (lambda ()
-      (and (cond (hl-line-mode nil)
-                 ((null global-hl-line-modes) nil)
-                 ((eq global-hl-line-modes t))
-                 ((eq (car global-hl-line-modes) 'not)
-                  (not (derived-mode-p global-hl-line-modes)))
-                 ((apply #'derived-mode-p global-hl-line-modes)))
-           (hl-line-mode +1))))
+  (if (boundp 'global-hl-line-buffers)
+      (setq global-hl-line-buffers
+            `(not (or (lambda (b)
+                        (when global-hl-line-modes
+                          (let ((mode (buffer-local-value 'major-mode b)))
+                            (if (eq (car global-hl-line-modes) 'not)
+                                (provided-mode-derived-p mode global-hl-line-modes)
+                              (not (provided-mode-derived-p mode global-hl-line-modes))))))
+                      (lambda (b) (with-current-buffer b (doom-region-active-p)))
+                      (lambda (b) (buffer-local-value 'cursor-face-highlight-mode b))
+                      (lambda (b) (string-match-p "\\` " (buffer-name b)))
+                      minibufferp))
+            ;; Don't display line highlights in non-focused windows, for
+            ;; performance sake and to reduce UI clutter.
+            global-hl-line-sticky-flag 'window)
+    ;; HACK: `global-hl-line-buffers' wasn't introduced until 31.1, so I
+    ;;   reimplement to `global-hl-line-modes' give us a major mode
+    ;;   white/blacklist via `global-hl-line-modes'.
+    (define-globalized-minor-mode global-hl-line-mode hl-line-mode
+      (lambda ()
+        (and (cond (hl-line-mode nil)
+                   ((null global-hl-line-modes) nil)
+                   ((eq global-hl-line-modes t))
+                   ((eq (car global-hl-line-modes) 'not)
+                    (not (derived-mode-p global-hl-line-modes)))
+                   ((apply #'derived-mode-p global-hl-line-modes)))
+             (hl-line-mode +1))))
 
-  ;; Temporarily disable `hl-line' when selection is active, since it doesn't
-  ;; serve much purpose when the selection is so much more visible.
-  (defvar doom--hl-line-mode nil)
+    ;; Temporarily disable `hl-line-mode' when selection is active, since it
+    ;; doesn't serve much purpose when the selection is so much more visible.
+    (defvar doom--hl-line-mode nil)
 
-  ;; Don't display line highlights in non-focused windows, for performance sake
-  ;; and to reduce UI clutter.
-  (setq hl-line-sticky-flag nil
-        global-hl-line-sticky-flag 'window)
+    (add-hook! 'hl-line-mode-hook
+      (defun doom-truly-disable-hl-line-h ()
+        (unless hl-line-mode
+          (setq-local doom--hl-line-mode nil))))
 
-  (add-hook! 'hl-line-mode-hook
-    (defun doom-truly-disable-hl-line-h ()
-      (unless hl-line-mode
-        (setq-local doom--hl-line-mode nil))))
+    ;; TODO: Use (de)activate-mark-hook in the absence of evil
+    (add-hook! 'evil-visual-state-entry-hook
+      (defun doom-disable-hl-line-h ()
+        (when hl-line-mode
+          (hl-line-mode -1)
+          (setq-local doom--hl-line-mode t))))
 
-  ;; TODO: Use (de)activate-mark-hook in the absence of evil
-  (add-hook! 'evil-visual-state-entry-hook
-    (defun doom-disable-hl-line-h ()
-      (when hl-line-mode
-        (hl-line-mode -1)
-        (setq-local doom--hl-line-mode t))))
-
-  (add-hook! 'evil-visual-state-exit-hook
-    (defun doom-enable-hl-line-maybe-h ()
-      (when doom--hl-line-mode
-        (hl-line-mode +1)))))
+    (add-hook! 'evil-visual-state-exit-hook
+      (defun doom-enable-hl-line-maybe-h ()
+        (when doom--hl-line-mode
+          (hl-line-mode +1))))))
 
 
 (use-package! winner
