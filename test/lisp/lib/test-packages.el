@@ -362,5 +362,146 @@
   (put 'cached-pkg 'homepage nil))
 
 
+;;; ============================================================
+;;; Tests for Parallel Processing Functions
+;;; ============================================================
+
+(ert-deftest doom-packages--find-emacs-executable/returns-emacs ()
+  "doom-packages--find-emacs-executable returns an Emacs executable path."
+  (let ((result (doom-packages--find-emacs-executable)))
+    (should (stringp result))
+    (should (or (string-match-p "emacs" result)
+                (getenv "EMACS")))))
+
+(ert-deftest doom-packages--find-emacs-executable/respects-env ()
+  "doom-packages--find-emacs-executable respects EMACS env var."
+  (let ((process-environment (cons "EMACS=/custom/emacs" process-environment)))
+    (should (equal (doom-packages--find-emacs-executable) "/custom/emacs"))))
+
+(ert-deftest doom-packages--collect-el-files/collects-files ()
+  "doom-packages--collect-el-files collects .el files from build dirs."
+  (let ((temp-dir (make-temp-file "doom-test-build-" t)))
+    (unwind-protect
+        (progn
+          ;; Create some test .el files
+          (with-temp-file (expand-file-name "test.el" temp-dir)
+            (insert "(provide 'test)"))
+          (with-temp-file (expand-file-name "helper.el" temp-dir)
+            (insert "(provide 'helper)"))
+          ;; These should be excluded
+          (with-temp-file (expand-file-name "test-autoloads.el" temp-dir)
+            (insert ";; autoloads"))
+          (with-temp-file (expand-file-name "test-pkg.el" temp-dir)
+            (insert ";; pkg file"))
+          ;; Mock straight--build-dir
+          (cl-letf (((symbol-function 'straight--build-dir)
+                     (lambda (pkg) temp-dir)))
+            (let ((files (doom-packages--collect-el-files '("test-pkg"))))
+              ;; Should have 2 files (test.el and helper.el)
+              (should (= (length files) 2))
+              ;; Should not include autoloads or pkg files
+              (should (null (cl-find-if (lambda (f) (string-match-p "-autoloads\\.el$" f)) files)))
+              (should (null (cl-find-if (lambda (f) (string-match-p "-pkg\\.el$" f)) files))))))
+      (delete-directory temp-dir t))))
+
+(ert-deftest doom-packages--collect-el-files/handles-missing-dir ()
+  "doom-packages--collect-el-files handles missing build directories."
+  (cl-letf (((symbol-function 'straight--build-dir)
+             (lambda (pkg) "/nonexistent/path")))
+    (let ((files (doom-packages--collect-el-files '("nonexistent-pkg"))))
+      (should (null files)))))
+
+(ert-deftest doom-packages--build-package/builds-successfully ()
+  "doom-packages--build-package builds a package."
+  (defvar straight--packages-not-to-rebuild)
+  (defvar straight--packages-to-rebuild)
+  (let ((build-called nil)
+        (straight--packages-not-to-rebuild nil)
+        (straight--packages-to-rebuild nil))
+    (cl-letf (((symbol-function 'straight--build-dir)
+               (lambda (_) "/tmp/nonexistent"))
+              ((symbol-function 'straight--make-build-cache-available)
+               (lambda () nil))
+              ((symbol-function 'straight-use-package)
+               (lambda (pkg) (setq build-called t))))
+      (let ((result (doom-packages--build-package "test-pkg")))
+        (should result)
+        (should build-called)))))
+
+(ert-deftest doom-packages--build-package/handles-errors ()
+  "doom-packages--build-package returns nil on error."
+  (defvar straight--packages-not-to-rebuild)
+  (defvar straight--packages-to-rebuild)
+  (let ((straight--packages-not-to-rebuild nil)
+        (straight--packages-to-rebuild nil))
+    (cl-letf (((symbol-function 'straight--build-dir)
+               (lambda (_) "/tmp/nonexistent"))
+              ((symbol-function 'straight--make-build-cache-available)
+               (lambda () nil))
+              ((symbol-function 'straight-use-package)
+               (lambda (pkg) (error "Build failed"))))
+      (let ((result (doom-packages--build-package "test-pkg")))
+        (should (null result))))))
+
+(ert-deftest doom-packages--parallel-byte-compile/calls-callback-empty ()
+  "doom-packages--parallel-byte-compile calls callback with empty file list."
+  (let ((callback-called nil)
+        (callback-args nil))
+    (cl-letf (((symbol-function 'doom-packages--collect-el-files)
+               (lambda (_) nil)))
+      (doom-packages--parallel-byte-compile
+       '("pkg")
+       (lambda (success total)
+         (setq callback-called t
+               callback-args (list success total)))))
+    (should callback-called)
+    (should (equal callback-args '(t 0)))))
+
+(ert-deftest doom-packages--async-fetch/creates-process ()
+  "doom-packages--async-fetch creates a git fetch process."
+  (let ((temp-dir (make-temp-file "doom-test-repo-" t)))
+    (unwind-protect
+        (progn
+          ;; Initialize a git repo with a remote
+          (let ((default-directory temp-dir))
+            (call-process "git" nil nil nil "init")
+            (call-process "git" nil nil nil "config" "user.email" "test@test.com")
+            (call-process "git" nil nil nil "config" "user.name" "Test")
+            ;; Add a dummy remote (will fail to fetch but process still runs)
+            (call-process "git" nil nil nil "remote" "add" "origin" "https://example.com/repo.git"))
+          (let* ((callback-called nil)
+                 (proc (doom-packages--async-fetch
+                        temp-dir
+                        '(:local-repo "test" :remote "origin")
+                        (lambda (success output)
+                          (setq callback-called t)))))
+            ;; Should return a process
+            (should (processp proc))
+            ;; Process name should contain doom-fetch
+            (should (string-match-p "doom-fetch" (process-name proc)))
+            ;; Wait for completion (with timeout)
+            (let ((timeout 5)
+                  (start (float-time)))
+              (while (and (process-live-p proc)
+                          (< (- (float-time) start) timeout))
+                (accept-process-output nil 0.1)))
+            ;; Process should have finished
+            (should (not (process-live-p proc)))))
+      (delete-directory temp-dir t))))
+
+
+;;; ============================================================
+;;; Tests for Parallel Config Variables
+;;; ============================================================
+
+(ert-deftest doom-packages--parallel-max-jobs/is-positive ()
+  "doom-packages--parallel-max-jobs has a positive value."
+  (should (> doom-packages--parallel-max-jobs 0)))
+
+(ert-deftest doom-packages--parallel-max-builds/is-positive ()
+  "doom-packages--parallel-max-builds has a positive value."
+  (should (> doom-packages--parallel-max-builds 0)))
+
+
 (provide 'test-packages)
 ;;; test-packages.el ends here
