@@ -775,6 +775,51 @@ Must be run from a magit diff buffer."
     (condition-case _ (straight-check-all)
       (error (user-error "Package state is incomplete. Run 'doom sync' first")))))
 
+;;; Parallel process management
+(defvar doom-packages--parallel-max-jobs 8
+  "Maximum number of parallel fetch jobs to run.")
+
+(defvar doom-packages--build-queue nil
+  "Queue of packages waiting to be built.")
+
+(defvar doom-packages--build-in-progress nil
+  "Package currently being built, or nil.")
+
+(defun doom-packages--async-fetch (repo-dir recipe callback)
+  "Start async git fetch in REPO-DIR for RECIPE, call CALLBACK when done.
+CALLBACK receives (success-p output)."
+  (let* ((default-directory repo-dir)
+         (remote (or (plist-get recipe :remote) "origin"))
+         (buf (generate-new-buffer " *doom-fetch*"))
+         (proc (make-process
+                :name (format "doom-fetch-%s" (plist-get recipe :local-repo))
+                :buffer buf
+                :command (list "git" "fetch" "--tags" remote)
+                :sentinel (lambda (proc _event)
+                            (when (memq (process-status proc) '(exit signal))
+                              (let ((output (with-current-buffer buf (buffer-string)))
+                                    (success (= 0 (process-exit-status proc))))
+                                (kill-buffer buf)
+                                (funcall callback success output)))))))
+    proc))
+
+(defun doom-packages--build-package (package)
+  "Build PACKAGE synchronously. Returns t on success."
+  (condition-case err
+      (let ((straight--packages-not-to-rebuild
+             (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+            (straight--packages-to-rebuild (make-hash-table :test #'equal)))
+        (puthash package t straight--packages-to-rebuild)
+        (let ((build-dir (straight--build-dir package)))
+          (when (file-directory-p build-dir)
+            (delete-directory build-dir t)))
+        (straight--make-build-cache-available)
+        (straight-use-package (intern package))
+        t)
+    (error
+     (message "Build error for %s: %s" package (error-message-string err))
+     nil)))
+
 (defmacro doom-packages--with-recipes (recipes binds &rest body)
   (declare (indent 2))
   (let ((recipe-var  (make-symbol "recipe"))
@@ -1052,7 +1097,8 @@ Must be run from a magit diff buffer."
         nil))))
 
 (defun doom-packages-update (&optional pinned-only-p)
-  "Updates packages."
+  "Updates packages with parallel fetch and pipelined build operations.
+Fetches run in parallel, builds run in main process but overlap with fetches."
   (doom-initialize-packages)
   (doom-packages--barf-if-incomplete)
   (let* ((repo-dir (straight--repos-dir))
@@ -1062,139 +1108,166 @@ Must be run from a magit diff buffer."
          (repos-to-rebuild (make-hash-table :test 'equal))
          (total (length recipes))
          (esc (if init-file-debug "" "\033[1A"))
-         (i 0))
+         ;; Pipeline state
+         (work-queue nil)          ; packages to process
+         (fetch-pending nil)       ; waiting to start fetch
+         (fetch-running (make-hash-table :test 'equal))  ; currently fetching
+         (fetch-complete nil)      ; fetched, waiting to process
+         (build-pending nil)       ; waiting to build
+         (builds-done 0)
+         (builds-failed 0)
+         (max-fetches doom-packages--parallel-max-jobs))
     (if pinned-only-p
         (print! (start "Updating pinned packages..."))
       (print! (start "Updating all packages (this may take a while)...")))
+
+    ;; Collect all packages to process
+    (print! (start "Analyzing packages..."))
     (doom-packages--with-recipes recipes (recipe package type local-repo)
-      (cl-incf i)
-      (print-group!
-       (unless (straight--repository-is-available-p recipe)
-         (print! (error "(%d/%d) Couldn't find local repo for %s") i total package)
-         (cl-return))
-       (when (gethash local-repo repos-to-rebuild)
-         (puthash package t packages-to-rebuild)
-         (print! (success "(%d/%d) %s was updated indirectly (with %s)") i total package local-repo)
-         (cl-return))
-       (let ((default-directory (straight--repos-dir local-repo)))
-         (unless (file-in-directory-p default-directory repo-dir)
-           (print! (warn "(%d/%d) Skipping %s because it is out-of-tree...") i total package)
-           (cl-return))
-         (when (eq type 'git)
-           (unless (or (file-directory-p ".git")
-                       (file-exists-p ".straight-commit"))
-             (error "%S is not a valid repository" package)))
-         (when (and pinned-only-p (not (assoc local-repo pinned)))
-           (cl-return))
-         (condition-case-unless-debug e
-             (let ((ref (straight-vc-get-commit type local-repo))
-                   (target-ref
-                    (cdr (or (assoc local-repo pinned)
-                             (assoc package pinned))))
-                   commits
-                   output)
-               (or (cond
-                    ((not (stringp target-ref))
-                     (print! (start "\r(%d/%d) Fetching %s...%s") i total package esc)
-                     (doom-packages--straight-with (straight-vc-fetch-from-remote recipe)
-                       (when .it
-                         (straight-merge-package package)
-                         (setq target-ref (straight-vc-get-commit type local-repo))
-                         (setq output (doom-packages--commit-log-between ref target-ref)
-                               commits (length (split-string output "\n" t)))
-                         (or (not (doom-packages--same-commit-p target-ref ref))
-                             (cl-return)))))
+      (when (and (straight--repository-is-available-p recipe)
+                 (not (gethash local-repo repos-to-rebuild))
+                 (file-in-directory-p (straight--repos-dir local-repo) repo-dir)
+                 (or (not pinned-only-p) (assoc local-repo pinned)))
+        (let* ((default-directory (straight--repos-dir local-repo))
+               (target-ref (cdr (or (assoc local-repo pinned) (assoc package pinned))))
+               (needs-fetch (or (not (stringp target-ref))
+                                (not (straight-vc-commit-present-p recipe target-ref)))))
+          (when (and (eq type 'git)
+                     (or (file-directory-p ".git") (file-exists-p ".straight-commit")))
+            (push (list :package package
+                        :recipe recipe
+                        :local-repo local-repo
+                        :type type
+                        :target-ref target-ref
+                        :needs-fetch needs-fetch
+                        :repo-dir default-directory)
+                  work-queue)))))
+    (setq fetch-pending (nreverse work-queue))
+    (let ((total-packages (length fetch-pending)))
+      (print! (success "Found %d packages to process") total-packages)
 
-                    ((doom-packages--same-commit-p target-ref ref)
-                     (print! (item "\r(%d/%d) %s is up-to-date...%s") i total package esc)
-                     (cl-return))
+      (when fetch-pending
+        (print! (start "Fetching and building in parallel..."))
+        ;; Main pipeline loop
+        (cl-labels
+            ((start-fetches ()
+               "Start fetch processes up to max-fetches limit."
+               (while (and fetch-pending
+                           (< (hash-table-count fetch-running) max-fetches))
+                 (let* ((item (pop fetch-pending))
+                        (package (plist-get item :package))
+                        (recipe (plist-get item :recipe))
+                        (repo-dir (plist-get item :repo-dir))
+                        (needs-fetch (plist-get item :needs-fetch)))
+                   (if (not needs-fetch)
+                       ;; No fetch needed, go straight to processing
+                       (push item fetch-complete)
+                     ;; Start async fetch
+                     (puthash package item fetch-running)
+                     (doom-packages--async-fetch
+                      repo-dir recipe
+                      (lambda (success output)
+                        (let ((item (gethash package fetch-running)))
+                          (remhash package fetch-running)
+                          (if success
+                              (progn
+                                (push (plist-put item :fetch-success t) fetch-complete)
+                                (print! (item "  Fetched %s") package))
+                            (print! (warn "  Failed to fetch %s") package)))))))))
 
-                    ((file-exists-p ".straight-commit")
-                     (print! (start "\r(%d/%d) Downloading %s...%s") i total package esc)
-                     (delete-directory default-directory t)
-                     (straight-vc 'clone 'git recipe target-ref)
-                     (doom-packages--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
+             (process-fetched ()
+               "Process completed fetches - merge/checkout and queue builds."
+               (while fetch-complete
+                 (let* ((item (pop fetch-complete))
+                        (package (plist-get item :package))
+                        (recipe (plist-get item :recipe))
+                        (local-repo (plist-get item :local-repo))
+                        (type (plist-get item :type))
+                        (target-ref (plist-get item :target-ref))
+                        (default-directory (plist-get item :repo-dir)))
+                   (condition-case-unless-debug e
+                       (let ((ref (straight-vc-get-commit type local-repo)))
+                         (cond
+                          ;; Unpinned - merge and check for changes
+                          ((not (stringp target-ref))
+                           (straight-merge-package package)
+                           (let ((new-ref (straight-vc-get-commit type local-repo)))
+                             (unless (doom-packages--same-commit-p new-ref ref)
+                               (puthash local-repo t repos-to-rebuild)
+                               (puthash package t packages-to-rebuild)
+                               (push package build-pending)
+                               (print! (success "  %s: %s -> %s")
+                                       local-repo
+                                       (doom-packages--abbrev-commit ref)
+                                       (doom-packages--abbrev-commit new-ref)))))
+                          ;; Pinned and already at target
+                          ((doom-packages--same-commit-p target-ref ref) nil)
+                          ;; Needs checkout
+                          ((straight-vc-commit-present-p recipe target-ref)
+                           (straight-vc-check-out-commit recipe target-ref)
+                           (when (doom-packages--same-commit-p
+                                  target-ref (straight-vc-get-commit type local-repo))
+                             (puthash local-repo t repos-to-rebuild)
+                             (puthash package t packages-to-rebuild)
+                             (push package build-pending)
+                             (print! (success "  %s: %s -> %s")
+                                     local-repo
+                                     (doom-packages--abbrev-commit ref)
+                                     (doom-packages--abbrev-commit target-ref))))))
+                     (error
+                      (print! (warn "  Error processing %s: %s")
+                              package (error-message-string e)))))))
 
-                    ((if (straight-vc-commit-present-p recipe target-ref)
-                         (print! (start "\r(%d/%d) Checking out %s (%s)...%s")
-                                 i total package (doom-packages--abbrev-commit target-ref) esc)
-                       (print! (start "\r(%d/%d) Fetching %s...%s") i total package esc)
-                       (and (straight-vc-fetch-from-remote recipe)
-                            (straight-vc-commit-present-p recipe target-ref)))
-                     (straight-vc-check-out-commit recipe target-ref)
-                     (or (not (eq type 'git))
-                         (setq output (doom-packages--commit-log-between ref target-ref)
-                               commits (length (split-string output "\n" t))))
-                     (doom-packages--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
+             (run-builds ()
+               "Run pending builds (in main process, overlapping with fetches)."
+               (while build-pending
+                 (let ((package (pop build-pending)))
+                   (print! (start "  Building %s...") package)
+                   (if (doom-packages--build-package package)
+                       (progn
+                         (cl-incf builds-done)
+                         (print! (success "  Built %s") package))
+                     (cl-incf builds-failed)
+                     (print! (warn "  Failed to build %s") package))
+                   ;; Allow fetch completions to be processed between builds
+                   (accept-process-output nil 0.01)))))
 
-                    ((print! (start "\r(%d/%d) Re-cloning %s...") i total local-repo esc)
-                     (let ((repo (straight--repos-dir local-repo))
-                           (straight-vc-git-default-clone-depth 'full))
-                       (delete-directory repo 'recursive)
-                       (print-group!
-                         (straight-use-package (intern package) nil 'no-build))
-                       (prog1 (file-directory-p repo)
-                         (or (not (eq type 'git))
-                             (setq output (doom-packages--commit-log-between ref target-ref)
-                                   commits (length (split-string output "\n" t))))))))
-                   (progn
-                     (print! (warn "\r(%d/%d) Failed to fetch %s")
-                             i total local-repo)
-                     (unless (string-empty-p output)
-                       (print-group! (print! (item "%s" output))))
-                     (cl-return)))
-               (puthash local-repo t repos-to-rebuild)
-               ;; HACK: Rebuild all packages that depend on PACKAGE after
-               ;;   updating it. This ensures their bytecode don't contain stale
-               ;;   references to symbols in silent dependencies.
-               ;; TODO: Allow `package!' to control this.
-               ;; TODO: Add cache+optimization step for this rebuild table.
-               (letf! ((dependents (straight-dependents package))
-                       (n 0)
-                       (defun* add-to-rebuild (tree)
-                         (cond ((null tree) nil)
-                               ((stringp tree)
-                                (unless (gethash tree packages-to-rebuild)
-                                  (cl-incf n 1)
-                                  (puthash tree t packages-to-rebuild)))
-                               ((listp tree)
-                                (add-to-rebuild (car tree))
-                                (add-to-rebuild (cdr tree))))))
-                 (add-to-rebuild dependents)
-                 (puthash package t packages-to-rebuild)
-                 (print! (success "\r(%d/%d) %s: %s -> %s%s%s")
-                         i total local-repo
-                         (doom-packages--abbrev-commit ref)
-                         (doom-packages--abbrev-commit target-ref)
-                         (if (and (integerp commits) (> commits 0))
-                             (format " [%d commit(s)]" commits)
-                           "")
-                         (if (> n 0)
-                             (format " (w/ %d dependents)" n)
-                           "")))
-               (when (and (stringp output) (not (string-empty-p output)))
-                 (let ((lines (split-string output "\n")))
-                   (setq output
-                         (if (> (length lines) 20)
-                             (concat (string-join (cl-subseq (butlast lines 1) 0 20) "\n")
-                                     "\n[...]")
-                           output)))
-                 (print-group! (print! "%s" (indent output 2)))))
-           (user-error
-            (signal 'user-error (error-message-string e)))
-           (error
-            (signal 'doom-package-error (list package e)))))))
+          ;; Pipeline: fetch -> process -> build, all overlapping
+          (start-fetches)
+          (while (or fetch-pending
+                     (> (hash-table-count fetch-running) 0)
+                     fetch-complete
+                     build-pending)
+            ;; Process any completed fetches
+            (process-fetched)
+            ;; Run any pending builds (overlaps with ongoing fetches)
+            (run-builds)
+            ;; Start more fetches if slots available
+            (start-fetches)
+            ;; Wait briefly for more fetch completions
+            (when (> (hash-table-count fetch-running) 0)
+              (accept-process-output nil 0.05))))))
+
+    ;; Add dependents
+    (maphash
+     (lambda (package _)
+       (dolist (dep (straight-dependents package))
+         (when (and (stringp dep) (not (gethash dep packages-to-rebuild)))
+           (puthash dep t packages-to-rebuild)
+           (print! (start "  Building dependent %s...") dep)
+           (if (doom-packages--build-package dep)
+               (cl-incf builds-done)
+             (cl-incf builds-failed)))))
+     (copy-hash-table packages-to-rebuild))
+
+    ;; Summary
     (print-group!
      (if (hash-table-empty-p packages-to-rebuild)
-         (ignore (print! (success "\rAll %d packages are up-to-date") total))
+         (ignore (print! (success "All %d packages are up-to-date") total))
        (doom-packages--cli-recipes-update)
        (straight--transaction-finalize)
-       (let ((default-directory (straight--build-dir)))
-         (mapc (doom-rpartial #'delete-directory 'recursive)
-               (hash-table-keys packages-to-rebuild)))
-       (print! (success "\rUpdated %d package(s)")
-               (hash-table-count packages-to-rebuild))
-       (doom-packages-ensure)
+       (print! (success "Updated %d package(s) (%d built, %d failed)")
+               (hash-table-count packages-to-rebuild) builds-done builds-failed)
        t))))
 
 
