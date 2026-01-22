@@ -38,6 +38,7 @@
 
 (require 'comp nil t)
 (require 'doom-straight)
+(doom-require 'doom-lib 'print)
 (doom-require 'doom-lib 'modules)
 
 
