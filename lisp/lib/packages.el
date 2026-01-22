@@ -776,7 +776,7 @@ Must be run from a magit diff buffer."
       (error (user-error "Package state is incomplete. Run 'doom sync' first")))))
 
 ;;; Parallel process management
-(defvar doom-packages--parallel-max-jobs 8
+(defvar doom-packages--parallel-max-jobs 20
   "Maximum number of parallel fetch jobs to run.")
 
 (defvar doom-packages--build-queue nil
@@ -819,6 +819,101 @@ CALLBACK receives (success-p output)."
     (error
      (message "Build error for %s: %s" package (error-message-string err))
      nil)))
+
+(defvar doom-packages--parallel-max-builds 8
+  "Maximum number of parallel byte-compile jobs to run.")
+
+(defvar doom-packages--compile-processes nil
+  "List of active byte-compile processes.")
+
+(defun doom-packages--async-byte-compile-files (files callback)
+  "Async byte-compile FILES using a batch Emacs process.
+CALLBACK receives (success output)."
+  (let* ((buf (generate-new-buffer " *doom-compile*"))
+         (emacs (doom-packages--find-emacs-executable))
+         ;; Write files to a temp file to avoid command line length issues
+         (list-file (make-temp-file "doom-compile-" nil ".el"))
+         (_ (with-temp-file list-file
+              (prin1 files (current-buffer))))
+         (proc (make-process
+                :name "doom-byte-compile"
+                :buffer buf
+                :command (list emacs "--batch"
+                               "--eval" (format "(progn
+                                  (setq load-prefer-newer t)
+                                  (let ((files (with-temp-buffer
+                                                 (insert-file-contents %S)
+                                                 (read (current-buffer))))
+                                        (failed nil)
+                                        (compiled 0))
+                                    (dolist (f files)
+                                      (condition-case err
+                                          (when (byte-compile-file f)
+                                            (setq compiled (1+ compiled)))
+                                        (error
+                                         (push (cons f err) failed))))
+                                    (princ (format \"COMPILED: %%d\\n\" compiled))
+                                    (when failed
+                                      (princ (format \"FAILED: %%S\\n\" failed)))
+                                    (princ \"COMPILE-DONE\")))"
+                                                list-file))
+                :sentinel (lambda (proc _event)
+                            (when (memq (process-status proc) '(exit signal))
+                              (let* ((output (with-current-buffer (process-buffer proc)
+                                               (buffer-string)))
+                                     (success (and (= 0 (process-exit-status proc))
+                                                   (string-match-p "COMPILE-DONE" output))))
+                                (ignore-errors (delete-file list-file))
+                                (kill-buffer (process-buffer proc))
+                                (setq doom-packages--compile-processes
+                                      (delq proc doom-packages--compile-processes))
+                                (funcall callback success output)))))))
+    (push proc doom-packages--compile-processes)
+    proc))
+
+(defun doom-packages--collect-el-files (packages)
+  "Collect all .el files from build directories of PACKAGES."
+  (let ((files nil))
+    (dolist (pkg packages)
+      (let ((build-dir (straight--build-dir pkg)))
+        (when (file-directory-p build-dir)
+          (dolist (f (directory-files-recursively build-dir "\\.el$"))
+            (unless (or (string-match-p "-autoloads\\.el$" f)
+                        (string-match-p "-pkg\\.el$" f))
+              (push f files))))))
+    (nreverse files)))
+
+(defun doom-packages--parallel-byte-compile (packages &optional callback)
+  "Byte-compile all .el files in PACKAGES in parallel.
+CALLBACK is called with (success total-files) when done."
+  (let* ((files (doom-packages--collect-el-files packages))
+         (total (length files))
+         (batch-size (max 10 (/ total doom-packages--parallel-max-builds)))
+         (batches (seq-partition files batch-size))
+         (completed 0)
+         (total-batches (length batches))
+         (all-success t))
+    (if (null files)
+        (when callback (funcall callback t 0))
+      (dolist (batch batches)
+        (doom-packages--async-byte-compile-files
+         batch
+         (lambda (success output)
+           (unless success
+             (setq all-success nil)
+             (print! (warn "Compilation batch failed: %s"
+                          (if (string-match "FAILED: \\(.+\\)" output)
+                              (match-string 1 output)
+                            "unknown error"))))
+           (cl-incf completed)
+           (when (= completed total-batches)
+             (when callback
+               (funcall callback all-success total)))))))))
+
+(defun doom-packages--find-emacs-executable ()
+  "Find the Emacs executable to use for batch builds."
+  (or (getenv "EMACS")
+      (expand-file-name invocation-name invocation-directory)))
 
 (defmacro doom-packages--with-recipes (recipes binds &rest body)
   (declare (indent 2))
@@ -984,117 +1079,200 @@ CALLBACK receives (success-p output)."
            (native-compile-async file)))
 
 (defun doom-packages-ensure (&optional force-p)
-  "Ensure packages are installed, built"
+  "Ensure packages are installed, built.
+When FORCE-P is non-nil, rebuild all packages using parallel processes."
   (doom-initialize-packages)
   (if (not (file-directory-p (straight--repos-dir)))
       (print! (start "Installing all packages for the first time (this may take a while)..."))
     (if force-p
-        (print! (start "Rebuilding all packages (this may take a while)..."))
+        (print! (start "Rebuilding all packages in parallel..."))
       (print! (start "Ensuring packages are installed and built..."))))
   (print-group!
-    (let ((straight-check-for-modifications
-           (when (file-directory-p (straight--modified-dir))
-             '(find-when-checking)))
-          (straight--allow-find
-           (and straight-check-for-modifications
-                (executable-find straight-find-executable)
-                t))
-          (straight--packages-not-to-rebuild
-           (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
-          (straight--packages-to-rebuild
-           (or (if force-p :all straight--packages-to-rebuild)
-               (make-hash-table :test #'equal)))
-          (recipes (doom-package-recipe-alist))
-          (pinned (doom-package-pinned-alist)))
+    (let ((recipes (doom-package-recipe-alist)))
       (add-hook 'native-comp-async-cu-done-functions #'doom-packages--native-compile-done-h)
       (straight--make-build-cache-available)
-      (if-let* ((built
-                 (doom-packages--with-recipes recipes (package local-repo recipe)
-                   (let ((repo-dir (straight--repos-dir (or local-repo package)))
-                         (build-dir (straight--build-dir package))
-                         (build-file ".doompackage"))
-                     (unless force-p
-                       ;; Ensure packages w/ a changed :env are rebuilt
-                       (when-let* ((plist (alist-get (intern package) doom-packages)))
-                         (unless (equal (plist-get plist :env)
-                                        (doom-file-read (doom-path build-dir build-file) :by 'read :noerror t))
-                           (puthash package t straight--packages-to-rebuild)))
-                       ;; Ensure packages w/ outdated files/bytecode are rebuilt
-                       (let* ((build (if (plist-member recipe :build)
-                                         (plist-get recipe :build)
-                                       t))
-                              (want-byte-compile
-                               (or (eq build t)
-                                   (memq 'compile build)))
-                              (want-native-compile
-                               (or (eq build t)
-                                   (memq 'native-compile build))))
-                         (and (eq (car-safe build) :not)
-                              (setq want-byte-compile (not want-byte-compile)
-                                    want-native-compile (not want-native-compile)))
-                         (when (or (not (featurep 'native-compile))
-                                   (not straight--native-comp-available))
-                           (setq want-native-compile nil))
-                         (and (or want-byte-compile want-native-compile)
-                              (or (file-newer-than-file-p repo-dir build-dir)
-                                  (file-exists-p (straight--modified-dir package))
-                                  (cl-loop with outdated = nil
-                                           for file in (doom-files-in build-dir :match "\\.el$" :full t)
-                                           if (or (if want-byte-compile   (doom-packages--elc-file-outdated-p file))
-                                                  (if want-native-compile (doom-packages--eln-file-outdated-p file)))
-                                           do (setq outdated t)
-                                           (when want-native-compile
-                                             (push file doom-packages--eln-output-expected))
-                                           finally return outdated))
-                              (puthash package t straight--packages-to-rebuild))))
-                     (unless (file-directory-p repo-dir)
-                       (doom-packages--cli-recipes-update))
-                     (condition-case-unless-debug e
-                         (let ((straight-vc-git-post-clone-hook
-                                (cons (lambda! (&key commit)
-                                        (print-group!
-                                          (if-let* ((pin (cdr (assoc package pinned))))
-                                              (print! (item "%s: pinned to %s") package pin)
-                                            (when commit
-                                              (print! (item "%s: checked out %s") package commit)))))
-                                      straight-vc-git-post-clone-hook))
-                               (straight-use-package-prepare-functions
-                                (cons (lambda (package &rest _)
-                                        (when-let* ((plist (alist-get (intern package) doom-packages))
-                                                    (env (plist-get plist :env)))
-                                          (cl-loop for (var . val) in env
-                                                   if (and (symbolp var)
-                                                           (string-prefix-p "_" (symbol-name var)))
-                                                   do (set-default var val)
-                                                   else if (and (stringp var) val)
-                                                   do (setenv var val))))
-                                      straight-use-package-prepare-functions))
-                               (straight-use-package-post-build-functions
-                                (cons (lambda (package &rest _)
-                                        (when-let* ((plist (alist-get (intern package) doom-packages))
-                                                    (env (plist-get plist :env)))
-                                          (with-temp-file (straight--build-file package build-file)
-                                            (prin1 env (current-buffer)))))
-                                      straight-use-package-post-build-functions)))
-                           (straight-use-package (intern package)))
-                       (error
-                        (signal 'doom-package-error (list package e))))))))
-          (progn
+      (if force-p
+          ;; Two-phase rebuild: fast setup, then parallel byte-compilation
+          (let* ((packages (mapcar (lambda (r) (plist-get r :package)) recipes))
+                 (total (length packages))
+                 (built nil)
+                 (failed nil)
+                 ;; Phase 1: Setup packages without byte-compilation
+                 (straight-disable-compile t)
+                 (straight--packages-to-rebuild :all)
+                 (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+            (print! (start "Phase 1: Setting up %d packages..." total))
+            (let ((count 0))
+              (dolist (pkg packages)
+                (cl-incf count)
+                (condition-case err
+                    (progn
+                      ;; Delete old build dir
+                      (let ((build-dir (straight--build-dir pkg)))
+                        (when (file-directory-p build-dir)
+                          (delete-directory build-dir t)))
+                      (straight-use-package (intern pkg))
+                      (push pkg built)
+                      (when (zerop (% count 20))
+                        (print! (item "Setup %d/%d packages..." count total))))
+                  (error
+                   (push pkg failed)
+                   (print! (warn "Failed to setup %s: %s" pkg (error-message-string err)))))))
+            ;; Phase 2: Parallel byte-compilation
+            (when built
+              (print! (start "Phase 2: Byte-compiling %d packages in parallel..."
+                             (length built)))
+              (let ((compile-done nil)
+                    (compile-success nil)
+                    (files-compiled 0))
+                (doom-packages--parallel-byte-compile
+                 built
+                 (lambda (success total-files)
+                   (setq compile-done t
+                         compile-success success
+                         files-compiled total-files)))
+                ;; Wait for compilation to finish
+                (while (not compile-done)
+                  (accept-process-output nil 0.1))
+                (if compile-success
+                    (print! (success "Compiled %d files" files-compiled))
+                  (print! (warn "Some files failed to compile")))))
+            ;; Native compilation
             (when (and (featurep 'native-compile)
                        straight--native-comp-available)
               (doom-packages--compile-site-files)
               (doom-packages--wait-for-native-compile-jobs)
               (doom-packages--write-missing-eln-errors))
-            ;; HACK: Every time you save a file in a package that straight
-            ;;   tracks, it is recorded in ~/.emacs.d/.local/straight/modified/.
-            ;;   Typically, straight will clean these up after rebuilding, but
-            ;;   Doom's use-case circumnavigates that, leaving these files there
-            ;;   and causing a rebuild of those packages each time `doom sync'
-            ;;   or similar is run, so we clean it up ourselves:
-            (delete-directory (straight--modified-dir) 'recursive)
-            (print! (success "\rBuilt %d package(s)") (length built)))
-        (print! (item "No packages need attention"))
-        nil))))
+            (when (file-directory-p (straight--modified-dir))
+              (delete-directory (straight--modified-dir) 'recursive))
+            (if built
+                (progn
+                  (when failed
+                    (print! (warn "Failed to setup %d package(s): %s"
+                                  (length failed) (string-join failed ", "))))
+                  (print! (success "Built %d package(s)" (length built))))
+              (print! (item "No packages were built")))
+            built)
+        ;; Sequential path for non-force operations (install/selective rebuild)
+        ;; Uses parallel byte-compilation for speed
+        (let ((straight-check-for-modifications
+               (when (file-directory-p (straight--modified-dir))
+                 '(find-when-checking)))
+              (straight--allow-find
+               (and straight-check-for-modifications
+                    (executable-find straight-find-executable)
+                    t))
+              (straight--packages-not-to-rebuild
+               (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+              (straight--packages-to-rebuild
+               (or straight--packages-to-rebuild
+                   (make-hash-table :test #'equal)))
+              (straight-disable-compile t)  ; Defer compilation for parallel processing
+              (pinned (doom-package-pinned-alist)))
+          (if-let* ((built
+                     (doom-packages--with-recipes recipes (package local-repo recipe)
+                       (let ((repo-dir (straight--repos-dir (or local-repo package)))
+                             (build-dir (straight--build-dir package))
+                             (build-file ".doompackage"))
+                         ;; Ensure packages w/ a changed :env are rebuilt
+                         (when-let* ((plist (alist-get (intern package) doom-packages)))
+                           (unless (equal (plist-get plist :env)
+                                          (doom-file-read (doom-path build-dir build-file) :by 'read :noerror t))
+                             (puthash package t straight--packages-to-rebuild)))
+                         ;; Ensure packages w/ outdated files/bytecode are rebuilt
+                         (let* ((build (if (plist-member recipe :build)
+                                           (plist-get recipe :build)
+                                         t))
+                                (want-byte-compile
+                                 (or (eq build t)
+                                     (memq 'compile build)))
+                                (want-native-compile
+                                 (or (eq build t)
+                                     (memq 'native-compile build))))
+                           (and (eq (car-safe build) :not)
+                                (setq want-byte-compile (not want-byte-compile)
+                                      want-native-compile (not want-native-compile)))
+                           (when (or (not (featurep 'native-compile))
+                                     (not straight--native-comp-available))
+                             (setq want-native-compile nil))
+                           (and (or want-byte-compile want-native-compile)
+                                (or (file-newer-than-file-p repo-dir build-dir)
+                                    (file-exists-p (straight--modified-dir package))
+                                    (cl-loop with outdated = nil
+                                             for file in (doom-files-in build-dir :match "\\.el$" :full t)
+                                             if (or (if want-byte-compile   (doom-packages--elc-file-outdated-p file))
+                                                    (if want-native-compile (doom-packages--eln-file-outdated-p file)))
+                                             do (setq outdated t)
+                                             (when want-native-compile
+                                               (push file doom-packages--eln-output-expected))
+                                             finally return outdated))
+                                (puthash package t straight--packages-to-rebuild)))
+                         (unless (file-directory-p repo-dir)
+                           (doom-packages--cli-recipes-update))
+                         (condition-case-unless-debug e
+                             (let ((straight-vc-git-post-clone-hook
+                                    (cons (lambda! (&key commit)
+                                            (print-group!
+                                              (if-let* ((pin (cdr (assoc package pinned))))
+                                                  (print! (item "%s: pinned to %s") package pin)
+                                                (when commit
+                                                  (print! (item "%s: checked out %s") package commit)))))
+                                          straight-vc-git-post-clone-hook))
+                                   (straight-use-package-prepare-functions
+                                    (cons (lambda (package &rest _)
+                                            (when-let* ((plist (alist-get (intern package) doom-packages))
+                                                        (env (plist-get plist :env)))
+                                              (cl-loop for (var . val) in env
+                                                       if (and (symbolp var)
+                                                               (string-prefix-p "_" (symbol-name var)))
+                                                       do (set-default var val)
+                                                       else if (and (stringp var) val)
+                                                       do (setenv var val))))
+                                          straight-use-package-prepare-functions))
+                                   (straight-use-package-post-build-functions
+                                    (cons (lambda (package &rest _)
+                                            (when-let* ((plist (alist-get (intern package) doom-packages))
+                                                        (env (plist-get plist :env)))
+                                              (with-temp-file (straight--build-file package build-file)
+                                                (prin1 env (current-buffer)))))
+                                          straight-use-package-post-build-functions)))
+                               (straight-use-package (intern package)))
+                           (error
+                            (signal 'doom-package-error (list package e))))))))
+              (progn
+                ;; Parallel byte-compilation for built packages
+                (when built
+                  (print! (start "Byte-compiling %d packages in parallel..." (length built)))
+                  (let ((compile-done nil)
+                        (compile-success nil)
+                        (files-compiled 0))
+                    (doom-packages--parallel-byte-compile
+                     built
+                     (lambda (success total-files)
+                       (setq compile-done t
+                             compile-success success
+                             files-compiled total-files)))
+                    (while (not compile-done)
+                      (accept-process-output nil 0.1))
+                    (if compile-success
+                        (print! (success "Compiled %d files" files-compiled))
+                      (print! (warn "Some files failed to compile")))))
+                (when (and (featurep 'native-compile)
+                           straight--native-comp-available)
+                  (doom-packages--compile-site-files)
+                  (doom-packages--wait-for-native-compile-jobs)
+                  (doom-packages--write-missing-eln-errors))
+                ;; HACK: Every time you save a file in a package that straight
+                ;;   tracks, it is recorded in ~/.emacs.d/.local/straight/modified/.
+                ;;   Typically, straight will clean these up after rebuilding, but
+                ;;   Doom's use-case circumnavigates that, leaving these files there
+                ;;   and causing a rebuild of those packages each time `doom sync'
+                ;;   or similar is run, so we clean it up ourselves:
+                (when (file-directory-p (straight--modified-dir))
+                  (delete-directory (straight--modified-dir) 'recursive))
+                (print! (success "\rBuilt %d package(s)") (length built)))
+            (print! (item "No packages need attention"))
+            nil))))))
 
 (defun doom-packages-update (&optional pinned-only-p)
   "Updates packages with parallel fetch and pipelined build operations.
