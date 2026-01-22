@@ -290,8 +290,8 @@ SEE ALSO:
     (defcli-autoload! (emacs))
     (defcli-obsolete! (run) (emacs) "3.0.0")
 
-    ;; TODO Post-3.0 commands
-    (defcli-stub! test))
+    ;; Development commands
+    (defcli-autoload! (test)))
 
   (let ((cli-file "cli.el"))
     (defcli-group! "Module commands"
