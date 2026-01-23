@@ -1,7 +1,7 @@
 ;;; term/vterm/config.el -*- lexical-binding: t; -*-
 
 (use-package! vterm
-  :when (featurep 'dynamic-modules)
+  :when (bound-and-true-p module-file-suffix)  ; requires dynamic-modules support
   :commands vterm-mode
   :hook (vterm-mode . doom-mark-buffer-as-real-h)
   :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
