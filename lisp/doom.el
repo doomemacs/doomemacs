@@ -144,6 +144,7 @@
 (push :system features)
 (put :system 'subfeatures doom-system)
 
+;;; DEPRECATED: Remove in v3
 ;; Emacs needs a more consistent way to detect build features, and the docs
 ;; claim `system-configuration-features' is not da way. Some features (that
 ;; don't represent packages) can be found in `features' (which `featurep'

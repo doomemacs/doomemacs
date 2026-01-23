@@ -149,7 +149,7 @@ isn't disabled in `+ligatures-extras-in-modes'."
  ;; leave the check here for safety.
  ((and (> emacs-major-version 27)
        (or (featurep 'ns)
-           (featurep 'harfbuzz))
+           (string-match-p "HARFBUZZ" system-configuration-features))
        (featurep 'composite))   ; Emacs loads `composite' at startup
 
   (after! ligature
