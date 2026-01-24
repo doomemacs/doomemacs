@@ -83,7 +83,7 @@ Doom, you will need to ensure that the call in your config is contained within
 an =after!= form, eg below to override Clojure's with =zprint=:
 
 #+begin_src emacs-lisp
-(after! clojure-mode
+(with-eval-after-load 'clojure-mode
   (set-formatter! 'zprint '("zprint" "-") :modes '(clojure-mode)))
 #+end_src
 
@@ -141,16 +141,16 @@ Here are some ways to use them:
    (setq-hook! 'emacs-lisp-mode-hook +format-inhibit t)
 
    ;; To permenantly disable a formatter:
-   (after! csharp-mode
+   (with-eval-after-load 'csharp-mode
      (set-formatter! 'csharpier nil))
 
    ;; To define new formatters:
    ;; From modules/tools/docker/config.el:
-   (after! dockerfile-mode
+   (with-eval-after-load 'dockerfile-mode
      (set-formatter! 'dockfmt '("dockfmt" "fmt" filepath) :modes '(dockerfile-mode)))
 
    ;; From modules/lang/sh/config.el:
-   (after! sh-script
+   (with-eval-after-load 'sh-script
      (set-formatter! 'shfmt '("shfmt" "-ci"
                               (unless indent-tabs-mode
                                 (list "-i" (number-to-string tab-width))))))

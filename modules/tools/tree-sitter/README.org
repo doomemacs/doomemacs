@@ -155,11 +155,11 @@ it:
 
 #+begin_src elisp
 ;;; add to $DOOMDIR/config.el
-(after! treesit
+(with-eval-after-load 'treesit
   (setq treesit-font-lock-level 3))
 
 ;; Alternatively, to only affect specific major modes:
-(after! treesit
+(with-eval-after-load 'treesit
   (setq treesit-font-lock-level
         '((python-ts-mode . 3)
           (c-ts-mode . 2)

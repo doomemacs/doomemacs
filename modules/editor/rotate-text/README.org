@@ -48,7 +48,7 @@ through them.
 To enable a set of items to cycle through globally:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! rotate-text
+(with-eval-after-load 'rotate-text
   (add-to-list 'rotate-text-words '("small" "medium" "large")))
 #+end_src
 
@@ -56,7 +56,7 @@ To add a sequence to a specific mode:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 (set-rotate-patterns! 'c++-mode
-    :words '(("float" "double")))
+  :words '(("float" "double")))
 #+end_src
 
 When configuring a sequence of words or symbols that should be rotated through,

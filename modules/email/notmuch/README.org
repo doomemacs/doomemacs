@@ -153,7 +153,7 @@ own backend:
 It is possible to change the =*notmuch-hello*= buffer if you want to.
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
-(after! notmuch
+(with-eval-after-load 'notmuch
   (setq notmuch-show-log nil
         notmuch-hello-sections `(notmuch-hello-insert-saved-searches
                                  notmuch-hello-insert-alltags)
@@ -189,7 +189,7 @@ you're used to sending, so here's some example configuration that turns those
 features off:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
-(after! org-mime
+(with-eval-after-load 'org-mime
   (setq org-mime-export-options '(:section-numbers nil
                                   :with-author nil
                                   :with-toc nil)))

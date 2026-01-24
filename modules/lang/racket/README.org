@@ -66,7 +66,7 @@ Formatting is handled using the [[doom-module::editor format]] module via [[http
 ~parinfer~, ~lispy~. If you wish to enable it:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! racket-mode
+(with-eval-after-load 'racket-mode
   (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
 #+end_src
 

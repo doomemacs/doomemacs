@@ -67,8 +67,8 @@ In addition, this module provides support for native Org-mode citations
 ([[doom-package:org-cite]]).
 
 * Configuration
-To override any defaults set by this module, do so in an ~(after! package ...)~
-block in =$DOOMDIR/config.el=.
+To override any defaults set by this module, do so in an ~(with-eval-after-load
+'package ...)~ block in =$DOOMDIR/config.el=.
 
 ** Org-cite
 *** Processor configuration

@@ -62,7 +62,7 @@ If you are new to Magit, see the [[https://github.com/magit/magit#getting-starte
 To enable gravatars when viewing commits:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! magit
+(with-eval-after-load 'magit
   (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")))
 #+end_src
 
@@ -72,7 +72,7 @@ This is so for [[https://magit.vc/manual/magit/Performance.html][performance rea
 /all/ visible hunks with:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! magit
+(with-eval-after-load 'magit
   (setq magit-diff-refine-hunk 'all))
 #+end_src
 

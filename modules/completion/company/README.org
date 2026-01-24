@@ -103,21 +103,21 @@ symbol, or a list of either. BACKENDS are prepended to ~company-backends~ for
 those modes.
 
 #+begin_src emacs-lisp
-(after! js2-mode
+(with-eval-after-load 'js2-mode
   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
 
-(after! sh-script
+(with-eval-after-load 'sh-script
   (set-company-backend! 'sh-mode
     '(company-shell :with company-yasnippet)))
 
-(after! cc-mode
+(with-eval-after-load 'cc-mode
   (set-company-backend! 'c-mode
     '(:separate company-irony-c-headers company-irony)))
 #+end_src
 
 To unset the backends for a particular mode, pass ~nil~ to it:
 #+begin_src emacs-lisp
-(after! sh-script
+(with-eval-after-load 'sh-script
   (set-company-backend! 'sh-mode nil))
 #+end_src
 

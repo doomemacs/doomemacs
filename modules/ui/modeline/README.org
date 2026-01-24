@@ -93,7 +93,7 @@ Some possible solutions:
 
 1. Add some padding to the modeline definition:
     #+begin_src emacs-lisp
-    (after! doom-modeline
+    (with-eval-after-load 'doom-modeline
       (doom-modeline-def-modeline 'main
         '(bar matches buffer-info remote-host buffer-position parrot selection-info)
         '(misc-info minor-modes check input-method buffer-encoding major-mode process vcs "  "))) ; <-- added padding here

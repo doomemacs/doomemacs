@@ -76,22 +76,22 @@ A list of fonts with good unicode coverage can be found on the page of the
 ** Advanced configuration
 Consult the [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] package documentation for a description of more
 advanced configuration. The configuration should be placed, as usual, in
-=$DOOMDIR/config.el= wrapped in an ~(after! unicode-fonts)~ block. The variable
-~unicode-fonts-blocks~ contains a list of all unicode block names and their
-character ranges. The default fonts to search for glyphs are in the variable
-~unicode-fonts-block-font-mapping~.
+=$DOOMDIR/config.el= wrapped in an ~(with-eval-after-load 'unicode-fonts)~ block.
+The variable ~unicode-fonts-blocks~ contains a list of all unicode block names and
+their character ranges. The default fonts to search for glyphs are in the
+variable ~unicode-fonts-block-font-mapping~.
 
 If you want to use the font =Symbola= for =Miscellaneous Symbols= by default
 use:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! unicode-fonts
+(with-eval-after-load 'unicode-fonts
   (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
 #+end_src
 
 If you want to redefine several blocks an efficient way would be:
 #+begin_src emacs-lisp
-(after! unicode-fonts
+(with-eval-after-load 'unicode-fonts
   (dolist (unicode-block '("Mathematical Alphanumeric Symbols"
                            "Mathematical Operators"
                            "Miscellaneous Mathematical Symbols-A"

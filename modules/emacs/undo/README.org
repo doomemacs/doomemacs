@@ -57,7 +57,7 @@ persist across Emacs sessions.
 ** Disabling persistent undo history
 - If you are using [[doom-module:+tree]]:
   #+begin_src emacs-lisp
-  (after! undo-tree
+  (with-eval-after-load 'undo-tree
     (setq undo-tree-auto-save-history nil))
   #+end_src
 

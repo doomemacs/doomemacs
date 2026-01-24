@@ -108,12 +108,12 @@ To prioritize ~ty~:
 ;;; add to $DOOMDIR/config.el
 
 ;; for eglot users
-(after! python
+(with-eval-after-load 'python
   (set-eglot-client! '(python-mode python-ts-mode) '("ty" "server")))
 
 ;; Not necessary for lsp-mode users, because `ty-ls' is already priority = -1
 ;; (lower = higher priority). Including this for posterity:
-(after! python
+(with-eval-after-load 'python
   (set-lsp-priority! 'ty-ls -5)) ; default is -1
 #+end_src
 
@@ -122,7 +122,7 @@ Formatting is handled by the [[doom-module::editor format]] module. Python buffe
 use [[https://black.readthedocs.io/en/stable/getting_started.html#installation][black]], by default. [[https://github.com/astral-sh/ruff][ruff]] is also supported:
 #+begin_src elisp
 ;;; Add to $DOOMDIR/config.el
-(after! python
+(with-eval-after-load 'python
   (set-formatter! 'ruff :modes '(python-mode python-ts-mode)))
 #+end_src
 

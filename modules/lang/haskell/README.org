@@ -85,7 +85,7 @@ After installing your preferred formatter, make sure to set
 Make sure to configure the lsp to use your perfered formatter, e.g.:
 #+begin_src emacs-lisp
 ;; ~/.doom.d/config.el
-(after! lsp-haskell
+(with-eval-after-load 'lsp-haskell
   (setq lsp-haskell-formatting-provider "brittany"))
 #+end_src
 

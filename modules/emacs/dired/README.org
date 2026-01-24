@@ -151,7 +151,7 @@ Use the following syntax to configure the entries displayed in
 
 #+begin_src emacs-lisp
 ;;; add to $DOOMDIR/config.el
-(after! dirvish
+(with-eval-after-load 'dirvish
   (setq! dirvish-quick-access-entries
          `(("h" "~/"                          "Home")
            ("e" ,user-emacs-directory         "Emacs user directory")

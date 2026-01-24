@@ -229,7 +229,7 @@ instead of your system browser, set ~+lookup-open-url-fn~ and/or
 with Xwidgets support):
 #+begin_src emacs-lisp
 (setq +lookup-open-url-fn #'+lookup-xwidget-webkit-open-url-fn)
-(after! dash-docs
+(with-eval-after-load 'dash-docs
   (setq dash-docs-browser-func #'+lookup-xwidget-webkit-open-url-fn))
 #+end_src
 
