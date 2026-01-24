@@ -128,7 +128,7 @@ the function ~ispell-change-dictionary~.
 Adjust ~spell-fu-idle-delay~ to change how long Emacs waits to spellcheck after
 recent changes:
 #+begin_src emacs-lisp
-(after! spell-fu
+(with-eval-after-load 'spell-fu
   (setq spell-fu-idle-delay 0.5))  ; default is 0.25
 #+end_src
 
@@ -139,7 +139,7 @@ Lazy spellcheck is provided by [[doom-package:flyspell-lazy]] package.
 recent changes (default as 1), while ~flyspell-lazy-window-idle-seconds~ sets
 how many seconds until the whole window is spellchecked (default as 3):
 #+begin_src emacs-lisp
-(after! flyspell
+(with-eval-after-load 'flyspell
   (setq flyspell-lazy-idle-seconds 2))
 #+end_src
 

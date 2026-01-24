@@ -70,14 +70,14 @@ This module requires one of three setups for ligatures to work:
 If you want to set symbol replacements for modules that don't have them by
 default you can use the ~set-ligatures!~ function in your config.el file
 #+BEGIN_SRC emacs-lisp
-(after! PACKAGE
+(with-eval-after-load 'PACKAGE
   (set-ligatures! 'MAJOR-MODE
     :symbol "keyword"))
 #+end_src
 
 E.g.
 #+begin_src emacs-lisp
-(after! go-mode ; in this case the major mode and package named the same thing
+(with-eval-after-load 'go-mode ; in this case the major mode and package named the same thing
   (set-ligatures! 'go-mode
     :def "func" ; function keyword
     :true "true" :false "false"
@@ -228,7 +228,7 @@ happen in all modes, you can use
 
 #+begin_src elisp
 ;; Set all your custom ligatures for all prog-modes here.
-;; This section is *out of* the after! block.
+;; This section is *outside* the `with-eval-after-load' block.
 ;; Example: only get ligatures for "==" and "===" in programming modes by
 ;; default, and get only "www" in all buffers by default.
 (set-font-ligatures! 'prog-mode :append "==" "===")

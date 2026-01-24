@@ -116,7 +116,7 @@ See below for advanced configuration.
 If you want different arguments to be passed to =fprettier=, follow this example:
 
 #+begin_src emacs-lisp
-(after! f90
+(with-eval-after-load 'f90
   (set-formatter! 'fprettify '("fprettify" "--enable-decl" "-w" "4" "-") :modes '(f90-mode fortran-mode)))
 #+end_src
 

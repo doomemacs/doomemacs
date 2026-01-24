@@ -176,7 +176,7 @@ framework other than helm, say company, may break if handed off to Helm, so it
 makes sense to exempt ~foo~ with the following:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
-(after! helm
+(with-eval-after-load 'helm
   (add-to-list 'helm-completing-read-handlers-alist (cons #'foo nil)))
 #+end_src
 
@@ -187,7 +187,7 @@ maintain consistency with other icons across Doom's modules,
 [[doom-package:nerd-icons]] is used. To change this:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
-(after! helm
+(with-eval-after-load 'helm
   (setq helm-icons-provider 'treemacs))
 #+end_src
 

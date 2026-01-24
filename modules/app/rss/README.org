@@ -25,10 +25,10 @@ Read RSS feeds in the comfort of Emacs.
 
 ** Hacks
 - By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last
-  2 weeks of entries visible. This needs to be set after elfeed has loaded like
-  so in your =$DOOMDIR/config.el=:
+  2 weeks of entries visible. This needs to be set after elfeed has loaded:
   #+begin_src emacs-lisp
-  (after! elfeed
+  ;;; in $DOOMDIR/config.el
+  (with-eval-after-load 'elfeed
     (setq elfeed-search-filter "@1-month-ago +unread"))
   #+end_src
 

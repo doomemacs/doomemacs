@@ -98,7 +98,7 @@ C-x C-f /docker:$USER@$CONTAINER:/path/to/file
 Thanks to [[https://github.com/magit/magit-popup][magit-popup]], all the popups default arguments can be customized. For
 example, here is how to customize the arguments for =docker-image-run-popup=:
 #+begin_src emacs-lisp
-(after! docker
+(with-eval-after-load 'docker
   (setq docker-image-run-arguments '("-i" "-t" "--rm")))
 #+end_src
 
@@ -133,7 +133,7 @@ For older versions of TRAMP you can dump [[https://github.com/emacs-pe/docker-tr
 ~load-path~ somewhere and add the following to =$DOOMDIR/config.el= to overwrite
 ~tramp-wait-for-output~ with the patch applied:
 #+begin_src emacs-lisp
-(after! tramp
+(with-eval-after-load 'tramp
   (require 'docker-tramp-compat))
 #+end_src
 

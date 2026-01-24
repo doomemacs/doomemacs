@@ -69,8 +69,8 @@ buffer.
 
 To use this module with only ChatGPT, you only need to set ~gptel-api-key~ to your
 OpenAI key. For other LLMs you'll need to call one of the ~gptel-make-*~ functions
-in an ~(after! gptel ...)~ block. Examples of these calls can be found [[https://github.com/karthink/gptel?tab=readme-ov-file#other-llm-backends][in gptel's
-readme]].
+in an ~(with-eval-after-load 'gptel ...)~ block. Examples of these calls can be
+found [[https://github.com/karthink/gptel?tab=readme-ov-file#other-llm-backends][in gptel's readme]].
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]

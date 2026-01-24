@@ -497,10 +497,10 @@ launchers write a walkthrough for, you'll have better luck asking about it on
 2. Remember to run ~$ doom sync~ after making [[id:594d2505-d3cb-4061-ab76-06e7c8a4e0b8][certain changes]] to your config.
    Run ~$ doom help sync~ to know exactly when you should use it.
 3. If you are reconfiguring a package, make sure you've deferred your settings
-   until the package loads with the ~after!~ macro:
+   until the package loads with the ~with-eval-after-load~ macro:
 
    #+begin_src emacs-lisp
-  (after! magit
+  (with-eval-after-load 'magit
     (setq magit-repository-directories '(("~/projects" . 2))
           magit-save-repository-buffers nil))
    #+end_src
@@ -542,7 +542,7 @@ Here are a few common causes for random crashes:
   E.g. To disable ~org-indent-mode~:
   #+begin_src emacs-lisp
   ;; in $DOOMDIR/config.el
-  (after! org
+  (with-eval-after-load 'org
     (setq org-startup-indented nil))
   #+end_src
 

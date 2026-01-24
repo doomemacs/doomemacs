@@ -79,7 +79,7 @@ environment in which it is installed. This is set to v1.6 by default as it is
 the current LTS:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! lsp-julia
+(with-eval-after-load 'lsp-julia
   (setq lsp-julia-default-environment "~/.julia/environments/v1.6"))
 #+end_src
 
@@ -96,7 +96,7 @@ But to let [[doom-package:eglot-jl]] use the environment bundled with it, set it
 ~eglot-jl-base~ instead:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! eglot-jl
+(with-eval-after-load 'eglot-jl
   (setq eglot-jl-language-server-project eglot-jl-base))
 #+end_src
 
@@ -133,7 +133,7 @@ described above.
 v1.6 by default as it is the current LTS:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! lsp-julia
+(with-eval-after-load 'lsp-julia
   (setq lsp-julia-default-environment "~/.julia/environments/v1.6"))
 #+end_src
 

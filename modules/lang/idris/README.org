@@ -55,7 +55,7 @@ To get this working, simply set [[var:idris-interpreter-path]] to the path of th
 =idris2= executable. E.g.
 #+begin_src emacs-lisp
 ;;; add to $DOODMIR/config.el
-(after! idris-mode
+(with-eval-after-load 'idris-mode
   (setq idris-interpreter-path "idris2"))
 #+end_src
 

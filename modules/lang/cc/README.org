@@ -166,7 +166,7 @@ Search for your combination of =(LSP client package, LSP server)=. You are using
 *** LSP-mode with clangd
 #+begin_src emacs-lisp
 ;;; add to $DOOMDIR/config.el
-(after! lsp-clangd
+(with-eval-after-load 'lsp-clangd
   (setq lsp-clients-clangd-args
         '("-j=3"
           "--background-index"
@@ -183,7 +183,7 @@ server everywhere clangd can be used.
 *** LSP-mode with ccls
 #+begin_src emacs-lisp
 ;;; add to $DOOMDIR/config.el
-(after! ccls
+(with-eval-after-load 'ccls
   (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
   (set-lsp-priority! 'ccls 1))
 #+end_src
@@ -198,7 +198,7 @@ and =:json-null= for ~null~).
 command, use [[fn:set-eglot-client!]]:
 #+begin_src emacs-lisp
 ;;; add to $DOOMDIR/config.el
-(after! cc-mode
+(with-eval-after-load 'cc-mode
   (set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy")))
 #+end_src
 
@@ -207,7 +207,7 @@ command, use [[fn:set-eglot-client!]]:
 use [[fn:set-eglot-client!]]:
 #+begin_src emacs-lisp
 ;;; add to $DOOMDIR/config.el
-(after! cc-mode
+(with-eval-after-load 'cc-mode
   (set-eglot-client! 'cc-mode '("ccls" "--init={\"index\": {\"threads\": 3}}")))
 #+end_src
 

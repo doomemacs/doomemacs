@@ -77,7 +77,7 @@ Use ~set-irc-server! SERVER PLIST~ to configure IRC servers. Its second argument
 (a plist) takes the same arguments as ~circe-network-options~:
 #+begin_src emacs-lisp
 ;; if you omit =:host=, ~SERVER~ will be used instead.
-(after! circe
+(with-eval-after-load 'circe
   (set-irc-server! "irc.libera.chat"
     `(:tls t
       :port 6697
@@ -94,7 +94,7 @@ macos or :tools pass modules if you want integration into the MacOS keychain or
 [[https://www.passwordstore.org/][Pass]]):
 #+begin_src emacs-lisp
 ;;; in $DOOMDIR/config.el
-(after! circe
+(with-eval-after-load 'circe
   (defun fetch-password (&rest params)
     (require 'auth-source)
     (if-let* ((match (car (apply #'auth-source-search params)))

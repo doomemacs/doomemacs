@@ -220,7 +220,7 @@ A few variables may be set to change behavior of this module:
 To disable idle (as-you-type) completion, unset ~corfu-auto~:
 #+begin_src emacs-lisp
 ;;; in $DOOMDIR/config.el
-(after! corfu
+(with-eval-after-load 'corfu-auto
   (setq corfu-auto nil))
 #+end_src
 

@@ -188,7 +188,7 @@ disabled completely. Doom lowers the default value to prevent performance
 issues, so increasing the value may fix your issue:
 #+begin_src elisp
 ;;; add to $DOOMDIR/config.el
-(after! ivy
+(with-eval-after-load 'ivy
   (setq ivy-sort-max-size 30000))  ; Doom sets this to 7500, but Ivy's default is 30k
 #+end_src
 

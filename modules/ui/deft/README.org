@@ -50,7 +50,7 @@ The default note format is org-mode. You can change this by setting the value of
 the variable ~deft-default-extension~. Replacing the value with ~"md"~, for
 example, will change the default note format to markdown:
 #+begin_src emacs-lisp
-(after! deft
+(with-eval-after-load 'deft
   (setq deft-default-extension "md"))
 #+end_src
 

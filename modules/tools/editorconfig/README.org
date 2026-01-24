@@ -59,7 +59,7 @@ The ~editorconfig-indentation-alist~ variable contains a list of major modes and
 their indentation variables. To add coffee-mode to it:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! editorconfig
+(with-eval-after-load 'editorconfig
   (add-to-list 'editorconfig-indentation-alist '(coffee-mode coffee-tab-width)))
 #+end_src
 

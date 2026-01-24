@@ -85,7 +85,7 @@ as =msmtp= (recommended).
 If you use =msmtp=:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
-(after! mu4e
+(with-eval-after-load 'mu4e
   (setq sendmail-program (executable-find "msmtp")
         send-mail-function #'smtpmail-send-it
         message-sendmail-f-is-evil t
@@ -164,7 +164,7 @@ If this is of interest, this approach can be seen [[https://tecosaur.github.io/e
 Mu4e can be configured to call an arbitary shell command to fetch your email. To
 use it, set [[var:mu4e-get-mail-command]]:
 #+begin_src emacs-lisp
-(after! mu4e
+(with-eval-after-load 'mu4e
   (setq mu4e-get-mail-command "your_command"))
 #+end_src
 

@@ -68,7 +68,7 @@ To add your own ITEMS you would need to configure them using
 ~hl-todo-keyword-faces~:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(after! hl-todo
+(with-eval-after-load 'hl-todo
   (setq hl-todo-keyword-faces
         `(("FOO"  . ,(face-foreground "MY COLOUR HEX CODE"))
           ("BAR" . ,(face-foreground 'my-colour-var)))))
