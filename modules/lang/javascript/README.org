@@ -24,7 +24,7 @@ This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.t
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~js-mode~, ~js-ts-mode~, ~typesript-mode~, and
+  Enable LSP support for ~js-mode~, ~js-ts-mode~, ~typescript-mode~, and
   ~typescript-ts-mode. Requires [[doom-module::tools lsp]] and a langserver
   (supports ts-ls and deno-ls).
 - +tree-sitter ::
