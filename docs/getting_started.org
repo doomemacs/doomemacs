@@ -294,7 +294,7 @@ to least recommended for Doom (based on compatibility).
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
   brew install emacs-mac --with-modules
-  ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
+  ln -s "$(brew --prefix)/opt/emacs-mac/Emacs.app" /Applications/Emacs.app
   #+END_SRC
 
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
@@ -302,7 +302,7 @@ to least recommended for Doom (based on compatibility).
   #+BEGIN_SRC bash
   brew tap d12frosted/emacs-plus
   brew install emacs-plus
-  ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
+  ln -s "$(brew --prefix)/opt/emacs-plus/Emacs.app" /Applications/Emacs.app
   #+END_SRC
 
 - [[https://formulae.brew.sh/formula/emacs][emacs]] is another acceptable option, **but does not provide a Emacs.app**:
