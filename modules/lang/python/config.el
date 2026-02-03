@@ -220,6 +220,13 @@
   :when (modulep! +uv)
   :after python
   :config
+  ;; open uv.lock files in toml-mode
+  (add-to-list 'auto-mode-alist
+               (cons "/uv\\.lock\\'"
+                     (if (and (modulep! :tools tree-sitter)
+                              (fboundp 'toml-ts-mode))
+                         'toml-ts-mode
+                       'conf-toml-mode)))
   ;; HACK: A faster (cached) version of the mode-line segment. See
   ;;   `+python-uv-mode-set-auto-h'.
   (setq uv-mode-mode-line-format '(+python--uv-version ("UV:" +python--uv-version " ")))
