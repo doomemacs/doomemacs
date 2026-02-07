@@ -6,6 +6,7 @@
   :preface
   (setq lsp-java-workspace-dir (file-name-concat doom-profile-data-dir "java-workspace"))
   (add-hook 'java-mode-local-vars-hook #'lsp! 'append)
+  (add-hook 'java-ts-mode-local-vars-hook #'lsp! 'append)
   :config
   (when (modulep! :tools debugger +lsp)
     (setq lsp-jt-root (concat lsp-java-server-install-dir "java-test/server/")
