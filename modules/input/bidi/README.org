@@ -27,7 +27,9 @@ to your needs.
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-/This module has no external requirements./
+This module requires the [[https://dejavu-fonts.github.io/][DejaVu Sans]] font be installed and present on your
+system (unless you've changed ~+bidi-hebrew-font~ and ~+bidi-arabic-font~ to a
+different font).
 
 * Usage
 This module provides ~+bidi-mode~, a minor mode that improves the display of RTL
