@@ -21,14 +21,12 @@ behavior).")
 (use-package! beancount
   :mode ("\\.bean\\'" . beancount-mode)
   :hook (beancount-mode . outline-minor-mode)
-  :hook (beancount-mode . flymake-bean-check-enable) ; FIXME: add proper flycheck support
   :init
   (after! nerd-icons
     (add-to-list 'nerd-icons-extension-icon-alist
                  '("beancount" nerd-icons-faicon "nf-fa-money" :face nerd-icons-lblue))
     (add-to-list 'nerd-icons-mode-icon-alist
                  '(beancount-mode nerd-icons-faicon "nf-fa-money" :face nerd-icons-lblue)))
-
   :config
   (set-eval-handler! 'beancount-mode #'beancount-region-default)
 
@@ -42,8 +40,11 @@ behavior).")
                  (1 'beancount-date)
                  (2 'beancount-directive)))
 
-  (when (modulep! +lsp)
-    (add-hook 'beancount-mode-local-vars-hook #'lsp! 'append))
+  (add-hook 'beancount-mode-local-vars-hook
+            (if (modulep! +lsp)
+                #'lsp!
+              #'flymake-bean-check-enable)  ; FIXME: add proper flycheck support
+            'append)
 
   ;; HACK: The intro message could contain ANSI color codes, causing the regexp
   ;;   in `beancount--fava-filter' to fail to match it (and thus the browser
