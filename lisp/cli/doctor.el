@@ -144,6 +144,23 @@ in."
                 "You must install a prebuilt Emacs binary with this included, or compile "
                 "Emacs with the --with-native-compilation option.")))
 
+  (print! (start "Checking for fonts..."))
+  (print-group!
+  (if (not (executable-find "fc-list"))
+      (warn! "Warning: unable to detect fonts because fontconfig isn't installed")
+    (with-temp-buffer
+      (cl-destructuring-bind (status . output)
+          (doom-call-process "fc-list" "" "family")
+        (if (not (zerop status))
+            (print! (error "There was an error running `fc-list'. Is fontconfig installed correctly?"))
+          (insert output)
+          (unless (re-search-backward "Symbola" nil t)
+            (print! (warn "Failed to locate the 'Symbola' font on your system"))
+            (explain! "Symbola is Emacs' fallback font. It is used when no other active font can "
+                      "render certain characters. This render failure can cause crash Emacs in "
+                      "cases and massive slowdowns in other. It would be wise to have this font "
+                      "installed.")))))))
+
   (print! (start "Checking for private config conflicts..."))
   (print-group!
     (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
