@@ -88,6 +88,8 @@
 (use-package! cider-mode
   ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
   :hook (clojure-mode-local-vars . cider-mode)
+  :hook (clojurec-mode-local-vars . cider-mode)
+  :hook (clojurescript-mode-local-vars . cider-mode)
   :hook (clojure-ts-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode
