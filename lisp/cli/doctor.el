@@ -327,7 +327,6 @@ in."
 
         (when doom-modules
           (print! (start "Checking your enabled modules..."))
-          (advice-add #'require :around #'doom-shut-up-a)
           (pcase-dolist (`(,group . ,name) (doom-module-list))
             (with-doom-context 'doctor
               (let (doom-local-errors
