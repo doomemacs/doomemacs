@@ -15,4 +15,4 @@
     (package! citar-org-roam :pin "9750cfbbf330ab3d5b15066b65bd0a0fe7c296fb")))
 
 (package! parsebib :pin "5b837e0a5b91a69cc0e5086d8e4a71d6d86dac93")
-(package! citeproc :pin "a3d62ab8e40a75fcfc6e4c0c107e3137b4db6db8")
+(package! citeproc :pin "4bde999a41803fe519ea80eab8b813d53503eebd")
