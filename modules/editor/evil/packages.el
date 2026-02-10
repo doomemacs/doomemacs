@@ -12,7 +12,7 @@
 (package! evil-indent-plus :pin "f392696e4813f1d3a92c7eeed333248914ba6dae")
 (package! evil-lion :pin "5a0bca151466960e090d1803c4c5ded88875f90a")
 (package! evil-nerd-commenter :pin "ae52c5070a48793e2c24474c9c8dbf20175d18a0")
-(package! evil-numbers :pin "e7adac70a076ae381c03960d9d669071c1177f3a")
+(package! evil-numbers :pin "616aff9e5cee012954756ed2715209fa90308cdf")
 (package! evil-snipe :pin "16317d7e54313490a0fe8642ed9a1a72498e7ad2")
 (package! evil-surround :pin "da05c60b0621cf33161bb4335153f75ff5c29d91")
 (package! evil-textobj-anyblock
@@ -35,4 +35,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "163792a823bcdb2dae7ac1bba4018adfac35dca2"))
+  (package! evil-collection :pin "d052ad2ec1f6a4b101f873f01517b295cd7dc4a9"))
