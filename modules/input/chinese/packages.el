@@ -8,7 +8,7 @@
 (when (modulep! +rime)
   (package! liberime :pin "23c0caa1bf73f4e9ab58d52dc46cf21088dc6c54"))
 (when (modulep! +childframe)
-  (package! posframe :pin "d93828bf6c36383c365bd564ad3bab5a4403804c"))
+  (package! posframe :pin "4fc893c3c9ea3f6b5099ac1b369abb3c6da40b1e"))
 (when (modulep! :editor evil +everywhere)
   (package! evil-pinyin
     :recipe (:build (:not autoloads))
