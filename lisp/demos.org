@@ -532,16 +532,16 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (package! rainbow-delimiters :disable t)
 
 ;; To install a package from a github repo
-(package! so-long :host 'github :repo "hlissner/emacs-so-long")
+(package! so-long :recipe '(:host 'github :repo "hlissner/emacs-so-long"))
 
 ;; If a package is particularly big and comes with submodules you don't need,
 ;; you can tell the package manager not to clone the repo recursively:
-(package! ansible :nonrecursive t)
+(package! ansible :recipe '(:nonrecursive t))
 
 ;; To pin a package to a specific commit:
 (package! evil :pin "e7bc39de2f9")
 ;; ...or branch:
-(package! evil :branch "stable")
+(package! evil :recipe '(:branch "stable"))
 ;; To unpin a pinned package:
 (package! evil :pin nil)
 
