@@ -47,9 +47,16 @@
         sly-kill-without-query-p t
         sly-net-coding-system 'utf-8-unix
         ;; Doom defaults to non-fuzzy search, because it is faster and more
-        ;; precise (but requires more keystrokes). Change this to
-        ;; `sly-flex-completions' for fuzzy completion
-        sly-complete-symbol-function 'sly-simple-completions)
+        ;; precise (but requires more keystrokes), since it causes showing all
+        ;; symbols in the cases of using vertico/helm (without +fuzzy) (see
+        ;; https://github.com/joaotavora/sly/issues/535) for :completion, it
+        ;; changes it to `sly-flex-completions', which is a fuzzy completion.
+        sly-complete-symbol-function (if (or (modulep! :completion vertico)
+                                             (and (modulep! :completion helm)
+                                                  (not (modulep! :completion helm +fuzzy))))
+                                         'sly-flex-completions
+                                       'sly-simple-completions))
+
 
   (set-popup-rules!
     '(("^\\*sly-mrepl"       :vslot 2 :size 0.3 :quit nil :ttl nil)
