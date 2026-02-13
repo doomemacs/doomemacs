@@ -81,6 +81,18 @@ Fixes #3939: unsortable dired entries on Windows."
   (dirvish-override-dired-mode)
   (set-popup-rule! "^ ?\\*\\(?:[Dd]irvish\\|SIDE :: \\).*" :ignore t)
 
+  ;; HACK: `dirvish-pre-redisplay-h' is called via `pre-redisplay-functions'
+  ;;   for every window that needs redisplay, but it unconditionally calls
+  ;;   `dirvish--redisplay'. When dirvish is open in multiple frames, this
+  ;;   creates a feedback loop: frame A's redisplay triggers frame B's, and
+  ;;   vice versa, causing visible flickering. Guard it so it only fires for
+  ;;   the selected window in its frame. See alexluigit/dirvish#353.
+  ;; REVIEW: PR this upstream!
+  (defadvice! +dired--debounce-dirvish-redisplay-a (fn window)
+    :around #'dirvish-pre-redisplay-h
+    (when (eq (frame-selected-window) window)
+      (funcall fn window)))
+
   ;; Fixes #8038. This setting is for folks who expect to be able to switch back
   ;; to dired buffers where the file is opened from.  In other cases, don't
   ;; recycle sessions. We don't want leftover buffers lying around, especially
