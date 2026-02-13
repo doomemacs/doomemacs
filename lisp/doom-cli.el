@@ -1432,7 +1432,13 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
   (or (when-let* ((path (doom-cli-autoload cli))
                   (path (locate-file-internal path doom-cli-load-path load-suffixes)))
         (doom-log "load: autoload %s" path)
-        (let ((doom-cli--group-plist (doom-cli-plist cli)))
+        (let ((doom-cli--group-plist
+               ;; FIX(#8560): Don't inherit :hide from the autoload stub's
+               ;;   plist, because alias stubs have :hide t, and that would
+               ;;   propagate to the primary command when the file is loaded.
+               (let ((p (copy-sequence (doom-cli-plist cli))))
+                 (cl-remf p :hide)
+                 p)))
           (doom-load path))
         (let* ((key (doom-cli-key cli))
                (cli (gethash key doom-cli--table)))
