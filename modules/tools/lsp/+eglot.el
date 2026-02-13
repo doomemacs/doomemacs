@@ -85,4 +85,19 @@ server an expensive restart when its buffer is reverted."
 
 (use-package! flycheck-eglot
   :when (modulep! :checkers syntax -flymake)
-  :hook (eglot-managed-mode . flycheck-eglot-mode))
+  :hook (eglot-managed-mode . flycheck-eglot-mode)
+  :config
+  ;; HACK: `flycheck-eglot' hard-codes `(idle-change new-line)' as trigger
+  ;;   conditions when pushing LSP diagnostics to flycheck. If the user
+  ;;   restricts `flycheck-check-syntax-automatically' to e.g. `(save
+  ;;   mode-enabled)', those conditions are blocked and diagnostics are never
+  ;;   displayed. Temporarily expand the allowed conditions during eglot's
+  ;;   push-based diagnostic reporting so LSP results always get through.
+  ;; TODO: Remove after flycheck-eglot is bumped to include
+  ;;   flycheck/flycheck-eglot#17, which removes the condition argument
+  ;;   entirely.
+  (defadvice! +lsp--flycheck-eglot-prefer-diagnostics-a (fn &rest args)
+    :around #'flycheck-eglot--report-eglot-diagnostics
+    (let ((flycheck-check-syntax-automatically
+           (append '(idle-change new-line) flycheck-check-syntax-automatically)))
+      (apply fn args))))
