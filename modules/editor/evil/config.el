@@ -67,6 +67,15 @@ directives. By default, this only recognizes C directives.")
   :config
   (evil-select-search-module 'evil-search-module 'evil-search)
 
+  ;; HACK: `evil-ex-search' (used by `n'/`N') calls `isearch-range-invisible'
+  ;;   which temporarily opens fold overlays, but never calls
+  ;;   `isearch-clean-overlays' to restore them. This corrupts org-fold
+  ;;   overlay state, making subtrees permanently unfoldable with TAB.
+  ;;   See emacs-evil/evil#1630, doomemacs/doomemacs#8625.
+  (defadvice! +evil--clean-isearch-overlays-a (&rest _)
+    :after #'evil-ex-search
+    (isearch-clean-overlays))
+
   ;; PERF: Stop copying the selection to the clipboard each time the cursor
   ;; moves in visual mode. Why? Because on most non-X systems (and in terminals
   ;; with clipboard plugins like xclip.el active), Emacs will spin up a new
