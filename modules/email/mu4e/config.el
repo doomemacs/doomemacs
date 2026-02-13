@@ -271,11 +271,12 @@ is non-nil."
   (add-hook! 'mu4e-headers-mode-hook
     (defun +mu4e-widen-frame-maybe ()
       "Expand the mu4e-headers containing frame's width to `+mu4e-min-header-frame-width'."
-      (dolist (frame (frame-list))
-        (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
-                            mu4e-headers-buffer-name)
-                   (< (frame-width) +mu4e-min-header-frame-width))
-          (set-frame-width frame +mu4e-min-header-frame-width)))))
+      (when (display-graphic-p)
+        (dolist (frame (frame-list))
+          (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
+                              mu4e-headers-buffer-name)
+                     (< (frame-width) +mu4e-min-header-frame-width))
+            (set-frame-width frame +mu4e-min-header-frame-width))))))
 
   ;; Fix columns misalignment in Headers buffers
   (add-hook! 'mu4e-headers-mode-hook
