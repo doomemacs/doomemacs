@@ -75,6 +75,24 @@ See `+evil/next-preproc-directive' for details."
   (interactive "p")
   (+evil/next-comment (- count)))
 
+;;; ]e / [e
+;;;###autoload
+(defun +evil/next-error (count)
+  "Jump to the next error in the current buffer.
+Falls back to `next-error' if the current buffer has no error source."
+  (interactive "p")
+  (if next-error-function
+      (next-error count)
+    (save-selected-window
+      (next-error count))))
+
+;;;###autoload
+(defun +evil/previous-error (count)
+  "Jump to the previous error in the current buffer.
+Falls back to `previous-error' if the current buffer has no error source."
+  (interactive "p")
+  (+evil/next-error (- count)))
+
 ;;; ] SPC / [ SPC
 ;;;###autoload
 (defun +evil/insert-newline-below (count)
