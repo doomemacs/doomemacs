@@ -119,7 +119,8 @@
       ("^\\*cider-repl" :quit nil :ttl nil)
       ("^\\*cider-repl-history" :vslot 2 :ttl nil)))
 
-  (setq nrepl-hide-special-buffers t
+  (setq cider-auto-mode nil
+        nrepl-hide-special-buffers t
         nrepl-log-messages nil
         cider-font-lock-dynamically '(macro core function var deprecated)
         cider-overlays-use-font-lock t
