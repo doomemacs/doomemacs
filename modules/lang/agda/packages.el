@@ -6,11 +6,11 @@
     :recipe (:host github :repo "agda/agda"
              :files ("src/data/emacs-mode/agda-input.el")
              :nonrecursive t)
-    :pin "bb9e13d97038dd3fdcdaeec1c58694f4eede89a8")
+    :pin "5cf984c3d200d973e5a74eb758f0638591e50666")
 
   (package! agda2-mode
     :recipe (:host github :repo "agda/agda"
              :files ("src/data/emacs-mode/*.el"
                      (:exclude "agda-input.el"))
              :nonrecursive t)
-    :pin "bb9e13d97038dd3fdcdaeec1c58694f4eede89a8"))
+    :pin "5cf984c3d200d973e5a74eb758f0638591e50666"))
