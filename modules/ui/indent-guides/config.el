@@ -14,12 +14,19 @@ be enabled. If any function returns non-nil, the mode will not be activated."
 
 (use-package! indent-bars
   :unless noninteractive
-  :hook ((prog-mode text-mode conf-mode) . +indent-guides-init-maybe-h)
+  :hook (doom-first-buffer . +indent-guides-startup-h)
   :init
+  (defun +indent-guides-startup-h ()
+    "Set up indent-bars to activate after startup."
+    (add-hook 'after-change-major-mode-hook #'+indent-guides-init-maybe-h))
+
   (defun +indent-guides-init-maybe-h ()
     "Enable `indent-bars-mode' depending on `+indent-guides-inhibit-functions'."
-    (unless (run-hook-with-args-until-success '+indent-guides-inhibit-functions)
+    (unless (or (eq major-mode 'fundamental-mode)
+                (doom-temp-buffer-p (current-buffer))
+                (run-hook-with-args-until-success '+indent-guides-inhibit-functions))
       (indent-bars-mode +1)))
+
   :config
   (setq indent-bars-treesit-support (modulep! :tools tree-sitter)
         indent-bars-prefer-character
