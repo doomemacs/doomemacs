@@ -14,12 +14,18 @@ be enabled. If any function returns non-nil, the mode will not be activated."
 
 (use-package! indent-bars
   :unless noninteractive
-  :hook ((prog-mode text-mode conf-mode) . +indent-guides-init-maybe-h)
+  ;; FIX(#8543): Use `after-change-major-mode-hook' instead of mode-specific
+  ;;   hooks because inside `run-mode-hooks', dir-local variables are applied
+  ;;   (via `hack-local-variables') after mode hooks but before
+  ;;   `after-change-major-mode-hook'. This ensures `indent-bars--guess-spacing'
+  ;;   reads the correct dir-local values (e.g. `c-basic-offset').
+  :hook (after-change-major-mode . +indent-guides-init-maybe-h)
   :init
   (defun +indent-guides-init-maybe-h ()
     "Enable `indent-bars-mode' depending on `+indent-guides-inhibit-functions'."
-    (unless (run-hook-with-args-until-success '+indent-guides-inhibit-functions)
-      (indent-bars-mode +1)))
+    (when (derived-mode-p 'prog-mode 'text-mode 'conf-mode)
+      (unless (run-hook-with-args-until-success '+indent-guides-inhibit-functions)
+        (indent-bars-mode +1))))
   :config
   (setq indent-bars-treesit-support (modulep! :tools tree-sitter)
         indent-bars-prefer-character
