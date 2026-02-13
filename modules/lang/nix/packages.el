@@ -6,7 +6,7 @@
 (package! nixos-options :pin "053a2d5110ce05b7f99bcc2ac4804b70cbe87916")
 
 (when (and (modulep! +tree-sitter) (treesit-available-p))
-  (package! nix-ts-mode :pin "706bbfaf7f344d7c5914bf7aa5beb2d904eb53b3"))
+  (package! nix-ts-mode :pin "625306cf9cd99390aa032563f44157ee25ad66d5"))
 
 (when (modulep! :completion company)
   (package! company-nixos-options :pin "053a2d5110ce05b7f99bcc2ac4804b70cbe87916"))

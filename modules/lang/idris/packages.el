@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/idris/packages.el
 
-(package! idris-mode :pin "85928dc4cc2c22010fa91661abd55e6bd3dbacee")
+(package! idris-mode :pin "d32b2396a8ad17820e308cd267f1b464a5235abc")

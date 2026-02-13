@@ -83,7 +83,7 @@
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-modern :pin "9bbc44cc7e085dea24e96f0cc0332ed7fcf349ca")
+  (package! org-modern :pin "b4b5b1c864f1fdf240d1bbd7093529f5a75e8a06")
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
@@ -94,10 +94,10 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "33bfe3b233f1a840cd70e834b609ec6f04494a40"))
+    :pin "5abf24c1d8c82830010080ae10ca267d9c9ed473"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
-  (package! org-roam :pin "c72702cf27891899ea6321fe6505ff04befaf43e"))
+  (package! org-roam :pin "b4857fd7a140361883dfb95e1193ee42698a4afb"))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")

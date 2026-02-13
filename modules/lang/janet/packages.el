@@ -8,4 +8,4 @@
 (when (and (modulep! +tree-sitter) (treesit-available-p))
   (package! janet-ts-mode
     :recipe (:host github :repo "sogaiu/janet-ts-mode")
-    :pin "0e4d04d6487486104c3d65576e7a1480ce52b3fd"))
+    :pin "aba932a1a1b6eec729f31c5cbc6e5babc9090892"))

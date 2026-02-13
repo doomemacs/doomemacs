@@ -10,4 +10,4 @@
 (when (modulep! +hack)
   (package! hack-mode
     :recipe (:host github :repo "hhvm/hack-mode")
-    :pin "86a981bd7bc9929750abc7cea368d58c6ebb86fa"))
+    :pin "0b117e7f259439e7b5d961ec936d8718a727c13a"))
