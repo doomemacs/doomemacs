@@ -70,6 +70,13 @@
              (executable-find "python3"))
     (setq python-shell-interpreter "python3"))
 
+  ;; HACK: Python 3.13's pyrepl mishandles SIGINT under Emacs's comint
+  ;;   (TERM=dumb), particularly on macOS. The ^C character is treated as
+  ;;   literal input rather than triggering an interrupt signal. Disabling
+  ;;   pyrepl forces the classic readline-based REPL which handles signals
+  ;;   correctly. See #8391, also used by VS Code's Python extension.
+  (add-to-list 'python-shell-process-environment "PYTHON_BASIC_REPL=1")
+
   (add-hook! '(python-mode-hook python-ts-mode-hook)
     (defun +python-use-correct-flycheck-executables-h ()
       "Use the correct Python executables for Flycheck."
