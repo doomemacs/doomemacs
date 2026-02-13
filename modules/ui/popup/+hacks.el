@@ -44,6 +44,10 @@ buffer that shouldn't be in a popup. We prevent that by remapping `quit-window'
 to this commmand."
   (interactive "P")
   (let ((orig-buffer (current-buffer)))
+    ;; FIX(#8650): Remember the popup window before `quit-window' destroys it,
+    ;;   so `+popup/toggle' can restore it later.
+    (when (and +popup--remember-last (+popup-buffer-p))
+      (+popup--remember (list (selected-window))))
     (quit-window arg)
     (when (and (eq orig-buffer (current-buffer))
                (+popup-buffer-p))
