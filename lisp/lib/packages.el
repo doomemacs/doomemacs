@@ -111,7 +111,11 @@ package's name as a symbol, and whose CDR is the plist supplied to its
                   (make-directory repo-dir 'recursive)
                   (let ((default-directory repo-dir))
                     (funcall call "git" "init")
-                    (funcall call "git" "branch" "-m" straight-repository-branch)
+                    ;; HACK: `git branch -m' fails on empty repos with git
+                    ;;   < 2.28. `git symbolic-ref' is a portable alternative
+                    ;;   that works on all git versions. See #8538.
+                    (funcall call "git" "symbolic-ref" "HEAD"
+                             (format "refs/heads/%s" straight-repository-branch))
                     (funcall call "git" "remote" "add" "origin" repo-url
                              "--master" straight-repository-branch)
                     (funcall call "git" "fetch" "origin" pin
