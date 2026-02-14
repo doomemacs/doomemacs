@@ -61,7 +61,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
         (lsp-signature-stop)
         t)))
 
-  (set-popup-rule! "^\\*lsp-\\(help\\|install\\)" :size 0.35 :quit t :select t)
+  (set-popup-rule! "^\\*lsp-\\(help\\|install\\)" :size 0.3 :quit t :select t)
   (set-lookup-handlers! 'lsp-mode
     :definition #'+lsp-lookup-definition-handler
     :references #'+lsp-lookup-references-handler
