@@ -21,7 +21,7 @@
         eglot-code-action-indications '(eldoc-hint))
 
   :config
-  (set-popup-rule! "^\\*eglot-help" :size 0.15 :quit t :select t)
+  (set-popup-rule! "^\\*eglot-help" :size 0.3 :quit t :select t)
   (set-lookup-handlers! 'eglot--managed-mode
     :definition      #'xref-find-definitions
     :references      #'xref-find-references
