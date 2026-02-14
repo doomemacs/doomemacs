@@ -72,6 +72,7 @@ directives. By default, this only recognizes C directives.")
   ;;   `isearch-clean-overlays' to restore them. This corrupts org-fold
   ;;   overlay state, making subtrees permanently unfoldable with TAB.
   ;;   See emacs-evil/evil#1630, doomemacs/doomemacs#8625.
+  ;; REVIEW: Remove when emacs-evil/evil#1630 is resolved.
   (defadvice! +evil--clean-isearch-overlays-a (&rest _)
     :after #'evil-ex-search
     (isearch-clean-overlays))
