@@ -8,7 +8,7 @@ falling back on searching your PATH."
   (if (file-name-absolute-p exe)
       (and (file-executable-p exe)
            exe)
-    (let ((exe-root (format "bin/%s" exe)))
+    (let ((exe-root (format (if (featurep :system 'windows) "Scripts/%s" "bin/%s") exe)))
       (cond ((when python-shell-virtualenv-root
                (let ((bin (expand-file-name exe-root python-shell-virtualenv-root)))
                  (if (file-exists-p bin) bin))))
