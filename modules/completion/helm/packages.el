@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/helm/packages.el
 
-(package! helm :pin "cbbaff3c5a76b3ab91ba297844acce11980f55fd")
+(package! helm :pin "9d8de1e0810ef5a5e1f3a46c9461b78b9e86167b")
 (package! helm-company :pin "4622b82353220ee6cc33468f710fa5b6b253b7f1")
 (package! helm-c-yasnippet :pin "c5880e740da101fde7a995e94a7b16c330e57583")
 (package! helm-descbinds :pin "0aff44badad976ebf2666a7e9b6ddf4db53e59e5")
