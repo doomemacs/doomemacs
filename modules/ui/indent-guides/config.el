@@ -23,7 +23,6 @@ be enabled. If any function returns non-nil, the mode will not be activated."
   (defun +indent-guides-init-maybe-h ()
     "Enable `indent-bars-mode' depending on `+indent-guides-inhibit-functions'."
     (unless (or (eq major-mode 'fundamental-mode)
-                (doom-temp-buffer-p (current-buffer))
                 (run-hook-with-args-until-success '+indent-guides-inhibit-functions))
       (indent-bars-mode +1)))
 
@@ -56,6 +55,11 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     (add-hook 'doom-load-theme-hook #'indent-bars-reset-styles))
 
   (add-hook! '+indent-guides-inhibit-functions
+    ;; Buffers that may have special fontification or may be invisible to the
+    ;; user. Particularly src blocks, org agenda, or special buffers like magit.
+    (defun +indent-guides-in-special-buffers-p ()
+      (or (doom-special-buffer-p (current-buffer))
+          (doom-temp-buffer-p (current-buffer))))
     ;; Org's virtual indentation messes up indent-guides.
     (defun +indent-guides-in-org-indent-mode-p ()
       (bound-and-true-p org-indent-mode))
@@ -68,13 +72,7 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     ;; used for completion or eldoc popups).
     ;; REVIEW: Swap with `frame-parent' when 27 support is dropped
     (defun +indent-guides-in-childframe-p ()
-      (frame-parameter nil 'parent-frame))
-    ;; indent-guides in src blocks can cause syntax highlighting to fail
-    ;; abruptly for some major modes (particularly *-ts-modes or rustic-mode).
-    ;; Since it's already working on the super org buffer, it's redundant to let
-    ;; it work on the contents of each babel block.
-    (defun +indent-guides-in-org-src-block-p ()
-      (string-prefix-p " *org-src-fontification:" (buffer-name))))
+      (frame-parameter nil 'parent-frame)))
 
   ;; HACK: The way `indent-bars-display-on-blank-lines' functions, it places
   ;;   text properties with a display property containing a newline, which
