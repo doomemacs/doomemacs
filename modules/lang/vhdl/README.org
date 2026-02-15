@@ -1,0 +1,86 @@
+#+title: :lang vhdl
+#+subtitle: Keep it syncronized stupid
+#+created:  2026-01-11
+#+since:    30.0.0
+
+
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +lsp ::   
+  Enable LSP support for ~vhdl-mode~  and ~vhdl-ts-mode~. 
+  Requires [[doom-module::tools lsp]] and a langserver
+  (supports VHDL Tool, VHDL LS, GHDL LS, and HDL Checker).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires Emacs 29.1+ and [[doom-module::tools tree-sitter]].
+
+** Packages
+- [[doom-package:vhdl-ts-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+** Language Server
+*** TODO VHDL Tool
+*** TODO GHDL LS
+*** VHDL LS
+**** Nix
+Add ~vhld-ls~ to system packages.
+#+begin_src nix
+  environment.systemPackages = [
+    pkgs.vhdl-ls
+  ];
+#+end_src
+
+
+*** TODO HDL Checker
+
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] and the inbuilt formatters for both vhdl-mode and vhdl-ts-mode.
+
+* TODO Usage
+#+begin_quote
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+* Configuration
+This module has 2 variables to set the language server:
+- ~+vhdl-lsp-server~
+- ~+vhdl-lsp-server-path~
+
+~+vhdl-lsp-server~ can take 4 values ~'vhdl-tool~, ~'hdl-checker~, ~'vhdl-ls~, and ~'ghdl-ls~.
+This set the language server. 
+Its default value is ~'vhdl-tool~.
+
+~+vhdl-lsp-server-path~ takes president over ~+vhdl-lsp-server~. 
+It is to set the path to a language server. Its default value is ~nil~.
+
+An example of a configuration could be.
+#+begin_src emacs-lisp
+(setq +vhdl-lsp-server 'vhdl-ls
+      +vhdl-lsp-server-path nil)
+#+end_src
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
+
+
+
