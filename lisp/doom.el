@@ -525,16 +525,6 @@ uses a straight or package.el command directly).")
     ;;   later (see `startup--load-user-init-file@undo-hacks').
     (advice-add #'tool-bar-setup :override #'ignore)
 
-    ;; PERF,UX: site-lisp files are often obnoxiously noisy (emitting output
-    ;;   that isn't useful to end-users, like load messages, deprecation
-    ;;   notices, and linter warnings). Displaying these in the minibuffer
-    ;;   causes unnecessary redraws at startup which can impact startup time
-    ;;   drastically and cause flashes of white. It also pollutes the logs. I
-    ;;   suppress it here and load it myself, later, in a more controlled way
-    ;;   (see `doom-initialize').
-    (put 'site-run-file 'initial-value site-run-file)
-    (setq site-run-file nil)
-
     (define-advice startup--load-user-init-file (:around (fn &rest args) undo-hacks 95)
       "Undo Doom's startup optimizations to prep for the user's session."
       (unwind-protect (apply fn args)
@@ -861,19 +851,16 @@ appropriately against `noninteractive' or the `cli' context."
         (require 'doom-cli)
         (add-hook 'doom-cli-initialize-hook #'doom-finalize)
 
-        ;; HACK: bin/doom suppresses site-lisp to silence otherwise the
-        ;;   unavoidable output it produces (like deprecation notices,
-        ;;   file-loaded messages, and linter warnings). This output can confuse
-        ;;   or alarm consumers Doom-derived CLIs, and are rarely important or
-        ;;   actionable for the end-user. Turn on debug mode if you actually
-        ;;   want to see it!
+        ;; HACK: site-lisp files can be obnoxiously noisy (emitting output that
+        ;;   can pollute logs and isn't useful to (and may even alarm)
+        ;;   end-users, like file load messages, deprecation notices, and linter
+        ;;   warnings). bin/doom suppresses site-lisp in its shebang line so we
+        ;;   can load it here with output suppressed (unless debug mode is on).
         (quiet!!
           (require 'cl nil t)   ; "Package cl is deprecated"
           (unless site-run-file
-            (when-let* ((site-file (get 'site-run-file 'initial-value)))
-              (let ((inhibit-startup-screen inhibit-startup-screen))
-                (setq site-run-file site-file)
-                (load site-run-file t)))))))
+            (let ((inhibit-startup-screen inhibit-startup-screen))
+              (load "site-start" t))))))
 
     ;; A last ditch opportunity to undo hacks or do extra configuration before
     ;; the session is complicated by user config and packages.
