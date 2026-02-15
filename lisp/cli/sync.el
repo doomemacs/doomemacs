@@ -106,7 +106,7 @@ OPTIONS:
             (call! '(env)))
           (doom-packages-ensure rebuild?)
           (unless noupdate? (doom-packages-update (not update?)))
-          (doom-packages-purge purge? purge? purge? purge? purge?)
+          (call! `(gc ,(unless purge? "-begpr")))
           (when (doom-profile-generate)
             (when emacs-running?
               (print! (item "Restart Emacs for changes to take effect")))
