@@ -59,6 +59,9 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     ;; Org's virtual indentation messes up indent-guides.
     (defun +indent-guides-in-org-indent-mode-p ()
       (bound-and-true-p org-indent-mode))
+    ;; Indent-bars messes up faces in agenda buffer.
+    (defun +indent-guides-in-org-agenda-indent-mode-p ()
+      (eq major-mode 'org-agenda-mode))
     ;; Fix #6438: indent-guides prevent inline images from displaying in ein
     ;; notebooks.
     (defun +indent-guides-in-ein-notebook-p ()
