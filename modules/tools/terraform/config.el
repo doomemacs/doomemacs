@@ -8,7 +8,7 @@
 ;;; Packages
 
 (use-package! terraform-mode
-  :defer t
+  :mode "\\.tofu\\'"
   :config
   (set-docsets! 'terraform-mode "Terraform")
   (setq-hook! 'terraform-mode-hook compile-command +terraform-runner)
