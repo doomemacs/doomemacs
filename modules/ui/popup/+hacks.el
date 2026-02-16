@@ -38,10 +38,13 @@ grows larger."
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup-save-a)
 
-;; The regular `quit-window' sometimes kills the popup buffer and switches to a
-;; buffer that shouldn't be in a popup; this is prevented by remapping the
-;; command in popups:
-(define-key +popup-buffer-mode-map [remap quit-window] #'+popup/close)
+(defun +popup/quit-window ()
+  "The regular `quit-window' sometimes kills the popup buffer and switches to a
+buffer that shouldn't be in a popup. We prevent that by remapping `quit-window'
+to this commmand."
+  (interactive)
+  (+popup/close nil 'force))
+(define-key +popup-buffer-mode-map [remap quit-window] #'+popup/quit-window)
 
 
 ;;
