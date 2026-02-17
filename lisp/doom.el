@@ -542,7 +542,17 @@ uses a straight or package.el command directly).")
     (unless doom--system-macos-p
       (setq command-line-ns-option-alist nil))
     (unless (memq initial-window-system '(x pgtk))
-      (setq command-line-x-option-alist nil))))
+      (setq command-line-x-option-alist nil))
+
+    ;; PERF: `setopt' can eagerly load symbol dependencies to preform immediate
+    ;;   type checking, which can cause unexpected load order issues and impact
+    ;;   startup time drastically. Type checks are already performed when the
+    ;;   variable is defined, anyway, so this advice prevents early loading, but
+    ;;   no-ops if debug mode is on (where immediate feedback > performance).
+    (define-advice setopt--set (:around (fn &rest args) inhibit-load-symbol -90)
+      (let ((custom-load-symbol
+             (if (or init-file-debug debug-on-error) custom-load-symbol t)))
+        (apply fn args)))))
 
 
 ;;
