@@ -666,6 +666,11 @@ safely cleaned up with 'doom sync' or 'doom gc'."
 ;; still aliases them fine regardless.
 (setq warning-suppress-types '((defvaralias) (lexical-binding)))
 
+;; Straight emits an intrusive warning if package.el is present and
+;; loaded. Silence it.
+;; REVIEW: Remove when Straight is replaced with Elpaca
+(add-to-list 'warning-suppress-types '(straight package))
+
 ;; As some point in 31+, Emacs began spamming the user with warnings about
 ;; missing `lexical-binding' cookies in elisp files that you are unlikely to
 ;; have any direct control over (e.g. package files, data lisp files, and elisp
