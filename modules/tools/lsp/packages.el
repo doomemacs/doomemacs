@@ -4,6 +4,7 @@
 (if (modulep! +eglot)
     (progn
       (package! eglot :pin "76dae6a0756dd54946129a8ef170abcee63cf1ff")
+      (package! jsonrpc :pin "2bf7f24e39b6592faefef85e7553b2253c2ab87a")
       (when (modulep! :completion vertico)
         (package! consult-eglot :pin "d8b444aac39edfc6473ffbd228df3e9119451b51"))
       (when (modulep! :checkers syntax -flymake)
