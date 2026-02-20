@@ -56,10 +56,13 @@ be enabled. If any function returns non-nil, the mode will not be activated."
 
   (add-hook! '+indent-guides-inhibit-functions
     ;; Buffers that may have special fontification or may be invisible to the
-    ;; user. Particularly src blocks, org agenda, or special buffers like magit.
+    ;; user. Particularly src blocks, org agenda, or special modes like magit.
     (defun +indent-guides-in-special-buffers-p ()
-      (or (doom-special-buffer-p (current-buffer))
-          (doom-temp-buffer-p (current-buffer))))
+      (and (not (derived-mode-p 'text-mode 'prog-mode 'conf-mode))
+           (or buffer-read-only
+               (bound-and-true-p cursor-intangible-mode)
+               (doom-temp-buffer-p (current-buffer))
+               (derived-mode-p 'special-mode))))
     ;; Org's virtual indentation messes up indent-guides.
     (defun +indent-guides-in-org-indent-mode-p ()
       (bound-and-true-p org-indent-mode))
