@@ -66,11 +66,6 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     ;; Org's virtual indentation messes up indent-guides.
     (defun +indent-guides-in-org-indent-mode-p ()
       (bound-and-true-p org-indent-mode))
-    ;; Fix #6438: indent-guides prevent inline images from displaying in ein
-    ;; notebooks.
-    (defun +indent-guides-in-ein-notebook-p ()
-      (and (bound-and-true-p ein:notebook-mode)
-           (bound-and-true-p ein:output-area-inlined-images)))
     ;; Don't display indent guides in childframe popups (which are almost always
     ;; used for completion or eldoc popups).
     ;; REVIEW: Swap with `frame-parent' when 27 support is dropped
