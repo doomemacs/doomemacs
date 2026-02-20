@@ -9,7 +9,8 @@ types of messages.")
   "Character to displayed when nick > `+irc-left-padding' in length.")
 
 (defvar +irc-scroll-to-bottom-on-commands
-  '(self-insert-command yank hilit-yank)
+  '(self-insert-command yank hilit-yank
+    evil-paste-after evil-paste-before evil-open-above evil-open-below)
   "If these commands are called pre prompt the buffer will scroll to `point-max'.")
 
 (defvar +irc-disconnect-hook nil
@@ -194,10 +195,7 @@ after prompt marker."
 
     (add-hook! 'lui-mode-hook
       (add-hook 'evil-insert-state-entry-hook #'+irc-evil-insert-h
-                nil 'local))
-
-    (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
-          '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
+                nil 'local)))
 
   (defun +irc-preinput-scroll-to-bottom-h ()
     "Go to the end of the buffer in all windows showing it.

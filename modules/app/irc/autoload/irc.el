@@ -74,13 +74,11 @@ argument) is non-nil only show channels in current server."
 
 ;;;###autoload
 (defun +irc--circe-all-buffers ()
-  (cl-loop with servers = (circe-server-buffers)
-           for server in servers
+  (cl-loop for server in (circe-server-buffers)
            collect server
            nconc
            (with-current-buffer server
-             (cl-loop for buf in (circe-server-chat-buffers)
-                      collect buf))))
+             (circe-server-chat-buffers))))
 
 ;;;###autoload
 (defun +irc/tracking-next-buffer ()
@@ -96,8 +94,7 @@ argument) is non-nil only show channels in current server."
 ;;;###autoload
 (defun +circe-buffer-p (buf)
   "Return non-nil if BUF is a `circe-mode' buffer."
-  (with-current-buffer buf
-    (derived-mode-p 'circe-mode)))
+  (provided-mode-derived-p (buffer-local-value 'major-mode buf) 'circe-mode))
 
 ;;;###autoload
 (defun +irc--add-circe-buffer-to-persp-h ()
