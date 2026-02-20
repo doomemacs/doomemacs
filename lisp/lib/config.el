@@ -135,20 +135,5 @@ imported into Emacs."
         (doom-load-envvars-file doom-env-file)
         (message "Reloaded %S" (abbreviate-file-name doom-env-file))))))
 
-(defvar doom-upgrade-command
-  (format "%s upgrade -B --force"
-          ;; /usr/bin/env doesn't exist on Android
-          (if (featurep :system 'android)
-              "sh %s"
-            "%s"))
-  "Command that `doom/upgrade' runs.")
-;;;###autoload
-(defun doom/upgrade ()
-  "Run 'doom upgrade' then prompt to restart Emacs."
-  (interactive)
-  (doom--if-compile doom-upgrade-command
-      (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
-        (doom/restart-and-restore))))
-
 (provide 'doom-lib '(config))
 ;;; config.el ends here

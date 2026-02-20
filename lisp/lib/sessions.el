@@ -29,10 +29,8 @@
          (setq persp-auto-save-opt 0)
          (persp-save-state-to-file file))
         ((and (require 'frameset nil t)
-              (require 'restart-emacs nil t))
-         (let ((frameset-filter-alist (append '((client . restart-emacs--record-tty-file))
-                                              frameset-filter-alist))
-               (desktop-base-file-name (file-name-nondirectory file))
+              (require 'desktop nil t))
+         (let ((desktop-base-file-name (file-name-nondirectory file))
                (desktop-dirname (file-name-directory file))
                (desktop-restore-eager t)
                desktop-file-modtime)
@@ -60,17 +58,13 @@
                     do (persp-kill name))
            (persp-load-state-from-file file)))
         ((and (require 'frameset nil t)
-              (require 'restart-emacs nil t))
+              (require 'desktop nil t))
          (let* ((file (expand-file-name (doom-session-file)))
                 desktop-file-modtime
                 (desktop-dirname (file-name-directory file))
                 (desktop-base-file-name (file-name-nondirectory file))
                 (desktop-base-lock-name (concat desktop-base-file-name ".lock"))
                 (desktop-restore-reuses-frames nil)
-                ;; Add filter for tty frames, the filter simply logs a message
-                ;; on the parent ttys of the frame
-                (frameset-filter-alist (append '((tty . restart-emacs--frameset-tty-filter))
-                                               frameset-filter-alist))
                 ;; Disable prompts for safe variables during restoration
                 (enable-local-variables :safe)
                 ;; We mock these two functions while restoring frames Calls to
@@ -148,38 +142,9 @@ then no confirmation is asked."
 
 Unlike `doom/restart-and-restore', does not restart the current session."
   (interactive)
-  (require 'restart-emacs)
+  (unless (fboundp 'restart-emacs)
+    (user-error "Cannot restart Emacs 28 or older"))
   (restart-emacs))
-
-;;;###autoload
-(defun doom/restart-and-restore (&optional debug)
-  "Restart Emacs (and the daemon, if active).
-
-If DEBUG (the prefix arg) is given, start the new instance with the --debug
-switch."
-  (interactive "P")
-  (require 'restart-emacs)
-  (doom/quicksave-session)
-  (save-some-buffers nil t)
-  (letf! ((#'save-buffers-kill-emacs #'kill-emacs)
-          (confirm-kill-emacs)
-          (tmpfile (make-temp-file "post-load")))
-    ;; HACK `restart-emacs' does not properly escape arguments on Windows (in
-    ;;   `restart-emacs--daemon-on-windows' and
-    ;;   `restart-emacs--start-gui-on-windows'), so don't give it complex
-    ;;   arguments at all. Should be fixed upstream, but restart-emacs seems to
-    ;;   be unmaintained.
-    (with-temp-file tmpfile
-      (print `(progn
-                (when (boundp 'doom-version)
-                  (add-hook 'window-setup-hook #'doom-load-session 100))
-                (delete-file ,tmpfile))
-             (current-buffer)))
-    (restart-emacs
-     (append (if debug (list "--debug-init"))
-             (when (boundp 'chemacs-current-emacs-profile)
-               (list "--with-profile" chemacs-current-emacs-profile))
-             (list "-l" tmpfile)))))
 
 (provide 'doom-lib '(sessions))
 ;;; sessions.el ends here

@@ -785,8 +785,7 @@
        :desc "Restore last session"         "l" #'doom/quickload-session
        :desc "Save session to file"         "S" #'doom/save-session
        :desc "Restore session from file"    "L" #'doom/load-session
-       :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
-       :desc "Restart Emacs"                "R" #'doom/restart)
+       :desc "Restart Emacs"                "r" #'doom/restart)
 
       ;;; <leader> r --- remote
       (:when (modulep! :tools upload)

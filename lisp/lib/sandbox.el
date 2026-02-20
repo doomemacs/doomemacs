@@ -24,23 +24,31 @@
 
 (defun doom--sandbox-launch (args forms)
   (require 'package)
-  (require 'restart-emacs)
   (let* ((sandbox-file (expand-file-name "init.el" doom-sandbox-dir))
-         (args (append args (list "-l" sandbox-file))))
+         (args (append args (list "-l" sandbox-file)))
+         (bin (or (when-let* (((featurep :system 'windows))
+                              (bin (expand-file-name "runemacs.exe" invocation-directory))
+                              ((file-exists-p bin)))
+                    bin)
+                  (expand-file-name invocation-name invocation-directory))))
     (delete-directory doom-sandbox-dir 'recursive)
     (make-directory doom-sandbox-dir 'parents)
     (with-temp-file sandbox-file
       (prin1 forms (current-buffer)))
     (condition-case-unless-debug e
         (cond ((display-graphic-p)
-               (if (memq system-type '(windows-nt ms-dos))
-                   (restart-emacs--start-gui-on-windows args)
-                 (restart-emacs--start-gui-using-sh args)))
+               (if (featurep :system 'windows)
+                   (w32-shell-execute "open" bin (string-join args " "))
+                 (call-process "sh" nil
+                               0 nil
+                               "-c" (format "%s %s &"
+                                            (shell-quote-argument bin)
+                                            (mapconcat #'shell-quote-argument args " ")))))
               ((memq system-type '(windows-nt ms-dos))
                (user-error "Cannot start another Emacs from Windows shell."))
               ((suspend-emacs
                 (format "%s %s -nw; fg"
-                        (shell-quote-argument (restart-emacs--get-emacs-binary))
+                        (shell-quote-argument bin)
                         (mapconcat #'shell-quote-argument args " ")))))
       (error
        (delete-directory doom-sandbox-dir 'recursive)
