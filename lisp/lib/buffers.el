@@ -83,15 +83,14 @@ If no project is active, return all buffers."
            finally return (hash-table-keys projects)))
 
 ;;;###autoload
-(defun doom-dired-buffer-p (buf)
-  "Returns non-nil if BUF is a dired buffer."
-  (provided-mode-derived-p (buffer-local-value 'major-mode buf)
-                           'dired-mode))
+(defun doom-special-buffer-p (buf &optional consider-mode?)
+  "Returns non-nil if BUF's name starts with an *.
 
-;;;###autoload
-(defun doom-special-buffer-p (buf)
-  "Returns non-nil if BUF's name starts and ends with an *."
-  (char-equal ?* (aref (buffer-name buf) 0)))
+If CONSIDER-MODE? is non-nil, returns non-nil if BUF's mode is derived from
+`special-mode'."
+  (or (char-equal ?* (aref (buffer-name buf) 0))
+      (and consider-mode?
+           (provided-mode-derived-p (buffer-local-value 'major-mode buf) 'special-mode))))
 
 ;;;###autoload
 (defun doom-temp-buffer-p (buf)

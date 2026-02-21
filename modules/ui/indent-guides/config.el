@@ -62,7 +62,7 @@ be enabled. If any function returns non-nil, the mode will not be activated."
       (and (not (derived-mode-p 'text-mode 'prog-mode 'conf-mode))
            (or buffer-read-only
                (bound-and-true-p cursor-intangible-mode)
-               (derived-mode-p 'special-mode))))
+               (doom-special-buffer-p (current-buffer) t))))
     ;; Org's virtual indentation messes up indent-guides.
     (defun +indent-guides-in-org-indent-mode-p ()
       (bound-and-true-p org-indent-mode))

@@ -560,7 +560,7 @@ on."
     :before-while #'so-long-statistics-excessive-p
     :before-while #'so-long-detected-long-line-p
     (not (or (doom-temp-buffer-p (current-buffer))
-             (doom-special-buffer-p (current-buffer)))))
+             (doom-special-buffer-p (current-buffer) t))))
 
   ;; Don't disable syntax highlighting and line numbers, or make the buffer
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing
