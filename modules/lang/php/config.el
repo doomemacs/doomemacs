@@ -41,10 +41,6 @@
 
   (let ((mode-vars-hook (intern (format "%s-local-vars-hook" mode)))
         (mode-map (intern (format "%s-map" mode))))
-    (sp-with-modes (ensure-list mode)
-      (sp-local-pair "<?"    "?>" :post-handlers '(("| " "SPC" "=") ("||\n[i]" "RET") ("[d2]" "p")))
-      (sp-local-pair "<?php" "?>" :post-handlers '(("| " "SPC") ("||\n[i]" "RET"))))
-
     (when (modulep! +lsp)
       (when (executable-find "php-language-server.php")
         (setq lsp-clients-php-server-command "php-language-server.php"))

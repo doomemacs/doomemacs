@@ -40,30 +40,6 @@
   (setq web-mode-enable-html-entities-fontification t
         web-mode-auto-close-style 1)
 
-  (after! smartparens
-    (defun +web-is-auto-close-style-3 (_id action _context)
-      (and (eq action 'insert)
-           (eq web-mode-auto-close-style 3)))
-    (sp-local-pair 'web-mode "<" ">" :unless '(:add +web-is-auto-close-style-3))
-
-    ;; let smartparens handle these
-    (setq web-mode-enable-auto-quoting nil
-          web-mode-enable-auto-pairing t)
-
-    ;; 1. Remove web-mode auto pairs whose end pair starts with a latter
-    ;;    (truncated autopairs like <?p and hp ?>). Smartparens handles these
-    ;;    better.
-    ;; 2. Strips out extra closing pairs to prevent redundant characters
-    ;;    inserted by smartparens.
-    (dolist (alist web-mode-engines-auto-pairs)
-      (setcdr alist
-              (cl-loop for pair in (cdr alist)
-                       unless (string-match-p "^[a-z-]" (cdr pair))
-                       collect (cons (car pair)
-                                     (string-trim-right (cdr pair)
-                                                        "\\(?:>\\|]\\|}\\)+\\'")))))
-    (cl-callf2 delq nil web-mode-engines-auto-pairs))
-
   (add-to-list 'web-mode-engines-alist '("elixir" . "\\.eex\\'"))
   (add-to-list 'web-mode-engines-alist '("phoenix" . "\\.[lh]eex\\'"))
 

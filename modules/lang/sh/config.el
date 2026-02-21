@@ -62,10 +62,7 @@
              (+sh--match-command-subst-in-quotes
               (1 'sh-quoted-exec prepend))
              (,(regexp-opt +sh-builtin-keywords 'symbols)
-              (0 'font-lock-type-face append))))))
-
-  ;; autoclose backticks
-  (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p)))
+              (0 'font-lock-type-face append)))))))
 
 
 (use-package! company-shell

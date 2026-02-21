@@ -9,15 +9,6 @@
 ;;; Packages
 
 (defun +elixir-common-config (mode)
-  ;; ...and only complete the basics
-  (sp-with-modes mode
-    (sp-local-pair "do" "end"
-                   :when '(("RET" "<evil-ret>"))
-                   :unless '(sp-in-comment-p sp-in-string-p)
-                   :post-handlers '("||\n[i]"))
-    (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
-    (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
-
   (when (modulep! +lsp)
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 

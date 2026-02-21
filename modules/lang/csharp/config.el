@@ -36,10 +36,6 @@
     :return        "return"
     :yield         "yield")
 
-  (sp-local-pair '(csharp-mode csharp-ts-mode) "<" ">"
-                 :when '(+csharp-sp-point-in-type-p)
-                 :post-handlers '(("| " "SPC")))
-
   (when (modulep! +lsp)
     (add-hook 'csharp-mode-local-vars-hook #'lsp! 'append)
     (add-hook 'csharp-ts-mode-local-vars-hook #'lsp! 'append))

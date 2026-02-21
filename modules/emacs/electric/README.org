@@ -4,8 +4,9 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module augments the built-in [[doom-package:electric]] package with keyword-based
-indentation (as opposed to character-based).
+This module configures Emacs to auto-insert and delete closing pairs and quotes,
+and to augment the built-in [[doom-package:electric]] package with keyword-based
+indentation triggers (by default it's only character-based).
 
 ** Maintainers
 - [[doom-user:][@hlissner]]

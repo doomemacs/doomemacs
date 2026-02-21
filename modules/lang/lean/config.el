@@ -6,13 +6,6 @@
   :config
   (set-lookup-handlers! 'lean-mode
     :definition #'lean-find-definition)
-  (sp-with-modes 'lean-mode
-    (sp-local-pair "/-" "-/")
-    (sp-local-pair "`" "`")
-    (sp-local-pair "{" "}")
-    (sp-local-pair "«" "»")
-    (sp-local-pair "⟨" "⟩")
-    (sp-local-pair "⟪" "⟫"))
   (map! :map lean-mode-map
         :localleader
         "g" #'lean-toggle-show-goal
@@ -40,13 +33,6 @@
   (after! markdown-mode
     (add-to-list 'markdown-code-lang-modes '("lean" . nael-mode)))
   :config
-  (sp-with-modes 'nael-mode
-    (sp-local-pair "/-" "-/")
-    (sp-local-pair "`" "`")
-    (sp-local-pair "{" "}")
-    (sp-local-pair "«" "»")
-    (sp-local-pair "⟨" "⟩")
-    (sp-local-pair "⟪" "⟫"))
   (when (modulep! +lsp)
     (if (modulep! :tools lsp +eglot)
         (setq nael-prepare-lsp nil)

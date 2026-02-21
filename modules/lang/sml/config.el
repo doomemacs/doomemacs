@@ -11,11 +11,6 @@
       (add-to-list 'lsp-language-id-configuration `(,mode . "sml")))
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append))
 
-  ;; don't auto-close apostrophes (type 'a = foo) and backticks (`Foo)
-  (sp-with-modes mode
-    (sp-local-pair "'" nil :actions nil)
-    (sp-local-pair "`" nil :actions nil))
-
   (map! :map ,(intern (format "%s-map" mode))
         :i "RET"   #'reindent-then-newline-and-indent
         :i "S-SPC" #'sml-electric-space

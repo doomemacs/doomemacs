@@ -26,9 +26,6 @@
     ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
     (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter))
 
-  ;; so class and module pairs work
-  (setq-hook! 'ruby-mode-hook sp-max-pair-length 6)
-
   (map! :localleader
         :map ruby-mode-map
         "[" #'ruby-toggle-block

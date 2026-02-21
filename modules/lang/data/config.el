@@ -7,9 +7,6 @@
   :config
   (setq nxml-slash-auto-complete-flag t
         nxml-auto-insert-xml-declaration-flag t)
-  ;; https://github.com/Fuco1/smartparens/issues/397#issuecomment-501059014
-  (after! smartparens
-    (sp-local-pair 'nxml-mode "<" ">" :post-handlers '(("[d1]" "/"))))
   (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet))
   (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent)
   (set-formatter! 'xmllint '("xmllint" "--format" "-") :modes '(nxml-mode)))

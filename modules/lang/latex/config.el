@@ -83,29 +83,6 @@ okular and pdf-tools.")
   (set-popup-rules! '((" output\\*$" :size 15)
                       ("^\\*TeX \\(?:Help\\|errors\\)"
                        :size 0.3 :select t :ttl nil)))
-  (after! smartparens-latex
-    ;; We have to use lower case modes here, because `smartparens-mode' uses
-    ;; the same during configuration.
-    (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
-      (dolist (open '(
-                      ;; All these pairs dramatically slow down typing in LaTeX
-                      ;; buffers, so remove them. Let snippets do their job.
-                      "\\left(" "\\left[" "\\left\\{" "\\left|"
-                      "\\bigl("   "\\biggl("   "\\Bigl("   "\\Biggl("
-                      "\\bigl["   "\\biggl["   "\\Bigl["   "\\Biggl["
-                      "\\bigl\\{" "\\biggl\\{" "\\Bigl\\{" "\\Biggl\\{"
-                      "\\lfloor" "\\lceil" "\\langle"
-                      "\\lVert" "\\lvert"
-                      ;; Disable pairs that interfere with AucTeX,
-                      ;; see https://github.com/Fuco1/smartparens/pull/1151.
-                      "`" "``" "\""))
-        ;; Some of the above pairs are in smartparens' global list, which
-        ;; applies to all modes, so we need a local ":actions nil" override
-        ;; (instead of ":actions :rem", which removes from the local list).
-        ;; While this keeps the pairs in `sp-pairs', it has negligible
-        ;; performance impact because smartparens will omit the pairs when
-        ;; building the buffer-local `sp-local-pairs' used during operation.
-        (sp-local-pair modes open nil :actions nil))))
   ;; Hook LSP, if enabled.
   (when (modulep! +lsp)
     (add-hook! '(tex-mode-local-vars-hook
