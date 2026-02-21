@@ -50,8 +50,6 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
 - [[doom-package:poetry]] if [[doom-module:+poetry]]
 - [[doom-package:pyenv]] if [[doom-module:+pyenv]]
 - [[doom-package:uvenv]] if [[doom-module:+uv]]
-- [[doom-package:pyimport]]
-- [[doom-package:py-isort]]
 - [[doom-package:python-pytest]]
 - if [[doom-module:+cython]]
   - [[doom-package:cython-mode]]
@@ -75,8 +73,6 @@ This module has no hard requirements, but softly depends on:
   - ~$ pip install pytest~
   - ~$ pip install nose~
 - The [[doom-module::editor format]] module uses Black for python files: ~$ pip install black~
-- [[doom-package:pyimport]] requires Python's module ~pyflakes~: ~$ pip install pyflakes~
-- [[doom-package:py-isort]] requires [[https://github.com/timothycrosley/isort][isort]] to be installed: ~pip install isort~
 - Python virtual environments install instructions at:
   - [[https://github.com/pyenv/pyenv][pyenv]]
   - [[https://github.com/astral-sh/uv][uv]]
