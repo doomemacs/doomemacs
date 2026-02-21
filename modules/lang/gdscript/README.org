@@ -5,7 +5,7 @@
 
 * Description :unfold:
 This module adds support for GDScript, the scripting language of the [[http://godotengine.org/][Godot]] game
-engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mode][gdscript-mode]].
+engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mode][gdscript-mode]] and [[https://github.com/bbbscarter/gdshader-mode][gdshader-mode]].
 
 ** Maintainers
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -20,6 +20,7 @@ engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mo
 
 ** Packages
 - [[doom-package:gdscript-mode]]
+- [[doom-package:gdshader-mode]]
 
 ** Hacks
 /No hacks documented for this module./
