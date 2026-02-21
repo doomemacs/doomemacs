@@ -23,6 +23,7 @@ be enabled. If any function returns non-nil, the mode will not be activated."
   (defun +indent-guides-init-maybe-h ()
     "Enable `indent-bars-mode' depending on `+indent-guides-inhibit-functions'."
     (unless (or (eq major-mode 'fundamental-mode)
+                (doom-temp-buffer-p (current-buffer))
                 (run-hook-with-args-until-success '+indent-guides-inhibit-functions))
       (indent-bars-mode +1)))
 
@@ -61,7 +62,6 @@ be enabled. If any function returns non-nil, the mode will not be activated."
       (and (not (derived-mode-p 'text-mode 'prog-mode 'conf-mode))
            (or buffer-read-only
                (bound-and-true-p cursor-intangible-mode)
-               (doom-temp-buffer-p (current-buffer))
                (derived-mode-p 'special-mode))))
     ;; Org's virtual indentation messes up indent-guides.
     (defun +indent-guides-in-org-indent-mode-p ()
