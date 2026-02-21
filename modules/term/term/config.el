@@ -1,7 +1,6 @@
 ;;; term/term/config.el -*- lexical-binding: t; -*-
 
 ;;;###package term
-(add-hook 'term-mode-hook #'doom-mark-buffer-as-real-h)
 (add-hook 'term-mode-hook #'hide-mode-line-mode)
 
 

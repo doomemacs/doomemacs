@@ -23,7 +23,6 @@
     (add-hook 'ruby-mode-local-vars-hook #'lsp! 'append))
 
   (after! inf-ruby
-    (add-hook 'inf-ruby-mode-hook #'doom-mark-buffer-as-real-h)
     ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
     (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter))
 
