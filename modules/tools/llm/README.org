@@ -18,8 +18,9 @@ backend, but it can talk to other LLMs given [[*Configuration][some configuratio
 
 ** Packages
 - [[doom-package:gptel]]
-- [[doom-package:gptel-quick]]
 - [[doom-package:gptel-magit]] if [[doom-module::tools magit]]
+- [[doom-package:gptel-quick]]
+- [[doom-package:ob-gptel]]
 
 ** Hacks
 #+begin_quote

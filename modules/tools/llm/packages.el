@@ -13,3 +13,8 @@
     :recipe (:host github
              :repo "ArthurHeymans/gptel-magit")
     :pin "4a40c3fc201d60d2f0589c2e1a6693fd94bb4c98"))
+
+(when (modulep! :lang org)
+  (package! ob-gptel
+    :recipe (:host github :repo "jwiegley/ob-gptel")
+    :pin "60e704a390d767a7d06c8d3845ba8786b75f7da3"))

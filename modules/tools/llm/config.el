@@ -28,4 +28,9 @@
   :hook (magit-mode . gptel-magit-install))
 
 
-;; TODO: Aidermacs?
+(use-package! ob-gptel
+  :when (modulep! :lang org)
+  :hook (org-mode . +llm-ob-gptel-install-completions-h)
+  :config
+  (defun +llm-ob-gptel-install-completions-h ()
+    (add-hook 'completion-at-point-functions 'ob-gptel-capf nil t)))
