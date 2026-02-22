@@ -341,7 +341,7 @@
       :desc "Org Capture"           "X"    #'org-capture
       ;; C-u is used by evil
       :desc "Universal argument"    "u"    #'universal-argument
-      :desc "window"                "w"    evil-window-map
+      :desc "window"                "w"    #'evil-window-map
       :desc "help"                  "h"    help-map
 
       (:when (modulep! :ui popup)
