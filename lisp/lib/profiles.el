@@ -323,18 +323,26 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                               magic-mode-alist
                               magic-fallback-mode-alist)
                  collect `(set-default-toplevel-value ',var ',(symbol-value var)))
-      ,@(cl-loop with site-run-dir =
+      ;; Ensure site lisp entries are placed at the end of `load-path' in
+      ;; interactive sessions, or malformed/strange EMACSLOADPATH values could
+      ;; mess with load order expectations.
+      ,@(cl-loop for path in (reverse (get 'load-path 'initial-value))
+                 collect `(add-to-list 'load-path ,path))
+      ,@(cl-loop with init-load-path = (get 'load-path 'initial-value)
+                 with site-run-dir =
                  (ignore-errors
                    (directory-file-name (file-name-directory
                                          (locate-library site-run-file))))
                  for path in load-path
-                 unless (and site-run-dir (file-in-directory-p path site-run-dir))
-                 unless (file-in-directory-p path data-directory)
+                 unless (member path init-load-path)
                  unless (file-equal-p path doom-core-dir)
+                 unless (file-in-directory-p path data-directory)
+                 unless (and site-run-dir (file-in-directory-p path site-run-dir))
                  collect `(add-to-list 'load-path ,path))
       ,@(cl-loop with v = (version-to-list doom-version)
-                 with ref = (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "rev-parse" "HEAD")
-                 with branch = (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "branch" "--show-current")
+                 with emacs-dir = (doom-path doom-emacs-dir)
+                 with ref = (doom-call-process "git" "-C" emacs-dir "rev-parse" "HEAD")
+                 with branch = (doom-call-process "git" "-C" emacs-dir "branch" "--show-current")
                  for (var . val)
                  in `((major  . ,(nth 0 v))
                       (minor  . ,(nth 1 v))
