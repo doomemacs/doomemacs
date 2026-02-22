@@ -118,7 +118,8 @@ possible."
       auto-save-file-name-transforms
       `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
          ,(file-name-concat auto-save-list-file-prefix "tramp-\\2-") sha1)
-        ("\\`/\\([^/]+/\\)*\\([^/]+\\)\\'" ,(file-name-concat auto-save-list-file-prefix "\\2-") sha1)))
+        ("\\`/\\([^/]+/\\)*\\([^/]+\\)\\'"
+         ,(file-name-concat auto-save-list-file-prefix "\\2-") sha1)))
 
 (add-hook! 'auto-save-hook
   (defun doom-ensure-auto-save-prefix-exists-h ()

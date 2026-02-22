@@ -1084,8 +1084,9 @@ between the two."
     ;;      link is stored or exported (whether or not they're a pdf link). This
     ;;      error gimps org until `pdf-tools-install' is run, but this is poor
     ;;      UX, so we suppress it.
-    (defun +org--pdftools-link-handler (fn &rest args)
-      "Produces a link handler for org-pdftools that suppresses missing-epdfinfo errors whenever storing or exporting links."
+    (defun +org--pdftools-link-handler (fn &rest _args)
+      "Produces a link handler for org-pdftools that suppresses missing-epdfinfo
+errors whenever storing or exporting links."
       (lambda (&rest args)
         (and (ignore-errors (require 'org-pdftools nil t))
              (file-executable-p pdf-info-epdfinfo-program)
