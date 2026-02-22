@@ -13,9 +13,9 @@
            ;;   and org-loaddefs.el, but Straight doesn't invoke this step, and
            ;;   the former doesn't work if the Org repo is a shallow clone.
            ;;   Rather than impose the network burden of a full clone (and other
-           ;;   redundant work in Org's makefile), I'd rather fake these files
-           ;;   instead. Besides, Straight already produces a org-autoloads.el,
-           ;;   so org-loaddefs.el isn't needed.
+           ;;   redundant and platform unagnostic work in Org's makefile), I'd
+           ;;   rather fake these files instead. Besides, Straight already
+           ;;   produces a org-autoloads.el, so org-loaddefs.el isn't needed.
            :build t
            :pre-build
            (progn
@@ -31,7 +31,7 @@
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                          "(provide 'org-version)\n")))))
-  :pin "b7bc0ede67f3e2a477f4d6ad0c46a6d80bca5aea")  ; release_9.7.39
+  :pin "89df5bf46ba214db44eea898cc7cacc0b27fd760")  ; release_9.8
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
@@ -94,7 +94,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "5abf24c1d8c82830010080ae10ca267d9c9ed473"))
+    :pin "0753c057773ed3e3ec68a558e9af38d8fce728b8"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
   (package! org-roam :pin "b4857fd7a140361883dfb95e1193ee42698a4afb"))
