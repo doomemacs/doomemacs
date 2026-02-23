@@ -30,7 +30,18 @@
                  (insert (format "(defun org-release () %S)\n" version)
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
-                         "(provide 'org-version)\n")))))
+                         "(provide 'org-version)\n"))))
+           ;; HACK: Org is hardcoded (with file-local variables) to spew some of
+           ;;   its autoloads into org-loaddefs.el file (that is never loaded or
+           ;;   subsumed into Doom's package autoloads), while the rest go into
+           ;;   org-autoloads.el, so we have to manually merge them.
+           ;; REVIEW: Fix this upstream?
+           :post-build
+           (let ((afile (straight--autoloads-file "org")))
+             (with-temp-file afile
+               (insert-file-contents "org-loaddefs.el")
+               (save-excursion (insert "\n"))
+               (insert-file-contents afile))))
   :pin "89df5bf46ba214db44eea898cc7cacc0b27fd760")  ; release_9.8
 (package! org-contrib
   :recipe (:host github
