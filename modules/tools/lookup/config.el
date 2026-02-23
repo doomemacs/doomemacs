@@ -156,15 +156,6 @@ Dictionary.app behind the scenes to get definitions.")
 (global-set-key [remap xref-find-references]  #'+lookup/references)
 
 (after! xref
-  ;; We already have `projectile-find-tag' and `evil-jump-to-tag', no need for
-  ;; xref to be one too.
-  (remove-hook 'xref-backend-functions #'etags--xref-backend)
-  ;; ...however, it breaks `projectile-find-tag', unless we put it back.
-  (defadvice! +lookup--projectile-find-tag-a (fn)
-    :around #'projectile-find-tag
-    (let ((xref-backend-functions '(etags--xref-backend t)))
-      (funcall fn)))
-
   ;; This integration is already built into evil
   (unless (modulep! :editor evil)
     ;; Use `better-jumper' instead of xref's marker stack
