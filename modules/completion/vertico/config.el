@@ -331,12 +331,54 @@ orderless."
             '(doom/find-file-in-other-project . project-file)
             '(doom/find-file-in-private-config . file)
             '(doom/describe-active-minor-mode . minor-mode)
+            '(doom/help-packages . doom-package)
             '(flycheck-error-list-set-filter . builtin)
             '(persp-switch-to-buffer . buffer)
             '(projectile-find-file . project-file)
             '(projectile-recentf . project-file)
             '(projectile-switch-to-buffer . buffer)
-            '(projectile-switch-project . project-file)))
+            '(projectile-switch-project . project-file))
+
+  ;; Add Marginalia annotations for `doom/help-packages'
+  (add-to-list 'marginalia-annotator-registry '(doom-package +marginalia--annotate-doom-package-fn none))
+  (defun +marginalia--annotate-doom-package-fn (cand)
+    "Annotate Doom package CAND with source, pin status, and summary."
+    (when-let ((package (intern-soft cand)))
+      (let* ((backend (doom-package-backend package))
+             (source (pcase backend
+                       (`straight "Straight")
+                       (`elpa "ELPA")
+                       (`builtin "Built-in")
+                       (_ "Other")))
+             (pin (when (eq backend 'straight)
+                    (plist-get (cdr (assq package doom-packages)) :pin)))
+             (summary
+              ;; when the package is not built in
+              (if (not (eq backend 'builtin))
+                  (let* ((local-repo (doom-package-recipe-repo package))
+                         (repo-dir (straight--repos-dir local-repo)))
+                    (if (file-exists-p repo-dir)
+                        (marginalia--library-doc
+                         (file-name-concat repo-dir
+                                           (format "%s%s" local-repo ".el")))
+                      ""))
+                ;; If the package is built in
+                (if-let (built-in (assq package package--builtins))
+                    (package-desc-summary (package--from-builtin built-in))
+                  (marginalia--library-doc (gethash local-repo (marginalia--library-cache)))))))
+        (marginalia--fields
+         ;; Display the package source with a specific width
+         ((propertize source 'face
+                      (if (string-equal source "Other")
+                          'marginalia-key 'marginalia-file-name)))
+         ;; Display pin status if applicable
+         ((propertize (if pin (concat (substring pin 0 4) "...")
+                        ;; If no pin, then create padding
+                        (make-string 7 ?\s))
+                      'face 'marginalia-number))
+         ;; Display the package summary:
+         ((propertize (string-trim summary) ;; Remove whitespace from summary
+                      'face 'marginalia-documentation)))))))
 
 
 (use-package! wgrep
