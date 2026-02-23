@@ -189,7 +189,7 @@ nixpkgs.overlays = [
 ];
 
 environment.systemPackages = [
-  pkgs.emacsGcc  # Installs Emacs 28 + native-comp
+  pkgs.emacs-git  # Installs Emacs 28 + native-comp
 ];
 #+END_SRC
 
@@ -232,7 +232,7 @@ Everything you need is in Gentoo's official =::gentoo= repository.
 
 ***** Emacs
 To use Emacs graphically, enable the =gui= USE flag. And enable the =xft= USE flag to render fonts correctly (see
-[[https://github.com/hlissner/doom-emacs/issues/4876][issue #4876]])
+[[https://github.com/doomemacs/doomemacs/issues/4876][issue #4876]])
 #+begin_src sh
 echo "app-editors/emacs gui xft" >> /etc/portage/package.use/emacs
 #+end_src
@@ -368,16 +368,16 @@ Emacs are necessary:
    =C:\Users\USERNAME\AppData\Roaming= as your ~HOME~, which will cause issues
    later.
 
-2. Add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.
+2. Add =C:\Users\USERNAME\.config\emacs\bin= to your ~PATH~.
 
-   This way, you don't have to type all of =C:\Users\USERNAME\.emacs.d\bin\doom=
+   This way, you don't have to type all of =C:\Users\USERNAME\.config\emacs\bin\doom=
    every time you need to run this script (and you'll need to, often).
 
    #+begin_quote
    A pre-existing PATH variable should already exist among your system
    variables. It contains a string of file paths separated by colons;
    ~pathA:pathB:pathC~. Prepend the path to bin/doom to that string, like so:
-   ~C:\Users\username\.emacs.d\bin:pathA:pathB:pathC~
+   ~C:\Users\username\.config\emacs\bin:pathA:pathB:pathC~
    #+end_quote
 
 3. Restart your system so your new values for ~HOME~ and ~PATH~ take effect.
@@ -465,11 +465,11 @@ With Emacs and Doom's dependencies installed, next is to install Doom Emacs
 itself:
 
 #+BEGIN_SRC bash
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom install
+git clone https://github.com/doomemacs/doomemacs ~/.config/emacs
+~/.config/emacs/bin/doom install
 #+END_SRC
 
-=doom install= will set up your =DOOMDIR= at =~/.doom.d= (if it doesn't already
+=doom install= will set up your =DOOMDIR= at =~/.config/doom= (if it doesn't already
 exist) and will work you through the first-time setup of Doom Emacs. Carefully
 follow any instructions it puts out.
 
@@ -511,30 +511,30 @@ provides, and ~doom help COMMAND~ to display documentation for a particular
 ~COMMAND~.
 
 #+begin_quote
-I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
+I recommend you add =~/.config/emacs/bin= to your ~PATH~ so you can call =doom=
 directly and from anywhere. Accomplish this by adding this to your .bashrc or
-.zshrc file: ~export PATH="$HOME/.emacs.d/bin:$PATH"~
+.zshrc file: ~export PATH="$HOME/.config/emacs/bin:$PATH"~
 #+end_quote
 
 *** Install Doom Manually
 If you'd rather install Doom yourself, instead of rely on the magic of =doom
 install=, here is its equivalent in bash shell commands (assuming
-=hlissner/doom-emacs= has been cloned to =~/.emacs.d=):
+=doomemacs/doomemacs= has been cloned to =~/.config/emacs=):
 
 #+BEGIN_SRC bash
-# So we don't have to write ~/.emacs.d/bin/doom every time
-PATH="$HOME/.emacs.d/bin:$PATH"
+# So we don't have to write ~/.config/emacs/bin/doom every time
+PATH="$HOME/.config/emacs/bin:$PATH"
 
 # Create a directory for our private config
-mkdir ~/.doom.d  # or ~/.config/doom
+mkdir ~/.config/doom
 
 # The init.example.el file contains an example doom! call, which tells Doom what
 # modules to load and in what order.
-cp ~/.emacs.d/init.example.el ~/.doom.d/init.el
-cp ~/.emacs.d/core/templates/config.example.el ~/.doom.d/config.el
-cp ~/.emacs.d/core/templates/packages.example.el ~/.doom.d/packages.el
+cp ~/.config/emacs/init.example.el ~/.config/doom/init.el
+cp ~/.config/emacs/core/templates/config.example.el ~/.config/doom/config.el
+cp ~/.config/emacs/core/templates/packages.example.el ~/.config/doom/packages.el
 
-# You might want to edit ~/.doom.d/init.el here and make sure you only have the
+# You might want to edit ~/.config/doom/init.el here and make sure you only have the
 # modules you want enabled.
 
 # Then synchronize Doom with your config:
@@ -554,7 +554,7 @@ doom env
 emacs --batch -f nerd-icons-install-fonts
 #+END_SRC
 
-To understand the purpose of the =~/.doom.d= directory and =~/.doom.d/init.el=
+To understand the purpose of the =~/.config/doom= directory and =~/.config/doom/init.el=
 file, see the [[#configure][Configure]] section further below.
 
 *** Install Doom alongside other configs (with Chemacs2)
@@ -564,15 +564,15 @@ the default config:
 
 1. First, install Doom somewhere:
    #+BEGIN_SRC sh :eval no
-   git clone https://github.com/hlissner/doom-emacs ~/doom-emacs
+   git clone https://github.com/doomemacs/doomemacs ~/doom-emacs
    ~/doom-emacs/bin/doom install
    #+END_SRC
 
-2. Move aside any existing config and install Chemacs2 as your new =~/.emacs.d=:
+2. Move aside any existing config and install Chemacs2 as your new =~/.config/emacs=:
    #+BEGIN_SRC bash :eval no
    [ -f ~/.emacs ] && mv ~/.emacs ~/.emacs.bak
-   [ -d ~/.emacs.d ] && mv ~/.emacs.d ~/.emacs.legacy
-   git clone https://github.com/plexus/chemacs2.git ~/.emacs.d
+   [ -d ~/.config/emacs ] && mv ~/.config/emacs ~/.emacs.legacy
+   git clone https://github.com/plexus/chemacs2.git ~/.config/emacs
    #+END_SRC
 
 3. Create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
@@ -606,7 +606,7 @@ README.org files yet!
 #+begin_quote
 Use ~M-x doom/help-modules~ (bound to =SPC h d m= or =C-h d m=) to jump to a
 module's documentation from within Doom, otherwise, place your cursor on a
-module in your ~doom!~ block (in =~/.doom.d/init.el=) and press =K= to jump to
+module in your ~doom!~ block (in =~/.config/doom/init.el=) and press =K= to jump to
 its documentation (or =gd= to jump to its source code). =C-c g k= and =C-c g d=
 for non-evil users, respectively.
 #+end_quote
@@ -620,7 +620,7 @@ doom upgrade   # or 'doom up'
 
 If you want to update Doom manually, ~doom upgrade~ is equivalent to:
 #+BEGIN_SRC bash
-cd ~/.emacs.d
+cd ~/.config/emacs
 git pull        # updates Doom
 doom clean      # Ensure your config isn't byte-compiled
 doom sync       # synchronizes your config with Doom Emacs
@@ -635,8 +635,8 @@ doom upgrade --packages
 
 #+begin_quote
 To minimize issues while upgrading, avoid modifying Doom's source files in
-=~/.emacs.d=. All your customization should be kept in your =DOOMDIR= (e.g.
-=~/.doom.d=). Read the [[#Configure][Configure]] section for more on configuring Doom.
+=~/.config/emacs=. All your customization should be kept in your =DOOMDIR= (e.g.
+=~/.config/doom=). Read the [[#Configure][Configure]] section for more on configuring Doom.
 #+end_quote
 
 ** TODO Rollback
@@ -653,7 +653,7 @@ the major version (e.g. 27 -> 28 or vice versa) run ~doom build~ too.
 + ~doom build~ will recompile all your installed packages, which is necessary
   because Emacs bytecode not generally forward compatible across major releases
   (e.g. 27 -> 28). Alternatively, reinstall all your packages by deleting
-  =~/.emacs.d/.local=, then run ~doom sync~.
+  =~/.config/emacs/.local=, then run ~doom sync~.
 
 * TODO Migrate
 If you're here from another Emacs distribution (or your own), here are a few
@@ -662,7 +662,7 @@ things to be aware of while you convert your old config to Doom:
 + Doom does not use =package.el= to manage its packages, but ~use-package~ does!
   You will see errors if you have ~:ensure ...~ properties in your ~use-package~
   blocks. Remove these and, instead, add ~package!~ declarations to
-  =~/.doom.d/packages.el= to install your packages.
+  =~/.config/doom/packages.el= to install your packages.
 
   See [[#package-management]["Package Management"]], further in this guide.
 
@@ -687,7 +687,7 @@ You can configure Doom by tweaking the files found in your =DOOMDIR=. Doom
 expects this directory to be found in one of:
 
 1. =~/.config/doom= (respects ~$XDG_CONFIG_HOME~)
-2. or =~/.doom.d=
+2. or =~/.config/doom=
 
 This directory is referred to as your =DOOMDIR=. Only one of these directories
 should exist (Doom will only recognize one).
@@ -969,10 +969,10 @@ live testing. To do this specify a ~:local-repo~ in that package's recipe:
 (package! my-package
   :recipe (:local-repo "/path/to/my/package"))
 
-;; Relative paths are expanded to ~/.emacs.d/.local/straight/repos/{local-repo}
-;; or ~/.doom.d/{local-repo} -- the first that is found.
+;; Relative paths are expanded to ~/.config/emacs/.local/straight/repos/{local-repo}
+;; or ~/.config/doom/{local-repo} -- the first that is found.
 (package! my-package
-  :recipe (:local-repo "my/package"))  ; looks for ~/.doom.d/my/package/my-package.el
+  :recipe (:local-repo "my/package"))  ; looks for ~/.config/doom/my/package/my-package.el
 
 (package! my-package
   :recipe (:local-repo "/path/to/my/package"
@@ -992,7 +992,7 @@ Alternatively, add the package's location to Emacs' ~load-path~. Do this if you
 don't need/care for autoload cookies or byte-compilation:
 #+BEGIN_SRC elisp
 ;; Doom has modified `use-package's `:load-path' to expand relative paths from
-;; your DOOMDIR. e.g. ~/.doom.d/lisp/package
+;; your DOOMDIR. e.g. ~/.config/doom/lisp/package
 (use-package my-package
   :load-path "lisp/package")
 
@@ -1012,7 +1012,7 @@ If your configuration needs are simple, the ~use-package!~, ~after!~,
 ~add-hook!~ and ~setq-hook!~ macros are your bread and butter.
 
 #+BEGIN_SRC emacs-lisp
-;;; ~/.doom.d/config.el (example)
+;;; ~/.config/doom/config.el (example)
 (setq doom-font (font-spec :family "Fira Mono" :size 12))
 
 ;; Takes a feature symbol or a library name (string)
@@ -1049,7 +1049,7 @@ These are powered by ~use-package~'s inject-hooks under the hood.
 Therefore it must be used from your private init.el file.
 
 #+BEGIN_SRC emacs-lisp
-;;; ~/.doom.d/init.el (example)
+;;; ~/.config/doom/init.el (example)
 ;; If a :pre-init / :pre-config hook returns nil, it overwrites that package's
 ;; original :init / :config block. Exploit this to overwrite Doom's config.
 (use-package-hook! doom-themes
@@ -1099,8 +1099,8 @@ also be helpful for debugging.
 
 ** Writing your own modules
 To create your own module you need only create a directory for it in
-=~/.doom.d/modules/abc/xyz=, then add =:abc xyz= to your ~doom!~ block in
-=~/.doom.d/init.el= to enable it.
+=~/.config/doom/modules/abc/xyz=, then add =:abc xyz= to your ~doom!~ block in
+=~/.config/doom/init.el= to enable it.
 
 #+begin_quote
 In this example, =:abc= is called the category and =xyz= is the name of the
@@ -1224,7 +1224,7 @@ This is all made possible thanks to these autoload cookie: ~;;;###autoload~.
 Placing this on top of a lisp form will do one of two things:
 
 1. Add a ~autoload~ call to Doom's autoload file (found in
-   =~/.emacs.d/.local/autoloads.el=, which is read very early in the startup
+   =~/.config/emacs/.local/autoloads.el=, which is read very early in the startup
    process).
 2. Or copy that lisp form to Doom's autoload file verbatim (usually the case for
    anything other than ~def*~ forms, like ~defun~ or ~defmacro~).
@@ -1315,13 +1315,13 @@ With that out of the way, here is the load order of Doom's most important files:
 
 | File                                        | Interactive | Batch | CLI |
 |---------------------------------------------+-------------+-------+-----|
-| ~/.emacs.d/early-init.el (Emacs 27+ only)   | yes         | no    | no  |
-| ~/.emacs.d/init.el                          | yes         | no    | no  |
+| ~/.config/emacs/early-init.el (Emacs 27+ only)   | yes         | no    | no  |
+| ~/.config/emacs/init.el                          | yes         | no    | no  |
 | $DOOMDIR/init.el                            | yes         | yes   | yes |
-| {~/.emacs.d,$DOOMDIR}/modules/*/*/init.el   | yes         | yes   | yes |
+| {~/.config/emacs,$DOOMDIR}/modules/*/*/init.el   | yes         | yes   | yes |
 | $DOOMDIR/cli.el                             | no          | no    | yes |
-| {~/.emacs.d,$DOOMDIR}/modules/*/*/cli.el    | no          | no    | yes |
-| {~/.emacs.d,$DOOMDIR}/modules/*/*/config.el | yes         | no    | no  |
+| {~/.config/emacs,$DOOMDIR}/modules/*/*/cli.el    | no          | no    | yes |
+| {~/.config/emacs,$DOOMDIR}/modules/*/*/config.el | yes         | no    | no  |
 | $DOOMDIR/config.el                          | yes         | no    | no  |
 
 *** Flags
@@ -1443,7 +1443,7 @@ keyword). You are free to do this, if it is your preference, but otherwise, Doom
 has its own package management system.
 
 Migrating ~use-package~ code to Doom is usually a case of removing the ~:ensure~
-keyword and adding a ~(package! PACKAGENAME)~ to =~/.doom.d/packages.el= (and
+keyword and adding a ~(package! PACKAGENAME)~ to =~/.config/doom/packages.el= (and
 running ~doom sync~ to sync your config).
 
 *** Using ~org-babel-do-load-languages~ to load your babel packages
@@ -1500,7 +1500,7 @@ provide tools to make this easier. Here are a few things you can try, first:
 + Investigate the =*Messages*= log for warnings or error messages. This log can
   be opened with =SPC h e=, =C-h e= or =M-x view-echo-area-messages=.
 
-+ Look up errors/warnings [[file:faq.org::Common Issues][on the FAQ]] and [[https://github.com/hlissner/doom-emacs/issues][Doom's issue tracker]]. It is possible
++ Look up errors/warnings [[file:faq.org::Common Issues][on the FAQ]] and [[https://github.com/doomemacs/doomemacs/issues][Doom's issue tracker]]. It is possible
   that a solution for your issue already exists. The FAQ can be searched from
   inside Doom with =SPC h d f= (or =C-h d f= for non-evil users).
 
@@ -1650,7 +1650,7 @@ You have four options when it comes to launching the sandbox:
   modules.
 - =C-c C-p= :: This launches "vanilla Doom+". That is, Doom core plus the
   modules that you have specified in the ~doom!~ block of your private config
-  (in =~/.doom.d/init.el=). This *does not* load your private config, however.
+  (in =~/.config/doom/init.el=). This *does not* load your private config, however.
 - =C-c C-f= :: This launches "full Doom". It loads Doom's core, your enabled
   modules, and your private config. This instance should be identical to the
   instance you launched it from.
