@@ -1,20 +1,20 @@
 #+TITLE: Doom Emacs Documentation
 #+STARTUP: nofold
 
-Doom is a configuration framework for [[https://www.gnu.org/software/emacs/][GNU Emacs 26.3+]] tailored for Emacs
-bankruptcy veterans who want less framework in their frameworks and the
-performance of a hand rolled config (or better). It can be a foundation for your
-own config or a resource for Emacs enthusiasts to learn more about our favorite
-OS.
+Doom is a configuration framework for [[https://www.gnu.org/software/emacs/][GNU Emacs 26.3+]]
+tailored for Emacs bankruptcy veterans who want less framework in their frameworks
+and the performance of a hand rolled config (or better).
+It can be a foundation for your own config
+or a resource for Emacs enthusiasts to learn more about our favorite OS.
 
-Doom is an opinionated collection of reasonable (and optional) defaults with a
-focus on performance (both runtime and startup) and on abstraction-light,
+Doom is an opinionated collection of reasonable (and optional) defaults
+with a focus on performance (both runtime and startup) and on abstraction-light,
 readable code design, so that there is less between you and Emacs.
 
 #+begin_quote
-The documentation is designed to be viewed within Doom Emacs. Access it by
-pressing =SPC h d h= (or =C-h d h= for non-evil users), or search it with =SPC h
-d s= (or =C-h d s=).
+The documentation is designed to be viewed within Doom Emacs.
+Access it by pressing =SPC h d h= (or =C-h d h= for non-evil users),
+or search it with =SPC h d s= (or =C-h d s=).
 #+end_quote
 
 * Table of Contents :TOC:
@@ -26,11 +26,11 @@ d s= (or =C-h d s=).
   - [[#workflow-tips-tricks--tutorials][Workflow Tips, Tricks & Tutorials]]
   - [[#module-appendix][Module Appendix]]
 - [[#community-resources][Community Resources]]
-  - [[#asking-for-help][Asking for help]]
-  - [[#project-roadmap][Project roadmap]]
-  - [[#tutorials--guides][Tutorials & guides]]
+  - [[#asking-for-help][Asking for Help]]
+  - [[#project-roadmap][Project Roadmap]]
+  - [[#tutorials--guides][Tutorials & Guides]]
   - [[#projects-that-supportcomplement-doom][Projects that support/complement Doom]]
-  - [[#similar-projects][Similar projects]]
+  - [[#similar-projects][Similar Projects]]
 
 * TODO Release Notes
 
@@ -63,19 +63,19 @@ d s= (or =C-h d s=).
 ** [[file:modules.org][Module Appendix]]
 
 * Community Resources
-** Asking for help
+** Asking for Help
 - [[https://discord.gg/qvGgnVx][Our Discord server]]
 - [[https://github.com/hlissner/doom-emacs/issues][Our issue tracker]]
 
-** Project roadmap
-- [[https://github.com/hlissner/doom-emacs/projects/3][Development roadmap]] - A timeline outlining what's being worked on and when it
+** Project Roadmap
+- [[https://discourse.doomemacs.org/t/development-roadmap/42][Development roadmap]] - A timeline outlining what's being worked on and when it
   is expected to be done.
-- [[https://github.com/hlissner/doom-emacs/projects/2][Plugins under review]] - A sitrep on third party plugins that we've considered,
+- [[https://github.com/orgs/doomemacs/projects/5][Packages under review]] - A sitrep on third party plugins that we've considered,
   rejected, or awaiting integration into Doom.
-- [[https://github.com/hlissner/doom-emacs/projects/5][Upstream bugs]] - Tracks issues originating from plugins and external programs
+- [[https://github.com/orgs/doomemacs/projects/7][Upstream bugs]] - Tracks issues originating from plugins and external programs
   that Doom relies on.
 
-** Tutorials & guides
+** Tutorials & Guides
 + *Doom Emacs*
   - (videos) [[https://www.youtube.com/playlist?list=PLyy8KUDC8P7X6YkegqrnEnymzMWCNB4bN][Doom Emacs Tutorials]] by [[https://www.youtube.com/channel/UCVls1GmFKf6WlTraIb_IaJg][DistroTube]]
   - (videos) [[https://www.youtube.com/playlist?list=PLhXZp00uXBk4np17N39WvB80zgxlZfVwj][DoomCasts]] by @zaiste
@@ -97,10 +97,10 @@ d s= (or =C-h d s=).
   - [[https://gist.github.com/dmsul/8bb08c686b70d5a68da0e2cb81cd857f][A crash course on modal editing and Ex commands]]
 
 ** Projects that support/complement Doom
-+ [[https://github.com/plexus/chemacs][plexus/chemacs]]
-+ [[https://github.com/r-darwish/topgrade][r-darwish/topgrade]]
++ [[https://github.com/plexus/chemacs2][plexus/chemacs2]] - emacs profile switcher
++ [[https://github.com/topgrade-rs/topgrade][topgrade]] - system updater that includes doom
 
-** Similar projects
-+ [[https://github.com/purcell/emacs.d][purcell/emacs.d]]
-+ [[https://github.com/seagle0128/.emacs.d][seagle0128/.emacs.d]]
-+ [[https://github.com/syl20bnr/spacemacs][syl20bnr/spacemacs]]
+** Similar Projects
++ [[https://github.com/purcell/emacs.d][purcell/emacs.d]] - a wise mans long-grown emacs config
++ [[https://github.com/seagle0128/.emacs.d][seagle0128/.emacs.d]] - centaur emacs, a personal distribution
++ [[https://github.com/syl20bnr/spacemacs][syl20bnr/spacemacs]] - spacemacs, an alternative community-driven distribution
