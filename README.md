@@ -2,7 +2,7 @@
 
 # Doom Emacs
 
-[Install](#install) • [Documentation] • [FAQ] • [Screenshots] • [Contribute](#contribute)
+[Install](#install) • [Documentation] • [FAQ] • [Screenshots] • [Contribute](#contribute) • [🇪🇸](README.es.md)
 
 ![Made with Doom Emacs](https://img.shields.io/github/tag/doomemacs/doomemacs.svg?style=flat-square&label=release&color=58839b)
 ![Supports Emacs 27.1–30.2](https://img.shields.io/badge/Supports-Emacs_27.1–30.2-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
