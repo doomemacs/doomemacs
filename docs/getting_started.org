@@ -465,8 +465,8 @@ With Emacs and Doom's dependencies installed, next is to install Doom Emacs
 itself:
 
 #+BEGIN_SRC bash
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom install
+git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+~/.config/emacs/bin/doom install
 #+END_SRC
 
 =doom install= will set up your =DOOMDIR= at =~/.doom.d= (if it doesn't already
@@ -511,28 +511,28 @@ provides, and ~doom help COMMAND~ to display documentation for a particular
 ~COMMAND~.
 
 #+begin_quote
-I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
+I recommend you add =~/.config/emacs/bin= to your ~PATH~ so you can call =doom=
 directly and from anywhere. Accomplish this by adding this to your .bashrc or
-.zshrc file: ~export PATH="$HOME/.emacs.d/bin:$PATH"~
+.zshrc file: ~export PATH="$HOME/.config/emacs/bin:$PATH"~
 #+end_quote
 
 *** Install Doom Manually
 If you'd rather install Doom yourself, instead of rely on the magic of =doom
 install=, here is its equivalent in bash shell commands (assuming
-=hlissner/doom-emacs= has been cloned to =~/.emacs.d=):
+=hlissner/doom-emacs= has been cloned to =~/.config/emacs=):
 
 #+BEGIN_SRC bash
-# So we don't have to write ~/.emacs.d/bin/doom every time
-PATH="$HOME/.emacs.d/bin:$PATH"
+# So we don't have to write ~/.config/emacs/bin/doom every time
+PATH="$HOME/.config/emacs/bin:$PATH"
 
 # Create a directory for our private config
 mkdir ~/.doom.d  # or ~/.config/doom
 
 # The init.example.el file contains an example doom! call, which tells Doom what
 # modules to load and in what order.
-cp ~/.emacs.d/init.example.el ~/.doom.d/init.el
-cp ~/.emacs.d/core/templates/config.example.el ~/.doom.d/config.el
-cp ~/.emacs.d/core/templates/packages.example.el ~/.doom.d/packages.el
+cp ~/.config/emacs/init.example.el ~/.doom.d/init.el
+cp ~/.config/emacs/core/templates/config.example.el ~/.doom.d/config.el
+cp ~/.config/emacs/core/templates/packages.example.el ~/.doom.d/packages.el
 
 # You might want to edit ~/.doom.d/init.el here and make sure you only have the
 # modules you want enabled.
@@ -620,7 +620,7 @@ doom upgrade   # or 'doom up'
 
 If you want to update Doom manually, ~doom upgrade~ is equivalent to:
 #+BEGIN_SRC bash
-cd ~/.emacs.d
+cd ~/.config/emacs
 git pull        # updates Doom
 doom clean      # Ensure your config isn't byte-compiled
 doom sync       # synchronizes your config with Doom Emacs
@@ -635,7 +635,7 @@ doom upgrade --packages
 
 #+begin_quote
 To minimize issues while upgrading, avoid modifying Doom's source files in
-=~/.emacs.d=. All your customization should be kept in your =DOOMDIR= (e.g.
+=~/..config/emacs=. All your customization should be kept in your =DOOMDIR= (e.g.
 =~/.doom.d=). Read the [[#Configure][Configure]] section for more on configuring Doom.
 #+end_quote
 
@@ -653,7 +653,7 @@ the major version (e.g. 27 -> 28 or vice versa) run ~doom build~ too.
 + ~doom build~ will recompile all your installed packages, which is necessary
   because Emacs bytecode not generally forward compatible across major releases
   (e.g. 27 -> 28). Alternatively, reinstall all your packages by deleting
-  =~/.emacs.d/.local=, then run ~doom sync~.
+  =~/..config/emacs/.local=, then run ~doom sync~.
 
 * TODO Migrate
 If you're here from another Emacs distribution (or your own), here are a few
@@ -969,7 +969,7 @@ live testing. To do this specify a ~:local-repo~ in that package's recipe:
 (package! my-package
   :recipe (:local-repo "/path/to/my/package"))
 
-;; Relative paths are expanded to ~/.emacs.d/.local/straight/repos/{local-repo}
+;; Relative paths are expanded to ~/..config/emacs/.local/straight/repos/{local-repo}
 ;; or ~/.doom.d/{local-repo} -- the first that is found.
 (package! my-package
   :recipe (:local-repo "my/package"))  ; looks for ~/.doom.d/my/package/my-package.el
@@ -1224,7 +1224,7 @@ This is all made possible thanks to these autoload cookie: ~;;;###autoload~.
 Placing this on top of a lisp form will do one of two things:
 
 1. Add a ~autoload~ call to Doom's autoload file (found in
-   =~/.emacs.d/.local/autoloads.el=, which is read very early in the startup
+   =~/..config/emacs/.local/autoloads.el=, which is read very early in the startup
    process).
 2. Or copy that lisp form to Doom's autoload file verbatim (usually the case for
    anything other than ~def*~ forms, like ~defun~ or ~defmacro~).
@@ -1313,16 +1313,16 @@ what kind of session it is. Doom has three types of sessions:
 
 With that out of the way, here is the load order of Doom's most important files:
 
-| File                                        | Interactive | Batch | CLI |
-|---------------------------------------------+-------------+-------+-----|
-| ~/.emacs.d/early-init.el (Emacs 27+ only)   | yes         | no    | no  |
-| ~/.emacs.d/init.el                          | yes         | no    | no  |
-| $DOOMDIR/init.el                            | yes         | yes   | yes |
-| {~/.emacs.d,$DOOMDIR}/modules/*/*/init.el   | yes         | yes   | yes |
-| $DOOMDIR/cli.el                             | no          | no    | yes |
-| {~/.emacs.d,$DOOMDIR}/modules/*/*/cli.el    | no          | no    | yes |
-| {~/.emacs.d,$DOOMDIR}/modules/*/*/config.el | yes         | no    | no  |
-| $DOOMDIR/config.el                          | yes         | no    | no  |
+| File                                              | Interactive | Batch | CLI |
+|---------------------------------------------------+-------------+-------+-----|
+| ~/..config/emacs/early-init.el (Emacs 27+ only)   | yes         | no    | no  |
+| ~/..config/emacs/init.el                          | yes         | no    | no  |
+| $DOOMDIR/init.el                                  | yes         | yes   | yes |
+| {~/..config/emacs,$DOOMDIR}/modules/*/*/init.el   | yes         | yes   | yes |
+| $DOOMDIR/cli.el                                   | no          | no    | yes |
+| {~/..config/emacs,$DOOMDIR}/modules/*/*/cli.el    | no          | no    | yes |
+| {~/..config/emacs,$DOOMDIR}/modules/*/*/config.el | yes         | no    | no  |
+| $DOOMDIR/config.el                                | yes         | no    | no  |
 
 *** Flags
 A module's flag is an arbitrary symbol. By convention, these symbols are
