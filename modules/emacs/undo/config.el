@@ -112,10 +112,11 @@
     :override #'undo-tree-visualizer-show-diff
     (setq undo-tree-visualizer-diff t)
     (let ((buff (with-current-buffer undo-tree-visualizer-parent-buffer
-                  (with-current-buffer (undo-tree-diff node)
-                    (hide-mode-line-mode +1))))
+                  (undo-tree-diff node)))
           (display-buffer-mark-dedicated 'soft)
           (win (split-window (get-buffer-window undo-tree-visualizer-parent-buffer))))
+      (with-current-buffer buff
+        (hide-mode-line-mode +1))
       (set-window-buffer win buff)
       (shrink-window-if-larger-than-buffer win)))
 
