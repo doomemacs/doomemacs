@@ -45,13 +45,51 @@ This module requires:
 - [[doom-package:code-review]] will also require a token setup (see [[https://github.com/wandersoncferreira/code-review#configuration][configuration]] for your particular forge)
 
 * TODO Usage
-#+begin_quote
- 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
-#+end_quote
 
-Start magit with [[kbd:][<leader> g g]] (~M-x magit-status~).
+** Opening magit
+Start magit with ~SPC g g~ (=M-x magit-status=) in the current project.
 
-If you are new to Magit, see the [[https://github.com/magit/magit#getting-started][Getting Started]] section of its project readme.
+For Evil users, there is also the ~:magit~ ex command.
+
+** Basic operations in magit-status buffer
+Once in the magit status buffer, you can perform Git operations using single-key commands:
+
+*** Staging and unstaging
+- ~s~ - stage file or hunk under cursor
+- ~u~ - unstage file or hunk
+- ~S~ - stage all unstaged changes
+- ~U~ - unstage all staged changes
+
+*** Committing
+- ~c~ - open commit menu
+  - ~c~ - create a commit
+  - ~a~ - amend the last commit
+  - ~e~ - extend the last commit
+
+*** Pushing and pulling
+- ~P~ - push menu
+  - ~p~ - push to default remote
+- ~F~ - pull/fetch menu
+  - ~p~ - pull from default remote
+  - ~f~ - fetch from default remote
+
+*** Branching
+- ~b~ - branch menu
+  - ~b~ - checkout existing branch
+  - ~c~ - create and checkout new branch
+
+*** Other operations
+- ~z~ - stash menu
+- ~l~ - log menu
+- ~d~ - diff menu
+- ~TAB~ - expand/collapse section under cursor
+- ~q~ - quit magit buffer
+- ~?~ - show help popup with all available commands
+
+** Learning more
+If you are new to Magit, see the [[https://docs.magit.vc/magit/Getting-Started.html](https://docs.magit.vc/magit/Getting-Started.html)[Getting Started]] section of the official Magit manual.
+
+For a full list of available commands, press ~?~ inside any magit buffer to show the help popup.
 
 * TODO Configuration
 #+begin_quote
