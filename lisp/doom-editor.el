@@ -284,6 +284,10 @@ tell you about it. Very annoying. This prevents that."
 (setq bookmark-default-file (file-name-concat doom-profile-data-dir "bookmarks"))
 
 
+;;;###package electric
+(setq electric-quote-mode nil)
+
+
 (use-package! recentf
   ;; Keep track of recently opened files
   :defer-incrementally easymenu tree-widget timer
