@@ -551,7 +551,9 @@ uses a straight or package.el command directly).")
     ;;   no-ops if debug mode is on (where immediate feedback > performance).
     (define-advice setopt--set (:around (fn &rest args) inhibit-load-symbol -90)
       (let ((custom-load-symbol
-             (if (or init-file-debug debug-on-error) custom-load-symbol t)))
+             (if (or init-file-debug debug-on-error)
+                 (bound-and-true-p custom-load-symbol)
+               t)))
         (apply fn args)))))
 
 
