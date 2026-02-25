@@ -184,7 +184,7 @@ at the values with which this function was called."
 
 If NOERROR, don't throw an error if PATH doesn't exist.
 Return non-nil if loading the file succeeds."
-  (doom-log "load: %s %s" (abbreviate-file-name path) noerror)
+  (doom-log 2 "load: %s %s" (abbreviate-file-name path) noerror)
   (condition-case-unless-debug e
       (load path noerror 'nomessage)
     (doom-error
@@ -246,7 +246,7 @@ unreadable. Returns the names of envvars that were changed."
 (defun doom-run-hook (hook)
   "Run HOOK (a hook function) with better error handling.
 Meant to be used with `run-hook-wrapped'."
-  (doom-log 2 "hook:%s: run %s" (or doom--hook '*) hook)
+  (doom-log 3 "hook:%s: run %s" (or doom--hook '*) hook)
   (condition-case-unless-debug e
       (funcall hook)
     (error
@@ -1285,7 +1285,7 @@ Never set this variable directly, use `with-doom-module'.")
             (if key
                 (doom-module-context key)
               (make-doom-module-context)))))
-     (doom-log 2 ":context:module: =%s" doom-module-context)
+     (doom-log 3 ":context:module: =%s" doom-module-context)
      ,@body))
 
 (defun doom-module-context (key)
