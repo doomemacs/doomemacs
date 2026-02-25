@@ -547,13 +547,9 @@ uses a straight or package.el command directly).")
     ;; PERF: `setopt' can eagerly load symbol dependencies to preform immediate
     ;;   type checking, which can cause unexpected load order issues and impact
     ;;   startup time drastically. Type checks are already performed when the
-    ;;   variable is defined, anyway, so this advice prevents early loading, but
-    ;;   no-ops if debug mode is on (where immediate feedback > performance).
+    ;;   variable is defined, anyway, so this advice prevents early loading.
     (define-advice setopt--set (:around (fn &rest args) inhibit-load-symbol -90)
-      (let ((custom-load-symbol
-             (if (or init-file-debug debug-on-error)
-                 (bound-and-true-p custom-load-symbol)
-               t)))
+      (let ((custom-load-recursion t))
         (apply fn args)))))
 
 
