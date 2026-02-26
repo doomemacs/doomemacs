@@ -62,13 +62,19 @@ Formatting is handled using the [[doom-module::editor format]] module via [[http
 #+end_quote
 
 ** racket-smart-open-bracket-mode
-~racket-smart-open-bracket-mode~ gets turned off automatically if you use
-~parinfer~, ~lispy~. If you wish to enable it:
+~racket-smart-open-bracket-mode~ is enabled by default (mimicking DrRacket's
+behavior). It automatically inserts ~(~ or ~[~ based on the surrounding
+syntactic context when you press ~[~. It is disabled automatically if you use
+~parinfer~ or ~lispy~.
+
+To disable it, set ~+racket-smart-open-bracket-mode~ to nil before racket-mode
+loads:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(with-eval-after-load 'racket-mode
-  (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
+(setq +racket-smart-open-bracket-mode nil)
 #+end_src
+
+To force a literal ~[~ without disabling the mode, use =C-q [=.
 
 ** Unicode Input
 The optional ~racket-unicode~ input method lets you type unicode characters such
