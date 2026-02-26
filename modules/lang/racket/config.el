@@ -4,6 +4,16 @@
 (after! projectile
   (add-to-list 'projectile-project-root-files "info.rkt"))
 
+(defvar +racket-smart-open-bracket-mode t
+  "If non-nil, enable `racket-smart-open-bracket-mode'.
+
+This mode, inspired by DrRacket, automatically inserts `(' or `[' based on
+the surrounding syntactic context when you press `['. It is disabled
+automatically if `:editor parinfer' or `:editor lispy' is active.
+
+Set this to nil to always insert the bracket you type. You can also use
+`C-q [' to force a literal `[' without disabling this mode.")
+
 
 ;;
 ;;; Packages
@@ -58,7 +68,8 @@
             (cl-pushnew 'racket flycheck-disabled-checkers)))))
 
     (unless (or (modulep! :editor parinfer)
-                (modulep! :editor lispy))
+                (modulep! :editor lispy)
+                (not +racket-smart-open-bracket-mode))
       (add-hook mode-hook #'racket-smart-open-bracket-mode))
 
     (map! (:map racket-xp-mode-map
