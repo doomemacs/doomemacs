@@ -3,7 +3,9 @@
 (use-package! gptel
   :defer t
   :config
-  (setq gptel-display-buffer-action nil)  ; if user changes this, popup manager will bow out
+  (setq gptel-display-buffer-action nil   ; if changed, popup manager will bow out
+        gptel-default-mode 'org-mode)
+
   (set-popup-rule!
     (lambda (bname _action)
       (and (null gptel-display-buffer-action)
