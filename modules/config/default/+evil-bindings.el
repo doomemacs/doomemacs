@@ -734,6 +734,7 @@
          :desc "Explain"                    "e" #'gptel-quick
          :desc "Add file to context"        "f" #'gptel-add-file
          :desc "Open gptel"                 "l" #'gptel
+         :desc "Open gptel in same window"  "L" #'+llm/open-in-same-window
          :desc "Send to gptel"              "s" #'gptel-send
          :desc "Open gptel menu"            "m" #'gptel-menu
          :desc "Rewrite"                    "r" #'gptel-rewrite
