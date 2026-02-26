@@ -16,6 +16,11 @@ cleanup() {
 # If emacs isn't running, we start a temporary daemon, solely for this window.
 if ! emacsclient --suppress-output --eval nil 2>/dev/null; then
   echo "No Emacs daemon/server is available! Starting one..."
+  # FIX(#8601): Ensure PGTK Emacs uses Wayland when available, rather than
+  #   falling back to X11 via XWayland (which triggers incompatibility warnings).
+  if [ -n "$WAYLAND_DISPLAY" ]; then
+    export GDK_BACKEND=wayland
+  fi
   emacs --daemon
   trap cleanup EXIT INT TERM
 fi
