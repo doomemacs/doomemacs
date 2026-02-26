@@ -9,7 +9,7 @@
 ;;   Magit ecosystem seems prone to breakage.
 
 (package! transient :pin "1f7039ef8d548d6fe858084fcbeae7588eba4190") ; 0.12.0
-(package! cond-let :pin "0430bd1eb3493ea90d69feb6b7eb7dac3e10d0ba") ; 0.2.1
+(package! cond-let :pin "8bf87d45e169ebc091103b2aae325aece3aa804d") ; 0.2.2
 
 (package! magit :pin "c800f79c2061621fde847f6a53129eca0e8da728") ; 4.5.0
 (when (modulep! +forge)
