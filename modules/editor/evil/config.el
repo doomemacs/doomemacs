@@ -489,8 +489,8 @@ don't offer any/enough real value to users.")
       :m  "[a"    #'evil-backward-arg
       :m  "]c"    #'+evil/next-comment
       :m  "[c"    #'+evil/previous-comment
-      :m  "]e"    #'next-error
-      :m  "[e"    #'previous-error
+      :m  "]e"    #'+evil/next-error
+      :m  "[e"    #'+evil/previous-error
       :n  "]F"    #'+evil/next-frame
       :n  "[F"    #'+evil/previous-frame
       :m  "]h"    #'outline-next-visible-heading
