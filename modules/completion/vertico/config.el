@@ -127,14 +127,26 @@ orderless."
     :before (list #'consult-recent-file #'consult-buffer)
     (recentf-mode +1))
 
-  (defadvice! +vertico--use-evil-registers-a (fn &rest args)
-    "Use `evil-register-list' if `evil-mode' is active."
-    :around #'consult-register--alist
-    (let ((register-alist
-           (if (bound-and-true-p evil-local-mode)
-               (evil-register-list)
-             register-alist)))
-      (apply fn args)))
+  (when (modulep! :editor evil)
+    (defadvice! +vertico--use-evil-registers-in-get-register-a (fn register &rest args)
+      "Use `evil-get-register' for Evil's special registers."
+      :around #'get-register
+      (if (and (bound-and-true-p evil-local-mode)
+               (fboundp 'evil-get-register)
+               (or (memq register '(?\" ?* ?+ ?% ?# ?/ ?: ?. ?- ?= ?_))
+                   (<= ?1 register ?9)))
+          (evil-get-register register t)
+        (apply fn register args)))
+
+    (defadvice! +vertico--use-evil-registers-a (fn &rest args)
+      "Use `evil-register-list' if `evil-local-mode' is active."
+      :around #'consult-register--alist
+      (let ((register-alist
+             (if (and (bound-and-true-p evil-local-mode)
+                      (fboundp 'evil-register-list))
+                 (evil-register-list)
+               register-alist)))
+        (apply fn args))))
 
   (setq consult-project-function #'doom-project-root
         consult-narrow-key "<"
