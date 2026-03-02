@@ -29,3 +29,8 @@
     :pin "303edcfbad8190eccb9a9269dfc58ed26d386ba5"
     ;; ...code-review depends on forge
     :disable (version< emacs-version "29.1")))
+
+(when (modulep! :lang org)
+  (package! orgit :pin "24c8fe48c477d561c2ce1720223f8c5aec664f4e") ; v2.1.1
+  (when (modulep! :tools magit +forge)
+    (package! orgit-forge :pin "c2116b8701498bd11d8674065a5429d844985e46"))) ; v1.1.1
