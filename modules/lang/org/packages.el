@@ -74,8 +74,6 @@
   (package! evil-org
     :recipe (:host github :repo "doomelpa/evil-org-mode")
     :pin "06518c65ff4f7aea2ea51149d701549dcbccce5d"))
-(when (modulep! :tools pdf)
-  (package! org-pdftools :pin "2b3357828a4c2dfba8f87c906d64035d8bf221f2"))
 (when (modulep! :tools magit)
   (package! orgit :pin "24c8fe48c477d561c2ce1720223f8c5aec664f4e") ; v2.1.1
   (when (modulep! :tools magit +forge)

@@ -94,3 +94,34 @@
 
 (use-package! saveplace-pdf-view
   :after pdf-view)
+
+
+(use-package! org-pdftools
+  :when (modulep! :lang org)
+  :commands org-pdftools-export
+  :init
+  (after! org
+    ;; HACK: Fixes an issue where org-pdftools link handlers will throw a
+    ;;   'pdf-info-epdfinfo-program is not executable' error whenever any link
+    ;;   is stored or exported (whether or not they're a pdf link). This error
+    ;;   gimps org until `pdf-tools-install' is run, but this is poor UX, so we
+    ;;   suppress it.
+    (defun +pdf--org-link-handler (fn &rest _args)
+      "Produces a link handler for org-pdftools that suppresses missing-epdfinfo
+errors whenever storing or exporting links."
+      (lambda (&rest args)
+        (and (ignore-errors (require 'org-pdftools nil t))
+             (file-executable-p pdf-info-epdfinfo-program)
+             (apply fn args))))
+    (org-link-set-parameters (or (bound-and-true-p org-pdftools-link-prefix) "pdf")
+                             :follow   (+pdf--org-link-handler #'org-pdftools-open)
+                             :complete (+pdf--org-link-handler #'org-pdftools-complete-link)
+                             :store    (+pdf--org-link-handler #'org-pdftools-store-link)
+                             :export   (+pdf--org-link-handler #'org-pdftools-export))
+    (add-hook! 'org-open-link-functions
+      (defun +pdf-open-legacy-links-fn (link)
+        "Open pdftools:* and pdfviews:* links as if they were pdf:* links."
+        (let ((regexp "^pdf\\(?:tools\\|view\\):"))
+          (when (string-match-p regexp link)
+            (org-pdftools-open (replace-regexp-in-string regexp "" link))
+            t))))))

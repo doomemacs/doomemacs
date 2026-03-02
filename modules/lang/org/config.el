@@ -1074,37 +1074,6 @@ between the two."
   (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
 
 
-(use-package! org-pdftools
-  :when (modulep! :tools pdf)
-  :commands org-pdftools-export
-  :init
-  (after! org
-    ;; HACK Fixes an issue where org-pdftools link handlers will throw a
-    ;;      'pdf-info-epdfinfo-program is not executable' error whenever any
-    ;;      link is stored or exported (whether or not they're a pdf link). This
-    ;;      error gimps org until `pdf-tools-install' is run, but this is poor
-    ;;      UX, so we suppress it.
-    (defun +org--pdftools-link-handler (fn &rest _args)
-      "Produces a link handler for org-pdftools that suppresses missing-epdfinfo
-errors whenever storing or exporting links."
-      (lambda (&rest args)
-        (and (ignore-errors (require 'org-pdftools nil t))
-             (file-executable-p pdf-info-epdfinfo-program)
-             (apply fn args))))
-    (org-link-set-parameters (or (bound-and-true-p org-pdftools-link-prefix) "pdf")
-                             :follow   (+org--pdftools-link-handler #'org-pdftools-open)
-                             :complete (+org--pdftools-link-handler #'org-pdftools-complete-link)
-                             :store    (+org--pdftools-link-handler #'org-pdftools-store-link)
-                             :export   (+org--pdftools-link-handler #'org-pdftools-export))
-    (add-hook! 'org-open-link-functions
-      (defun +org-open-legacy-pdf-links-fn (link)
-        "Open pdftools:* and pdfviews:* links as if they were pdf:* links."
-        (let ((regexp "^pdf\\(?:tools\\|view\\):"))
-          (when (string-match-p regexp link)
-            (org-pdftools-open (replace-regexp-in-string regexp "" link))
-            t))))))
-
-
 (use-package! evil-org
   :when (modulep! :editor evil +everywhere)
   :hook (org-mode . evil-org-mode)

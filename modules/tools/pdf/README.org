@@ -24,6 +24,7 @@ for details and videos.
 ** Packages
 - [[doom-package:pdf-tools]]
 - [[doom-package:saveplace-pdf-view]]
+- [[doom-package:org-pdftools]] if [[doom-module::lang org]]
 
 ** TODO Hacks
 #+begin_quote
