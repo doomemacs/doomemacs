@@ -9,10 +9,10 @@
 (package! consult-dir :pin "1497b46d6f48da2d884296a1297e5ace1e050eb5")
 (when (modulep! :checkers syntax -flymake)
   (package! consult-flycheck :pin "9fe96c4b75c8566170ad41a04c3849d2e2606104"))
-(package! embark :pin "7b3b2fa239c34c2e304eab4367a4f5924c047e2b")
-(package! embark-consult :pin "7b3b2fa239c34c2e304eab4367a4f5924c047e2b")
+(package! embark :pin "e0238889b1c946514fd967d21d70599af9c4e887")
+(package! embark-consult :pin "e0238889b1c946514fd967d21d70599af9c4e887")
 
-(package! marginalia :pin "0d08fbea0f1182627891240780081ba528c1348b")
+(package! marginalia :pin "142e4da1bd76dc5bdbbfd15532571b8a271e680e")
 
 (package! wgrep :pin "49f09ab9b706d2312cab1199e1eeb1bcd3f27f6f")
 

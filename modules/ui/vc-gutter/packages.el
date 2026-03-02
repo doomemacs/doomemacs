@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/vc-gutter/packages.el
 
-(package! diff-hl :pin "3eefe68941933c8549049502007411ed2bf70387")
+(package! diff-hl :pin "bb9af85441b0cbb3281268d30256d50f0595ebfe")

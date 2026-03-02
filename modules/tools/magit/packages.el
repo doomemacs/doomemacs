@@ -19,7 +19,7 @@
     ;; forge depends on ghub, which requires Emacs 29.1+
     :disable (version< emacs-version "29.1"))
   (package! ghub
-    :pin "278d9fb5f3f673a4ecfe551faeacc0dfd5de0783" ; 5.0.3
+    :pin "c22858596c1f5a1f5b439e475e7ba0e6a2e1718b" ; 5.0.4
     ;; ghub requires Emacs 29.1+
     :disable (version< emacs-version "29.1"))
   (package! code-review
@@ -31,6 +31,6 @@
     :disable (version< emacs-version "29.1")))
 
 (when (modulep! :lang org)
-  (package! orgit :pin "24c8fe48c477d561c2ce1720223f8c5aec664f4e") ; v2.1.1
+  (package! orgit :pin "4fb91faff3bf32dac5f6f932654c280cd1f190f7") ; v2.1.2
   (when (modulep! :tools magit +forge)
     (package! orgit-forge :pin "c2116b8701498bd11d8674065a5429d844985e46"))) ; v1.1.1
