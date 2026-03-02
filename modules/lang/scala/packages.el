@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scala/packages.el
 
-(package! sbt-mode :pin "cc68728a6ef0600aad369157b3a2d0ce56afba9b")
+(package! sbt-mode :pin "c353df6aa112c05dde6dc63ccf813c2203cb472b")
 (package! scala-mode :pin "50bcafa181baec7054e27f4bca55d5f9277c6350")
 
 (when (and (modulep! +tree-sitter) (treesit-available-p))

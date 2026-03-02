@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/julia/packages.el
 
-(package! julia-mode :pin "aadf29523a120c666939cd7adac4b7dece5bd6ef")
+(package! julia-mode :pin "1478898ea0ab1ae21ec053fcc81c6b42136a2224")
 (package! julia-repl :pin "0173237a43d9a42f0d69a5405283fabe1ac602a0")
 
 (when (and (modulep! +tree-sitter) (treesit-available-p))

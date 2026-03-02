@@ -80,7 +80,7 @@
   (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "de89cbeca890db51ba84aee956658f89aaa0b642"))
+  (package! jupyter :pin "242fdc709ce0faa3b9ee81dcc48cfd791898e6b8"))
 (when (modulep! +journal)
   (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
 (when (modulep! +noter)
@@ -102,7 +102,7 @@
     :pin "0753c057773ed3e3ec68a558e9af38d8fce728b8"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
-  (package! org-roam :pin "b4857fd7a140361883dfb95e1193ee42698a4afb"))
+  (package! org-roam :pin "7cd906b6f8b18a21766228f074aff24586770934"))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")

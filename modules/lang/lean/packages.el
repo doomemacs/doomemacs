@@ -4,7 +4,7 @@
 (when (modulep! +v3)
   (package! lean-mode :pin "99d6a34dc5b12f6e996e9217fa9f6fe4a6af037a"))
 
-(package! nael :pin "3ee1cf286dc1ee3c9f99357079288ce1285c10c0")
+(package! nael :pin "fbfb6757365cbde89d7ae0b56727315db15d31e4")
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
   (package! nael-lsp
@@ -12,4 +12,4 @@
     ;;   unlikely `nael' will be loaded at that point.
     ;; REVIEW: Address this upstream!
     :recipe (:build (:not autoloads))
-    :pin "3ee1cf286dc1ee3c9f99357079288ce1285c10c0"))
+    :pin "fbfb6757365cbde89d7ae0b56727315db15d31e4"))
