@@ -291,8 +291,7 @@ tell you about it. Very annoying. This prevents that."
   :commands recentf-open-files
   :custom (recentf-save-file (file-name-concat doom-profile-cache-dir "recentf"))
   :config
-  (setq recentf-auto-cleanup nil     ; Don't. We'll auto-cleanup on shutdown
-        recentf-max-saved-items 200) ; default is 20
+  (setq recentf-max-saved-items 200) ; default is 20
 
   ;; Anything in runtime folders
   (add-to-list 'recentf-exclude
@@ -319,7 +318,7 @@ tell you about it. Very annoying. This prevents that."
 
   ;; The most sensible time to clean up your recent files list is when you quit
   ;; Emacs (unless this is a long-running daemon session).
-  (setq recentf-auto-cleanup (if (daemonp) 300))
+  (setq recentf-auto-cleanup (if (daemonp) 300 'never))
   ;; Use a negative depth value because we need `recentf-cleanup' to run before
   ;; `recentf-save-list' to be effective, which `recentf-mode' will only add to
   ;; `kill-emacs-hook' once it is enabled.
