@@ -53,8 +53,6 @@ stored in `persp-save-dir'.")
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
-
-  ;;;; Create main workspace
   ;; The default perspective persp-mode creates is special and doesn't represent
   ;; a real persp object, so buffers can't really be assigned to it, among other
   ;; quirks, so I replace it with a "main" perspective.
@@ -168,7 +166,7 @@ stored in `persp-save-dir'.")
     [remap delete-window] #'+workspace/close-window-or-workspace
     [remap evil-window-delete] #'+workspace/close-window-or-workspace)
 
-  ;; per-frame workspaces
+  ;; Per-frame workspaces
   (setq persp-init-frame-behaviour t
         persp-init-new-frame-behaviour-override nil
         persp-interactive-init-frame-behaviour-override #'+workspaces-associate-frame-fn
@@ -231,16 +229,16 @@ stored in `persp-save-dir'.")
   ;; excluded from the buffer list.
   (add-hook 'bookmark-after-jump-hook #'+workspaces-add-current-buffer-h)
 
-  ;;; eshell
+  ;; `eshell'
   (persp-def-buffer-save/load
    :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
    :save-vars '(major-mode default-directory))
-  ;; compile
+  ;; `compile'
   (persp-def-buffer-save/load
    :mode 'compilation-mode :tag-symbol 'def-compilation-buffer
    :save-vars '(major-mode default-directory compilation-directory
                 compilation-environment compilation-arguments))
-  ;; magit
+  ;; `magit'
   (persp-def-buffer-save/load
    :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
    :save-vars '(default-directory)
@@ -248,7 +246,7 @@ stored in `persp-save-dir'.")
                     (cl-destructuring-bind (buffer-name vars &rest _rest) (cdr savelist)
                       (magit-status (alist-get 'default-directory vars)))))
 
-;;; tab-bar
+  ;; `tab-bar'
   (add-hook! 'tab-bar-mode-hook
     (defun +workspaces-set-up-tab-bar-integration-h ()
       (add-hook 'persp-before-deactivate-functions #'+workspaces-save-tab-bar-data-h)

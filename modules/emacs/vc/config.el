@@ -155,8 +155,8 @@ info in the `header-line-format' is a more visible indicator."
   ;; numbers, users can request them by making a selection first. Otherwise
   ;; omitting them.
   (setq browse-at-remote-add-line-number-if-no-region-selected nil)
-  ;; Opt to produce permanent links with `browse-at-remote' by default,
-  ;; using commit hashes rather than branch names.
+  ;; Opt to produce permanent links with `browse-at-remote' by default, using
+  ;; commit hashes rather than branch names.
   (setq browse-at-remote-prefer-symbolic nil)
 
   ;; Expand recognition for more forges (like self-hosted gitlab.* subdomains

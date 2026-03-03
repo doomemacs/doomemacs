@@ -65,7 +65,6 @@
 (cond ((modulep! :completion ivy)
        (evil-ex-define-cmd "pg[rep]"   #'+ivy:project-search)
        (evil-ex-define-cmd "pg[grep]d" #'+ivy:project-search-from-cwd))
-
       ((modulep! :completion helm)
        (evil-ex-define-cmd "pg[rep]"   #'+helm:project-search)
        (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd))
