@@ -41,40 +41,45 @@ performance, it is best to run Doom out of ~/.config/emacs or ~/.emacs.d."
           ;; Evaluate piped-in text directly, if given.
           (eval (read input) t)
         (doom-emacs-repl context))
-    (let* ((tempdir  (doom-path (temporary-file-directory) "doom.run"))
-           (tempemacsdir (doom-path tempdir ".emacs.d")))
-      (delete-directory tempdir t) ; start from scratch
-      (make-directory tempemacsdir t)
-      ;; HACK: So that Emacs doesn't lose track of local state, like user fonts,
-      ;;   configs, or binscripts, we symlink these to the sandbox.
-      ;; REVIEW: Use `--init-directory' when we drop 29 support OR when Doom is
-      ;;   in bootloader mode.
-      (dolist (dir (list (cons "XDG_DATA_HOME"   ".local/share")
-                         (cons "XDG_STATE_HOME"  ".local/state")
-                         (cons "XDG_BIN_HOME"    ".local/bin")
-                         (cons "XDG_CONFIG_HOME" ".config")
-                         (cons "XDG_CACHE_HOME"  ".cache")))
-        (let* ((source (expand-file-name (or (getenv (car dir)) (expand-file-name (cdr dir) "~"))))
-               (target (expand-file-name (cdr dir) tempdir)))
-          (when (file-directory-p source)
-            (unless (file-symlink-p target)
-              (make-directory (file-name-directory target) t)
-              (make-symbolic-link source target)))))
-      (with-temp-file (doom-path tempemacsdir "early-init.el")
-        (prin1 `(progn
-                  ;; Restore sane values for these envvars
-                  (setenv "HOME" ,(getenv "HOME"))
-                  (setenv "EMACSDIR" ,doom-emacs-dir)
-                  (setenv "DOOMDIR"  ,doom-user-dir)
-                  (setenv "DOOMPROFILE" ,(getenv "DOOMPROFILE"))
-                  (setq early-init-file ,(doom-path doom-emacs-dir "early-init.el"))
-                  (load early-init-file nil (not ,init-file-debug) 'nosuffix))
-               (current-buffer)))
-      (setenv "HOME" tempdir)
-      (exit! (format "%s %s"
-                     (or (getenv "EMACS")
-                         (doom-path invocation-directory invocation-name))
-                     (combine-and-quote-strings args))))))
+    (let* ((emacs (or (getenv "EMACS")
+                      (doom-path invocation-directory invocation-name)))
+           (emacs-args (combine-and-quote-strings args)))
+      (if (or (doom-profiles-bootloadable-p)
+              (>= emacs-major-version 29))
+          ;; If --init-directory is available to us (or $EMACSDIR lives in
+          ;; ~/.emacs.d or ~/.config/emacs), life is simple:
+          (exit! (format "%s --init-directory %S %s"
+                         emacs
+                         doom-emacs-dir
+                         emacs-args))
+        ;; Otherwise, some hackery is needed to emulate --init-directory...
+        (let* ((tempdir  (doom-path (temporary-file-directory) "doom.run"))
+               (tempemacsdir (doom-path tempdir ".emacs.d")))
+          (delete-directory tempdir t) ; start from scratch
+          (make-directory tempemacsdir t)
+          (dolist (dir (list (cons "XDG_DATA_HOME"   ".local/share")
+                             (cons "XDG_STATE_HOME"  ".local/state")
+                             (cons "XDG_BIN_HOME"    ".local/bin")
+                             (cons "XDG_CONFIG_HOME" ".config")
+                             (cons "XDG_CACHE_HOME"  ".cache")))
+            (let* ((source (expand-file-name (or (getenv (car dir)) (expand-file-name (cdr dir) "~"))))
+                   (target (expand-file-name (cdr dir) tempdir)))
+              (when (file-directory-p source)
+                (unless (file-symlink-p target)
+                  (make-directory (file-name-directory target) t)
+                  (make-symbolic-link source target)))))
+          (with-temp-file (doom-path tempemacsdir "early-init.el")
+            (prin1 `(progn
+                      ;; Restore sane values for these envvars
+                      (setenv "HOME" ,(getenv "HOME"))
+                      (setenv "EMACSDIR" ,doom-emacs-dir)
+                      (setenv "DOOMDIR"  ,doom-user-dir)
+                      (setenv "DOOMPROFILE" ,(getenv "DOOMPROFILE"))
+                      (setq early-init-file ,(doom-path doom-emacs-dir "early-init.el"))
+                      (load early-init-file nil (not ,init-file-debug) 'nosuffix))
+                   (current-buffer)))
+          (setenv "HOME" tempdir)
+          (exit! (format "%s %s" emacs emacs-args)))))))
 
 
 ;;
