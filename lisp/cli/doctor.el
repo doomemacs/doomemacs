@@ -261,15 +261,31 @@ in."
           (unless (ignore-errors (executable-find doom-fd-executable))
             (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
 
-          (require 'projectile)
-          (when (projectile-project-root "~")
+          (require 'projectile nil t)
+          (when (projectile-project-p "~")
             (warn! "Your $HOME is recognized as a project root")
-            (explain! "Emacs will assume $HOME is the root of any project living under $HOME. If this isn't\n"
-                      "desired, you will need to remove \".git\" from `projectile-project-root-files-bottom-up'\n"
-                      "(a variable), e.g.\n\n"
-                      "  (after! projectile\n"
-                      "    (setq projectile-project-root-files-bottom-up\n"
-                      "          (remove \".git\" projectile-project-root-files-bottom-up)))"))
+            (let ((files
+                   (let ((default-directory (expand-file-name "~")))
+                     (append (seq-filter #'file-exists-p projectile-project-root-files-bottom-up)
+                             (seq-filter #'file-exists-p projectile-project-root-files)))))
+              (explain! "The following files will interfere with projectile's project root detection "
+                        "for any project that lives under $HOME:\n\n"
+                        "  - " (mapconcat #'expand-file-name files "\n - ") "\n\n"
+                        "To fix this, these files must be deleted (recommended), or removed from the "
+                        "`projectile-project-root-files-bottom-up' or `projectile-project-root-files' "
+                        "variables in your Doom config (not recommended). For example:\n\n"
+                        "    ;; Add to $DOOMDIR/config.el\n"
+                        "    (after! projectile\n"
+                        "      (setq projectile-project-root-files-bottom-up\n"
+                        "            (remove \".git\" projectile-project-root-files-bottom-up)))\n")))
+
+          ;; REVIEW: When projectile is replaced with project...
+          ;; (require 'project)
+          ;; (when (project-current nil doom-emacs-dir)
+          ;;   (let ((file (or (seq-find #'file-exists-p project-vc-extra-root-markers)
+          ;;                   (seq-find #'file-directory-p (mapcar #'cdr project-vc-backend-markers-alist)))))
+          ;;     ;; ...
+          ;;     ))
 
           ;; There should only be one
           (when (and (file-equal-p doom-user-dir "~/.config/doom")
