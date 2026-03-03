@@ -54,29 +54,17 @@ in."
 
   (print! (start "Checking your Emacs version..."))
   (print-group!
-    (cond ((or (> emacs-major-version 30)
-               (string-match-p ".\\([56]0\\|9[0-9]\\)$" emacs-version))
-           (warn! "Detected a development version of Emacs (%s)" emacs-version)
-           (if (> emacs-major-version 30)
-               (explain! "This is the bleeding edge of Emacs. As it is constantly changing, Doom will not "
-                         "(officially) support it. If you've found a stable commit, great! But be cautious "
-                         "about updating Emacs too eagerly!\n")
-             (explain! "A version that ends in .50, .60, or .9X indicates a build of Emacs in between "
-                       "stable releases (i.e. development builds). Doom does not support these well.\n"))
-           (explain! "Because development (or bleeding edge) builds are prone to random breakage, "
-                     "there will be a greater burden on you to investigate and deal with issues. "
-                     "Please make extra sure that your issue is reproducible on a stable version "
-                     "(between 27.1 and 30.2) before reporting them to Doom's issue tracker!\n"
-                     "\n"
-                     "If this doesn't phase you, read the \"Why does Doom not support Emacs HEAD\" QnA "
-                     "in Doom's FAQ. It offers some advice for debugging and surviving issues on the "
-                     "bleeding edge. Failing that, the latest stable release of Emacs will always be "
-                     "Doom's best supported version of Emacs."))
-          ((= emacs-major-version 27)
-           (warn! "Emacs 27 is supported, but not for long!")
-           (explain! "Doom will drop 27.x support sometime mid-2025. It's recommended that you upgrade "
-                     "to the latest stable release (currently 30.2). It is better supported, faster, and "
-                     "more stable.")))
+    (when (or (> emacs-major-version 30)
+              (string-match-p ".\\([56]0\\|9[0-9]\\)$" emacs-version))
+      (warn! "Detected a development build of Emacs (%s)" emacs-version)
+      (if (> emacs-major-version 30)
+          (explain! "This is the bleeding edge of Emacs and is inherently unstable.\n")
+        (explain! "A version that ends in .50, .60, or .9X indicates a pre-release build of Emacs "
+                  "in between stable releases. Doom does not officially support them.\n"))
+      (explain! "If you encounter issues, make extra sure that your issue is reproducible on "
+                "a stable version of Emacs (between 27.1–30.2) before reporting them to Doom's "
+                "issue tracker! Check out the \"Why does Doom not support Emacs HEAD\" QnA "
+                "in Doom's FAQ for common issues and debugging."))
 
     (when (and (version= emacs-version "29.4") (featurep 'pgtk))
       (warn! "Detected emacs-pgtk 29.4!")
