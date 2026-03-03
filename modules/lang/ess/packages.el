@@ -3,7 +3,7 @@
 
 (package! ess :pin "bfe892db15e94387f70319efdc55710dc3660d2f")
 (package! ess-view-data :pin "7dcbd23d4cef2030753d16e1ca1811d3466484e7")
-(package! polymode :pin "4604f55cc020c75562526fb76b723e5e242c97c0")
+(package! polymode :pin "14b1fd8d2a183f11b123f62e02801dc1139da9c1")
 (package! poly-R :pin "fee0b6e99943fa49ca5ba8ae1a97cbed5ed51946")
 (package! quarto-mode :pin "a7b974f7d22ef939eaed8b9919434bcf20b1438f")
 
