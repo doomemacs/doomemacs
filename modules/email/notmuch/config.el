@@ -1,7 +1,5 @@
 ;;; email/notmuch/config.el -*- lexical-binding: t; -*-
 
-;; FIXME This module is a WIP!
-
 (defvar +notmuch-home-function #'notmuch
   "Function for customizing the landing page for doom-emacs =notmuch.")
 

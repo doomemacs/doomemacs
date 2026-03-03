@@ -345,7 +345,7 @@ Otherwise, falls back to `org-fill-paragraph' to reflow paragraphs."
   (interactive)
   (let ((element (org-element-at-point)))
     (cond ((doom-region-active-p)
-           ;; TODO Perform additional formatting?
+           ;; TODO: Perform additional formatting?
            ;; (save-restriction
            ;;   (narrow-to-region beg end)
            ;;   (org-table-recalculate t)

@@ -13,12 +13,12 @@
 ;;
 ;;; Packages
 
-;; DEPRECATED To be replaced with pulsar.el when Emacs 28 support is dropped
+;; DEPRECATED: To be replaced with pulsar.el when Emacs 28 support is dropped
 (use-package! nav-flash
   :defer t
   :init
-  ;; NOTE In :tools lookup `recenter' is hooked to a bunch of jumping
-  ;; commands, which will trigger nav-flash.
+  ;; In :tools lookup `recenter' is hooked to a bunch of jumping commands, which
+  ;; will trigger nav-flash.
   (add-hook! '(imenu-after-jump-hook
                better-jumper-post-jump-hook
                counsel-grep-post-action-hook

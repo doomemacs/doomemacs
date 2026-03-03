@@ -148,7 +148,7 @@ if it's callable, `apropos' otherwise."
               #'helpful-at-point
             #'describe-symbol)))))
 
-;; DEPRECATED Remove when 28 support is dropped.
+;; DEPRECATED: Remove when 28 support is dropped.
 (unless (fboundp 'lisp--local-defform-body-p)
   (fset 'lisp--local-defform-body-p #'ignore))
 
@@ -534,7 +534,7 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
                               (ignore-errors
                                 (or (save-excursion
                                       (goto-char first)
-                                      ;; FIXME Can we avoid `syntax-ppss'?
+                                      ;; FIXME: Can we avoid `syntax-ppss'?
                                       (when-let* ((parse-sexp-ignore-comments t)
                                                   (end (scan-lists (point) 1 0))
                                                   (depth (ppss-depth (syntax-ppss))))

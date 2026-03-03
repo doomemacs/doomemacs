@@ -13,8 +13,8 @@
   ;; Doom syncs other indent variables with `tab-width'; we trust major modes to
   ;; set it -- which most of them do -- but coq-mode doesn't, so...
   tab-width proof-indent
-  ;; HACK Fix #2081: Doom continues comments on RET, but coq-mode doesn't have a
-  ;;      sane `comment-line-break-function', so...
+  ;; HACK: Fix #2081: Doom continues comments on RET, but coq-mode doesn't have
+  ;;   a sane `comment-line-break-function', so...
   comment-line-break-function nil)
 
 ;; We've replaced coq-mode abbrevs with yasnippet snippets (in the snippets

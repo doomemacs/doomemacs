@@ -59,12 +59,12 @@
   ;; The mode-line does serve any useful purpose is annotation windows
   (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
 
-  ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
+  ;; HACK: Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
-  ;; HACK Refresh FG/BG for pdfs when `pdf-view-midnight-colors' is changed by a
-  ;;      theme or with `setq!'.
-  ;; TODO PR this upstream?
+  ;; HACK: Refresh FG/BG for pdfs when `pdf-view-midnight-colors' is changed by
+  ;;   a theme or with `setq!'.
+  ;; TODO: PR this upstream?
   (defun +pdf-reload-midnight-minor-mode-h ()
     (when pdf-view-midnight-minor-mode
       (pdf-info-setoptions

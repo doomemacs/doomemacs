@@ -1,7 +1,7 @@
 ;;; config/default/+bindings.el -*- lexical-binding: t; -*-
 
 (when (modulep! :editor evil +everywhere)
-  ;; NOTE SPC u replaces C-u as the universal argument.
+  ;; NOTE: SPC u replaces C-u as the universal argument.
 
   ;; Minibuffer
   (map! :map (evil-ex-completion-map evil-ex-search-keymap)
@@ -593,10 +593,6 @@
        :desc "From clipboard"                "y"   #'+default/yank-pop)
 
       ;;; <leader> l --- live share/collab
-      ;;; TODO Do you like this location for this map? This was the best idea we
-      ;;; could come up with, but we're happy to move it if there's a better
-      ;;; place! Also not sure if we're allowed to say "live share" since that's
-      ;;; a blatant ripoff of VS Code's name for this feature
       (:when (modulep! :tools collab)
        (:prefix-map ("l" . "live share/collab")
         :desc "Switch to a shared buffer"      "b"   #'crdt-switch-to-buffer

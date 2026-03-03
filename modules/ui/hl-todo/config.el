@@ -14,18 +14,24 @@
           ;; For code that needs to be revisited later, either to upstream it,
           ;; improve it, or address non-critical issues.
           ("REVIEW" font-lock-keyword-face bold)
-          ;; For code smells where questionable practices are used
-          ;; intentionally, and/or is likely to break in a future update.
+          ;; For code smells where questionable practices are used intentionally
+          ;; and is likely to break in a future update.
           ("HACK" font-lock-constant-face bold)
           ;; For sections of code that just gotta go, and will be gone soon.
           ;; Specifically, this means the code is deprecated, not necessarily
           ;; the feature it enables.
           ("DEPRECATED" font-lock-doc-face bold)
           ;; Extra keywords commonly found in the wild, whose meaning may vary
-          ;; from project to project.
-          ("NOTE" success bold)
+          ;; from project to project. Doom doesn't use BUG.
           ("BUG" error bold)
-          ("XXX" font-lock-constant-face bold)))
+          ;; Doom uses XXX solely to highlight changes to the source in large
+          ;; :override advice functions.
+          ("XXX" font-lock-constant-face bold)
+          ;; Doom uses NOTE to indicate either A) this comment is about a code
+          ;; omission, e.g. "I *would've* put X here, but I didn't because Y",
+          ;; or B) it's a comment about a large section of code beyond the scope
+          ;; of adjacent lines.
+          ("NOTE" success bold)))
 
 
   (defadvice! +hl-todo-clamp-font-lock-fontify-region-a (fn &rest args)

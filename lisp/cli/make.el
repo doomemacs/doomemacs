@@ -44,7 +44,7 @@
               (unless dryrun?
                 (write-region (buffer-string) nil outfile)))))))))
 
-;; TODO Finish me
+;; TODO: Finish me
 (defcli-stub! (make changelog))
 
 

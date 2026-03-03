@@ -329,7 +329,7 @@ without needing to check if they are available."
           (autodef
            (completing-read
             "Describe setter: "
-            ;; TODO Could be cleaner (refactor me!)
+            ;; REVIEW: Could be cleaner (refactor me!)
             (cl-loop with maxwidth = (apply #'max (mapcar #'length (mapcar #'symbol-name settings)))
                      for def in (sort settings #'string-lessp)
                      if (get def 'doom-module)
@@ -379,7 +379,7 @@ without needing to check if they are available."
              (unless (eq (char-after) ?\()
                (backward-char))
              (let ((sexp (sexp-at-point)))
-               ;; DEPRECATED `featurep!'
+               ;; DEPRECATED: `featurep!' is deprecated
                (when (memq (car-safe sexp) '(featurep! modulep! require!))
                  (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
         ((when buffer-file-name
@@ -551,7 +551,7 @@ If prefix arg is present, refresh the cache."
                                           (format "total %d" (length packages))))
                           packages nil t nil nil
                           (when guess (symbol-name guess))))))))
-  ;; TODO Refactor me.
+  ;; REVIEW: Refactor me.
   (doom-initialize-packages)
   (help-setup-xref (list #'doom/help-packages package)
                    (called-interactively-p 'interactive))
@@ -729,7 +729,6 @@ config blocks in your private config."
 
 (defvar counsel-rg-base-command)
 (defun doom--help-search (dirs query prompt)
-  ;; REVIEW Replace with deadgrep
   (unless doom-ripgrep-executable
     (user-error "Can't find ripgrep on your system"))
   (cond ((fboundp 'consult--grep)
@@ -741,7 +740,7 @@ config blocks in your private config."
                             (concat "%s " (mapconcat #'shell-quote-argument dirs " ")))
                   (append counsel-rg-base-command dirs))))
            (counsel-rg query nil "-Lz" (concat prompt ": "))))
-        ;; () TODO Helm support?
+        ;; TODO: Helm support?
         ((grep-find
           (string-join
            (append (list doom-ripgrep-executable

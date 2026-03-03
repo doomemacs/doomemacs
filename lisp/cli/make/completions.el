@@ -15,13 +15,13 @@
 
 (defcli! (make completions)
     ((shell   ("--zsh" "--bash") "Generate a particular flavor of completion files (defaults to $SHELL)")
-     ;; TODO (outfile ("-o" "--outfile" file))
+     ;; TODO: (outfile ("-o" "--outfile" file))
      &context context &args args)
   "Generate completion scripts for a Doom-CLI script."
   ;; (unless outfile
   ;;   (user-error "No destination file specified"))
   (let ((shell (or shell (file-name-base (getenv "SHELL"))))
-        ;; TODO Allow this command to read other Doom binscripts, which will
+        ;; TODO: Allow this command to read other Doom binscripts, which will
         ;;   dump their `doom-cli--table' if __DOOMDUMP is set.
         ;; (table (read (letenv! (("__DOOMDUMP" "1")) (apply #'sh! script-file args))))
         )
@@ -35,7 +35,7 @@
 ;;
 ;;; ZSH Helpers
 
-;; TODO Write to OUTFILE when specified
+;; TODO: Write to OUTFILE when specified
 (defun doom-make-completions-zsh (context _outfile)
   (let* ((cli (doom-cli-get context))
          (prefix (doom-cli-context-prefix context))
@@ -59,7 +59,7 @@
     ))
 
 (defun doom-make-completions--zsh-insert-options (options &optional cr)
-  ;; FIXME Refactor, generalize, and parameterize this mess
+  ;; FIXME: Refactor, generalize, and parameterize this mess
   (dolist (option options)
     (let* ((switches (cl-loop for (sw . args) in (car option)
                               if (string-prefix-p "--[no-]" sw)

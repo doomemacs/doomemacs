@@ -473,7 +473,7 @@ also be a list of module keys."
 (defun doom/reload-packages ()
   "Reload `doom-packages', `package' and `quelpa'."
   (interactive)
-  ;; HACK straight.el must be loaded for this to work
+  ;; HACK: straight.el must be loaded for this to work
   (message "Reloading packages")
   (doom-initialize-packages t)
   (message "Reloading packages...DONE"))
@@ -850,8 +850,8 @@ Must be run from a magit diff buffer."
 (defun doom-packages--elc-file-outdated-p (file)
   "Check whether the corresponding .elc for `file' is outdated."
   (let ((elc-file (byte-compile-dest-file file)))
-    ;; NOTE Ignore missing elc files, they could be missing due to
-    ;;   `no-byte-compile'. Rebuilding unnecessarily is expensive.
+    ;; Ignore missing elc files, they could be missing due to `no-byte-compile'.
+    ;; Rebuilding unnecessarily is expensive.
     (when (and (file-exists-p elc-file)
                (file-newer-than-file-p file elc-file))
       (doom-log "packages:elc: %s is newer than %s" file elc-file)

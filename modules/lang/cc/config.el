@@ -76,9 +76,9 @@ This is ignored by ccls.")
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.c\\(c\\|pp\\)?\\'" "\\1.h\\(h\\|pp\\)?\\'"))
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.h\\(h\\|pp\\)?\\'" "\\1.c\\(c\\|pp\\)?\\'"))
 
-  ;; HACK Suppress 'Args out of range' error in when multiple modifications are
-  ;;      performed at once in a `c++-mode' buffer, e.g. with `iedit' or
-  ;;      multiple cursors.
+  ;; HACK: Suppress 'Args out of range' error in when multiple modifications are
+  ;;   performed at once in a `c++-mode' buffer, e.g. with `iedit' or multiple
+  ;;   cursors.
   (undefadvice! +cc--suppress-silly-errors-a (fn &rest args)
     :around #'c-after-change-mark-abnormal-strings
     (ignore-errors (apply fn args)))
@@ -205,7 +205,6 @@ This is ignored by ccls.")
           :map c++-mode-map
           :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
 
-    ;; NOTE : This setting is untested yet
     (after! eglot
       (when (featurep :system 'macos)
         (add-to-list 'eglot-workspace-configuration

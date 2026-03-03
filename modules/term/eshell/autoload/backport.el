@@ -1,9 +1,9 @@
 ;;; term/eshell/autoload/mode.el -*- lexical-binding: t; -*-
 ;;;###if (< emacs-major-version 28)
 
-;; DEPRECATED Remove this when we drop Emacs 27 support.
+;; DEPRECATED: Remove this when we drop Emacs 27 support.
 
-;; HACK Eshell resets its keymap every time `eshell-mode' is enabled. This is
+;; HACK: Eshell resets its keymap every time `eshell-mode' is enabled. This is
 ;;   fixed in Emacs 28+, but this file backports that fix for 27 users. This
 ;;   way, keys can be safely bound to `eshell-mode-map' and `eshell-command-map'
 ;;   like any normal keymap, rather than a hook.

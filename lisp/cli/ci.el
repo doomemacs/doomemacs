@@ -56,7 +56,7 @@ Each element of this list can be one of:
     '(docs \"faq\" \"install\" check-docs)")
 
 (defvar doom-ci-commit-rules
-  ;; TODO Extract into named functions
+  ;; TODO: Extract into named functions
   (list (lambda! (&key subject)
           "If a fixup/squash commit, don't lint this commit"
           (when (string-match "^\\(\\(?:fixup\\|squash\\)!\\|FIXUP\\|WIP\\) " subject)
@@ -169,7 +169,7 @@ Each element of this list can be one of:
                 (fail! "%d commit hash(s) not 12 characters long: %s"
                        (length refs) (string-join (nreverse refs) ", "))))))
 
-        ;; TODO Add bump validations for revert: type.
+        ;; TODO: Add bump validations for revert: type.
         (lambda! (&key body trailers)
           "Validate commit trailers."
           (let* ((keys   (mapcar #'car doom-ci-commit-trailer-keys))
@@ -206,10 +206,10 @@ Each element of this list can be one of:
                       (fail! "%S expects one of %s, but got %S"
                              key allowed-types value)))))))
 
-        ;; TODO Check that bump/revert SUBJECT list: 1) valid modules and 2)
-        ;;      modules whose files are actually being touched.
+        ;; TODO: Check that bump/revert SUBJECT list: 1) valid modules and 2)
+        ;;   modules whose files are actually being touched.
 
-        ;; TODO Ensure your diff corraborates your SCOPE
+        ;; TODO: Ensure your diff corraborates your SCOPE
 
         )
   "A list of validator functions to run against a commit.
@@ -252,7 +252,7 @@ Note: warnings are not considered failures.")
   "Commands that automate development processes."
   :partial t)
 
-;; TODO Move to 'doom install --git-hooks'
+;; TODO: Move to 'doom install --git-hooks'
 (defcli! (ci deploy-hooks) ((force ("--force")))
   "TODO"
   (let* ((repo-path (sh! "git" "rev-parse" "--show-toplevel"))
@@ -284,7 +284,7 @@ Note: warnings are not considered failures.")
                 (if overwrite-p "Overwrote" "Created")
                 (path hook))))))
 
-;; TODO Move to 'doom lint commits'
+;; TODO: Move to 'doom lint commits'
 (defcli! (ci lint-commits) (from &optional to)
   "TODO"
   (with-temp-buffer
@@ -307,7 +307,7 @@ Note: warnings are not considered failures.")
                commits))
        commits))))
 
-;; TODO Move to 'doom lint hook:commit-msg'
+;; TODO: Move to 'doom lint hook:commit-msg'
 (defcli! (ci hook commit-msg) (file)
   "Run git commit-msg hook.
 
@@ -323,7 +323,7 @@ Lints the current commit message."
             (point-max)))))
      t)))
 
-;; TODO Move to 'doom lint hook:pre-push'
+;; TODO: Move to 'doom lint hook:pre-push'
 (defcli! (ci hook pre-push) (remote url)
   "Run git pre-push hook.
 
@@ -335,7 +335,7 @@ Prevents pushing if there are unrebased or WIP commits."
         (catch 'continue
           (seq-let (local-ref local-sha remote-ref remote-sha)
               (split-string line " ")
-            ;; TODO Extract this branch detection to a variable
+            ;; TODO: Extract this branch detection to a variable
             (unless (or (string-match-p "^refs/heads/\\(master\\|main\\)$" remote-ref)
                         (equal local-sha z40))
               (throw 'continue t))

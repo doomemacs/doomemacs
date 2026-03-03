@@ -35,7 +35,7 @@
 By default, this only recognizes C preproc directives. To change this see
 `+evil-preprocessor-regexp'."
   (interactive "p")
-  ;; TODO More generalized search, to support directives in other languages?
+  ;; TODO: More generalized search, to support directives in other languages?
   (if (re-search-forward +evil-preprocessor-regexp nil t count)
       (goto-char (match-beginning 0))
     (user-error "No preprocessor directives %s point"
@@ -140,7 +140,7 @@ See `+evil/next-preproc-directive' for details."
 ;;
 ;;; Encoding/Decoding
 
-;; NOTE For ]x / [x see :lang web
+;; NOTE: For ]x / [x see :lang web
 ;; - `+web:encode-html-entities'
 ;; - `+web:decode-html-entities'
 

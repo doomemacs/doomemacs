@@ -54,7 +54,7 @@ variable names to omit from `doom-env-file'.")
     ((allow-only  ("--allow-all"))
      (deny-only   ("--deny-all"))
      (output-file ("-o" path) "Write envvar file to non-standard PATH.")
-     ;; TODO (refresh?    ("-r" "--refresh"))
+     ;; TODO: (refresh?    ("-r" "--refresh"))
      &multiple
      (rules ("-a" "--allow" "-d" "--deny" regexp) "Allow/deny envvars that match REGEXP"))
   "(Re)generates envvars file from your shell environment.

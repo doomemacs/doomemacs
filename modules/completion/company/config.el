@@ -52,10 +52,10 @@
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
     (add-hook! 'evil-normal-state-entry-hook
       (defun +company-abort-h ()
-        ;; HACK `company-abort' doesn't no-op if company isn't active; causing
-        ;;      unwanted side-effects, like the suppression of messages in the
-        ;;      echo-area.
-        ;; REVIEW Revisit this to refactor; shouldn't be necessary!
+        ;; HACK: `company-abort' doesn't no-op if company isn't active; causing
+        ;;   unwanted side-effects, like the suppression of messages in the
+        ;;   echo-area.
+        ;; REVIEW: Revisit this to refactor; shouldn't be necessary!
         (when company-candidates
           (company-abort))))
     ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
@@ -67,13 +67,13 @@
 
   (add-hook 'company-mode-hook #'+company-init-backends-h 'append)
 
-  ;; NOTE Fix #1335: ensure `company-emulation-alist' is the first item of
-  ;;      `emulation-mode-map-alists', thus higher priority than keymaps of
-  ;;      evil-mode. We raise the priority of company-mode keymaps
-  ;;      unconditionally even when completion is not activated. This should not
-  ;;      cause problems, because when completion is activated, the value of
-  ;;      `company-emulation-alist' is ((t . company-my-keymap)), when
-  ;;      completion is not activated, the value is ((t . nil)).
+  ;; Fix #1335: ensure `company-emulation-alist' is the first item of
+  ;; `emulation-mode-map-alists', thus higher priority than keymaps of
+  ;; evil-mode. We raise the priority of company-mode keymaps unconditionally
+  ;; even when completion is not activated. This should not cause problems,
+  ;; because when completion is activated, the value of
+  ;; `company-emulation-alist' is ((t . company-my-keymap)), when completion is
+  ;; not activated, the value is ((t . nil)).
   (add-hook! 'evil-local-mode-hook
     (when (memq 'company-emulation-alist emulation-mode-map-alists)
       (company-ensure-emulation-alist)))
@@ -141,13 +141,13 @@
           (ElispFeature   . ,(nerd-icons-codicon  "nf-cod-globe"               :face  'font-lock-builtin-face))
           (ElispFace      . ,(nerd-icons-codicon  "nf-cod-symbol_color"        :face  'success))))
 
-  ;; HACK Fix oversized scrollbar in some odd cases
-  ;; REVIEW `resize-mode' is deprecated and may stop working in the future.
-  ;; TODO PR me upstream?
+  ;; HACK: Fix oversized scrollbar in some odd cases
+  ;; REVIEW: `resize-mode' is deprecated and may stop working in the future.
+  ;; TODO: PR me upstream?
   (setq x-gtk-resize-child-frames 'resize-mode)
 
   ;; Disable tab-bar in company-box child frames
-  ;; TODO PR me upstream!
+  ;; REVIEW: PR me upstream!
   (add-to-list 'company-box-frame-parameters '(tab-bar-lines . 0))
 
   ;; Don't show documentation in echo area, because company-box displays its own
@@ -164,7 +164,7 @@
 
   ;; `company-box' performs insufficient frame-live-p checks. Any command that
   ;; "cleans up the session" will break company-box.
-  ;; TODO Fix this upstream.
+  ;; REVIEW: Fix this upstream.
   (defadvice! +company-box-detect-deleted-frame-a (frame)
     :filter-return #'company-box--get-frame
     (if (frame-live-p frame) frame))

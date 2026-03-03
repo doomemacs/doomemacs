@@ -1,6 +1,6 @@
 ;;; config/default/autoload/deferred.el -*- lexical-binding: t; -*-
 
-;; TODO generalize this
+;; REVIEW: Generalize this
 ;;;###autoload
 (defun +default/lsp-command-map ()
   "Lazily invoke `lsp-command-map'."

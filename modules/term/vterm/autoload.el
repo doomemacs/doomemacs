@@ -53,7 +53,7 @@ Returns the vterm buffer."
    arg
    (lambda()
      (require 'vterm)
-     ;; HACK forces vterm to redraw, fixing strange artefacting in the tty.
+     ;; HACK: Force vterm to redraw to fix artefacting in tty.
      (save-window-excursion
        (pop-to-buffer "*scratch*"))
      (let (display-buffer-alist)

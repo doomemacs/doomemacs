@@ -410,7 +410,7 @@ based on the print level of the message. For example:
   ```"
   (if (not text) ""
     (let ((case-fold-search nil))
-      ;; TODO Syntax highlighting?
+      ;; TODO: Syntax highlighting?
       (replace-regexp-in-string
        " *```\n\\(.+?\\)\n *```" (doom-print--style 'blue "%s" "\\1")
        (replace-regexp-in-string

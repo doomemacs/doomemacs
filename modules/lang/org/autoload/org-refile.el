@@ -1,6 +1,6 @@
 ;;; lang/org/autoload/org-refile.el -*- lexical-binding: t; -*-
 
-;; REVIEW These are all proof-of-concept. Refactor me!
+;; REVIEW: These are all proof-of-concept. Refactor me!
 
 ;;;###autoload
 (defun +org/refile-to-current-file (arg &optional file)

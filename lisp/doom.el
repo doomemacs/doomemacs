@@ -237,7 +237,7 @@
             (cons (match-string 1 profile)
                   (match-string 2 profile))
           (cons profile "0")))
-    ;; TODO Restore this in 3.0
+    ;; TODO: Restore this in v3
     ;; (cons "_" "0")
     )
   "The active profile as a cons cell (NAME . VERSION).")

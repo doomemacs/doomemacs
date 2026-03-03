@@ -5,7 +5,7 @@
   "Execute a block of plantuml code with org-babel.
 This function is called by `org-babel-execute-src-block'."
   (require 'plantuml-mode)
-  ;; REVIEW Refactor me
+  ;; REVIEW: Refactor me
   (let* ((body (replace-regexp-in-string
                 "^[[:blank:]\n]*\\(@start\\)"
                 "\\1"

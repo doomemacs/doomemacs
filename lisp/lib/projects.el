@@ -1,10 +1,10 @@
 ;;; lisp/lib/projects.el -*- lexical-binding: t; -*-
 
-;; HACK We forward declare these variables because they are let-bound in a
-;;      number of places with no guarantee that they've been defined yet (i.e.
-;;      that `projectile' is loaded). If a variable is defined with `defvar'
-;;      while it is lexically bound, you get "Defining as dynamic an already
-;;      lexical var" errors in Emacs 28+).
+;; HACK: We forward declare these variables because they are let-bound in a
+;;   number of places with no guarantee that they've been defined yet (i.e.
+;;   that `projectile' is loaded). If a variable is defined with `defvar' while
+;;   it is lexically bound, you get "Defining as dynamic an already lexical var"
+;;   errors in Emacs 28+).
 ;;;###autoload (defvar projectile-project-root nil)
 ;;;###autoload (defvar projectile-enable-caching (not noninteractive))
 ;;;###autoload (defvar projectile-require-project-root 'prompt)

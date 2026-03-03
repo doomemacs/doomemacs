@@ -1,9 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; app/wanderlust/packages.el
 
-;; HACK These are wanderlust's dependencies (wanderlust depends on semi, semi
-;;      depends on flim, flim on apel), but they all have non-standard default
-;;      branches which straight cannot detect without our help.
+;; HACK: These are wanderlust's dependencies (wanderlust depends on semi, semi
+;;   depends on flim, flim on apel), but they all have non-standard default
+;;   branches which straight cannot detect without our help.
 (package! apel
   :recipe (:host github :repo "wanderlust/apel" :branch "apel-wl")
   :pin "2383abfd3a27c094ae9095b05103167cf810379b")

@@ -170,7 +170,7 @@ And if it's a function, evaluate it."
            ((when-let*
                 ((doom-fd-executable)
                  (projectile-git-use-fd)
-                 ;; REVIEW Temporary fix for #6618. Improve me later.
+                 ;; REVIEW: Temporary fix for #6618. Improve me later.
                  (version (with-memoization (get 'doom-fd-executable 'version)
                             (cadr (split-string (cdr (doom-call-process doom-fd-executable "--version"))
                                                 " " t))))

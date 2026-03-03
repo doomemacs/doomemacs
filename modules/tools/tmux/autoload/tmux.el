@@ -2,7 +2,7 @@
 
 ;; This library offers:
 ;;   + A way of communicating with a tmux instance
-;;   + TODO A way to manage tmuxifier from emacs
+;;   + TODO: A way to manage tmuxifier from emacs
 
 (defvar +tmux-last-command nil
   "The last command ran by `+tmux'. Used by `+tmux/rerun'")

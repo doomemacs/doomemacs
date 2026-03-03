@@ -91,8 +91,8 @@ buffer rather than an overlay on the line at point or the minibuffer.")
           (setq quickrun-option-outputter #'ignore)
           (funcall cb))))
 
-    ;; HACK Without this, `+eval--inhibit-quickrun-popup-a' throws a
-    ;;      window-live-p error because no window exists to be recentered!
+    ;; HACK: Without this, `+eval--inhibit-quickrun-popup-a' throws a
+    ;;   window-live-p error because no window exists to be recentered!
     (advice-add #'quickrun--recenter :override #'ignore)))
 
 

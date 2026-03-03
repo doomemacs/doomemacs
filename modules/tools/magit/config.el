@@ -203,8 +203,6 @@ FUNCTION
   :when (modulep! +forge)
   :after magit
   :init
-  ;; TODO This needs to either a) be cleaned up or better b) better map things
-  ;; to fit
   (after! evil-collection-magit
     (dolist (binding evil-collection-magit-mode-map-bindings)
       (pcase-let* ((`(,states _ ,evil-binding ,fn) binding))
@@ -247,8 +245,8 @@ FUNCTION
     "gm" #'forge-jump-to-pullreqs)
 
   ;; Fix these keybinds because they are blacklisted
-  ;; REVIEW There must be a better way to exclude particular evil-collection
-  ;;        modules from the blacklist.
+  ;; REVIEW: There must be a better way to exclude particular evil-collection
+  ;;   modules from the blacklist.
   (map! (:map magit-mode-map
          :nv "q" #'+magit/quit
          :nv "Q" #'+magit/quit-all

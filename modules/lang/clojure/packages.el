@@ -1,15 +1,15 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/clojure/packages.el
 
-;; HACK Fix #5577. Paredit is a cider dependency. We install paredit ourselves
-;;      to get it from emacsmirror, because the original upstream is a custom
-;;      git server with shallow clones disabled.
+;; HACK: Fix #5577. Paredit is a cider dependency. We install paredit ourselves
+;;   to get it from emacsmirror, because the original upstream is a custom git
+;;   server with shallow clones disabled.
 (package! paredit
   :recipe (:host github :repo "emacsmirror/paredit")
   :pin "af075775af91f2dbc63b915d762b4aec092946c4")
 
-;; HACK Forward declare these clj-refactor/cider deps so that their deps are
-;;      byte-compiled first.
+;; HACK: Forward declare these clj-refactor/cider deps so that their deps are
+;;   byte-compiled first.
 (package! parseclj :pin "6af22372e0fe14df882dd300b22b12ba2d7e00b0")
 (package! parseedn :pin "3407e4530a367b6c2b857dae261cdbb67a440aaa")
 

@@ -5,7 +5,7 @@
   "Browse files from the current project's root."
   (interactive)
   (doom-project-browse (or (doom-project-root) default-directory)))
-;; NOTE No need for find-in-project, use `projectile-find-file'
+;; NOTE: No need for find-in-project, use `projectile-find-file'
 
 ;;;###autoload
 (defun +default/browse-templates ()

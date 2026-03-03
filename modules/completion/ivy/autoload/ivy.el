@@ -123,7 +123,7 @@ In the GUI, this is the same as `ivy-format-function-line'."
               :preselect (buffer-name (other-buffer (current-buffer)))
               :matcher #'ivy--switch-buffer-matcher
               :keymap ivy-switch-buffer-map
-              ;; NOTE A clever disguise, needed for virtual buffers.
+              ;; A clever disguise, needed for virtual buffers.
               :caller #'ivy-switch-buffer)))
 
 ;;;###autoload
@@ -322,7 +322,6 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 (defun +ivy/jump-list ()
   "Go to an entry in evil's (or better-jumper's) jumplist."
   (interactive)
-  ;; REVIEW Refactor me
   (let (buffers)
     (unwind-protect
         (ivy-read "jumplist: "

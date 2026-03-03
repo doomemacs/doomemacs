@@ -43,5 +43,5 @@ If prefix ARG, recreate the term buffer."
 (defalias '+term/here #'multi-term)
 
 
-;; TODO +term/frame -- dedicate current frame to term buffers
-;; TODO +term/frame-quite -- revert frame to before +term/frame
+;; TODO: +term/frame -- dedicate current frame to term buffers
+;; TODO: +term/frame-quite -- revert frame to before +term/frame

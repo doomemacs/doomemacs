@@ -180,7 +180,7 @@ is non-nil."
   (add-to-list 'mu4e-bookmarks
                '("flag:flagged" "Flagged messages" ?f) t)
 
-  ;; TODO avoid assuming that nerd-icons is present
+  ;; TODO: avoid assuming that nerd-icons is present
   (defvar +mu4e-header-colorized-faces
     '(nerd-icons-green
       nerd-icons-lblue
@@ -598,7 +598,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
 
     ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
     (setq mu4e-sent-messages-behavior
-          (lambda () ;; TODO make use +mu4e-msg-gmail-p
+          (lambda () ;; TODO: make use +mu4e-msg-gmail-p
             (if (or (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
                     (member (message-sendmail-envelope-from)
                             (mapcar #'car +mu4e-gmail-accounts)))

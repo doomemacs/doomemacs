@@ -570,7 +570,7 @@ Throws `doom-cli-invalid-option-error' for illegal values."
             errors)
         (catch 'done
           (dolist (type types)
-            ;; REVIEW Use pcase-let + map.el when 27.x support is dropped
+            ;; REVIEW: Use pcase-let + map.el when 27.x support is dropped
             (cl-destructuring-bind (&key test read error &allow-other-keys)
                 (if (or (symbolp type)
                         (and (stringp type)
@@ -956,7 +956,7 @@ considered as well."
 
 (defun doom-cli-debugger (type data &optional context)
   "Print a more presentable backtrace to terminal and write it to file."
-  ;; HACK Works around a heuristic in eval.c for detecting errors in the
+  ;; HACK: Works around a heuristic in eval.c for detecting errors in the
   ;;   debugger, which executes this handler again on subsequent calls. Taken
   ;;   from `ert--run-test-debugger'.
   (cl-incf num-nonmacro-input-events)
@@ -1351,9 +1351,9 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
          0)))
    context))
 
-;; (defun doom-cli--exit-editor (args context))  ; TODO Launch $EDITOR
+;; (defun doom-cli--exit-editor (args context))  ; TODO: Launch $EDITOR
 
-;; (defun doom-cli--exit-emacs (args context))   ; TODO Launch Emacs subsession
+;; (defun doom-cli--exit-emacs (args context))   ; TODO: Launch Emacs subsession
 
 
 
@@ -1990,7 +1990,7 @@ errors to `doom-cli-error-file')."
 
 (defalias 'sh!! #'doom-exec-process)
 
-;; TODO Make `git!' into a more sophisticated wrapper around git
+;; TODO: Make `git!' into a more sophisticated wrapper around git
 (defalias 'git! (doom-partial #'straight--process-run "git"))
 
 (defun get! (key) (doom-cli-context-get doom-cli--context key))
@@ -2108,7 +2108,7 @@ substring is edited more than once."
         current))))
 
 ;;; Help: printers
-;; TODO Parameterize optional args with `cl-defun'
+;; TODO: Parameterize optional args with `cl-defun'
 (defun doom-cli-help--print (cli context &optional manpage? noglobal?)
   "Write CLI's documentation in a manpage-esque format to stdout."
   (let-alist (doom-cli-help cli)
@@ -2118,7 +2118,7 @@ substring is edited more than once."
                                         (width (floor (/ (- (doom-cli-context-width context)
                                                             (length title))
                                                          2.0))))
-                                   ;; FIXME Who am I fooling?
+                                   ;; FIXME: Who am I fooling?
                                    (format (format "%%-%ds%%s%%%ds" width width)
                                            "DOOM(1)" title "DOOM(1)")))
                       ("NAME" . ,(concat .command " - " .summary))

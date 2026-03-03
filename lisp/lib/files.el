@@ -207,7 +207,7 @@ single file or nested compound statement of `and' and `or' statements."
   (if (executable-find "du")
       (/ (string-to-number (cdr (doom-call-process "du" "-sb" dir)))
          1024.0)
-    ;; REVIEW This is slow and terribly inaccurate, but it's something
+    ;; REVIEW: This is slow and terribly inaccurate, but it's something
     (let ((w32-get-true-file-attributes t)
           (file-name-handler-alist dir)
           (max-lisp-eval-depth 5000)

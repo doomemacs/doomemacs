@@ -37,9 +37,9 @@
   ;; This needs to be appended so it fires later than `sly-editing-mode'
   (add-hook 'lisp-mode-local-vars-hook #'sly-lisp-indent-compatibility-mode 'append)
 
-  ;; HACK Ensures that sly's contrib modules are loaded as soon as possible, but
-  ;;      also as late as possible, so users have an opportunity to override
-  ;;      `sly-contrib' in an `after!' block.
+  ;; HACK: Ensures that sly's contrib modules are loaded as soon as possible,
+  ;;   but also as late as possible, so users have an opportunity to override
+  ;;   `sly-contrib' in an `after!' block.
   (add-hook! 'after-init-hook (after! sly (sly-setup)))
 
   :config

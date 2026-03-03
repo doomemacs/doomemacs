@@ -37,8 +37,8 @@
     '(company-R-args company-R-objects company-dabbrev-code :separate))
 
   (setq-hook! 'ess-r-mode-hook
-    ;; HACK Fix #2233: Doom continues comments on RET, but ess-r-mode doesn't
-    ;;      have a sane `comment-line-break-function', so...
+    ;; HACK: Fix #2233: Doom continues comments on RET, but ess-r-mode doesn't
+    ;;   have a sane `comment-line-break-function', so...
     comment-line-break-function nil)
 
   ;; HACK: make the REPL buffer more responsive.

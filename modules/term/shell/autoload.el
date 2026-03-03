@@ -101,5 +101,5 @@ If already in a shell buffer, clear it and cd into the current directory."
     buffer))
 
 
-;; TODO +shell/frame -- dedicate current frame to shell buffers
-;; TODO +shell/frame-quite -- revert frame to before +term/frame
+;; TODO: +shell/frame -- dedicate current frame to shell buffers
+;; TODO: +shell/frame-quite -- revert frame to before +term/frame

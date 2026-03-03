@@ -48,7 +48,7 @@ all themes. It will apply to all themes once they are loaded."
        (when (or (get 'doom-theme 'history)
                  (null doom-theme))
          (doom--run-customize-theme-hook #',fn))
-       ;; FIXME Prevent clobbering this on-the-fly
+       ;; FIXME: Prevent clobbering this on-the-fly
        (add-hook 'doom-customize-theme-hook #',fn 100))))
 
 ;;;###autoload

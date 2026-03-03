@@ -20,7 +20,7 @@ too, so strings take the form: \"POSITION ~ LABEL @ URL\"."
                (url (when (stringp raw-url)
                       (propertize raw-url 'face 'link)))
                (label (replace-regexp-in-string
-                       "\n" " " ; NOTE 2021-07-25: newlines break completion
+                       "\n" " "  ; 2021-07-25: newlines break completion
                        (buffer-substring-no-properties
                         start-point-prop end-point-prop)))
                (point start-point-prop)
@@ -47,7 +47,7 @@ too, so strings take the form: \"POSITION ~ LABEL @ URL\"."
                (start-point-prop (prop-match-beginning match))
                (end-point-prop (prop-match-end match))
                (text (replace-regexp-in-string
-                      "\n" " "      ; NOTE 2021-07-25: newlines break completion
+                      "\n" " "  ; 2021-07-25: newlines break completion
                       (buffer-substring-no-properties
                        start-point-prop end-point-prop))))
           (cond

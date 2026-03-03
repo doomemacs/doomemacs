@@ -14,7 +14,7 @@
 (setq password-store-password-length 12)
 
 (after! evil-collection-pass
-  ;; FIXME This needs to be upstreamed to evil-collection.
+  ;; REVIEW: This needs to be upstreamed to evil-collection.
   (add-to-list 'evil-collection-pass-command-to-label '(pass-update-buffer . "gr")))
 
 (after! pass

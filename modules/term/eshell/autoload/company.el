@@ -1,8 +1,6 @@
 ;;; term/eshell/autoload/company.el -*- lexical-binding: t; -*-
 ;;;###if (modulep! :completion company)
 
-;; REVIEW Refactor me
-
 (defvar company-pcomplete-available 'unknown)
 
 (defun company-pcomplete--prefix ()

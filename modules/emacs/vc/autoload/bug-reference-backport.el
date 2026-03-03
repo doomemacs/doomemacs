@@ -1,6 +1,6 @@
 ;;; emacs/vc/autoload/bug-reference-backport.el -*- lexical-binding: t; -*-
 ;;;###if (< emacs-major-version 28)
-;; DEPRECATED Remove when Emacs 27.x support is dropped
+;; DEPRECATED: Remove when Emacs 27.x support is dropped
 
 ;; In Emacs 28, the built-in bug-reference package started consulting vc for
 ;; repo information (to inform its bug reference URLs). This incredibly useful

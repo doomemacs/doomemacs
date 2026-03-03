@@ -68,8 +68,8 @@ You should use `set-eshell-alias!' to change this.")
         eshell-scroll-to-bottom-on-output 'all
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
-        ;; don't record command in history if prefixed with whitespace
-        ;; TODO Use `eshell-input-filter-initial-space' when Emacs 25 support is dropped
+        ;; Don't record command in history if prefixed with whitespace
+        ;; TODO: Use `eshell-input-filter-initial-space' when Emacs 25 support is dropped
         eshell-input-filter (lambda (input) (not (string-match-p "\\`\\s-+" input)))
         ;; em-prompt
         eshell-prompt-regexp "^[^#$\n]* [#$λ] "

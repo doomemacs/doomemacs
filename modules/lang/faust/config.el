@@ -5,9 +5,9 @@
   :config
   (set-company-backend! '(faust-mode faustine-mode) '(company-dabbrev-code +faust-company-backend company-yasnippet))
 
-  ;; HACK Both `faust-mode' and `faustine-mode' are hardcoded to use
-  ;; auto-complete. This silences the obnoxious 'You really should install and
-  ;; use auto-complete' warnings when starting them.
+  ;; HACK: Both `faust-mode' and `faustine-mode' are hardcoded to use
+  ;;   auto-complete. This silences the obnoxious 'You really should install and
+  ;;   use auto-complete' warnings when starting them.
   (defvar ac-modes nil)
   (defvar ac-sources nil)
 

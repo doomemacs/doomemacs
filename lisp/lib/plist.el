@@ -5,7 +5,7 @@
 ;;
 ;;; Macros
 
-;;; DEPRECATED In favor of `cl-callf'
+;;; DEPRECATED: In favor of `cl-callf'
 ;;;###autoload
 (defmacro plist-put! (plist &rest rest)
   "Set each PROP VALUE pair in REST to PLIST in-place."

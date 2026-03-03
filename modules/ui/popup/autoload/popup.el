@@ -24,9 +24,9 @@ the buffer is visible, then set another timer and try again later."
                    (when (eq (process-type process) 'real)
                      (kill-process process)))
                  (let (kill-buffer-query-functions)
-                   ;; HACK The debugger backtrace buffer, when killed, called
-                   ;;      `top-level'. This causes jumpiness when the popup
-                   ;;      manager tries to clean it up.
+                   ;; HACK: The debugger backtrace buffer, when killed, called
+                   ;;   `top-level'. This causes jumpiness when the popup
+                   ;;   manager tries to clean it up.
                    (cl-letf (((symbol-function #'top-level) #'ignore))
                      (kill-buffer buffer)))))))
           ((let ((ttl (if (= ttl 0)

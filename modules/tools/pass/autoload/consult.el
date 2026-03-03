@@ -18,4 +18,4 @@
              #'password-store-copy)
            pass))
 
-;; TODO Add embark actions to +pass/consult
+;; TODO: Add embark actions to +pass/consult

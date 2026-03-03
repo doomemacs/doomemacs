@@ -52,9 +52,9 @@
   (defun use-package-handler/:magic-minor (name _ arg rest state)
     (use-package-handle-mode name 'auto-minor-mode-magic-alist arg rest state))
 
-  ;; HACK Fix `:load-path' so it resolves relative paths to the containing file,
-  ;;      rather than `user-emacs-directory'. This is a done as a convenience
-  ;;      for users, wanting to specify a local directory.
+  ;; HACK: Fix `:load-path' so it resolves relative paths to the containing
+  ;;   file, rather than `user-emacs-directory'. This is a done as a convenience
+  ;;   for users, wanting to specify a local directory.
   (defadvice! doom--resolve-load-path-from-containg-file-a (fn label arg &optional recursed)
     "Resolve :load-path from the current directory."
     :around #'use-package-normalize-paths

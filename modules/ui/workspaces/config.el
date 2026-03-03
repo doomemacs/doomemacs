@@ -5,7 +5,7 @@
 ;; it because it was unstable and slow; `persp-mode' is neither (and still
 ;; maintained).
 ;;
-;; NOTE persp-mode requires `workgroups' for file persistence in Emacs 24.4.
+;; NOTE: persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
 (defvar +workspaces-main "main"
   "The name of the primary and initial workspace, which cannot be deleted.")
@@ -25,7 +25,7 @@ t           Always create a new workspace for the project
             associated with it.
 nil         Never create a new workspace on project switch.")
 
-;; FIXME actually use this for wconf bookmark system
+;; FIXME: Actually use this for wconf bookmark system
 (defvar +workspaces-data-file "_workspaces"
   "The basename of the file to store single workspace perspectives. Will be
 stored in `persp-save-dir'.")
@@ -77,8 +77,8 @@ stored in `persp-save-dir'.")
                       ;; Start from 2 b/c persp-mode counts the nil workspace
                       (> (hash-table-count *persp-hash*) 2))
             (persp-add-new +workspaces-main))
-          ;; HACK Fix #319: the warnings buffer gets swallowed when creating
-          ;;      `+workspaces-main', so display it ourselves, if it exists.
+          ;; HACK: Fix #319: the warnings buffer gets swallowed when creating
+          ;;   `+workspaces-main', so display it ourselves, if it exists.
           (when-let (warnings (get-buffer "*Warnings*"))
             (unless (get-buffer-window warnings)
               (save-excursion
@@ -86,10 +86,10 @@ stored in `persp-save-dir'.")
                  warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))
     (defun +workspaces-init-persp-mode-h ()
       (cond (persp-mode
-             ;; `uniquify' breaks persp-mode. It renames old buffers, which causes
-             ;; errors when switching between perspective (their buffers are
-             ;; serialized by name and persp-mode expects them to have the same
-             ;; name when restored).
+             ;; `uniquify' breaks persp-mode. It renames old buffers, which
+             ;; causes errors when switching between perspective (their buffers
+             ;; are serialized by name and persp-mode expects them to have the
+             ;; same name when restored).
              (when uniquify-buffer-name-style
                (setq +workspace--old-uniquify-style uniquify-buffer-name-style))
              (setq uniquify-buffer-name-style nil)
@@ -153,13 +153,13 @@ stored in `persp-save-dir'.")
           (cadr prev-buffers)
         head)))
 
-  ;; HACK Fixes #4196, #1525: selecting deleted buffer error when quitting Emacs
-  ;;      or on some buffer listing ops.
+  ;; HACK: Fixes #4196, #1525: selecting deleted buffer error when quitting
+  ;;   Emacs or on some buffer listing ops.
   (defadvice! +workspaces-remove-dead-buffers-a (persp)
     :before #'persp-buffers-to-savelist
     (when (perspective-p persp)
-      ;; HACK Can't use `persp-buffers' because of a race condition with its gv
-      ;;      getter/setter not being defined in time.
+      ;; HACK: Can't use `persp-buffers' because of a race condition with its gv
+      ;;   getter/setter not being defined in time.
       (setf (aref persp 2)
             (cl-delete-if-not #'persp-get-buffer-or-null (persp-buffers persp)))))
 
@@ -176,8 +176,8 @@ stored in `persp-save-dir'.")
   (add-hook 'delete-frame-functions #'+workspaces-delete-associated-workspace-h)
   (add-hook 'server-done-hook #'+workspaces-delete-associated-workspace-h)
 
-  ;; per-project workspaces, but reuse current workspace if empty
-  ;; HACK?? needs review
+  ;; Per-project workspaces, but reuse current workspace if empty
+  ;; REVIEW: Remove when ivy module is removed
   (setq projectile-switch-project-action #'+workspaces-switch-to-project-h
         counsel-projectile-switch-project-action
         '(1 ("o" +workspaces-switch-to-project-h "open project in new workspace")

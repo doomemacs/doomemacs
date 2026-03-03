@@ -35,7 +35,7 @@ libraries. It is the equivalent of the following shell commands:
   (let ((force? (doom-cli-context-suppress-prompts-p context)))
     (cond
      (packages?
-      ;; HACK It's messy to use straight to upgrade straight, due to the
+      ;; HACK: It's messy to use straight to upgrade straight, due to the
       ;;   potential for backwards incompatibility, so we staticly check if
       ;;   Doom's `package!' declaration for straight has changed. If it has,
       ;;   delete straight so 'doom sync' will install the new version for us.

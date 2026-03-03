@@ -293,7 +293,7 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;      and ~/_emacs) -- and spare us the IO of searching for them, and allows
 ;;      savvy hackers to use $EMACSDIR as their $DOOMDIR, if they wanted.
 ;;   3. Cut down on unnecessary logic in Emacs' bootstrapper.
-;;   4. TODO Offer a more user-friendly error state/screen, especially for
+;;   4. TODO: Offer a more user-friendly error state/screen, especially for
 ;;      errors emitted from Doom's core or the user's config.
 (define-advice startup--load-user-init-file (:override (&rest _) init-doom 100)
   (let ((debug-on-error-from-init-file nil)

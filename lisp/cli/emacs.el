@@ -15,7 +15,7 @@
 ;;; Commands
 
 (defcli! emacs
-    (;; TODO Implement sandbox functionality post-3.0
+    (;; TODO: Implement sandbox functionality post-3.0
      ;; (daemon?     ("--daemon"))
      ;; (window-type ("--gui" "--tty"))
      ;; (version     ("--with-emacs" version))

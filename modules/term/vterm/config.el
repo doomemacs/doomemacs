@@ -5,10 +5,10 @@
   :commands vterm-mode
   :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
   :preface
-  ;; HACK Because vterm clusmily forces vterm-module.so's compilation on us when
-  ;;      the package is loaded, this is necessary to prevent it when
-  ;;      byte-compiling this file (`use-package' blocks eagerly loads packages
-  ;;      when compiled).
+  ;; HACK: Because vterm clusmily forces vterm-module.so's compilation on us
+  ;;   when the package is loaded, this is necessary to prevent it when
+  ;;   byte-compiling this file (`use-package' blocks eagerly loads packages
+  ;;   when compiled).
   (when noninteractive
     (advice-add #'vterm-module-compile :override #'ignore)
     (provide 'vterm-module))

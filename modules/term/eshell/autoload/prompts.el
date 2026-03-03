@@ -12,7 +12,7 @@
 
 
 (defun +eshell--current-git-branch ()
-  ;; TODO Refactor me
+  ;; REVIEW: Refactor me
   (cl-destructuring-bind (status . output)
       (doom-call-process "git" "symbolic-ref" "-q" "--short" "HEAD")
     (if (equal status 0)

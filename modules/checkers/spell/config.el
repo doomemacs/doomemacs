@@ -144,9 +144,9 @@
           (when-let (excluded (cdr (cl-find-if #'derived-mode-p +spell-excluded-faces-alist :key #'car)))
             (setq-local spell-fu-faces-exclude excluded))))
 
-      ;; TODO custom `spell-fu-check-range' function to reduce false positives
-      ;;      more intelligently, or modify `spell-fu-word-regexp' to include
-      ;;      non-latin charactersets.
+      ;; TODO: custom `spell-fu-check-range' function to reduce false positives
+      ;;   more intelligently, or modify `spell-fu-word-regexp' to include
+      ;;   non-latin charactersets.
       )
 
   (use-package! flyspell ; built-in

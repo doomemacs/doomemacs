@@ -100,7 +100,7 @@ default/fallback account."
 (defun +mu4e/compose ()
   "Compose a new email."
   (interactive)
-  ;; TODO Interactively select email account
+  ;; TODO: Interactively select email account
   (call-interactively #'mu4e-compose-new))
 
 (defun +mu4e--get-string-width (str)
@@ -279,7 +279,7 @@ attach a file, or select a folder to open dired in and select file attachments
 (using `dired-mu4e-attach-ctrl-c-ctrl-c').
 
 When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-ctrl-c'."
-  ;; TODO add ability to attach files (+dirs) as a single (named) archive
+  ;; TODO: add ability to attach files (+dirs) as a single (named) archive
   (interactive "p")
   (pcase major-mode
     ((or 'mu4e-compose-mode 'org-msg-edit-mode)

@@ -40,8 +40,8 @@
   (add-to-list 'load-path +snippets-dir)
   (require 'doom-snippets nil t)
 
-  ;; HACK In case `+snippets-dir' and `doom-snippets-dir' are the same, or
-  ;;      duplicates exist in `yas-snippet-dirs'.
+  ;; HACK: In case `+snippets-dir' and `doom-snippets-dir' are the same, or
+  ;;   duplicates exist in `yas-snippet-dirs'.
   (advice-add #'yas-snippet-dirs :filter-return #'delete-dups)
 
   ;; Remove GUI dropdown prompt (prefer ivy/helm)
@@ -85,14 +85,14 @@
         (:map snippet-mode-map
          "C-c C-k" #'+snippet--abort))
 
-  ;; REVIEW Fix #2639: For some reason `yas--all-templates' returns duplicates
-  ;;        of some templates. Until I figure out the real cause this fixes it.
+  ;; REVIEW: Fix #2639: For some reason `yas--all-templates' returns duplicates
+  ;;   of some templates. Until I figure out the real cause this fixes it.
   (defadvice! +snippets--remove-duplicates-a (templates)
     :filter-return #'yas--all-templates
     (cl-delete-duplicates templates :test #'equal))
 
-  ;; HACK Smartparens will interfere with snippets expanded by `hippie-expand`,
-  ;;      so temporarily disable smartparens during snippet expansion.
+  ;; HACK: Smartparens will interfere with snippets expanded by `hippie-expand`,
+  ;;   so temporarily disable smartparens during snippet expansion.
   (after! hippie-exp
     (defvar +snippets--smartparens-enabled-p t)
     (defvar +snippets--expanding-p nil)

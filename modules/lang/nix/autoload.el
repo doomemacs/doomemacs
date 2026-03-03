@@ -17,7 +17,7 @@
   "Look up documentation on a nix option."
   (interactive
    (list
-    ;; REVIEW Must be a better way to do this
+    ;; REVIEW: Must be a better way to do this
     (when (and (looking-at-p "[a-zA-Z0-9-_\\.]")
                (not (doom-point-in-string-or-comment-p)))
       (buffer-substring-no-properties
@@ -30,8 +30,8 @@
   (require 'nixos-options)
   (cond ((modulep! :completion helm)
          (require 'helm-nixos-options)
-         ;; REVIEW We reimplment `helm-nixos-options' so we can supply
-         ;; `initial-input'. Maybe use `helm-attrset' instead?
+         ;; REVIEW: We reimplment `helm-nixos-options' so we can supply
+         ;;   `initial-input'. Maybe use `helm-attrset' instead?
          (helm :sources `(,(helm-source-nixos-options-search))
                :buffer "*helm-nixos-options*"
                :input initial-input))
@@ -74,7 +74,7 @@
             (prog1 (set-auto-mode-0 mode)
               (when (eq major-mode 'sh-mode)
                 (sh-set-shell interp))
-              ;; HACK Without this, quickrun tries to evaluate code directly
-              ;;      with (cached)?nix-shell.
-              ;; TODO Use the nix-shell/cached-nix-shell-given interpreter
+              ;; HACK: Without this, quickrun tries to evaluate code directly
+              ;;   with (cached)?nix-shell.
+              ;; TODO: Use the nix-shell/cached-nix-shell-given interpreter
               (setq-local quickrun-option-shebang nil))))))))

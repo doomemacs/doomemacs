@@ -53,7 +53,7 @@
   (defvar evil-mc-key-map (make-sparse-keymap))
 
   :config
-  ;; HACK evil-mc's design is bizarre. Its variables and hooks are lazy loaded
+  ;; HACK: evil-mc's design is bizarre. Its variables and hooks are lazy loaded
   ;;   rather than declared at top-level, some hooks aren't defined or
   ;;   documented, it's a bit initializer-function drunk, and its minor modes
   ;;   are intended to be perpetually active -- even when no cursors are active
@@ -73,7 +73,7 @@
     (letf! ((#'evil-mc-initialize-vars #'ignore))
       (apply fn args)))
 
-  ;; REVIEW This is tremendously slow on macos and windows for some reason.
+  ;; REVIEW: This is tremendously slow on macos and windows for some reason.
   (setq evil-mc-enable-bar-cursor (featurep :system 'linux))
 
   (after! smartparens
@@ -112,8 +112,8 @@
                         (or (cdr fn)
                             #'evil-mc-execute-default-call-with-count))))))
 
-  ;; HACK Allow these commands to be repeated by prefixing them with a numerical
-  ;;      argument. See gabesoft/evil-mc#110
+  ;; HACK: Allow these commands to be repeated by prefixing them with a
+  ;;   numerical argument. See gabesoft/evil-mc#110
   (defadvice! +multiple-cursors--make-repeatable-a (fn)
     :around '(evil-mc-make-and-goto-first-cursor
               evil-mc-make-and-goto-last-cursor
@@ -165,7 +165,7 @@
   ;; Can't use `mc/cmds-to-run-once' because mc-lists.el overwrites it
   (add-to-list 'mc--default-cmds-to-run-once 'swiper-mc)
 
-  ;; TODO multiple-cursors config for Emacs users?
+  ;; TODO: multiple-cursors config for Emacs users?
 
   ;; mc doesn't play well with evil, this attempts to assuage some of its
   ;; problems so that any plugins that depend on multiple-cursors (which I have

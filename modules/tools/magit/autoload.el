@@ -1,9 +1,9 @@
 ;;; tools/magit/autoload.el -*- lexical-binding: t; -*-
 
-;; HACK Magit complains loudly (but harmlessly) when it can't determine its own
-;;      version in a sparse clone. Since I'd rather not compromise on shallow
-;;      clones, I've gimped `magit-version' so it doesn't complain (unless
-;;      called interactively).
+;; HACK: Magit complains loudly (but harmlessly) when it can't determine its own
+;;   version in a sparse clone. Since I'd rather not compromise on shallow
+;;   clones, I've gimped `magit-version' so it doesn't complain (unless called
+;;   interactively).
 ;;;###autoload
 (defadvice! +magit--ignore-version-a (fn &rest args)
   :around #'magit-version

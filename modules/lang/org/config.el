@@ -140,9 +140,12 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 
   (plist-put org-format-latex-options :scale 1.5) ; larger previews
 
-  ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
-  ;;      underlying faces like the `org-todo' face does, so we define our own
-  ;;      intermediary faces that extend from org-todo.
+  ;; HACK: Face specs fed directly to `org-todo-keyword-faces' don't respect
+  ;;   underlying faces like the `org-todo' face does, so we define our own
+  ;;   intermediary faces that extend from org-todo.
+  ;; REVIEW: On one hand, this config is too opinionated, on the other, these
+  ;;   are the most commonly reconfigured variables in Org so they don't step on
+  ;;   many toes. Consider either removing or simplifying this!
   (with-no-warnings
     (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
     (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
@@ -407,8 +410,8 @@ I like:
       (when (bound-and-true-p org-capture-is-refiling)
         (save-buffer))))
 
-  ;; HACK Doom doesn't support `customize'. Best not to advertise it as an
-  ;;      option in `org-capture's menu.
+  ;; HACK: Doom doesn't support `customize'. Best not to advertise it as an
+  ;;   option in `org-capture's menu.
   (defadvice! +org--remove-customize-option-a (fn table title &optional prompt specials)
     :around #'org-mks
     (funcall fn table title prompt
@@ -1066,9 +1069,9 @@ between the two."
                #'+org-link-doom--help-echo-from-textprop)
            (+org-link-doom--help-echo-from-textprop nil (current-buffer) (point)))))
 
-  ;; HACK Fix #2972: infinite recursion when eldoc kicks in 'org' or 'python'
+  ;; HACK: Fix #2972: infinite recursion when eldoc kicks in 'org' or 'python'
   ;;   src blocks.
-  ;; TODO Should be reported upstream!
+  ;; REVIEW: Should be reported upstream!
   (puthash "org" #'ignore org-eldoc-local-functions-cache)
   (puthash "plantuml" #'ignore org-eldoc-local-functions-cache)
   (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
@@ -1300,16 +1303,16 @@ between the two."
   ;; Other org properties are all-caps. Be consistent.
   (setq org-effort-property "EFFORT")
 
-  ;; HACK `org-id' doesn't check if `org-id-locations-file' exists or is
-  ;;      writeable before trying to read/write to it, potentially throwing a
-  ;;      file-error if it doesn't, which can leave Org in a broken state.
+  ;; HACK: `org-id' doesn't check if `org-id-locations-file' exists or is
+  ;;   writeable before trying to read/write to it, potentially throwing a
+  ;;   file-error if it doesn't, which can leave Org in a broken state.
   (defadvice! +org--fail-gracefully-a (fn &rest args)
     :around '(org-id-locations-save org-id-locations-load)
     (with-demoted-errors "org-id-locations: %s"
       (apply fn args)))
 
   (add-hook 'org-open-at-point-functions #'doom-set-jump-h)
-  ;; HACK For functions that dodge `org-open-at-point-functions', like
+  ;; HACK: For functions that dodge `org-open-at-point-functions', like
   ;;   `org-id-open', `org-goto', or roam: links.
   (advice-add #'org-mark-ring-push :around #'doom-set-jump-a)
 

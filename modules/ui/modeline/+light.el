@@ -361,9 +361,9 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 ;;; `+modeline-buffer-identification'
 (defvar-local +modeline--buffer-id-cache nil)
 
-;; REVIEW Generating the buffer's file name can be relatively expensive.
-;;        Compounded with how often the modeline updates this can add up, so
-;;        we cache it ahead of time.
+;; REVIEW: Generating the buffer's file name can be relatively expensive.
+;;   Compounded with how often the modeline updates this can add up, so we cache
+;;   it ahead of time.
 (add-hook! '(change-major-mode-after-body-hook
              ;; In case the user saves the file to a new location
              after-save-hook
@@ -562,7 +562,7 @@ lines are selected, or the NxM dimensions of a block selection.")
   `(""
     +modeline-modes
     "  "))
-;; TODO (def-modeline! helm ...)
+;; TODO: (def-modeline! helm ...)
 
 
 ;; Other modes

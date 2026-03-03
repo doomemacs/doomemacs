@@ -88,7 +88,7 @@
 ;; library being loaded only when is absolutely needed, which is too late for
 ;; reconfiguration in many cases.
 (use-package! cider-mode
-  ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
+  ;; NOTE: If `org-directory' doesn't exist, `cider-jack' in won't work
   :hook (clojure-mode-local-vars . cider-mode)
   :hook (clojurec-mode-local-vars . cider-mode)
   :hook (clojurescript-mode-local-vars . cider-mode)
@@ -105,7 +105,7 @@
                          clojurec-mode clojure-ts-clojurec-mode)
       #'cider-eval-region))
 
-  ;; HACK Fix radian-software/radian#446: CIDER tries to calculate the frame's
+  ;; HACK: Fix radian-software/radian#446: CIDER tries to calculate the frame's
   ;;   background too early; sometimes before the initial frame has been
   ;;   initialized, causing errors.
   (defvar cider-docview-code-background-color nil)

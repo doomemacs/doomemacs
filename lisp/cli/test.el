@@ -12,11 +12,11 @@
 ;;
 ;;; Variables
 
-;; TODO Implement me
+;; TODO: Implement me
 (defvar doom-test-backend 'ert
   "One of `ert' or `buttercup'.")
 
-;; TODO Implement me
+;; TODO: Implement me
 (defvar doom-test-isolation-level nil
   "Determines the testing strategy for tests.
 
@@ -31,7 +31,7 @@ Should be one of:
 ;;
 ;;; Commands
 
-;; FIXME Will be fixed in v3.1
+;; FIXME: Will be fixed in v3.1
 (defcli-stub! test
     ((backend ("--ert" "--buttercup"))
      (jobs    ("-j" "--jobs" int))

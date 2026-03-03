@@ -54,7 +54,7 @@
 (package! toc-org :pin "6d3ae0fc47ce79b1ea06cabe21a3c596395409cd")
 (package! org-cliplink :pin "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
 
-;; TODO Adjust when this is added to GNU ELPA
+;; TODO: Adjust when this is added to GNU ELPA
 (when (modulep! +contacts)
   (package! org-contacts
     :recipe (:host github :repo "doomelpa/org-contacts")

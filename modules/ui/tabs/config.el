@@ -39,5 +39,5 @@
       (when (centaur-tabs-mode-on-p)
         (centaur-tabs-local-mode)))))
 
-;; TODO tab-bar-mode (emacs 27)
-;; TODO tab-line-mode (emacs 27)
+;; TODO: tab-bar-mode (emacs 27)
+;; TODO: tab-line-mode (emacs 27)

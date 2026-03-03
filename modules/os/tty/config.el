@@ -3,7 +3,7 @@
 ;; Keep window title up-to-date. Should fail gracefully in non-xterm terminals.
 ;; Only works in Emacs 27+.
 (setq xterm-set-window-title t)
-;; DEPRECATED Not needed on Emacs 28+. Remove when dropping 27 support.
+;; DEPRECATED: Not needed on Emacs 28+. Remove when dropping 27 support.
 (defadvice! +tty--only-set-window-title-in-tty-a (&optional terminal)
   "`xterm-set-window-title' fails in GUI Emacs. Stop that. Get some help."
   :before-while #'xterm-set-window-title

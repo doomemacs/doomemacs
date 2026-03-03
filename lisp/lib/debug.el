@@ -372,7 +372,7 @@ FILL-COLUMN determines the column at which lines will be broken."
     (let ((doom-print-backend (unless nocolor doom-print-backend))
           (doom-print-indent 0))
       (dolist (spec (cl-remove-if-not #'cdr (doom-info)) (buffer-string))
-        ;; FIXME Refactor this horrible cludge, either here or in `format!'
+        ;; REVIEW: Refactor this horrible cludge, either here or in `format!'
         (insert! ((bold "%-10s ") (symbol-name (car spec)))
                  ("%s\n"
                   (string-trim-left
@@ -406,7 +406,7 @@ FILL-COLUMN determines the column at which lines will be broken."
                             "git" "-C" (expand-file-name doom-emacs-dir)
                             "log" "-1" "--format=%D %h %ci"))
                       "n/a"))
-          ;; NOTE This is a placeholder. Our modules will be moved to its own
+          ;; NOTE: This is a placeholder. Our modules will be moved to its own
           ;;   repo eventually, and Doom core will later be capable of managing
           ;;   them like package sources.
           (format "%-13s v%-15s %s"

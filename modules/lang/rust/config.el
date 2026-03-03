@@ -18,7 +18,7 @@
   :mode ("\\.rs\\'" . rustic-mode)
   :defer t
   :preface
-  ;; HACK `rustic' sets up some things too early. I'd rather disable it and let
+  ;; HACK: `rustic' sets up some things too early. I'd rather disable it and let
   ;;   our respective modules standardize how they're initialized.
   (setq rustic-lsp-client nil)
   (after! rustic-lsp
@@ -33,7 +33,7 @@
       `((rust :url "https://github.com/tree-sitter/tree-sitter-rust"
               :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.2" "v0.24.0")))))
 
-  ;; HACK Certainly, `rustic-babel' does this, but the package (and many other
+  ;; HACK: Certainly, `rustic-babel' does this, but the package (and many other
   ;;   rustic packages) must be loaded in order for them to take effect. To lazy
   ;;   load it all, it must be done earlier:
   (after! org-src
@@ -88,7 +88,7 @@
                            (s-join " "))))
             (lsp--render-element (concat "```rust\n" sig cmt "\n```")))))))
 
-  ;; HACK If lsp/eglot isn't available, it attempts to install lsp-mode via
+  ;; HACK: If lsp/eglot isn't available, it attempts to install lsp-mode via
   ;;   package.el. Doom manages its own dependencies through straight so disable
   ;;   this behavior to avoid package-not-initialized errors.
   (defadvice! +rust--dont-install-packages-a (&rest _)

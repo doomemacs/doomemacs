@@ -251,7 +251,7 @@
                         python-mode-map)
                     (kbd "DEL") nil))
       ;; Interferes with the def snippet in doom-snippets
-      ;; TODO Fix this upstream, in doom-snippets, instead
+      ;; TODO: Fix this upstream, in doom-snippets, instead
       (setq sp-python-insert-colon-in-function-definitions nil))))
 
 
@@ -273,16 +273,15 @@
 ;;  e) do none of this when inside a string
 (advice-add #'delete-backward-char :override #'+default--delete-backward-char-a)
 
-;; HACK Makes `newline-and-indent' continue comments (and more reliably).
-;;      Consults `doom-point-in-comment-p' to detect a commented region and uses
-;;      that mode's `comment-line-break-function' to continue comments.  If
-;;      neither exists, it will fall back to the normal behavior of
-;;      `newline-and-indent'.
+;; HACK: Makes `newline-and-indent' continue comments (and more reliably).
+;;   Consults `doom-point-in-comment-p' to detect a commented region and uses
+;;   that mode's `comment-line-break-function' to continue comments.  If neither
+;;   exists, it will fall back to the normal behavior of `newline-and-indent'.
 ;;
-;;      We use an advice here instead of a remapping because many modes define
-;;      and remap to their own newline-and-indent commands, and tackling all
-;;      those cases was judged to be more work than dealing with the edge cases
-;;      on a case by case basis.
+;;   We use an advice here instead of a remapping because many modes define and
+;;   remap to their own newline-and-indent commands, and tackling all those
+;;   cases was judged to be more work than dealing with the edge cases on a case
+;;   by case basis.
 (defadvice! +default--newline-indent-and-continue-comments-a (&rest _)
   "A replacement for `newline-and-indent'.
 Continues comments if executed from a commented line."

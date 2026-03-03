@@ -11,8 +11,8 @@ If 'strict, the module does a normal swap and 'c' bindings go to 'h', 'r' bindin
 In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation keys still feel vim-like.")
 
 ;; Highlight non breaking spaces as error in prog modes only
-;; REVIEW `nobreak-char-display' is defined in xdisp.c; will that work in non-X
-;;        builds? From early observations in sway+pgtk, it does not.
+;; REVIEW: `nobreak-char-display' is defined in xdisp.c; will that work in non-X
+;;   builds? From early observations in sway+pgtk, it does not.
 (setq nobreak-char-display t)
 (set-face-attribute 'nobreak-space nil :underline t)
 
@@ -20,8 +20,8 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
 ;;
 ;;; Initializers
 
-;; TODO Separate each package into their own hook, so users can
-;;      enable/disable/add their own per-package remappings.
+;; TODO: Separate each package into their own hook, so users can
+;;   enable/disable/add their own per-package remappings.
 
 (defun +layout-remap-keys-for-bepo-h ()
   (setq avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n)

@@ -21,10 +21,10 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   ;; will do it for you, after `+lsp-defer-shutdown' seconds.
   (setq lsp-keep-workspace-alive nil)
 
-  ;; NOTE I tweak LSP's defaults in order to make its more expensive or imposing
-  ;;      features opt-in. Some servers implement these poorly and, in most
-  ;;      cases, it's safer to rely on Emacs' native mechanisms (eldoc vs
-  ;;      lsp-ui-doc, open in popup vs sideline, etc).
+  ;; NOTE: I tweak LSP's defaults in order to make its more expensive or
+  ;;   imposing features opt-in. Some servers implement these poorly and, in
+  ;;   most cases, it's safer to rely on Emacs' native mechanisms (eldoc vs
+  ;;   lsp-ui-doc, open in popup vs sideline, etc).
 
   ;; Disable features that have great potential to be slow.
   (setq lsp-enable-folding nil

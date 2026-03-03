@@ -3,7 +3,7 @@
 ;;
 ;;; Custom commands
 ;; Editing
-(evil-ex-define-cmd "@"            #'+evil:macro-on-all-lines)   ; TODO Test me
+(evil-ex-define-cmd "@"            #'+evil:macro-on-all-lines)
 (evil-ex-define-cmd "R[ead]"       #'+evil:read)
 (evil-ex-define-cmd "al[ign]"      #'+evil:align)
 (evil-ex-define-cmd "ral[ign]"     #'+evil:align-right)
@@ -17,16 +17,16 @@
 (evil-ex-define-cmd "l[ine]diff"   #'evil-quick-diff)
 
 ;;; External resources
-;; TODO (evil-ex-define-cmd "db"          #'doom:db)
-;; TODO (evil-ex-define-cmd "dbu[se]"     #'doom:db-select)
-;; TODO (evil-ex-define-cmd "go[ogle]"    #'doom:google-search)
+;; TODO: (evil-ex-define-cmd "db"          #'doom:db)
+;; TODO: (evil-ex-define-cmd "dbu[se]"     #'doom:db-select)
+;; TODO: (evil-ex-define-cmd "go[ogle]"    #'doom:google-search)
 (evil-ex-define-cmd "lo[okup]"    #'+lookup:online)
 (evil-ex-define-cmd "dash"        #'+lookup:dash)
 (evil-ex-define-cmd "http"        #'httpd-start)            ; start http server
 (evil-ex-define-cmd "repl"        #'+eval:repl)             ; invoke or send to repl
 (evil-ex-define-cmd "h[elp]"      #'+evil:help)
 
-;; TODO (evil-ex-define-cmd "rx"          'doom:regex)             ; open re-builder
+;; TODO: (evil-ex-define-cmd "rx"          'doom:regex)             ; open re-builder
 (evil-ex-define-cmd "sh[ell]"     #'+eshell:run)
 (evil-ex-define-cmd "pad"         #'+evil:open-scratch-buffer)
 

@@ -1543,7 +1543,7 @@ in these blocks dictates their load order (unless given an explicit :depth)."
             modules)))
      t))
 
-;; DEPRECATED Remove in 3.0
+;; DEPRECATED: Remove in v3
 (define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
 
 (defmacro modulep! (group &optional module &rest flags)
@@ -1696,7 +1696,7 @@ elsewhere."
        (with-no-warnings
          (cons name plist)))))
 
-;; DEPRECATED: Will be replaced with new `packages!' macro in v3.0
+;; DEPRECATED: Will be replaced in v3
 (defmacro disable-packages! (&rest packages)
   "A convenience macro for disabling packages in bulk.
 Only use this macro in a module's (or your private) packages.el file."
@@ -1704,7 +1704,7 @@ Only use this macro in a module's (or your private) packages.el file."
    (mapcar (lambda (p) `(package! ,p :disable t))
            packages)))
 
-;; DEPRECATED: Will be replaced with new `packages!' macro in v3.0
+;; DEPRECATED: Will be replaced in v3
 (defmacro unpin! (&rest targets)
   "Unpin packages in TARGETS.
 

@@ -4,11 +4,11 @@
 (use-package! org-journal
   :defer t
   :init
-  ;; HACK `org-journal' adds a `magic-mode-alist' entry for detecting journal
-  ;;      files, but this causes us lazy loaders a big problem: an unacceptable
-  ;;      delay on the first file the user opens, because calling the autoloaded
-  ;;      `org-journal-is-journal' pulls all of `org' with it. So, we replace it
-  ;;      with our own, extra layer of heuristics.
+  ;; HACK: `org-journal' adds a `magic-mode-alist' entry for detecting journal
+  ;;   files, but this causes us lazy loaders a big problem: an unacceptable
+  ;;   delay on the first file the user opens, because calling the autoloaded
+  ;;   `org-journal-is-journal' pulls all of `org' with it. So, we replace it
+  ;;   with our own, extra layer of heuristics.
   (add-to-list 'magic-mode-alist '(+org-journal-p . org-journal-mode))
 
   (defun +org-journal-p ()
@@ -27,8 +27,9 @@
         org-journal-cache-file (file-name-concat doom-profile-cache-dir "org-journal"))
 
   :config
-  ;; Remove the orginal journal file detector and rely on `+org-journal-p'
-  ;; instead, to avoid loading org-journal until the last possible moment.
+  ;; HACK: Remove the original journal file detector and rely on
+  ;;   `+org-journal-p' instead, to avoid loading org-journal until the last
+  ;;   possible moment.
   (setq magic-mode-alist (assq-delete-all 'org-journal-is-journal magic-mode-alist))
 
   ;; `org-journal' can't deal with symlinks, so resolve them here.

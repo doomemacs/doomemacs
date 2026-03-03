@@ -9,7 +9,7 @@
   org-download-clipboard
   org-download-dnd-base64
   :init
-  ;; HACK We add these manually so that org-download is truly lazy-loaded
+  ;; HACK: We add these manually so that org-download is truly lazy-loaded
   (add-to-list 'dnd-protocol-alist '("^data:" . org-download-dnd-base64))
   (add-to-list 'dnd-protocol-alist '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . org-download-dnd))
   (advice-add #'org-download-enable :override #'ignore)

@@ -22,4 +22,4 @@
     (unless (zerop (car (apply #'doom-call-process args)))
       (warn! "Couldn't find LanguageServer.jl and/or SymbolServer.jl"))))
 
-;; TODO Check for snail
+;; TODO: Check for snail

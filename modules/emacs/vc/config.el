@@ -88,7 +88,7 @@
   ;; `header-line-format', which has better visibility.
   (setq git-timemachine-show-minibuffer-details t)
 
-  ;; TODO PR this to `git-timemachine'
+  ;; REVIEW: PR this to `git-timemachine'
   (defadvice! +vc-support-git-timemachine-a (fn)
     "Allow `browse-at-remote' commands in git-timemachine buffers to open that
 file in your browser at the visited revision."
@@ -159,17 +159,15 @@ info in the `header-line-format' is a more visible indicator."
   ;; using commit hashes rather than branch names.
   (setq browse-at-remote-prefer-symbolic nil)
 
-  ;; Add codeberg.org support
-  ;; TODO: PR this upstream?
+  ;; Expand recognition for more forges (like self-hosted gitlab.* subdomains
+  ;; and codeberg).
+  ;; REVIEW: PR these upstream?
   (add-to-list 'browse-at-remote-remote-type-regexps '(:host "^codeberg\\.org$" :type "codeberg"))
-  ;; Expand recognition for gitlab hosts besides gitlab.org or gitlab.gnome.org
-  ;; which are presumably hosted in a gitlab.* subdomain.
-  ;; TODO: PR this upstream?
   (add-to-list 'browse-at-remote-remote-type-regexps '(:host "^gitlab\\." :type "gitlab") 'append)
 
-  ;; HACK `browse-at-remote' produces urls with `nil' in them, when the repo is
-  ;;      detached. This creates broken links. I think it is more sensible to
-  ;;      fall back to master in those cases.
+  ;; HACK: `browse-at-remote' produces urls with `nil' in them, when the repo is
+  ;;   detached. This creates broken links. I think it is more sensible to fall
+  ;;   back to master in those cases.
   (defadvice! +vc--fallback-to-master-branch-a ()
     "Return 'master' in detached state."
     :after-until #'browse-at-remote--get-local-branch

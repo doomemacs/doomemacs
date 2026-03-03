@@ -91,8 +91,8 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("\\.class\\.php$" :trigger "__.class.php" :mode php-mode)
     (php-mode)
     ;; Python
-    ;; TODO ("tests?/test_.+\\.py$" :trigger "__" :mode nose-mode)
-    ;; TODO ("/setup\\.py$" :trigger "__setup.py" :mode python-mode)
+    ;; TODO: ("tests?/test_.+\\.py$" :trigger "__" :mode nose-mode)
+    ;; TODO: ("/setup\\.py$" :trigger "__setup.py" :mode python-mode)
     (python-mode)
     ;; Ruby
     ("/lib/.+\\.rb$"      :trigger "__module"   :mode ruby-mode :project t)

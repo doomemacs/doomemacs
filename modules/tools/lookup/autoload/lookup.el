@@ -446,7 +446,7 @@ Otherwise, falls back on `find-file-at-point'."
 (defun +lookup/synonyms (identifier &optional _arg)
   "Look up and insert a synonym for the word at point (or selection)."
   (interactive
-   (list (doom-thing-at-point-or-region 'word) ; TODO actually use this
+   (list (doom-thing-at-point-or-region 'word) ; TODO: actually use this
          current-prefix-arg))
   (message "Looking up synonyms for %S" identifier)
   (cond ((and +lookup-dictionary-prefer-offline

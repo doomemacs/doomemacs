@@ -82,5 +82,5 @@ or session. Otherwise, the addition is permanent."
   (call-interactively
    (if (featurep 'evil)
        #'evil-prev-flyspell-error
-     ;; TODO Implement this
+     ;; TODO: Implement this
      (user-error "Not supported"))))
