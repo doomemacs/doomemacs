@@ -125,7 +125,15 @@
   :when (modulep! +flymake)
   :hook ((prog-mode text-mode) . flymake-mode)
   :config
-  (setq flymake-fringe-indicator-position 'right-fringe)
+  (setq flymake-fringe-indicator-position 'right-fringe
+        flymake-wrap-around nil)
+
+  ;; Consult the current buffer first, when searching for the next error (rather
+  ;; than looking at other buffers first).
+  (setq-default next-error-find-buffer-function #'next-error-buffer-unnavigated-current)
+
+  ;; Fix `next-error' and `previous-error' in buffers where flymake is active.
+  (setq-hook! 'flymake-mode-hook next-error-function #'flymake-goto-next-error)
 
   ;; HACK: Disable the emacs-lisp checker in non-project (likely untrusted)
   ;;   buffers to mitigate potential code execution vulnerability during macro
