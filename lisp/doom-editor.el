@@ -320,7 +320,10 @@ tell you about it. Very annoying. This prevents that."
   ;; The most sensible time to clean up your recent files list is when you quit
   ;; Emacs (unless this is a long-running daemon session).
   (setq recentf-auto-cleanup (if (daemonp) 300))
-  (add-hook 'kill-emacs-hook #'recentf-cleanup)
+  ;; Use a negative depth value because we need `recentf-cleanup' to run before
+  ;; `recentf-save-list' to be effective, which `recentf-mode' will only add to
+  ;; `kill-emacs-hook' once it is enabled.
+  (add-hook 'kill-emacs-hook #'recentf-cleanup -50)
 
   ;; Otherwise `load-file' calls in `recentf-load-list' pollute *Messages*
   (advice-add #'recentf-load-list :around #'doom-shut-up-a))
