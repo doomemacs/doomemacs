@@ -784,7 +784,7 @@ between the two."
 
   (map! :map org-mode-map
         "C-c C-S-l"  #'+org/remove-link
-        "C-c C-i"    #'org-toggle-inline-images
+        "C-c <C-i>"  #'org-toggle-inline-images
         ;; textmate-esque newline insertion
         "S-RET"      #'+org/shift-return
         "C-RET"      #'+org/insert-item-below
