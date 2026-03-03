@@ -122,8 +122,12 @@
 ;;; Flymake
 
 (use-package! flymake
-  :when (modulep! +flymake)
-  :hook ((prog-mode text-mode) . flymake-mode)
+  :defer t
+  :init
+  (when (modulep! +flymake)
+    (add-hook 'prog-mode-hook #'flymake-mode)
+    (add-hook 'text-mode-hook #'flymake-mode))
+
   :config
   (setq flymake-fringe-indicator-position 'right-fringe
         flymake-wrap-around nil)
