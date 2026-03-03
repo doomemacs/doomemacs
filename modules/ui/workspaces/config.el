@@ -243,8 +243,7 @@ stored in `persp-save-dir'.")
    :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
    :save-vars '(default-directory)
    :load-function (lambda (savelist &rest _)
-                    (cl-destructuring-bind (buffer-name vars &rest _rest) (cdr savelist)
-                      (magit-status (alist-get 'default-directory vars)))))
+                    (magit-status (alist-get 'default-directory (caddr savelist)))))
 
   ;; `tab-bar'
   (add-hook! 'tab-bar-mode-hook
