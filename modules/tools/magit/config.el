@@ -71,7 +71,14 @@ FUNCTION
         ;;   enough that a non-absolute path can notably slow it down,
         ;;   especially on MacOS and Windows, so I resolve it once, the first
         ;;   time it's needed.
-        magit-git-executable (or (executable-find magit-git-executable) "git"))
+        magit-git-executable (or
+                              ;; PERF: Inexplicably, the built-in git on MacOS
+                              ;;   is much faster than the one provided by
+                              ;;   homebrew, so use that instead there.
+                              (and (featurep :system 'macos)
+                                   (file-exists-p! "/usr/bin/git"))
+                              (executable-find magit-git-executable)
+                              "git"))
 
   ;; Turn ref links into clickable buttons.
   (add-hook 'magit-process-mode-hook #'goto-address-mode)
