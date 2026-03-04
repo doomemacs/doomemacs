@@ -27,7 +27,7 @@
 (defun +use-package--ignore-ensure-maybe-fn (name &rest args)
   ;; ...On the other hand, if the user has loaded `package', then we should
   ;; assume they know what they're doing and restore the old behavior:
-  (if (bound-and-true-p package--initialized)
+  (if (bound-and-true-p package--activated)
       (apply #'use-package-ensure-elpa name args)
     (doom-log "Ignoring ':ensure t' in '%s' config" name)
     (not (memq name doom-disabled-packages))))
