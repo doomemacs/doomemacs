@@ -186,7 +186,7 @@ processed."
   (when (or force-p (not (bound-and-true-p package--initialized)))
     (doom-log "Initializing package.el")
     (require 'package)
-    (package-initialize)
+    (package-initialize t)
     (unless package--initialized
       (error "Failed to initialize package.el")))
   (when (or force-p (null doom-packages))
