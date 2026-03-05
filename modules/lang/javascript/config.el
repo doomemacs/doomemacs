@@ -11,7 +11,9 @@
 
 (defun +javascript-common-config (mode)
   (unless (eq mode 'nodejs-repl-mode)
-    (set-repl-handler! mode #'+javascript/open-repl)
+    (set-repl-handler! mode #'+javascript/open-repl
+      :send-region #'nodejs-repl-send-region
+      :send-buffer #'nodejs-repl-send-buffer)
     (set-electric! mode :chars '(?\} ?\) ?. ?:))
     (set-ligatures! mode
       ;; Functional
