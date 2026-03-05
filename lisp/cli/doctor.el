@@ -86,10 +86,7 @@ in."
               (when (version< version "2.23")
                 (error! "Git %s detected! Doom requires git 2.23 or newer!"
                         version))
-            (warn! "Cannot determine Git version. Doom requires git 2.23 or newer!")))))
-
-    (unless (executable-find "rg")
-      (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all")))
+            (warn! "Cannot determine Git version. Doom requires git 2.23 or newer!"))))))
 
   (print! (start "Checking for Emacs config conflicts..."))
   (print-group!
@@ -244,6 +241,9 @@ in."
                 (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
                        file (/ size 1024 1024.0))
                 (explain! "Consider deleting it from your system (manually)"))))
+
+          (unless (ignore-errors (executable-find doom-ripgrep-executable))
+            (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work"))
 
           (unless (ignore-errors (executable-find doom-fd-executable))
             (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
