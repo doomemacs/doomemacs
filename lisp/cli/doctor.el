@@ -184,19 +184,6 @@ in."
                 "CLI commands and various Emacs components will unpredictably throw file "
                 "permissions errors at unpredictable times."))
 
-    (unless (string-match-p "/\\(ba\\|z\\|m?k\\|d?a\\)?sh$" shell-file-name)
-      (print! (warn "Detected a non-POSIX compliant shell (%s)" shell-file-name))
-      (explain! "Non-POSIX compliant shells (particularly Fish and Nushell) can cause "
-                "unpredictable issues with any Emacs utilities that spawn child processes "
-                "from shell commands (like diff-hl TRAMP, and terminal emulators). To get "
-                "around this, configure Emacs to use a POSIX shell internally, e.g.\n\n"
-                "  ;;; add to $DOOMDIR/config.el\n"
-                "  (setq shell-file-name (executable-find \"bash\"))\n\n"
-                "Emacs' terminal emulators can be safely configured to use your original $SHELL:\n\n"
-                "  ;;; add to $DOOMDIR/config.el\n"
-                (format "  (setq-default vterm-shell \"%s\")\n" shell-file-name)
-                (format "  (setq-default explicit-shell-file-name \"%s\")\n" shell-file-name)))
-
     (unless (doom-system-supports-symlinks-p)
       (print! (warn "Symlinks are not enabled on this operating system"))
       (explain! "In the near future, Doom will make extensive use of symlinks to save space "
@@ -294,6 +281,19 @@ in."
                     (path doom-user-dir))
             (explain! "Doom will only load one of these (~/.config/doom takes precedence). Possessing\n"
                       "both is rarely intentional; you should one or the other."))
+
+          (unless (string-match-p "/\\(ba\\|z\\|m?k\\|d?a\\)?sh$" shell-file-name)
+            (print! (warn "Detected a non-POSIX compliant shell (%s)" shell-file-name))
+            (explain! "Non-POSIX compliant shells (particularly Fish and Nushell) can cause "
+                      "unpredictable issues with any Emacs utilities that spawn child processes "
+                      "from shell commands (like diff-hl TRAMP, and terminal emulators). To get "
+                      "around this, configure Emacs to use a POSIX shell internally, e.g.\n\n"
+                      "  ;;; add to $DOOMDIR/config.el\n"
+                      "  (setq shell-file-name (executable-find \"bash\"))\n\n"
+                      "Emacs' terminal emulators can be safely configured to use your original $SHELL:\n\n"
+                      "  ;;; add to $DOOMDIR/config.el\n"
+                      (format "  (setq-default vterm-shell \"%s\")\n" shell-file-name)
+                      (format "  (setq-default explicit-shell-file-name \"%s\")\n" shell-file-name)))
 
           ;; Check for fonts
           (if (not (executable-find "fc-list"))
