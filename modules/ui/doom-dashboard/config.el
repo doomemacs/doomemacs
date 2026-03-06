@@ -513,7 +513,7 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
     (with-temp-buffer
       (insert-text-button (or (nerd-icons-codicon "nf-cod-octoface" :face 'doom-dashboard-footer-icon :height 1.3 :v-adjust -0.15)
                               (propertize "github" 'face 'doom-dashboard-footer))
-                          'action (lambda (_) (browse-url "https://github.com/hlissner/doom-emacs"))
+                          'action (lambda (_) (browse-url "https://github.com/doomemacs/doomemacs"))
                           'follow-link t
                           'help-echo "Open Doom Emacs github page")
       (buffer-string)))

@@ -92,7 +92,7 @@ them like below:
 * Troubleshooting
 [[doom-report:][Report an issue?]]
 
-** Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs ([[https://github.com/hlissner/doom-emacs/issues/2573][#2573]])
+** Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs ([[https://github.com/doomemacs/doomemacs/issues/2573][#2573]])
 lispyville binds [[kbd:][M-[]] to ~lispyville-wrap-brackets~ when the =wrap= or
 =additional-wrap= key themes are enabled. In terminal Emacs, this is the key
 Emacs receives when you scroll with your mouse wheel.

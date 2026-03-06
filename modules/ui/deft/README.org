@@ -64,7 +64,7 @@ https://github.com/jrblevin/deft#other-customizations
 * Troubleshooting
 [[doom-report:][Report an issue?]]
 
-- It is [[https://github.com/hlissner/doom-emacs/pull/2845/commits/dce80a3c8032f5390f4e763e18a108d5f3f08772][not recommended]] to re-enable deft's buffer auto-save.
+- It is [[https://github.com/doomemacs/doomemacs/pull/2845/commits/dce80a3c8032f5390f4e763e18a108d5f3f08772][not recommended]] to re-enable deft's buffer auto-save.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

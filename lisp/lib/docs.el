@@ -159,7 +159,7 @@
 
 ;; DEPRECATED: Will be renamed once docs "framework" is generalized
 (defvar doom-docs-link-alist
-  '(("doom-tag"                . "https://github.com/hlissner/doom-emacs/releases/tag/%s")
+  '(("doom-tag"                . "https://github.com/doomemacs/doomemacs/releases/tag/%s")
     ("doom-contrib-core"       . "id:9ac0c15c-29e7-43f8-8926-5f0edb1098f0")
     ("doom-contrib-docs"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
     ("doom-contrib-maintainer" . "id:e71e9595-a297-4c49-bd11-f238329372db")

@@ -223,7 +223,7 @@ kind!
 [discuss]: https://doomemacs.org/discuss
 [community-faq]: https://github.com/doomemacs/community?tab=readme-ov-file#frequently-asked-questions
 [documentation]: docs/index.org
-[faq]: https://github.com/hlissner/doom-emacs/blob/master/docs/faq.org
+[faq]: https://github.com/doomemacs/doomemacs/blob/master/docs/faq.org
 [getting-started]: docs/getting_started.org
 [install]: docs/getting_started.org#install
 [backtrace]: docs/getting_started.org#how-to-extract-a-backtrace-from-an-error

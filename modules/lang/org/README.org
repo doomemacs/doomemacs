@@ -247,11 +247,11 @@ They are (with examples):
 
 - ~doom-docs:index.org~ -> =~/.emacs.d/docs/%s=
 - ~doom-modules:editor/evil/README.org~ -> =~/.emacs.d/modules/%s=
-- ~doom-repo:issues~ -> =https://github.com/hlissner/doom-emacs/%s=
+- ~doom-repo:issues~ -> =https://github.com/doomemacs/doomemacs/%s=
 - ~doom:core/core.el~ -> =~/.emacs.d/%s=
 - ~duckduckgo:search terms~
 - ~gimages:search terms~ (Google Images)
-- ~github:hlissner/doom-emacs~
+- ~github:doomemacs/doomemacs~
 - ~gmap:Toronto, Ontario~ (Google Maps)
 - ~google:search terms~
 - ~kagi:search terms~

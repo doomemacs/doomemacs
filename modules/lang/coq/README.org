@@ -41,7 +41,7 @@ This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://pro
 This module provides no additional configuration over that of the [[Packages]] it loads
 
 * Troubleshooting
-See [[https://github.com/hlissner/doom-emacs/issues?q=is%3Aissue+is%3Aopen+label%3A%22%3Alang+coq"][related github issues]]
+See [[https://github.com/doomemacs/doomemacs/issues?q=is%3Aissue+is%3Aopen+label%3A%22%3Alang+coq"][related github issues]]
 /There are no known problems with this module./ [[doom-report:][Report one?]]
 
 * Frequently asked questions
