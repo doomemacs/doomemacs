@@ -144,23 +144,21 @@ If ARG (universal argument), prompt for a specific REPL to open."
 Opens a REPL if one isn't already open. If AUTO-EXECUTE-P, then execute it
 immediately after."
   (interactive "rP")
-  (let ((selection (buffer-substring-no-properties beg end))
-        (buffer (+eval--ensure-in-repl-buffer)))
+  (let ((buffer (+eval--ensure-in-repl-buffer)))
     (unless buffer
       (error "No REPL open"))
-    (let ((origin-window (selected-window))
-          (selection
-           (with-temp-buffer
-             (insert selection)
-             (goto-char (point-min))
-             (when (> (skip-chars-forward "\n") 0)
-               (delete-region (point-min) (point)))
-             (indent-rigidly (point) (point-max)
-                             (- (skip-chars-forward " \t")))
-             (string-trim-right (buffer-string)))))
+    (let* ((region (buffer-substring-no-properties beg end))
+           (region
+            (with-temp-buffer
+              (save-excursion (insert region))
+              (when (> (skip-chars-forward "\n") 0)
+                (delete-region (point-min) (point)))
+              (indent-rigidly (point-min) (point-max) (- (current-indentation)))
+              (buffer-string))))
       (with-selected-window (get-buffer-window buffer)
         (with-current-buffer buffer
-          (dolist (line (split-string selection "\n"))
+          (goto-char (point-max))
+          (dolist (line (split-string region "\n"))
             (insert line)
             (if inhibit-auto-execute-p
                 (insert "\n")
@@ -168,14 +166,9 @@ immediately after."
               ;; current REPL uses comint. Even if it did, no telling if they
               ;; have their own `comint-send-input' wrapper, so to be safe, I
               ;; simply emulate the keypress.
-              (call-interactively
-               (if (bound-and-true-p evil-local-mode)
-                   (evil-save-state
-                     (evil-insert-state)
-                     (doom-lookup-key (kbd "RET")))
-                 (doom-lookup-key (kbd "RET")))))
-            (sit-for 0.001)
-            (redisplay 'force)))
-        (when (and (eq origin-window (selected-window))
-                   (bound-and-true-p evil-local-mode))
-          (call-interactively #'evil-append-line))))))
+              (if (bound-and-true-p evil-local-mode)
+                  (let (evil-move-cursor-back)
+                    (evil-save-state
+                      (evil-append-line 1)
+                      (call-interactively (doom-lookup-key (kbd "RET")))))
+                (call-interactively (doom-lookup-key (kbd "RET")))))))))))
