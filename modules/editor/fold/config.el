@@ -107,6 +107,5 @@
 
 ;; Will be autoloaded by fold commands
 (use-package! treesit-fold
-  :when (modulep! :tools tree-sitter -compat)
   :defer t
   :config (global-treesit-fold-mode +1))
