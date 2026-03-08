@@ -44,7 +44,7 @@ possible."
                               #'string-match-p))))
        (setq-local doom-large-file-p size)))
 
-(add-hook! 'find-file-hook
+(add-hook! 'find-file-hook :depth -90
   (defun doom-optimize-for-large-files-h ()
     "Trigger `so-long-minor-mode' if the file is large."
     (when (and doom-large-file-p buffer-file-name)
