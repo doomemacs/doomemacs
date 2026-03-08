@@ -55,11 +55,12 @@
   :init
   (add-hook! 'find-file-hook
     (defun +vc-init-smerge-mode-h ()
-      (unless (bound-and-true-p smerge-mode)
-        (save-excursion
-          (goto-char (point-min))
-          (when (re-search-forward "^<<<<<<< " nil t)
-            (smerge-mode 1))))))
+      (or doom-large-file-p
+          (bound-and-true-p smerge-mode)
+          (save-excursion
+            (goto-char (point-min))
+            (when (re-search-forward "^<<<<<<< " nil t)
+              (smerge-mode 1))))))
   :config
   (map! :map smerge-mode-map
         :localleader
