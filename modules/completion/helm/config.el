@@ -181,7 +181,8 @@ Can be negative.")
         swiper-helm-display-function
         (lambda (buf &optional _resume) (pop-to-buffer buf)))
   (global-set-key [remap swiper] #'swiper-helm)
-  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq))
+  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq) ; DEPRECATED
+  (add-to-list 'swiper-font-lock-exclude #'+dashboard-mode nil #'eq))
 
 
 (use-package! helm-descbinds

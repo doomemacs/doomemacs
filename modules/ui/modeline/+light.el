@@ -567,7 +567,8 @@ lines are selected, or the NxM dimensions of a block selection.")
 
 ;; Other modes
 (set-modeline! :main 'default)
-(set-modeline-hook! '+doom-dashboard-mode-hook 'project)
+(set-modeline-hook! '+doom-dashboard-mode-hook 'project) ; DEPRECATED
+(set-modeline-hook! '+dashboard-mode-hook 'project)
 (set-modeline-hook! 'pdf-tools-enabled-hook 'pdf)
 (set-modeline-hook! '(special-mode-hook
                       image-mode-hook

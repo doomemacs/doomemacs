@@ -1,13 +1,7 @@
-#+title:    :ui doom-dashboard
-#+subtitle: Welcome to your doom
+#+title:    :ui dashboard
+#+subtitle: A pretty face for your doom
 #+created:  February 20, 2017
 #+since:    2.0.0
-
-#+begin_quote
-  *This module is deprecated* in favor of the [[doom-module::ui dashboard]] module,
-    which is a rewrite of this module. This module will be in maintenance mode
-    until it is eventually removed.
-#+end_quote
 
 * Description :unfold:
 This module adds a minimalistic, Atom-inspired dashboard to Emacs.
@@ -55,7 +49,7 @@ nerd-icons-install-fonts~ to install them.
 Once this module is enabled, the dashboard will present itself after opening a
 fresh instance of Emacs, or after killing all real buffers.
 
-You can forcibly open the dashboard with ~M-x +doom-dashboard/open~.
+You can forcibly open the dashboard with ~M-x +dashboard/open~.
 
 * TODO Configuration
 #+begin_quote
@@ -70,13 +64,13 @@ To use a custom image as your banner, change ~fancy-splash-image~:
 
 #+begin_quote
  󰐃 Doom will fall back to its ASCII banner in Terminal Emacs. To replace the
-    ASCII banner, replace the ~doom-dashboard-widget-banner~ function in
-    ~+doom-dashboard-functions~ with a function that inserts your new banner
+    ASCII banner, replace the ~+dashboard-widget-banner~ function in
+    ~+dashboard-functions~ with a function that inserts your new banner
     into the current file.
 #+end_quote
 
 ** Adding text to the dashboard
-Doom's dashboard iterates over ~+doom-dashboard-functions~ when it is told to
+Doom's dashboard iterates over ~+dashboard-functions~ when it is told to
 redraw. Add your own functions to operate on the buffer and potentially add
 whatever you like to Doom's splash screen.
 
@@ -92,23 +86,23 @@ color from the theme) you can make use of ~custom-set-faces!~ or
 ~custom-theme-set-faces!~:
 #+begin_src emacs-lisp
 (custom-set-faces!
-  '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
-  '(doom-dashboard-footer :inherit font-lock-constant-face)
-  '(doom-dashboard-footer-icon :inherit nerd-icons-red)
-  '(doom-dashboard-loaded :inherit font-lock-warning-face)
-  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
-  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+  '(+dashboard-banner :foreground "red" :background "#000000" :weight bold)
+  '(+dashboard-footer :inherit font-lock-constant-face)
+  '(+dashboard-footer-icon :inherit nerd-icons-red)
+  '(+dashboard-loaded :inherit font-lock-warning-face)
+  '(+dashboard-menu-desc :inherit font-lock-string-face)
+  '(+dashboard-menu-title :inherit font-lock-function-name-face))
 #+end_src
 
 or for a per-theme setting
 #+begin_src emacs-lisp
 (custom-theme-set-faces! 'doom-tomorrow-night
-  '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
-  '(doom-dashboard-footer :inherit font-lock-constant-face)
-  '(doom-dashboard-footer-icon :inherit nerd-icons-red)
-  '(doom-dashboard-loaded :inherit font-lock-warning-face)
-  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
-  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+  '(+dashboard-banner :foreground "red" :background "#000000" :weight bold)
+  '(+dashboard-footer :inherit font-lock-constant-face)
+  '(+dashboard-footer-icon :inherit nerd-icons-red)
+  '(+dashboard-loaded :inherit font-lock-warning-face)
+  '(+dashboard-menu-desc :inherit font-lock-string-face)
+  '(+dashboard-menu-title :inherit font-lock-function-name-face))
 #+end_src
 
 * Troubleshooting

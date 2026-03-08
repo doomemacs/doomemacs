@@ -34,7 +34,8 @@
   (add-hook 'after-setting-font-hook #'+modeline-resize-for-font-h)
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
 
-  (add-to-list 'doom-modeline-mode-alist '(+doom-dashboard-mode . dashboard))
+  (add-to-list 'doom-modeline-mode-alist '(+doom-dashboard-mode . dashboard)) ; DEPRECATED
+  (add-to-list 'doom-modeline-mode-alist '(+dashboard-mode . dashboard))
   (add-hook! 'magit-mode-hook
     (defun +modeline-hide-in-non-status-buffer-h ()
       "Show minimal modeline in magit-status buffer, no modeline elsewhere."

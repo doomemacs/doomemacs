@@ -245,7 +245,8 @@ workable results ripgrep produces, despite the error."
 
   ;; `swiper'
   ;; Don't mess with font-locking on the dashboard; it causes breakages
-  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode)
+  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode) ; DEPRECATED
+  (add-to-list 'swiper-font-lock-exclude #'+dashboard-mode)
 
   ;; `counsel-find-file'
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
