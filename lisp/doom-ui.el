@@ -448,7 +448,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   :config
   (if (boundp 'global-hl-line-buffers)
       (setq global-hl-line-buffers
-            `(not (or (lambda (b)
+            `(not (or (lambda (b) (buffer-local-value 'hl-line-mode b))
+                      (lambda (b)
                         (when global-hl-line-modes
                           (let ((mode (buffer-local-value 'major-mode b)))
                             (if (eq (car global-hl-line-modes) 'not)
