@@ -190,7 +190,12 @@ FUNCTION
       (if (derived-mode-p 'org-mode)
           (org-reveal '(4))
         (require 'reveal)
-        (reveal-post-command)))))
+        (reveal-post-command))))
+
+  ;; HACK: See magit/magit#5320: large/long status buffers can change the
+  ;;   behavior of motions and TAB in obscure ways.
+  ;; REVIEW: REmove when magit/magit#5320 is addressed.
+  (setq-hook! 'magit-status-mode-hook long-line-threshold nil))
 
 
 (use-package! forge
