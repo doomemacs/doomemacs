@@ -136,17 +136,28 @@ Uses `evil-visual-end' if available."
       (region-end)))
 
 ;;;###autoload
-(defun doom-region (&optional as-list)
-  "Return the bounds of the current seelction.
+(defun doom-region-bounds (&optional as-list)
+  "Return the bounds of the active selection.
 
-If AS-LIST is non-nil, returns (BEG END). Otherwise returns a cons cell (BEG .
-END)."
+If AS-LIST is non-nil, returns (BEG END) instead of (BEG . END). If nothing is
+selected, returns (nil . nil)."
   (let* ((active (doom-region-active-p))
          (beg (if active (doom-region-beginning)))
          (end (if active (doom-region-end))))
     (if as-list
         (list beg end)
       (cons beg end))))
+
+;;;###autoload
+(defun doom-region (&optional preserve-properties?)
+  "Return the contents of the active selection.
+
+Return nil if nothing is selected."
+  (when (doom-region-active-p)
+    (let* ((bounds (doom-region-bounds)))
+      (if preserve-properties?
+          (buffer-substring-no-properties (car bounds) (cdr bounds))
+        (buffer-substring (car bounds) (cdr bounds))))))
 
 ;;;###autoload
 (defun doom-thing-at-point-or-region (&optional thing prompt)
