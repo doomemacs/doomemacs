@@ -39,7 +39,7 @@
           (with-file-contents! "/etc/os-release"
             (when (re-search-forward "^PRETTY_NAME=\"?\\([^\"\n]+\\)\"?" nil t)
               (match-string 1)))))
-       ((when-let (files (doom-glob "/etc/*-release"))
+       ((when-let* ((files (doom-glob "/etc/*-release")))
           (truncate-string-to-width
            (replace-regexp-in-string
             "\n" " " (doom-file-read (car files) :end 73) nil t)

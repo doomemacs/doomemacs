@@ -198,7 +198,7 @@ Each element of this list can be one of:
                        (string-match-p " " value))
                   (fail! "Found %S, but only one value allowed per trailer"
                          (truncate-string-to-width (concat key ": " value) 20 nil nil "…"))
-                (when-let (allowed-types (cdr (assoc key doom-ci-commit-trailer-keys)))
+                (when-let* ((allowed-types (cdr (assoc key doom-ci-commit-trailer-keys))))
                   (or (cl-loop for type in allowed-types
                                if (cdr (assq type doom-ci-commit-trailer-types))
                                if (string-match-p it value)

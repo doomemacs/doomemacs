@@ -91,7 +91,7 @@ Return non-nil if successful in doing so."
         (let ((beg (progn (outline-back-to-heading) (point)))
               (end (progn (outline-end-of-subtree) (point))))
           (list (cons beg end)))))
-    (when-let ((start (+fold--hideshow-fold-p)))
+    (when-let* ((start (+fold--hideshow-fold-p)))
       ;; `start' could be start of the block, or 't' if that wasn't found.
       ;; In either case, we know the fold is on the same line.
       (let* ((start (or (and (numberp start) start)

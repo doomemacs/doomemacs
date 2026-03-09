@@ -22,7 +22,7 @@ lua-language-server.")
         (doom-path +lua-lsp-dir "main.lua")))
 
 (defun +lua-love-build-command ()
-  (when-let (root (+lua-love-project-root))
+  (when-let* ((root (+lua-love-project-root)))
     (format "%s %s"
             (if (executable-find "love")
                 "love"
@@ -35,7 +35,7 @@ lua-language-server.")
 
 Returns nil if 'love' executable can't be found."
   (when (executable-find "love")
-    (when-let ((dir (or dir (doom-project-root))))
+    (when-let* ((dir (or dir (doom-project-root))))
       (if (doom-project-p dir)
           (file-name-directory
            (or (file-exists-p! (or "main.lua" "src/main.lua") dir)
@@ -46,11 +46,11 @@ Returns nil if 'love' executable can't be found."
         ;; well-formed project as far as projecitle is concerned, so we search for
         ;; main.lua/main.moon up the file tree as a backup.
         (or (projectile-locate-dominating-file dir "main.lua")
-            (when-let (root (projectile-locate-dominating-file dir "src/main.lua"))
+            (when-let* ((root (projectile-locate-dominating-file dir "src/main.lua")))
               (expand-file-name "src" root))
             (and (modulep! +moonscript)
                  (or (projectile-locate-dominating-file dir "main.moon")
-                     (when-let (root (projectile-locate-dominating-file dir "src/main.moon"))
+                     (when-let* ((root (projectile-locate-dominating-file dir "src/main.moon")))
                        (expand-file-name "src" root)))))))))
 
 

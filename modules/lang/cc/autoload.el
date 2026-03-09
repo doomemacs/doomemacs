@@ -130,7 +130,7 @@ the children of class at point."
   (condition-case _
       (progn
         (save-window-excursion (cmake-help))
-        (when-let (buf (get-buffer "*CMake Help*"))
+        (when-let* ((buf (get-buffer "*CMake Help*")))
           (pop-to-buffer buf)
           t))
     (error nil)))

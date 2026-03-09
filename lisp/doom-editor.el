@@ -396,7 +396,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   :after-call doom-first-input-hook doom-first-file-hook focus-out-hook
   :defer 1
   :config
-  (when-let (name (getenv "EMACS_SERVER_NAME"))
+  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
     (setq server-name name))
   (unless (server-running-p)
     (server-start)))

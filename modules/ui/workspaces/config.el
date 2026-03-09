@@ -77,7 +77,7 @@ stored in `persp-save-dir'.")
             (persp-add-new +workspaces-main))
           ;; HACK: Fix #319: the warnings buffer gets swallowed when creating
           ;;   `+workspaces-main', so display it ourselves, if it exists.
-          (when-let (warnings (get-buffer "*Warnings*"))
+          (when-let* ((warnings (get-buffer "*Warnings*")))
             (unless (get-buffer-window warnings)
               (save-excursion
                 (display-buffer-in-side-window

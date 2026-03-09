@@ -55,7 +55,7 @@ more information on modifiers."
                                    (file-relative-name parent)))))
                             ("s"
                              (if (featurep 'evil)
-                                 (when-let (args (evil-delimited-arguments (substring modifier 1) 2))
+                                 (when-let* ((args (evil-delimited-arguments (substring modifier 1) 2)))
                                    (let ((pattern (evil-transform-vim-style-regexp (car args)))
                                          (replace (cadr args)))
                                      (replace-regexp-in-string

@@ -66,7 +66,7 @@ Docsets must be installed with one of the following commands:
 
 Docsets can be searched directly via `+lookup/in-docsets'."
   (when (require 'dash-docs nil t)
-    (when-let (docsets (cl-remove-if-not #'dash-docs-docset-path (dash-docs-buffer-local-docsets)))
+    (when-let* ((docsets (cl-remove-if-not #'dash-docs-docset-path (dash-docs-buffer-local-docsets))))
       (+lookup/in-docsets nil identifier docsets)
       'deferred)))
 

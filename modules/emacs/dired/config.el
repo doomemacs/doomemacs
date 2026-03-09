@@ -114,7 +114,7 @@ Fixes #3939: unsortable dired entries on Windows."
   (when (modulep! :ui modeline)
     (add-hook! 'dired-mode-hook
       (defun +dired-update-mode-line-height-h ()
-        (when-let (height (bound-and-true-p doom-modeline-height))
+        (when-let* ((height (bound-and-true-p doom-modeline-height)))
           (setq dirvish-mode-line-height height
                 dirvish-header-line-height height)))))
 
@@ -181,10 +181,10 @@ Fixes #3939: unsortable dired entries on Windows."
                persp-before-switch-functions
                projectile-before-switch-project-hook)
     (defun +dired--cleanup-dirvish-h (&rest _)
-      (when-let ((dv (cl-loop for w in (window-list)
-                              if (window-dedicated-p w)
-                              if (with-current-buffer (window-buffer w) (dirvish-curr))
-                              return it)))
+      (when-let* ((dv (cl-loop for w in (window-list)
+                               if (window-dedicated-p w)
+                               if (with-current-buffer (window-buffer w) (dirvish-curr))
+                               return it)))
         (let (dirvish-reuse-session)
           (with-selected-window (dv-root-window dv)
             (dirvish-quit)))))))
@@ -212,9 +212,9 @@ Fixes #3939: unsortable dired entries on Windows."
   ;; deleted directory. Of course I do!
   (setq dired-clean-confirm-killing-deleted-buffers nil)
   ;; Let OS decide how to open certain files
-  (when-let (cmd (cond ((featurep :system 'macos) "open")
-                       ((featurep :system 'linux) "xdg-open")
-                       ((featurep :system 'windows) "start")))
+  (when-let* ((cmd (cond ((featurep :system 'macos) "open")
+                         ((featurep :system 'linux) "xdg-open")
+                         ((featurep :system 'windows) "start"))))
     (setq dired-guess-shell-alist-user
           `(("\\.\\(?:docx\\|pdf\\|djvu\\|eps\\)\\'" ,cmd)
             ("\\.\\(?:jpe?g\\|png\\|gif\\|xpm\\)\\'" ,cmd)

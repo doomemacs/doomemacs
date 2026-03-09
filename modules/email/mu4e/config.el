@@ -44,7 +44,7 @@
                (concat "mbsync --all"
                        ;; XDG support was added to isync 1.5, but this lets
                        ;; users on older benefit from it sooner.
-                       (when-let (file (file-exists-p! "isyncrc" (or (getenv "XDG_CONFIG_HOME") "~/.config")))
+                       (when-let* ((file (file-exists-p! "isyncrc" (or (getenv "XDG_CONFIG_HOME") "~/.config"))))
                          (format " --config %S" file)))
                mu4e-change-filenames-when-moving t))
         ((or (modulep! +offlineimap)

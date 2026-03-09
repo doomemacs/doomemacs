@@ -109,7 +109,7 @@ selection of all minor-modes, active or not."
    (list (if current-prefix-arg
              (save-window-excursion
                (message "Click what to describe...")
-               (or (when-let ((evt (read--potential-mouse-event)))
+               (or (when-let* ((evt (read--potential-mouse-event)))
                      ;; Discard mouse release event
                      (read--potential-mouse-event)
                      (cadr evt))
@@ -383,10 +383,10 @@ without needing to check if they are available."
                (when (memq (car-safe sexp) '(featurep! modulep! require!))
                  (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
         ((when buffer-file-name
-           (when-let (mod (doom-module-from-path buffer-file-name))
+           (when-let* ((mod (doom-module-from-path buffer-file-name)))
              (unless (memq (car mod) '(:doom :user))
                (format "%s %s" (car mod) (cdr mod))))))
-        ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
+        ((when-let* ((mod (cdr (assq major-mode doom--help-major-mode-module-alist))))
            (format "%s %s"
                    (symbol-name (car mod))
                    (symbol-name (cadr mod)))))))

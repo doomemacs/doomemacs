@@ -457,7 +457,7 @@ All emphasis markers need to be preceded by a backslash."
               (let ((end (point))
                     (iend (1- (point))))
                 (let ((text (buffer-substring ibeg iend)))
-                  (when-let (style (cdr (assq (string-to-char fence) styles)))
+                  (when-let* ((style (cdr (assq (string-to-char fence) styles))))
                     (goto-char beg)
                     (delete-region beg end)
                     (insert (doom-print--style style "%s" text)))))

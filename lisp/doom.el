@@ -93,8 +93,8 @@
           (concat "Alternatively, either update your $PATH environment variable to include the\n"
                   "path of the desired Emacs executable OR alter the $EMACS environment variable\n"
                   "to specify the exact path or command needed to invoke Emacs."
-                  (when-let ((script (cadr (member "--load" command-line-args)))
-                             (command (file-name-nondirectory script)))
+                  (when-let* ((script (cadr (member "--load" command-line-args)))
+                              (command (file-name-nondirectory script)))
                     (concat " For example:\n\n"
                             "  $ EMACS=/path/to/valid/emacs " command " ...\n"
                             "  $ EMACS=\"/Applications/Emacs.app/Contents/MacOS/Emacs\" " command " ...\n"

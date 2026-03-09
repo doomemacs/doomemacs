@@ -47,7 +47,7 @@ root)."
         ((and (not (eq major-mode 'java-mode))
               (not (eq major-mode 'java-ts-mode))
               (user-error "Not in java-mode or java-ts-mode")))
-        ((when-let (project-root (doom-project-root))
+        ((when-let* ((project-root (doom-project-root)))
            (let* ((project-root (file-truename project-root))
                   (file-path
                    (file-name-sans-extension

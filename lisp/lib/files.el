@@ -398,11 +398,11 @@ some optimizations for `binary' IO."
     (dolist (file files)
       (when (featurep 'vc)
         (vc-file-clearprops file)
-        (when-let (buffer (get-file-buffer file))
+        (when-let* ((buffer (get-file-buffer file)))
           (with-current-buffer buffer
             (vc-refresh-state))))
       (when (featurep 'magit)
-        (when-let (default-directory (magit-toplevel (file-name-directory file)))
+        (when-let* ((default-directory (magit-toplevel (file-name-directory file))))
           (cl-pushnew default-directory toplevels)))
       (unless (file-readable-p file)
         (when (bound-and-true-p recentf-mode)

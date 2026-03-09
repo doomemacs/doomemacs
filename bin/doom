@@ -297,7 +297,7 @@ SEE ALSO:
     (defcli-group! "Module commands"
       (with-doom-context 'module
         (dolist (key (doom-module-list))
-          (when-let (path (doom-module-locate-path key cli-file))
+          (when-let* ((path (doom-module-locate-path key cli-file)))
             (defcli-group! :prefix (if (cdr key) (format "+%s" (cdr key)))
               (doom-load (file-name-sans-extension path))))))))
 

@@ -224,7 +224,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
     (call-interactively
      (cond ((or (file-equal-p default-directory "~")
                 (file-equal-p default-directory "/")
-                (when-let (proot (doom-project-root))
+                (when-let* ((proot (doom-project-root)))
                   (file-equal-p proot "~")))
             #'counsel-find-file)
 

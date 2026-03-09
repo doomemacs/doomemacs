@@ -122,7 +122,7 @@ This is controlled by `+format-on-save-disabled-modes'."
                                                 ".prettierrc.toml")
                                            if (locate-dominating-file default-directory file)
                                            return t)
-                                  (when-let ((pkg (locate-dominating-file default-directory "package.json")))
+                                  (when-let* ((pkg (locate-dominating-file default-directory "package.json")))
                                     (require 'json)
                                     (let ((json-key-type 'alist))
                                       (assq 'prettier

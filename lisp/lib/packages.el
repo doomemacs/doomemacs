@@ -148,9 +148,9 @@ package's name as a symbol, and whose CDR is the plist supplied to its
   (dolist (package packages)
     (let* ((name (car package))
            (repo (symbol-name name)))
-      (when-let (recipe (plist-get (cdr package) :recipe))
+      (when-let* ((recipe (plist-get (cdr package) :recipe)))
         (straight-override-recipe (cons name recipe))
-        (when-let (local-repo (plist-get recipe :local-repo))
+        (when-let* ((local-repo (plist-get recipe :local-repo)))
           (setq repo local-repo)))
       (print-group!
         ;; Only clone the package, don't build them. Straight hasn't been fully
@@ -313,7 +313,7 @@ non-nil."
 ;;;###autoload
 (defun doom-package-in-module-p (package category &optional module)
   "Return non-nil if PACKAGE was installed by the user's private config."
-  (when-let (modules (doom-package-get package :modules))
+  (when-let* ((modules (doom-package-get package :modules)))
     (or (and (not module) (assq :user modules))
         (member (cons category module) modules))))
 
@@ -379,8 +379,8 @@ also be a list of module keys."
         doom-packages)
     (letf! (defun read-packages (key)
              (with-doom-module key
-               (when-let (file (doom-module-locate-path
-                                key doom-module-packages-file))
+               (when-let* ((file (doom-module-locate-path
+                                  key doom-module-packages-file)))
                  (doom-packages--read file nil 'noerror))))
       (with-doom-context 'package
         (let ((user? (assq :user module-list)))
@@ -430,7 +430,7 @@ also be a list of module keys."
   (doom-initialize-packages)
   (or (get package 'homepage)
       (put package 'homepage
-           (cond ((when-let (location (locate-library (symbol-name package)))
+           (cond ((when-let* ((location (locate-library (symbol-name package))))
                     (with-temp-buffer
                       (if (string-match-p "\\.gz$" location)
                           (jka-compr-insert-file-contents location)
@@ -439,7 +439,7 @@ also be a list of module keys."
                       (let ((case-fold-search t))
                         (when (re-search-forward " \\(?:url\\|homepage\\|website\\): \\(http[^\n]+\\)\n" nil t)
                           (match-string-no-properties 1))))))
-                 ((when-let ((recipe (straight-recipes-retrieve package)))
+                 ((when-let* ((recipe (straight-recipes-retrieve package)))
                     (straight--with-plist (straight--convert-recipe recipe)
                         (host repo)
                       (pcase host
@@ -528,7 +528,7 @@ also be a list of module keys."
   (interactive)
   (cl-destructuring-bind (&key package plist beg end)
       (doom--package-at-point)
-    (when-let (str (doom--package-to-bump-string package plist))
+    (when-let* ((str (doom--package-to-bump-string package plist)))
       (goto-char beg)
       (delete-region beg end)
       (insert str))))
@@ -693,11 +693,11 @@ Must be run from a magit diff buffer."
                         :test #'equal)))
         (save-excursion
           (while (re-search-forward "^-" nil t)
-            (when-let (pkg (read-package))
+            (when-let* ((pkg (read-package)))
               (cl-pushnew pkg before :test #'equal))))
         (save-excursion
           (while (re-search-forward "^+" nil t)
-            (when-let (pkg (read-package))
+            (when-let* ((pkg (read-package)))
               (cl-pushnew pkg after :test #'equal))))
         (unless (= (length before) (length after))
           (user-error "Uneven number of packages being bumped"))

@@ -18,7 +18,7 @@
 ;;;###autoload
 (defun +python-pyenv-read-version-from-file ()
   "Read pyenv version from .python-version file."
-  (when-let (root-path (projectile-locate-dominating-file default-directory ".python-version"))
+  (when-let* ((root-path (projectile-locate-dominating-file default-directory ".python-version")))
     (let* ((file-path (expand-file-name ".python-version" root-path))
            (version
             (with-temp-buffer

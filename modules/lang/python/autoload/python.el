@@ -16,7 +16,7 @@ falling back on searching your PATH."
                (let ((bin (expand-file-name (concat conda-env-current-name "/" exe-root)
                                             (conda-env-default-location))))
                  (if (file-executable-p bin) bin))))
-            ((when-let (bin (projectile-locate-dominating-file default-directory exe-root))
+            ((when-let* ((bin (projectile-locate-dominating-file default-directory exe-root)))
                (setq-local doom-modeline-python-executable (expand-file-name exe-root bin))))
             ((executable-find exe))))))
 

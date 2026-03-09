@@ -270,7 +270,7 @@ whose dimensions may not be fully initialized by the time this is run."
   (let (buffer-list-update-hook
         window-configuration-change-hook
         window-size-change-functions)
-    (when-let (windows (get-buffer-window-list (doom-fallback-buffer) nil t))
+    (when-let* ((windows (get-buffer-window-list (doom-fallback-buffer) nil t)))
       (dolist (win windows)
         (set-window-start win 0)
         (set-window-fringes win 0 0)
@@ -297,7 +297,7 @@ This and `+doom-dashboard--persp-record-project-h' provides `persp-mode'
 integration with the Doom dashboard. It ensures that the dashboard is always in
 the correct project (which may be different across perspective)."
   (when (bound-and-true-p persp-mode)
-    (when-let (pwd (persp-parameter 'last-project-root))
+    (when-let* ((pwd (persp-parameter 'last-project-root)))
       (+doom-dashboard-update-pwd-h pwd))))
 
 (defun +doom-dashboard--persp-record-project-h (&optional persp &rest _)

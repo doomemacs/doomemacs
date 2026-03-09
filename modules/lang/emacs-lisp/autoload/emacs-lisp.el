@@ -119,7 +119,7 @@ Intended to replace `lisp-outline-level'."
 (defun +emacs-lisp-lookup-documentation (thing)
   "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
 if it's callable, `apropos' otherwise."
-  (cond ((when-let (module (+emacs-lisp--module-at-point))
+  (cond ((when-let* ((module (+emacs-lisp--module-at-point)))
            (doom/help-modules (car module) (cadr module))
            (when (eq major-mode 'org-mode)
              (goto-char (point-min))
@@ -400,10 +400,10 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
                (derived-mode-p 'emacs-lisp-mode)
                (not (+emacs-lisp--in-package-buffer-p)))
     (setq +emacs-lisp-non-package-mode nil))
-  (when-let ((modesym (cond ((modulep! :checkers syntax +flymake)
-                             #'+emacs-lisp--flymake-non-package-mode)
-                            ((modulep! :checkers syntax)
-                             #'+emacs-lisp--flycheck-non-package-mode))))
+  (when-let* ((modesym (cond ((modulep! :checkers syntax +flymake)
+                              #'+emacs-lisp--flymake-non-package-mode)
+                             ((modulep! :checkers syntax)
+                              #'+emacs-lisp--flycheck-non-package-mode))))
     (if (not +emacs-lisp-non-package-mode)
         (when (symbol-value modesym)
           (funcall modesym -1))
@@ -528,8 +528,8 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
                        ;; Align keywords in plists if each newline begins with
                        ;; a keyword. This is useful for "unquoted plist
                        ;; function" macros, like `map!' and `defhydra'.
-                       (when-let ((first (elt state 1))
-                                  (char (char-after (1+ first))))
+                       (when-let* ((first (elt state 1))
+                                   (char (char-after (1+ first))))
                          (and (eq char ?:)
                               (ignore-errors
                                 (or (save-excursion
@@ -554,14 +554,14 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
                              (quotep 0))
                          (while positions
                            (let ((point (pop positions)))
-                             (or (when-let (char (char-before point))
+                             (or (when-let* ((char (char-before point)))
                                    (cond
                                     ((eq char ?\())
                                     ((memq char '(?\' ?\`))
                                      (or (save-excursion
                                            (goto-char (1+ point))
                                            (skip-chars-forward "( ")
-                                           (when-let (fn (ignore-errors (read (current-buffer))))
+                                           (when-let* ((fn (ignore-errors (read (current-buffer)))))
                                              (if (and (symbolp fn)
                                                       (fboundp fn)
                                                       ;; Only special forms and

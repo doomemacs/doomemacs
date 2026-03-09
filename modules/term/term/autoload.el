@@ -34,9 +34,9 @@ If prefix ARG, recreate the term buffer."
           (doom-mark-buffer-as-real-h)
           (multi-term-internal))
         (unless (window-live-p window)
-          (when-let (window
-                     (display-buffer-in-side-window
-                      buffer `((window-height . ,multi-term-dedicated-window-height))))
+          (when-let* ((window
+                       (display-buffer-in-side-window
+                        buffer `((window-height . ,multi-term-dedicated-window-height)))))
             (select-window window)))))))
 
 ;;;###autoload

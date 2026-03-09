@@ -20,7 +20,7 @@ the buffer is visible, then set another timer and try again later."
              (with-current-buffer buffer
                (let ((kill-buffer-hook (remq '+popup-kill-buffer-hook-h kill-buffer-hook))
                      confirm-kill-processes)
-                 (when-let (process (get-buffer-process buffer))
+                 (when-let* ((process (get-buffer-process buffer)))
                    (when (eq (process-type process) 'real)
                      (kill-process process)))
                  (let (kill-buffer-query-functions)
@@ -83,7 +83,7 @@ the buffer is visible, then set another timer and try again later."
 
 (defun +popup--delete-other-windows (window)
   "Fixes `delete-other-windows' when used from a popup window."
-  (when-let (window (ignore-errors (+popup/raise window)))
+  (when-let* ((window (ignore-errors (+popup/raise window))))
     (let ((ignore-window-parameters t))
       (delete-other-windows window)))
   nil)
@@ -203,9 +203,9 @@ and enables `+popup-buffer-mode'."
           (when window
             (+popup--maybe-select-window window origin)
             window))
-        (when-let (popup (cl-loop for func in actions
-                                  if (funcall func buffer alist)
-                                  return it))
+        (when-let* ((popup (cl-loop for func in actions
+                                    if (funcall func buffer alist)
+                                    return it)))
           (with-current-buffer buffer
             (+popup--init popup alist))
           (+popup--maybe-select-window popup origin)
@@ -325,7 +325,7 @@ Any non-nil value besides the above will be used as the raw value for
 ;;;###autoload
 (defun +popup-kill-buffer-hook-h ()
   "TODO"
-  (when-let (window (get-buffer-window))
+  (when-let* ((window (get-buffer-window)))
     (when (+popup-window-p window)
       (let ((+popup--inhibit-transient t))
         (+popup--delete-window window)))))
@@ -499,10 +499,10 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 (defun +popup-display-buffer-fullframe-fn (buffer alist)
   "Displays the buffer fullscreen."
   (let ((wconf (current-window-configuration)))
-    (when-let (window (or (display-buffer-reuse-window buffer alist)
-                          (display-buffer-same-window buffer alist)
-                          (display-buffer-pop-up-window buffer alist)
-                          (display-buffer-use-some-window buffer alist)))
+    (when-let* ((window (or (display-buffer-reuse-window buffer alist)
+                            (display-buffer-same-window buffer alist)
+                            (display-buffer-pop-up-window buffer alist)
+                            (display-buffer-use-some-window buffer alist))))
       (set-window-parameter window 'saved-wconf wconf)
       (add-to-list 'window-persistent-parameters '(saved-wconf . t))
       (delete-other-windows window)
@@ -578,7 +578,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
             ((not windows)
              (cl-letf (((symbol-function 'window--make-major-side-window-next-to)
                         (lambda (_side) (frame-root-window (selected-frame)))))
-               (when-let (window (window--make-major-side-window buffer side slot alist))
+               (when-let* ((window (window--make-major-side-window buffer side slot alist)))
                  (set-window-parameter window 'window-vslot vslot)
                  (add-to-list 'window-persistent-parameters '(window-vslot . writable))
                  window)))

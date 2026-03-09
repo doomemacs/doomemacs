@@ -168,5 +168,5 @@ Uses ivy, helm, vertico, or ido, if available."
          (call-interactively #'helm-company))
         ((not company-candidates)
          (user-error "No company candidates available"))
-        ((when-let (cand (completing-read "Candidate: " company-candidates))
+        ((when-let* ((cand (completing-read "Candidate: " company-candidates)))
            (company-finish cand)))))

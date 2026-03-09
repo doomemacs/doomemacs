@@ -79,7 +79,7 @@ If popup is focused, kill it."
           (cd dir)
           (run-mode-hooks 'shell-mode-hook)))
       (pop-to-buffer buffer))
-    (when-let (process (get-buffer-process buffer))
+    (when-let* ((process (get-buffer-process buffer)))
       (set-process-sentinel process #'+shell--sentinel)
       (+shell--send-input buffer command))))
 

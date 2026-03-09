@@ -87,7 +87,7 @@ libraries. It is the equivalent of the following shell commands:
                  "Couldn't detect what branch you're on. Is Doom detached?")))
 
       ;; We assume that a dirty .emacs.d is intentional and abort
-      (when-let (dirty (doom-upgrade--working-tree-dirty-p default-directory))
+      (when-let* ((dirty (doom-upgrade--working-tree-dirty-p default-directory)))
         (if (not force-p)
             (user-error "%s\n\n%s\n\n %s"
                         (format "Refusing to upgrade because %S has been modified."

@@ -63,7 +63,7 @@ and Emacs states, and for non-evil users.")
                    ([C-m] [?\C-m] return kp-return)))
     (define-key
      input-decode-map fallback
-     (cmd! (if (when-let ((keys (this-single-command-raw-keys)))
+     (cmd! (if (when-let* ((keys (this-single-command-raw-keys)))
                  (and (display-graphic-p)
                       (not (cl-loop for event in events
                                     if (cl-position event keys)
@@ -159,7 +159,7 @@ all hooks after it are ignored.")
               (push `(define-key doom-leader-map (general--kbd ,key)
                        ,bdef)
                     forms))
-            (when-let (desc (cadr (memq :which-key udef)))
+            (when-let* ((desc (cadr (memq :which-key udef))))
               (cl-callf2 append
                   `((which-key-add-key-based-replacements
                       (general--concat t doom-leader-alt-key ,key)

@@ -227,7 +227,7 @@ unreadable. Returns the names of envvars that were changed."
         (signal 'file-error (list "No envvar file exists" file)))
     (with-temp-buffer
       (insert-file-contents file)
-      (when-let (env (read (current-buffer)))
+      (when-let* ((env (read (current-buffer))))
         (let ((tz (getenv-internal "TZ")))
           (setq-default
            process-environment
@@ -238,7 +238,7 @@ unreadable. Returns the names of envvars that were changed."
            shell-file-name
            (or (getenv "SHELL")
                (default-value 'shell-file-name)))
-          (when-let (newtz (getenv-internal "TZ"))
+          (when-let* ((newtz (getenv-internal "TZ")))
             (unless (equal tz newtz)
               (set-time-zone-rule newtz))))
         env))))
@@ -313,7 +313,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   "Queue FNS to be byte/natively-compiled after a brief delay."
   (with-memoization (get 'doom-compile-function 'timer)
     (run-with-idle-timer
-     1.5 t (fn! (when-let (fn (pop fns))
+     1.5 t (fn! (when-let* ((fn (pop fns)))
                   (doom-log 3 "compile-functions: %s" fn)
                   (or (if (featurep 'native-compile)
                           (or (subr-native-elisp-p (indirect-function fn))
@@ -345,7 +345,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (if (stringp val)
       (if deep? val (purecopy val))
     (if deep?
-        (when-let ((newval (mapcar (doom-rpartial #'doom-copy t) val)))
+        (when-let* ((newval (mapcar (doom-rpartial #'doom-copy t) val)))
           (if (vectorp val)
               (apply #'vector newval)
             newval))
@@ -424,7 +424,7 @@ The def* forms accepted are:
               (`defadvice
                (if (keywordp (cadr rest))
                    (cl-destructuring-bind (target where fn) rest
-                     `(when-let (fn ,fn)
+                     `(when-let* ((fn ,fn))
                         (advice-add ,target ,where fn)
                         (unwind-protect ,body (advice-remove ,target fn))))
                  (let* ((fn (pop rest))
@@ -1318,7 +1318,7 @@ cell."
 
 Return its PROPERTY, if specified."
   (declare (side-effect-free t))
-  (when-let ((context (get group name)))
+  (when-let* ((context (get group name)))
     (if property
         (aref
          context
@@ -1371,9 +1371,9 @@ duplicates."
     (while flags
       (let* ((flag (car flags))
              (flagstr (symbol-name flag)))
-        (when-let ((sym (intern-soft
-                         (concat (if (eq ?- (aref flagstr 0)) "+" "-")
-                                 (substring flagstr 1)))))
+        (when-let* ((sym (intern-soft
+                          (concat (if (eq ?- (aref flagstr 0)) "+" "-")
+                                  (substring flagstr 1)))))
           (setq newflags (delq sym newflags)))
         (cl-pushnew flag newflags :test 'eq))
       (setq flags (cdr flags)))
@@ -1382,7 +1382,7 @@ duplicates."
 (defun doom-module-get (key &optional property)
   "Returns the plist for GROUP MODULE. Gets PROPERTY, specifically, if set."
   (declare (side-effect-free t))
-  (when-let ((m (gethash key doom-modules)))
+  (when-let* ((m (gethash key doom-modules)))
     (if property
         (aref
          m (or (plist-get
@@ -1398,7 +1398,7 @@ duplicates."
 (defun doom-module-active-p (group module &optional flags)
   "Return t if GROUP MODULE is active, and with FLAGS (if given)."
   (declare (side-effect-free t))
-  (when-let ((val (doom-module-get (cons group module) (if flags :flags))))
+  (when-let* ((val (doom-module-get (cons group module) (if flags :flags))))
     (or (null flags)
         (doom-module--has-flag-p flags val))))
 
@@ -1453,7 +1453,7 @@ If INITORDER? is non-nil, sort modules by the CAR of that module's :depth."
 GROUP is a keyword. MODULE is a symbol. FILE is an optional string path.
 If the group isn't enabled this returns nil. For finding disabled modules use
 `doom-module-locate-path' instead."
-  (when-let ((path (doom-module-get key :path)))
+  (when-let* ((path (doom-module-get key :path)))
     (if file
         (file-name-concat path file)
       path)))
@@ -1671,7 +1671,7 @@ elsewhere."
               do (cl-callf plist-put plist key value))
      ;; Some basic key validation; throws an error on invalid properties
      (condition-case e
-         (when-let (recipe (plist-get plist :recipe))
+         (when-let* ((recipe (plist-get plist :recipe)))
            (cl-destructuring-bind
                (&key local-repo _files _flavor _build _pre-build _post-build
                      _includes _type _repo _host _branch _protocol _remote

@@ -13,7 +13,7 @@
 
   (defun +org-journal-p ()
     "Wrapper around `org-journal-is-journal' to lazy load `org-journal'."
-    (when-let (buffer-file-name (buffer-file-name (buffer-base-buffer)))
+    (when-let* ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
       (if (or (featurep 'org-journal)
               (and (file-in-directory-p
                     buffer-file-name (expand-file-name org-journal-dir org-directory))

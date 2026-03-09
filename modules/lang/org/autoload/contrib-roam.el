@@ -55,11 +55,11 @@ If there's none, return an empty string."
 ;;;###autoload (autoload 'org-roam-node-doom-type "lang/org/autoload/contrib-roam" nil t)
 (cl-defmethod org-roam-node-doom-type ((node org-roam-node))
   "Return the directory relative to `org-roam-directory' as a note's \"type\"."
-  (when-let (dir (thread-first
-                   node
-                   (org-roam-node-file)
-                   (file-relative-name org-roam-directory)
-                   (file-name-directory)))
+  (when-let* ((dir (thread-first
+                     node
+                     (org-roam-node-file)
+                     (file-relative-name org-roam-directory)
+                     (file-name-directory))))
     (directory-file-name dir)))
 
 

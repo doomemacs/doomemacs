@@ -297,7 +297,7 @@ FUNCTION
 
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
-      (when-let (desc (assoc (car key) evil-collection-magit-rebase-commands-w-descriptions))
+      (when-let* ((desc (assoc (car key) evil-collection-magit-rebase-commands-w-descriptions)))
         (setcar desc (cdr key))))
     (evil-define-key* evil-collection-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down

@@ -74,7 +74,7 @@ PT defaults to the current position."
               ;; starters and enders, because `syntax-ppss' does not yet know if
               ;; we are inside a comment or not (e.g. / can be a division or
               ;; comment starter...).
-              (when-let ((s (car (syntax-after pt))))
+              (when-let* ((s (car (syntax-after pt))))
                 (or (and (/= 0 (logand (ash 1 16) s))
                          (nth 4 (syntax-ppss (+ pt 2))))
                     (and (/= 0 (logand (ash 1 17) s))
@@ -392,7 +392,7 @@ editorconfig installed."
          (let (editorconfig-lisp-use-default-indent)
            (editorconfig-set-indentation nil width)))
         ((require 'dtrt-indent nil t)
-         (when-let (vars (nth 2 (assq major-mode dtrt-indent-hook-mapping-list)))
+         (when-let* ((vars (nth 2 (assq major-mode dtrt-indent-hook-mapping-list))))
            (dolist (var (ensure-list vars))
              (doom-log "Updated %s = %d" var width)
              (set var width)))))

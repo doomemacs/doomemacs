@@ -53,7 +53,7 @@
   "Return a workspace named NAME. Unless NOERROR is non-nil, this throws an
 error if NAME doesn't exist."
   (cl-check-type name string)
-  (when-let (persp (persp-get-by-name name))
+  (when-let* ((persp (persp-get-by-name name)))
     (cond ((+workspace-p persp) persp)
           ((not noerror)
            (error "No workspace called '%s' was found" name)))))
@@ -630,7 +630,7 @@ This be hooked to `projectile-after-switch-project-hook'."
 ;;;###autoload
 (defun +workspaces-load-tab-bar-data-from-file-h (&rest _)
   "Restores the tab bar data from file."
-  (when-let ((persp-tab-data (persp-parameter 'tab-bar-tabs)))
+  (when-let* ((persp-tab-data (persp-parameter 'tab-bar-tabs)))
     (tab-bar-tabs-set persp-tab-data)
     (tab-bar--update-tab-bar-lines t)))
 

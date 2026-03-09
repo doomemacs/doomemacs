@@ -161,7 +161,7 @@ properties:
             ((catch 'doom-modules
                (let* ((module (if (listp m) (car m) m))
                       (flags  (if (listp m) (cdr m))))
-                 (when-let (new (assq module obsolete))
+                 (when-let* ((new (assq module obsolete)))
                    (let ((newkeys (cdr new)))
                      (if (null newkeys)
                          (print! (warn "%s module was removed"))

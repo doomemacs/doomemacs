@@ -21,7 +21,7 @@ DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
   (after! mu4e
     (when (version< mu4e-mu-version "1.4")
-      (when-let (address (cdr (assq 'user-mail-address letvars)))
+      (when-let* ((address (cdr (assq 'user-mail-address letvars))))
         (add-to-list 'mu4e-user-mail-address-list address)))
     ;; remove existing context with same label
     (setq mu4e-contexts
@@ -376,10 +376,10 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
 within a context, set `user-mail-address' to an alias found in the 'To' or
 'From' headers of the parent message if present, or prompt the user for a
 preferred alias"
-  (when-let ((addresses (if (or mu4e-contexts +mu4e-personal-addresses)
-                            (and (> (length +mu4e-personal-addresses) 1)
-                                 +mu4e-personal-addresses)
-                          (mu4e-personal-addresses))))
+  (when-let* ((addresses (if (or mu4e-contexts +mu4e-personal-addresses)
+                             (and (> (length +mu4e-personal-addresses) 1)
+                                  +mu4e-personal-addresses)
+                           (mu4e-personal-addresses))))
     (setq user-mail-address
           (if mu4e-compose-parent-message
               (if (version<= "1.8" mu4e-mu-version)

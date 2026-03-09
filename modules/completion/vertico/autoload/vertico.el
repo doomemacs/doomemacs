@@ -253,12 +253,12 @@ See minad/consult#770."
        ;; Ignore single dispatcher character
        ((and (= len 1) (alist-get (aref pattern 0) alist)) #'ignore)
        ;; Prefix
-       ((when-let ((style (alist-get (aref pattern 0) alist))
-                   ((not (char-equal (aref pattern (max (1- len) 1)) ?\\))))
+       ((when-let* ((style (alist-get (aref pattern 0) alist))
+                    ((not (char-equal (aref pattern (max (1- len) 1)) ?\\))))
           (cons style (substring pattern 1))))
        ;; Suffix
-       ((when-let ((style (alist-get (aref pattern (1- len)) alist))
-                   ((not (char-equal (aref pattern (max 0 (- len 2))) ?\\))))
+       ((when-let* ((style (alist-get (aref pattern (1- len)) alist))
+                    ((not (char-equal (aref pattern (max 0 (- len 2))) ?\\))))
           (cons style (substring pattern 0 -1))))))))
 
 ;;;###autoload
