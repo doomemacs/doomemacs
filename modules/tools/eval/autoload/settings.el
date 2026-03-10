@@ -1,9 +1,10 @@
 ;;; tools/eval/autoload/settings.el -*- lexical-binding: t; -*-
 
 ;;
-;; REPLs
+;;; REPLs
 
-(defvar +eval-repls nil
+;;;###autoload
+(defvar +eval-repl-handler-alist nil
   "An alist mapping major modes to plists that describe REPLs. Used by
 `+eval/open-repl-other-window' and filled with the `:repl' setting.")
 
@@ -27,20 +28,20 @@ recognized:
     A function that accepts a BEG and END, and sends the contents of the region
     to the REPL. Defaults to `+eval/send-region-to-repl'.
   :send-buffer FUNC
-    A function of no arguments that sends the contents of the buffer to the REPL.
-    Defaults to `+eval/region', which will run the :send-region specified function
-    or `+eval/send-region-to-repl'."
+    A function of no arguments that sends the contents of the buffer to the
+    REPL. Defaults to `+eval/region', which will run the :send-region specified
+    function or `+eval/send-region-to-repl'."
   (declare (indent defun))
   (dolist (mode (ensure-list modes))
-    (setf (alist-get mode +eval-repls)
+    (setf (alist-get mode +eval-repl-handler-alist)
           (cons command plist))))
 
 
 ;;
-;; Evaluation
+;;; Evaluation
 
 ;;;###autoload
-(defvar +eval-runners nil
+(defvar +eval-handler-alist nil
   "Alist mapping major modes to interactive runner functions.")
 
 ;;;###autodef
@@ -57,20 +58,22 @@ MODES can be list of major mode symbols, or a single one.
 3. If MODE is not a string and COMMAND is an alist, see `quickrun-add-command':
    (quickrun-add-command MODE COMMAND :mode MODE).
 4. If MODE is not a string and COMMANd is a symbol, add it to
-   `+eval-runners', which is used by `+eval/region'."
+   `+eval-handler-alist', which is used by `+eval/region'."
   (declare (indent defun))
   (dolist (mode (ensure-list modes))
     (cond ((symbolp command)
-           (push (cons mode command) +eval-runners))
+           (setf (alist-get mode +eval-handler-alist nil t)
+                 command))
           ((stringp command)
            (after! quickrun
-             (push (cons mode command)
-                   (if (stringp mode)
-                       quickrun-file-alist
-                     quickrun--major-mode-alist))))
+             (setf (alist-get mode (if (stringp mode)
+                                       quickrun-file-alist
+                                     quickrun--major-mode-alist)
+                              nil t)
+                   command)))
           ((listp command)
            (after! quickrun
              (quickrun-add-command
-               (or (cdr (assq mode quickrun--major-mode-alist))
+               (or (alist-get mode quickrun--major-mode-alist)
                    (string-remove-suffix "-mode" (symbol-name mode)))
                command :mode mode))))))

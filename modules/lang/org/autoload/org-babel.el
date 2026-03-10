@@ -23,7 +23,7 @@
         (cond ((and (string-prefix-p "jupyter-" lang)
                     (require 'jupyter nil t))
                (jupyter-eval-region beg end))
-              ((+eval-region-as-major-mode beg end (org-src-get-lang-mode lang))))))))
+              ((+eval-with-mode-handler-fn beg end nil (org-src-get-lang-mode lang))))))))
 
 
 ;;;###autoload
