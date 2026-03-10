@@ -12,6 +12,11 @@ buffer rather than an overlay on the line at point or the minibuffer.")
 ;;
 ;;; Packages
 
+;; These commands are drop-in replacements, but present an overlay/popup to
+;; display the return value, and emit a backtrace if an error is encountered.
+(global-set-key [remap eval-region] #'+eval/region)
+(global-set-key [remap eval-buffer] #'+eval/buffer)
+
 (set-popup-rule!
   (lambda (bufname _)
     (when (boundp '+eval-repl-mode)
