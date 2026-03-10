@@ -3,10 +3,8 @@
 ;;
 ;;; Library
 
-(defvar +emacs-lisp-eval-working-buffer nil)
-
 ;;;###autoload
-(defun +emacs-lisp-eval (beg end)
+(defun +emacs-lisp-eval-fn (beg end)
   "Evaluate a region and print it to the echo area (if one line long), otherwise
 to a pop up buffer.
 
@@ -14,10 +12,10 @@ Meant as an eval handler for Doom's :tools eval module."
   (+eval-display-results
    (string-trim-right
     (let ((buffer (generate-new-buffer " *+eval-output*"))
-          (working-buffer (or +emacs-lisp-eval-working-buffer (current-buffer)))
+          (working-buffer (or +emacs-lisp-working-buffer (current-buffer)))
           (debug-on-error t))
       (unless (buffer-live-p working-buffer)
-        (setq +emacs-lisp-eval-working-buffer nil
+        (setq +emacs-lisp-working-buffer nil
               working-buffer (current-buffer)))
       (with-current-buffer working-buffer
         (unwind-protect
@@ -157,15 +155,32 @@ if it's callable, `apropos' otherwise."
 ;;; Commands
 
 ;;;###autoload
-(defun +emacs-lisp/change-working-buffer (buffer)
-  "Change what buffer to run `+emacs-lisp-eval-fn' in."
+(defun +emacs-lisp/change-working-buffer (buffer &optional all-buffers)
+  "Change what buffer `+emacs-lisp-eval-fn' executes code in.
+
+If ALL-BUFFERS? (the prefix arg), the prompted buffer list will include all
+buffers (if don't have the workspaces module enabled, there's no difference).
+
+This only affects the buffer-local value of `+emacs-lisp-working-buffer'. If
+BUFFER is nil or the focused buffer, unsets `+emacs-lisp-working-buffer's local
+value."
   (interactive
-   (list (read-buffer "Set working buffer to: " (list (current-buffer)))
+   (list (read-buffer
+          "Set working buffer to: " (list (current-buffer))
+          nil (unless all-buffers
+                (let ((buffers (mapcar #'buffer-name (doom-buffer-list))))
+                  (lambda (b)
+                    (member (or (car-safe b) b) buffers)))))
          current-prefix-arg))
-  (let ((buffer (get-buffer buffer)))
-    (if (and buffer (buffer-live-p buffer))
-        (setq +emacs-lisp-eval-working-buffer buffer)
-      (user-error "No such buffer: %S" buf))))
+  (let ((buffer (if buffer (get-buffer buffer))))
+    (cond ((or (null buffer)
+               (equal buffer (current-buffer)))
+           (kill-local-variable '+emacs-lisp-working-buffer)
+           (message "Unset working buffer"))
+          ((and buffer (buffer-live-p buffer))
+           (setq-local +emacs-lisp-working-buffer buffer)
+           (message "Working buffer set to %S" buffer))
+          ((user-error "No such buffer: %S" buffer)))))
 
 ;;;###autoload
 (defun +emacs-lisp/open-repl ()

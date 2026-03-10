@@ -119,7 +119,7 @@ A simpler version is simply to use the path to the binary:
 
 Or if you'd rather run an elisp command:
 #+begin_src emacs-lisp
-(set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
+(set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval-fn)
 #+end_src
 
 * TODO Troubleshooting
