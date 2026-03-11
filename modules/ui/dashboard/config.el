@@ -2,8 +2,7 @@
 
 (defgroup +dashboard nil
   "Manage how Doom's dashboard is coloured and themed."
-  :prefix "+dashboard"
-  :group 'doom-themes)
+  :group 'doom+)
 
 (defcustom +dashboard-name "*doom*"
   "The name to use for the dashboard buffer."
