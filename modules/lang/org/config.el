@@ -64,6 +64,9 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defvar +org-habit-graph-window-ratio 0.3
   "The ratio of the consistency graphs relative to the window width.")
 
+(defvar +org-preview-dir (doom-path doom-profile-cache-dir "org/previews/")
+  "Where link preview images are cached.")
+
 (defvar +org-startup-with-animated-gifs nil
   "If non-nil, and the cursor is over a gif inline-image preview, animate it!")
 
@@ -472,7 +475,7 @@ relative to `org-directory', unless it is an absolute path."
       (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
 
   ;; Add inline image previews for attachment links
-  (org-link-set-parameters "attachment" :image-data-fun #'+org-image-file-data-fn))
+  (org-link-set-parameters "attachment" :preview #'+org-preview-image-file-fn))
 
 
 (defun +org-init-custom-links-h ()
@@ -607,11 +610,12 @@ relative to `org-directory', unless it is an absolute path."
   ;; documentation -- especially Doom's!
 
   ;; Allow inline image previews of http(s)? urls or data uris.
-  ;; `+org-http-image-data-fn' will respect `org-display-remote-inline-images'.
+  ;; `+org-link-preview-image-url-fn' will respect
+  ;; `org-display-remote-inline-images'.
   (setq org-display-remote-inline-images 'download) ; TRAMP urls
-  (org-link-set-parameters "http"  :image-data-fun #'+org-http-image-data-fn)
-  (org-link-set-parameters "https" :image-data-fun #'+org-http-image-data-fn)
-  (org-link-set-parameters "img"   :image-data-fun #'+org-inline-image-data-fn))
+  (org-link-set-parameters "http"  :preview #'+org-link-preview-image-url-fn)
+  (org-link-set-parameters "https" :preview #'+org-link-preview-image-url-fn)
+  (org-link-set-parameters "data"  :preview #'+org-link-preview-image-data-fn))
 
 
 (defun +org-init-export-h ()
@@ -784,7 +788,7 @@ between the two."
 
   (map! :map org-mode-map
         "C-c C-S-l"  #'+org/remove-link
-        "C-c <C-i>"  #'org-toggle-inline-images
+        "C-c <C-i>"  #'org-link-preview-refresh
         ;; textmate-esque newline insertion
         "S-RET"      #'+org/shift-return
         "C-RET"      #'+org/insert-item-below

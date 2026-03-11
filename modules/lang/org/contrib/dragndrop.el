@@ -17,7 +17,7 @@
   (after! org
     ;; A shorter link to attachments
     (+org-define-basic-link "download" (lambda () (or org-download-image-dir org-attach-id-dir "."))
-      :image-data-fun #'+org-image-file-data-fn
+      :preview #'+org-link-preview-attachment-fn
       :requires 'org-download))
   :config
   (unless org-download-image-dir
@@ -43,7 +43,7 @@
             ;; Handle non-image files a little differently. Images should be
             ;; inserted as normal with previews. Other files, like pdfs or zips,
             ;; should be linked to, with an icon indicating the type of file.
-            (format (concat (unless (image-type-from-file-name filename)
+            (format (concat (unless (image-supported-file-p filename)
                               (concat (+org-attach-icon-for filename)
                                       " "))
                             org-download-link-format)

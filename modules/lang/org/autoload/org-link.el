@@ -312,40 +312,62 @@ exist, and `org-link' otherwise."
 ;;; Image data functions (for custom inline images)
 
 ;;;###autoload
-(defun +org-image-file-data-fn (protocol link _description)
-  "Intepret LINK as an image file path and return its data."
-  (setq
-   link (pcase protocol
-          ("download"
-           (expand-file-name link (or (if (require 'org-download nil t) org-download-image-dir)
-               default-directory)))
-          ("attachment"
-           (require 'org-attach)
-           (org-attach-expand link))
-          (_ (expand-file-name link default-directory))))
-  (when (and (file-exists-p link)
-             (image-type-from-file-name link))
-    (with-temp-buffer
-      (set-buffer-multibyte nil)
-      (setq buffer-file-coding-system 'binary)
-      (insert-file-contents-literally link)
-      (buffer-substring-no-properties (point-min) (point-max)))))
+(defun +org-link-preview-attachment-fn (ov link elem)
+  "Preview images managed by org-download and org-attach in Org buffers."
+  (let ((link
+         (pcase (org-element-property :type elem)
+           ("download"
+            (expand-file-name
+             link (or (if (require 'org-download nil t) org-download-image-dir)
+                      default-directory)))
+           ("attachment"
+            (require 'org-attach)
+            (org-attach-expand link))
+           (_ (expand-file-name link default-directory)))))
+    (when (and (file-readable-p link)
+               (image-supported-file-p link))
+      (org-link-preview-file ov link elem))))
 
 ;;;###autoload
-(defun +org-inline-image-data-fn (_protocol link _description)
-  "Interpret LINK as base64-encoded image data."
-  (base64-decode-string link))
+(defun +org-link-preview-image-data-fn (ov data elem)
+  "Preview base64 encoded images in Org buffers."
+  (save-match-data
+    (when-let*
+        (((string-match "^image/\\([^;]+\\);base64,\\(.+\\)" data))
+         (raw-data (base64-decode-string (match-string 2 data)))
+         (type (or (image-type-from-data raw-data) (match-string 1 data)))
+         (cache-file (doom-path
+                      +org-preview-dir (format "imagedata.%s.%s"
+                                               (sha1 data)
+                                               type))))
+      (unless (file-exists-p cache-file)
+        (with-temp-file cache-file
+          (insert raw-data)))
+      (when (file-readable-p cache-file)
+        (org-link-preview-file ov cache-file elem)))))
 
 ;;;###autoload
-(defun +org-http-image-data-fn (protocol link _description)
-  "Interpret LINK as an URL to an image file."
-  (when (and (image-type-from-file-name link)
+(defun +org-link-preview-image-url-fn (ov link elem)
+  "Preview remote images (http/https links) in Org buffers."
+  (when (and (image-supported-file-p link)
              (not (eq org-display-remote-inline-images 'skip)))
-    (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
-        (with-current-buffer buf
-          (goto-char (point-min))
-          (re-search-forward "\r?\n\r?\n" nil t)
-          (buffer-substring-no-properties (point) (point-max)))
+    (if-let* ((raw-link (org-element-property :raw-link elem))
+              (buf (url-retrieve-synchronously raw-link))
+              (cache-file (doom-path
+                           +org-preview-dir (format "image.%s.%s"
+                                                    (sha1 raw-link)
+                                                    (file-name-extension link)))))
+        (progn
+          (unless (file-exists-p cache-file)
+            (make-directory +org-preview-dir t)
+            (with-temp-file cache-file
+              (insert
+               (with-current-buffer buf
+                 (goto-char (point-min))
+                 (re-search-forward "\r?\n\r?\n" nil t)
+                 (buffer-substring-no-properties (point) (point-max))))))
+          (when (file-readable-p cache-file)
+            (org-link-preview-file ov cache-file elem)))
       (message "Download of image \"%s\" failed" link)
       nil)))
 

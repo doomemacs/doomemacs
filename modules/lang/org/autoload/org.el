@@ -19,7 +19,7 @@
       (delete-overlay ov)
       (setq org-inline-image-overlays (delete ov org-inline-image-overlays)))
     (when (or refresh (not overlays))
-      (org-display-inline-images t t beg end)
+      (org-link-preview nil beg end)
       t)))
 
 (defun +org--insert-item (direction)
