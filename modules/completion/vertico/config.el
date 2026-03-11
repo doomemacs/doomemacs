@@ -341,8 +341,7 @@ orderless."
                           "\\`\\(?:Dired\\|Find file\\) in \\(.*\\): \\'"
                           prompt)
                          (match-string 1 prompt)))
-                  (and (doom-project-p)
-                       (doom-project-root)))))
+                  (doom-project-root))))
       marginalia--project-root)))
 
 
