@@ -34,11 +34,9 @@
 (defun +vertico--workspace-generate-sources ()
   "Generate list of consult buffer sources for all workspaces"
   (let* ((active-workspace (+workspace-current-name))
-         (workspaces (+workspace-list-names))
          (key-range (append (cl-loop for i from ?1 to ?9 collect i)
                             (cl-loop for i from ?a to ?z collect i)
                             (cl-loop for i from ?A to ?Z collect i)))
-         (last-i (length workspaces))
          (i 0))
     (mapcar (lambda (name)
               (cl-incf i)

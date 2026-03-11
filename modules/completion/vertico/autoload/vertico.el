@@ -1,8 +1,8 @@
 ;;; completion/vertico/autoload/vertico.el -*- lexical-binding: t; -*-
 
-;; To prevent "Defining as dynamic an already lexical var" from +vertico/embark-preview
-;;;###autoload
+(defvar consult-ripgrep-args)
 (defvar embark-quit-after-action)
+(defvar embark-after-export-hook)
 
 ;;;###autoload
 (cl-defun +vertico-file-search (&key query in all-files (recursive t) prompt args)
@@ -11,7 +11,8 @@
 :query STRING
   Determines the initial input to search for.
 :in PATH
-  Sets what directory to base the search out of. Defaults to the current project's root.
+  Sets what directory to base the search out of. Defaults to the current
+  project's root.
 :recursive BOOL
   Whether or not to search files recursively from the base directory.
 :args LIST
@@ -94,12 +95,13 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 (defun +vertico/embark-export-write ()
   "Export the current vertico results to a writable buffer if possible.
 
-Supports exporting consult-grep to wgrep, file to wdeired, and consult-location to occur-edit"
+Supports exporting consult-grep to wgrep, file to wdired, and consult-location
+to occur-edit"
   (interactive)
   (require 'embark)
   (require 'wgrep)
   (let* ((edit-command
-          (pcase-let ((`(,type . ,candidates)
+          (pcase-let ((`(,type . _)
                        (run-hook-with-args-until-success 'embark-candidate-collectors)))
             (pcase type
               ('consult-grep #'wgrep-change-to-wgrep-mode)
@@ -114,11 +116,11 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   "Previews candidate in vertico buffer, unless it's a consult command"
   (interactive)
   (unless (bound-and-true-p consult--preview-function)
-    (if (fboundp 'embark-dwim)
-        (save-selected-window
-          (let (embark-quit-after-action)
-            (embark-dwim)))
-      (user-error "Embark not installed, aborting..."))))
+    (unless (require 'embark nil t)
+      (user-error "Embark not installed, aborting..."))
+    (save-selected-window
+      (let (embark-quit-after-action)
+        (embark-dwim)))))
 
 ;;;###autoload
 (defun +vertico/enter-or-preview ()
