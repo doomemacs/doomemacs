@@ -65,7 +65,7 @@ directives. By default, this only recognizes C directives.")
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
   ;; like magit while incrementally highlighting matches.
-  (setq-hook! '(magit-mode-hook so-long-minor-mode-hook)
+  (setq-hook! '(special-mode-hook so-long-minor-mode-hook)
     evil-ex-hl-update-delay 0.25)
 
   :config
