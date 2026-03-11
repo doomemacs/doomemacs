@@ -320,17 +320,9 @@ orderless."
   (map! :map minibuffer-local-map
         :desc "Cycle marginalia views" "M-A" #'marginalia-cycle)
   :config
-  (dolist (cat '((+default/find-file-under-here . file)
-                 (doom/find-file-in-emacsd . project-file)
-                 (doom/find-file-in-other-project . project-file)
-                 (doom/find-file-in-private-config . file)
-                 (doom/describe-active-minor-mode . minor-mode)
-                 (flycheck-error-list-set-filter . builtin)
+  (dolist (cat '((flycheck-error-list-set-filter . builtin)
                  (persp-switch-to-buffer . buffer)
-                 (projectile-find-file . project-file)
-                 (projectile-recentf . project-file)
-                 (projectile-switch-to-buffer . buffer)
-                 (projectile-switch-project . project-file)))
+                 (projectile-switch-to-buffer . buffer)))
     (add-to-list 'marginalia-command-categories cat))
 
   (when (modulep! +icons)

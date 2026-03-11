@@ -93,7 +93,13 @@ the current major-modea.")
   "Get information on an active minor mode. Use `describe-minor-mode' for a
 selection of all minor-modes, active or not."
   (interactive
-   (list (completing-read "Describe active mode: " (doom-active-minor-modes))))
+   (list
+    (completing-read
+     "Describe active mode: "
+     (lambda (str pred action)
+       (if (eq action 'metadata) ; for embark/marginalia
+           `(metadata (category . minor-mode))
+         (complete-with-action action (doom-active-minor-modes) str pred))))))
   (let ((symbol
          (cond ((stringp mode) (intern mode))
                ((symbolp mode) mode)

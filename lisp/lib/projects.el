@@ -36,6 +36,16 @@ The project's root is determined by `projectile', starting from BASE-DIRECTORY
 unless they begin with a slash."
   `(file-exists-p! ,files (doom-project-root ,base-directory)))
 
+(defun doom--project-completing-read (prompt collection &optional category)
+  (completing-read
+   prompt
+   (if category
+       (lambda (str pred action)
+         (if (eq action 'metadata) ; used by embark/marginalia
+             `(metadata (category . ,category))
+           (complete-with-action action collection str pred)))
+     collection)))
+
 
 ;;
 ;;; Commands
@@ -45,7 +55,8 @@ unless they begin with a slash."
   "Performs `projectile-find-file' in a known project of your choosing."
   (interactive
    (list
-    (completing-read "Find file in project: " (projectile-relevant-known-projects))))
+    (doom--project-completing-read
+     "Find file in project: " (projectile-relevant-known-projects) 'project-file)))
   (unless (file-directory-p project-root)
     (error "Project directory '%s' doesn't exist" project-root))
   (doom-project-find-file project-root))
@@ -55,7 +66,8 @@ unless they begin with a slash."
   "Performs `find-file' in a known project of your choosing."
   (interactive
    (list
-    (completing-read "Browse in project: " (projectile-relevant-known-projects))))
+    (doom--project-completing-read
+     "Browse in project: " (projectile-relevant-known-projects) 'project-file)))
   (unless (file-directory-p project-root)
     (error "Project directory '%s' doesn't exist" project-root))
   (doom-project-browse project-root))
