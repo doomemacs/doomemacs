@@ -337,17 +337,28 @@ exist, and `org-link' otherwise."
   (base64-decode-string link))
 
 ;;;###autoload
-(defun +org-http-image-data-fn (protocol link _description)
+(defun +org-http-image-data-fn (ov _link elem)
   "Interpret LINK as an URL to an image file."
-  (when (and (image-type-from-file-name link)
-             (not (eq org-display-remote-inline-images 'skip)))
-    (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
-        (with-current-buffer buf
-          (goto-char (point-min))
-          (re-search-forward "\r?\n\r?\n" nil t)
-          (buffer-substring-no-properties (point) (point-max)))
-      (message "Download of image \"%s\" failed" link)
-      nil)))
+  ;; _link is the link sans http or https,
+  ;; e.g. http://somesite.com/someimage.png will be passed as
+  ;; _link = //somesite.com/someimage.png
+  ;; so we just get the raw link from the org element isntead
+  (when-let* ((link (org-element-property :raw-link elem))
+              (cache-file (and (image-supported-file-p link)
+                               (not (eq org-display-remote-inline-images 'skip))
+                               (concat temporary-file-directory
+                                       "org-preview/"
+                                       (buffer-name (overlay-buffer ov)) "/"
+                                       (file-name-nondirectory link)))))
+    ;; cache a local copy of the file
+    (when (or (eq org-display-remote-inline-images 'download)
+              (not (file-exists-p cache-file)))
+      (make-directory (file-name-directory cache-file) t)
+      (url-copy-file link cache-file t))
+
+    ;; preview
+    (when (file-exists-p cache-file)
+      (org-link-preview-file ov cache-file link))))
 
 (defvar +org--gif-timers nil)
 ;;;###autoload
