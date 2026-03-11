@@ -3,8 +3,8 @@
 
 (defun +vertico--workspace-buffer-state ()
   (let ((preview
-         ;; Only preview in current window and other window.
-         ;; Preview in frames and tabs is not possible since these don't get cleaned up.
+         ;; Only preview in current window and other window. Preview in frames
+         ;; and tabs is not possible since these don't get cleaned up.
          (if (memq consult--buffer-display
                    '(switch-to-buffer switch-to-buffer-other-window))
              (let ((orig-buf (current-buffer))
@@ -55,6 +55,10 @@
                                   (+workspace-contains-buffer-p buf workspace)))))))
             (+workspace-list-names))))
 
+
+;;
+;;; Commands
+
 (autoload 'consult--multi "consult")
 ;;;###autoload
 (defun +vertico/switch-workspace-buffer (&optional force-same-workspace)
@@ -89,3 +93,5 @@ buffer will be opened in the current workspace instead."
   (interactive "GFile:")
   (+workspace/new)
   (find-file file))
+
+;;; workspaces.el ends here

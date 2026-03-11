@@ -275,3 +275,5 @@ See minad/consult#770."
     (when (and (> len 0)
                (char-equal (aref pattern (1- len)) ?$))
       `(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x200000-\x300000]*$")))))
+
+;;; vertico.el ends here

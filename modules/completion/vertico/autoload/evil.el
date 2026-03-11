@@ -12,3 +12,5 @@
   "Ex interface for `+vertico/project-search-from-cwd'."
   (interactive "<a><!>")
   (+vertico/project-search-from-cwd (not recurse-p) query))
+
+;;; evil.el ends here

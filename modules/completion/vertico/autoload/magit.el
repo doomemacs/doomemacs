@@ -6,3 +6,5 @@
   "Run `magit-status` on repo containing the embark target."
   (interactive "GFile: ")
   (magit-status (locate-dominating-file file ".git")))
+
+;;; magit.el ends here
