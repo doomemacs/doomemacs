@@ -36,27 +36,32 @@
          (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
-                      (regexp-quote (doom-thing-at-point-or-region)))))
+                      (regexp-quote (doom-region)))))
          (consult-async-split-style consult-async-split-style)
-         (consult-async-split-styles-alist consult-async-split-styles-alist))
+         (consult-async-split-styles-alist
+          (copy-sequence consult-async-split-styles-alist)))
     ;; Change the split style if the initial query contains the separator.
     (when query
-      (cl-destructuring-bind (&key type separator initial _function)
+      (cl-destructuring-bind (&key separator initial function)
           (alist-get consult-async-split-style consult-async-split-styles-alist)
-        (pcase type
-          (`separator
-           (replace-regexp-in-string (regexp-quote (char-to-string separator))
-                                     (concat "\\" (char-to-string separator))
-                                     query t t))
-          (`perl
-           (when (string-match-p initial query)
-             (setf (alist-get 'perlalt consult-async-split-styles-alist)
-                   `(:initial ,(or (cl-loop for char in (list "%" "@" "!" "&" "/" ";")
-                                            unless (string-match-p char query)
-                                            return char)
-                                   "%")
-                     :type perl)
-                   consult-async-split-style 'perlalt))))))
+        ;; Perl async split style starts with an #. If the query contains #,
+        ;; then use oneof the alternative delimiters instead.
+        (if (eq consult-async-split-style 'perl)
+            (when (string-match-p (char-to-string initial) query)
+              (setf (alist-get 'perlalt consult-async-split-styles-alist)
+                    `(:initial ,(or (cl-loop for char in (list "%" "@" "!" "&" "/" ";")
+                                             unless (string-match-p char query)
+                                             return char)
+                                    "%")
+                      :seperator ,separator
+                      :function ,function)
+                    consult-async-split-style 'perlalt))
+          ;; If the separator character is present *in* the query, escape them.
+          (when separator
+            (setq query
+                  (replace-regexp-in-string (regexp-quote (char-to-string separator))
+                                            (concat "\\" (char-to-string separator))
+                                            query t t))))))
     (consult--grep prompt #'consult--ripgrep-make-builder directory query)))
 
 ;;;###autoload
