@@ -59,13 +59,14 @@ FUNCTION
         ;; Don't display parent/related refs in commit buffers; they are rarely
         ;; helpful and only add to runtime costs.
         magit-revision-insert-related-refs nil
-        ;; If two projects have the same project name (e.g. A/src and B/src will
-        ;; both resolve to the name "src"), Magit will treat them as the same
-        ;; project and destructively hijack each other's magit buffers. This is
-        ;; especially problematic if you use workspaces and have magit open in
-        ;; each, and the two projects happen to have the same name! By unsetting
-        ;; `magit-uniquify-buffer-names', magit uses the project's full path as
-        ;; its name, preventing such naming collisions.
+        ;; HACK: If two projects have the same project name (e.g. A/src and
+        ;;   B/src will both resolve to the name "src"), Magit will treat them
+        ;;   as the same project and destructively hijack each other's magit
+        ;;   buffers. This is especially problematic if you use workspaces and
+        ;;   have magit open in each, and the two projects happen to have the
+        ;;   same name! By unsetting `magit-uniquify-buffer-names', magit uses
+        ;;   the project's full path as its name, preventing such naming
+        ;;   collisions.
         magit-uniquify-buffer-names nil
         ;; PERF: Magit resolves `magit-git-executable' to an absolute path on
         ;;   Windows and MacOS, but not Linux. The $PATH lookup is much faster
