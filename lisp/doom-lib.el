@@ -1254,7 +1254,7 @@ one of CONTEXTS isn't active."
         (push context removed))
       (when removed
         (setq doom-context current-context)
-        (doom-log 3 ":context: +%s %s" removed doom-context)
+        (doom-log 3 ":context: -%s %s" removed doom-context)
         removed))))
 
 (defmacro with-doom-context (contexts &rest body)
