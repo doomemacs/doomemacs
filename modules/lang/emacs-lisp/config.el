@@ -304,8 +304,6 @@ current buffer."
             (when (buffer-live-p buf)
               (with-current-buffer buf (goto-char pos))))))))
   :config
-  (setq helpful-set-variable-function #'setq!)
-
   (setq-hook! 'helpful-mode-hook
     ;; Elisp code using tab indentation always use a tab-width of 8. C source
     ;; code from Emacs also use a tab-width of 8. Therefore Helpful needs a
