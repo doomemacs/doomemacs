@@ -270,7 +270,7 @@ Meant to be used with `run-hook-wrapped'."
                 (caddr e)))
        (signal 'doom-hook-error (cons hook (cdr e)))))))
 
-(defun doom-run-hook-on (hook-var trigger-hooks)
+(defun doom-run-hook-on (hook-var trigger-hooks &optional predicate)
   "Configure HOOK-VAR to be invoked exactly once when any of the TRIGGER-HOOKS
 are invoked *after* Emacs has initialized (to reduce false positives). Once
 HOOK-VAR is triggered, it is reset to nil.
@@ -292,7 +292,9 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
                            ;; internally). In that case assume this hook was
                            ;; invoked non-interactively.
                            (and (boundp hook)
-                                (symbol-value hook))))
+                                (symbol-value hook)))
+                       (or (null predicate)
+                           (funcall predicate)))
               (setq running? t)  ; prevent infinite recursion
               (doom-run-hooks hook-var)
               (set hook-var nil))))
