@@ -31,7 +31,10 @@
                              (error "Failed to reload Lisp project in 5 attempts.")
                            (recurse (1+ attempt)))))))
     (recurse 1)
-    (sly-asdf-load-system)))
+    (sly-asdf-load-system
+     (or (sly-asdf-find-current-system)
+         (car sly-asdf-system-history)
+         (user-error "Can't find a system to reload")))))
 
 ;;;###autoload
 (defun +lisp/find-file-in-quicklisp ()
