@@ -3,18 +3,18 @@
 ;;; Code:
 
 (defun doom-files--build-checks (spec &optional directory)
-  "Converts a simple nested series of or/and forms into a series of
-`file-exists-p' checks.
+  "Converts simple nested series of/and forms into a series of `file-exists-p'
+calls.
 
 For example
 
   (doom-files--build-checks
-    '(or A (and B C))
+    \\='(or A (and B C))
     \"~\")
 
 Returns (not precisely, but effectively):
 
-  '(let* ((_directory \"~\")
+  \\='(let* ((_directory \"~\")
           (A (expand-file-name A _directory))
           (B (expand-file-name B _directory))
           (C (expand-file-name C _directory)))
@@ -100,7 +100,7 @@ MAP is a function or symbol which will be used to transform each entry in the
 results.
 
 TYPE determines what kind of path will be included in the results. This can be t
-(files and folders), 'files or 'dirs.
+(files and folders), \\='files or \\='dirs.
 
 By default, this function returns paths relative to PATH-OR-PATHS if it is a
 single path. If it a list of paths, this function returns absolute paths.
@@ -256,10 +256,10 @@ called with no arguments and expected to return the contents as any arbitrary
 data. By default, BY is set to `buffer-string'. Otherwise, BY recognizes these
 special values:
 
-'insert      -- insert FILE's contents into the current buffer before point.
-'read        -- read the first form in FILE and return it as a single S-exp.
-'read*       -- read all forms in FILE and return it as a list of S-exps.
-'(read . N)  -- read the first N (an integer) S-exps in FILE.
+\\='insert      -- insert FILE's contents into the current buffer before point.
+\\='read        -- read the first form in FILE and return it as a single S-exp.
+\\='read*       -- read all forms in FILE and return it as a list of S-exps.
+\\='(read . N)  -- read the first N (an integer) S-exps in FILE.
 
 CODING dictates the encoding of the buffer. This defaults to `utf-8'. If set to
 nil, `binary' is used.

@@ -1,5 +1,9 @@
 ;;; editor/file-templates/autoload.el -*- lexical-binding: t; -*-
 
+(defvar yas-choose-tables-first)
+(defvar yas-choose-keys-first)
+
+
 (defun +file-templates--set (pred plist)
   (if (null (car-safe plist))
       (setq +file-templates-alist

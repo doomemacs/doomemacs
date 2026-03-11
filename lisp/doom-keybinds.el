@@ -275,7 +275,7 @@ localleader prefix."
 (defun doom--map-keyword-to-states (keyword)
   "Convert a KEYWORD into a list of evil state symbols.
 
-For example, :nvi will map to (list 'normal 'visual 'insert). See
+For example, :nvi will map to (list \\='normal \\='visual \\='insert). See
 `doom-evil-state-alist' to customize this."
   (cl-loop for l across (doom-keyword-name keyword)
            if (assq l doom-evil-state-alist) collect (cdr it)

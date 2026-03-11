@@ -393,7 +393,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
 
 (use-package! server
   :when (display-graphic-p)
-  :after-call doom-first-input-hook doom-first-file-hook focus-out-hook
+  :after-call doom-first-input-hook doom-first-file-hook
   :defer 1
   :config
   (when-let* ((name (getenv "EMACS_SERVER_NAME")))
@@ -531,7 +531,7 @@ on."
     (defun doom-disable-smartparens-mode-maybe-h ()
       (when smartparens-mode
         (setq-local doom-buffer-smartparens-mode t)
-        (turn-off-smartparens-mode)))))
+        (smartparens-mode -1)))))
 
 
 (use-package! so-long

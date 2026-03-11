@@ -252,7 +252,7 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
 
 ;;; Generators
 
-(defun doom-profile-generate (&optional _profile regenerate-only?)
+(defun doom-profile-generate (&optional _profile _regenerate-only?)
   "Generate profile init files."
   (doom-initialize-packages)
   (let* ((default-directory doom-profile-dir)

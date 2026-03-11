@@ -179,9 +179,9 @@ original state.")
   (and (bound-and-true-p doom-cli--context)
        (doom-cli-context-suppress-prompts-p doom-cli--context)))
 
-(defadvice! doom-straight--fallback-to-tty-prompt-a (fn prompt actions)
+(defadvice! doom-straight--fallback-to-tty-prompt-a (prompt actions)
   "Modifies straight to prompt on the terminal when in noninteractive sessions."
-  :around #'straight--popup-raw
+  :override #'straight--popup-raw
   (if (bound-and-true-p async-in-child-emacs)
       (error "Straight prompt: %s" prompt)
     (let ((doom-straight--auto-options doom-straight--auto-options))
@@ -231,7 +231,7 @@ original state.")
                                         ", ")
                              (if (not recommended) ""
                                (format "; don't know? Pick %d" (1+ recommended)))))
-                   answer fn)
+                   answer)
               (while (null (nth (setq answer (1- (read-number prompt))) options))
                 (print! (warn "%s is not a valid answer, try again.") answer))
               (funcall (nth answer options)))))))))

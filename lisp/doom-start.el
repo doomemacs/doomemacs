@@ -8,19 +8,16 @@
 (defcustom doom-first-input-hook ()
   "Transient hooks run before the first user input."
   :type 'hook
-  :local 'permanent-local
   :group 'doom)
 
 (defcustom doom-first-file-hook ()
   "Transient hooks run before the first interactively opened file."
   :type 'hook
-  :local 'permanent-local
   :group 'doom)
 
 (defcustom doom-first-buffer-hook ()
   "Transient hooks run before the first interactively opened buffer."
   :type 'hook
-  :local 'permanent-local
   :group 'doom)
 
 
@@ -191,7 +188,7 @@ sub-packages. For example, `org' is comprised of many packages, and might be
 broken up into:
 
   (doom-load-packages-incrementally
-   '(calendar find-func format-spec org-macs org-compat
+   \\='(calendar find-func format-spec org-macs org-compat
      org-faces org-entities org-list org-pcomplete org-src
      org-footnote org-macro ob org org-clock org-agenda
      org-capture))

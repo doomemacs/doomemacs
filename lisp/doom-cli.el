@@ -977,7 +977,7 @@ considered as well."
                  (save-excursion
                    (goto-char (point-max))
                    (buffer-substring (if (re-search-backward "^\\[Return code: 0\\]$" nil t)
-                                         (point-at-bol 2)
+                                         (pos-bol 2)
                                        (point-min))
                                      (point-max))))))
          (error-file (doom-cli--output-file 'error context)))
@@ -2122,7 +2122,7 @@ substring is edited more than once."
                                    (format (format "%%-%ds%%s%%%ds" width width)
                                            "DOOM(1)" title "DOOM(1)")))
                       ("NAME" . ,(concat .command " - " .summary))
-                      ("SYNOPSIS" . ,(doom-cli-help--render-synopsis .synopsis nil t))
+                      ("SYNOPSIS" . ,(doom-cli-help--render-synopsis .synopsis))
                       ("DESCRIPTION" . ,.description))
                   `((nil . ,(doom-cli-help--render-synopsis .synopsis "Usage: "))
                     (nil . ,(string-join (seq-remove #'string-empty-p (list .summary .description))
@@ -2398,7 +2398,7 @@ Recognizes %p (for the prefix) and %c (for the active command).")
                    ((doom-cli-find (list prefix)))))
     (terpri)
     ;; Kill manually so we don't save output to logs.
-    (let (kill-emacs) (kill-emacs 0))))
+    (let (kill-emacs-hook) (kill-emacs 0))))
 
 (defcli! (:root :help)
     ((localonly? ("-g" "--no-global") "Hide global options")

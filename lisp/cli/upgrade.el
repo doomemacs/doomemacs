@@ -102,7 +102,7 @@ libraries. It is the equivalent of the following shell commands:
       (sh! "git" "branch" "-D" target-remote)
       (sh! "git" "remote" "remove" doom-upgrade-remote)
       (unwind-protect
-          (let (result)
+          (progn
             (or (zerop (car (sh! "git" "remote" "add" doom-upgrade-remote doom-upgrade-url)))
                 (error "Failed to add %s to remotes" doom-upgrade-remote))
             (or (zerop (car (setq result (sh! "git" "fetch" "--force" "--tags" doom-upgrade-remote (format "%s:%s" branch target-remote)))))

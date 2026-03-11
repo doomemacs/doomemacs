@@ -467,7 +467,7 @@ This primes `org-mode' for reading."
         (org-id-locations-file doom-docs--id-location-file)
         (org-id-locations doom-docs--id-locations)
         (org-id-files doom-docs--id-files))
-    (doom/reload-docs)
+    (doom/reload-docs force?)
     (when-let* ((fname (buffer-file-name (buffer-base-buffer))))
       (let ((id (org-id-new)))
         (org-id-add-location id fname)

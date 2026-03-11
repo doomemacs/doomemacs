@@ -1,5 +1,9 @@
 ;;; lang/emacs-lisp/autoload/emacs-lisp.el -*- lexical-binding: t; -*-
 
+(defvar buttercup-suites)
+(defvar pp-max-width)
+
+
 ;;
 ;;; Library
 

@@ -139,21 +139,21 @@ See `display-line-numbers' for what these values mean."
   (remove-hook 'doom-switch-window-hook #'doom--enlargened-forget-last-wconf-h))
 
 ;;;###autoload
-(defun doom/window-maximize-buffer (&optional arg)
+(defun doom/window-maximize-buffer ()
   "Close other windows to focus on this one.
 Use `winner-undo' to undo this. Alternatively, use `doom/window-enlargen'."
-  (interactive "P")
+  (interactive)
   (when (and (bound-and-true-p +popup-mode)
              (+popup-window-p))
     (+popup/raise (selected-window)))
   (delete-other-windows))
 
 ;;;###autoload
-(defun doom/window-enlargen (&optional arg)
+(defun doom/window-enlargen ()
   "Enlargen the current window (i.e. shrinks others) so you can focus on it.
 Use `winner-undo' to undo this. Alternatively, use
 `doom/window-maximize-buffer'."
-  (interactive "P")
+  (interactive)
   (let* ((window (selected-window))
          (dedicated-p (window-dedicated-p window))
          (preserved-p (window-parameter window 'window-preserved-size))

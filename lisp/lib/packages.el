@@ -267,7 +267,7 @@ processed."
       plist)))
 
 ;;;###autoload
-(defun doom-package-dependencies (package &optional recursive noerror)
+(defun doom-package-dependencies (package &optional recursive _noerror)
   "Return a list of dependencies for a package.
 
 If RECURSIVE is `tree', return a tree of dependencies.
@@ -319,8 +319,8 @@ non-nil."
 
 ;;;###autoload
 (defun doom-package-backend (package)
-  "Return 'straight, 'builtin, 'elpa or 'other, depending on how PACKAGE is
-installed."
+  "Return \\='straight, \\='builtin, \\='elpa or \\='other, depending on how
+PACKAGE is installed."
   (cond ((gethash (symbol-name package) straight--build-cache)
          'straight)
         ((or (doom-package-built-in-p package)
@@ -374,7 +374,6 @@ also be a list of module keys."
   (let ((module-list (cond ((null module-list) (doom-module-list))
                            ((symbolp module-list) (doom-module-list 'all))
                            (module-list)))
-        (packages-file doom-module-packages-file)
         doom-disabled-packages
         doom-packages)
     (letf! (defun read-packages (key)
@@ -493,7 +492,7 @@ also be a list of module keys."
          (cdr recipe))))))
 
 (defun doom--package-to-bump-string (package plist)
-  "Return a PACKAGE and its PLIST in 'username/repo@commit' format."
+  "Return a PACKAGE and its PLIST in \\='username/repo@commit' format."
   (format "%s@%s"
           (plist-get (doom--package-merge-recipes package plist) :repo)
           (substring-no-properties (plist-get plist :pin) 0 12)))
@@ -546,10 +545,10 @@ also be a list of module keys."
 ;;;###autoload
 (defun doom/bump-package-at-point (&optional select)
   "Inserts or updates a `:pin' for the `package!' statement at point.
-Grabs the latest commit id of the package using 'git'."
+Grabs the latest commit id of the package using git."
   (interactive "P")
   (doom-initialize-packages)
-  (cl-destructuring-bind (&key package plist beg end)
+  (cl-destructuring-bind (&key package plist _beg end)
       (or (doom--package-at-point)
           (user-error "Not on a `package!' call"))
     (let* ((recipe (doom--package-merge-recipes package plist))

@@ -631,7 +631,7 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
   (define-advice comp-run-async-workers (:around (fn &rest args) dont-litter-tmpdir)
     "Normally, native-comp writes a ton to /tmp. This advice redirects this IO
 to `doom-profile-cache-dir' instead, so it doesn't OOM tmpfs users and can be
-safely cleaned up with 'doom sync' or 'doom gc'."
+safely cleaned up with \\='doom sync' or \\='doom gc'."
     (let ((temporary-file-directory (expand-file-name "comp/" doom-profile-cache-dir)))
       (make-directory temporary-file-directory t)
       (apply fn args)))

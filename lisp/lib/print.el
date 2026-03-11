@@ -186,7 +186,7 @@ Returns OUTPUT."
   (cl-destructuring-bind (&key if indent level verbose title
                                ;; TODO: Implement these
                                _benchmark)
-      (cl-loop for (key val) on body by #'cddr
+      (cl-loop for (key _val) on body by #'cddr
                while (keywordp key)
                collect (pop body)
                collect (pop body))
@@ -268,7 +268,7 @@ based on the print level of the message. For example:
                            (cadr spec)))))
 
 (defun doom-print--redirect-standard-output (streamspec level &optional old-stream)
-  (let ((old (or old-stream standard-output))
+  (let ((_old (or old-stream standard-output))
         (streams (doom-print--redirect-streams streamspec level)))
     (lambda (ch)
       (let ((str (char-to-string ch)))

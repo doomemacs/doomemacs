@@ -206,7 +206,7 @@ Return non-nil if loading the file succeeds."
 (defun doom-require (feature &optional filename noerror)
   "Like `require', but handles and enhances Doom errors.
 
-Can also load Doom's subfeatures, e.g. (doom-require 'doom-lib 'files)"
+Can also load Doom's subfeatures, e.g. (doom-require \\='doom-lib \\='files)"
   (let ((subfeature (if (symbolp filename) filename)))
     (or (featurep feature subfeature)
         (doom-load
@@ -622,14 +622,15 @@ or aliases."
   (declare (doc-string 1))
   `(lambda (&rest _) (interactive) ,@body))
 
-(defmacro cmd!! (command &optional prefix-arg &rest args)
+(defmacro cmd!! (command &optional arg &rest args)
   "Returns a closure that interactively calls COMMAND with ARGS and PREFIX-ARG.
+
 Like `cmd!', but allows you to change `current-prefix-arg' or pass arguments to
 COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
 `define-key' or `map!')."
   (declare (doc-string 1) (pure t) (side-effect-free t))
   `(lambda (arg &rest _) (interactive "P")
-     (let ((current-prefix-arg (or ,prefix-arg arg)))
+     (let ((current-prefix-arg (or ,arg arg)))
        (,(if args
              #'funcall-interactively
            #'call-interactively)
@@ -1633,11 +1634,11 @@ Accepts the following properties:
  :built-in BOOL|'prefer
    Same as :ignore if the package is a built-in Emacs package. This is more to
    inform help commands like `doom/help-packages' that this is a built-in
-   package. If set to 'prefer, the package will not be installed if it is
+   package. If set to \\='prefer, the package will not be installed if it is
    already provided by Emacs.
  :env ALIST
    Parameters and envvars to set while the package is building. If these values
-   change, the package will be rebuilt on next 'doom sync'.
+   change, the package will be rebuilt on next \\='doom sync'.
 
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."

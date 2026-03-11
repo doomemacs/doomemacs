@@ -234,7 +234,7 @@ state are passed in.")
                                      on-exit)
   "Define a project minor mode named NAME and where/how it is activated.
 
-Project modes allow you to configure 'sub-modes' for major-modes that are
+Project modes allow you to configure \\='sub-modes' for major-modes that are
 specific to a folder, project structure, framework or whatever arbitrary context
 you define. These project modes can have their own settings, keymaps, hooks,
 snippets, etc.

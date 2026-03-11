@@ -108,7 +108,7 @@ This is much faster and safer than `doom/reload', but not as comprehensive. This
 reloads your package and module visibility, but does not install new packages or
 remove orphaned ones. It also doesn't reload your private config.
 
-It is useful to only pull in changes performed by 'doom sync' on the command
+It is useful to only pull in changes performed by \\='doom sync' on the command
 line."
   (interactive)
   (doom-require 'doom-lib 'profiles)
@@ -123,8 +123,8 @@ line."
 (defun doom/reload-env ()
   "Reloads your envvar file.
 
-DOES NOT REGENERATE IT. You must run 'doom env' in your shell OUTSIDE of Emacs.
-Doing so from within Emacs will taint your shell environment.
+DOES NOT REGENERATE IT. You must run \\='doom env' in your shell OUTSIDE of
+Emacs. Doing so from within Emacs will taint your shell environment.
 
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
