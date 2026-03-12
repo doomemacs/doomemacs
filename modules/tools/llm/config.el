@@ -39,7 +39,20 @@
            (if (eq gptel-magit-backend gptel--openrouter)
                '(:reasoning (:exclude t :effort "minimal"))
              nil)))
-      (apply fn args))))
+      (apply fn args)))
+
+  ;; HACK: Responses from the system/API calls might not be a string, causing
+  ;;   type errors.
+  ;; REVIEW: Remove these when ragnard/gptel-magit#9 is resolved OR
+  ;;   ragnard/gptel-magit#4 is merged.
+  (defadvice! +llm--fix-gptel-magit--non-string-responses-a (plist)
+    :filter-args #'gptel-magit--request
+    (when-let* ((callback (plist-get plist :callback)))
+      (cl-callf plist-put plist :callback
+                (lambda (response info)
+                  (when (stringp response)
+                    (funcall callback response info)))))
+    plist))
 
 
 (use-package! ob-gptel
