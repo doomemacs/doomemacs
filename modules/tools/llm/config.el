@@ -34,11 +34,7 @@
   ;; REVIEW: Remove when ragnard/gptel-magit#8 is resolved.
   (defadvice! +llm--fix-gptel-magit--omit-reasoning-a (fn &rest args)
     :around #'gptel-magit--generate
-    (let ((gptel-include-reasoning nil)
-          (gptel--request-params
-           (if (eq gptel-magit-backend gptel--openrouter)
-               '(:reasoning (:exclude t :effort "minimal"))
-             nil)))
+    (let (gptel-include-reasoning)
       (apply fn args)))
 
   ;; HACK: Responses from the system/API calls might not be a string, causing
