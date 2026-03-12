@@ -80,7 +80,7 @@
   (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "3b9caed3e4cc5f4bc0348eb65d17098de76904e4"))
+  (package! jupyter :pin "242fdc709ce0faa3b9ee81dcc48cfd791898e6b8"))
 (when (modulep! +journal)
   (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
 (when (modulep! +noter)
