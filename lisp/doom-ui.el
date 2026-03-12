@@ -13,7 +13,7 @@ Is either a symbol representing the name of an Emacs theme, or a list thereof
 
 Set to `nil' to load no theme at all. This variable is changed by `load-theme'
 and `enable-theme'."
-  :type '(choice theme (repeat theme))
+  :type '(choice symbol (repeat symbol))
   :group 'doom)
 
 (defcustom doom-font nil
@@ -26,7 +26,7 @@ Examples:
   (setq doom-font (font-spec :family \"Fira Mono\" :size 12))
   (setq doom-font \"Terminus (TTF):pixelsize=12:antialias=off\")
   (setq doom-font \"Fira Code-14\")"
-  :type 'font
+  :type '(restricted-sexp :match-alternatives (fontp stringp 'nil))
   :group 'doom)
 
 (defcustom doom-variable-pitch-font nil
@@ -35,7 +35,7 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
 
 An omitted font size means to inherit `doom-font''s size."
-  :type 'font
+  :type '(restricted-sexp :match-alternatives (fontp stringp 'nil))
   :group 'doom)
 
 (defcustom doom-serif-font nil
@@ -44,7 +44,7 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
 
 An omitted font size means to inherit `doom-font''s size."
-  :type 'font
+  :type '(restricted-sexp :match-alternatives (fontp stringp 'nil))
   :group 'doom)
 
 (define-obsolete-variable-alias 'doom-unicode-font 'doom-symbol-font "3.0.0")
@@ -55,7 +55,7 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
 font to that size. It's rarely a good idea to do so!"
-  :type 'font
+  :type '(restricted-sexp :match-alternatives (fontp stringp 'nil))
   :group 'doom)
 
 (defcustom doom-emoji-font nil
@@ -65,7 +65,7 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
 font to that size. It's rarely a good idea to do so!"
-  :type 'font
+  :type '(restricted-sexp :match-alternatives (fontp stringp 'nil))
   :group 'doom)
 
 (defcustom doom-emoji-fallback-font-families
@@ -76,7 +76,7 @@ font to that size. It's rarely a good idea to do so!"
   "A list of fallback font families to use for emojis.
 These are platform-specific fallbacks for internal use. If you
 want to change your emoji font, use `doom-emoji-font'."
-  :type '(repeat font)
+  :type '(repeat (restricted-sexp :match-alternatives (fontp stringp)))
   :group 'doom)
 
 (defcustom doom-symbol-fallback-font-families
@@ -85,7 +85,7 @@ want to change your emoji font, use `doom-emoji-font'."
   "A list of fallback font families for general symbol glyphs.
 These are platform-specific fallbacks for internal use. If you
 want to change your symbol font, use `doom-symbol-font'."
-  :type '(repeat font)
+  :type '(repeat (restricted-sexp :match-alternatives (fontp stringp)))
   :group 'doom)
 
 

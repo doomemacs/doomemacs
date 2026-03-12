@@ -21,7 +21,7 @@
 
 It is prefilled by the DOOMPATH envvar (a colon-separated list on Linux/macOS,
 semicolon otherwise)."
-  :type '(list directory)
+  :type '(repeat directory)
   :group 'doom-cli)
 
 

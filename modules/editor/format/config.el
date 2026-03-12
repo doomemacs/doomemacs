@@ -11,7 +11,7 @@
 If it is t, it is disabled in all modes, the same as if the +onsave flag wasn't
   used at all.
 If nil, formatting is enabled in all modes."
-  :type '(list symbol))
+  :type '(repeat symbol))
 
 (defvaralias '+format-with 'apheleia-formatter)
 (defvaralias '+format-inhibit 'apheleia-inhibit)
