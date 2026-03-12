@@ -1243,6 +1243,15 @@ between the two."
              #'+org-init-popup-rules-h
              #'+org-init-smartparens-h)
 
+  ;; HACK: Since 9.8, org-agenda fails to properly initialize on first
+  ;;   invokation for some reason. Until this is sorted out, this will
+  ;;   automatically reload it.
+  (add-hook! 'org-agenda-finalize-hook
+    (defun +org--reload-org-agenda-h ()
+      (when (get-buffer-window nil t) ; make sure it's visible
+        (remove-hook 'org-agenda-finalize-hook #'+org--reload-org-agenda-h)
+        (org-agenda-redo nil))))
+
   ;; Wait until an org-protocol link is opened via emacsclient to load
   ;; `org-protocol'. Normally you'd simply require `org-protocol' and use it,
   ;; but the package loads all of org for no compelling reason, so...
