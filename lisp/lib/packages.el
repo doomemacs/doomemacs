@@ -115,7 +115,7 @@ package's name as a symbol, and whose CDR is the plist supplied to its
                     ;;   < 2.28. `git symbolic-ref' is a portable alternative
                     ;;   that works on all git versions. See #8538.
                     (funcall call "git" "symbolic-ref" "HEAD"
-                             (format "refs/heads/%s" straight-repository-branch))
+                             (format "refs/heads/%s" branch))
                     (funcall call "git" "remote" "add" "origin" repo-url
                              "--master" straight-repository-branch)
                     (funcall call "git" "fetch" "origin" pin
