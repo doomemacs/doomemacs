@@ -24,9 +24,11 @@ behavior).")
   :init
   (after! nerd-icons
     (add-to-list 'nerd-icons-extension-icon-alist
-                 '("beancount" nerd-icons-faicon "nf-fa-money" :face nerd-icons-lblue))
+                 '("beancount" nerd-icons-faicon "nf-fa-money" :face nerd-icons-lgreen))
+    (add-to-list 'nerd-icons-extension-icon-alist
+                 '("bean" nerd-icons-faicon "nf-fa-money" :face nerd-icons-lgreen))
     (add-to-list 'nerd-icons-mode-icon-alist
-                 '(beancount-mode nerd-icons-faicon "nf-fa-money" :face nerd-icons-lblue)))
+                 '(beancount-mode nerd-icons-faicon "nf-fa-money" :face nerd-icons-lgreen)))
   :config
   (set-eval-handler! 'beancount-mode #'beancount-region-default)
 
