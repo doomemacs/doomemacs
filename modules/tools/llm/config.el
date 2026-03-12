@@ -3,6 +3,8 @@
 (use-package! gptel
   :defer t
   :config
+  (set-debug-variable! 'gptel-log-level 'debug)
+
   (setq gptel-display-buffer-action nil   ; if changed, popup manager will bow out
         gptel-default-mode 'org-mode)
 
