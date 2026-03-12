@@ -46,7 +46,7 @@
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "90e1d6bd6288615233dae273f0525a43a9d8779d")
+  :pin "b840bdabd1867f9d51ee36bef7bac4be7073288c")  ; release_0.8
 
 (package! avy)
 (package! htmlize :pin "fa644880699adea3770504f913e6dddbec90c076")
@@ -80,7 +80,7 @@
   (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "242fdc709ce0faa3b9ee81dcc48cfd791898e6b8"))
+  (package! jupyter :pin "3b9caed3e4cc5f4bc0348eb65d17098de76904e4"))
 (when (modulep! +journal)
   (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
 (when (modulep! +noter)
@@ -88,7 +88,7 @@
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-modern :pin "b4b5b1c864f1fdf240d1bbd7093529f5a75e8a06")
+  (package! org-modern :pin "f514a2570da0f7a8ff0d72641458dbcf96ccf702")
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
 (when (modulep! +present)
   (package! centered-window
@@ -99,7 +99,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "0753c057773ed3e3ec68a558e9af38d8fce728b8"))
+    :pin "8d9120f8abf159670e9ddcb1e802ce29c0aea6eb"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
   (package! org-roam :pin "7cd906b6f8b18a21766228f074aff24586770934"))
