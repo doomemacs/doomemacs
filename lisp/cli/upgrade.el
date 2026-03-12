@@ -105,7 +105,7 @@ libraries. It is the equivalent of the following shell commands:
           (progn
             (or (zerop (car (sh! "git" "remote" "add" doom-upgrade-remote doom-upgrade-url)))
                 (error "Failed to add %s to remotes" doom-upgrade-remote))
-            (or (zerop (car (setq result (sh! "git" "fetch" "--force" "--tags" doom-upgrade-remote (format "%s:%s" branch target-remote)))))
+            (or (zerop (car (sh! "git" "fetch" "--force" "--tags" doom-upgrade-remote (format "%s:%s" branch target-remote))))
                 (error "Failed to fetch from upstream"))
 
             (let ((this-rev (cdr (sh! "git" "rev-parse" "HEAD")))
