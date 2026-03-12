@@ -27,7 +27,19 @@
 
 (use-package! gptel-magit
   :when (modulep! :tools magit)
-  :hook (magit-mode . gptel-magit-install))
+  :hook (magit-mode . gptel-magit-install)
+  :config
+  ;; HACK: `gptel-include-reasoning' can break gptel-magit, and needs to be
+  ;;   excluded if you use openrouter.
+  ;; REVIEW: Remove when ragnard/gptel-magit#8 is resolved.
+  (defadvice! +llm--fix-gptel-magit--omit-reasoning-a (fn &rest args)
+    :around #'gptel-magit--generate
+    (let ((gptel-include-reasoning nil)
+          (gptel--request-params
+           (if (eq gptel-magit-backend gptel--openrouter)
+               '(:reasoning (:exclude t :effort "minimal"))
+             nil)))
+      (apply fn args))))
 
 
 (use-package! ob-gptel
