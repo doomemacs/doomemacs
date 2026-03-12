@@ -40,17 +40,20 @@
       (apply fn args)))
 
   ;; HACK: Responses from the system/API calls might not be a string, causing
-  ;;   type errors.
+  ;;   type errors. It also doesn't do any error handling at all, so we do it.
   ;; REVIEW: Remove these when ragnard/gptel-magit#9 is resolved OR
   ;;   ragnard/gptel-magit#4 is merged.
-  (defadvice! +llm--fix-gptel-magit--non-string-responses-a (plist)
+  (defadvice! +llm--fix-gptel-magit--non-string-responses-a (args)
     :filter-args #'gptel-magit--request
-    (when-let* ((callback (plist-get plist :callback)))
-      (cl-callf plist-put plist :callback
-                (lambda (response info)
-                  (when (stringp response)
-                    (funcall callback response info)))))
-    plist))
+    (when-let* ((callback (plist-get (cdr args) :callback)))
+      (cl-callf plist-put (cdr args)
+        :callback (lambda (response info)
+                    (if (stringp response)
+                        (funcall callback response info)
+                      (message "gptel-magit error: %s: %s"
+                               (plist-get info :status)
+                               (plist-get (plist-get info :error) :message))))))
+    args))
 
 
 (use-package! ob-gptel
