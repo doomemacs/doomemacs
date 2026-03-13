@@ -106,9 +106,6 @@
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
-(when (modulep! :lang clojure)
-  (package! ob-clojure-literate
-    :pin "18c3ea15b872a43e67c899a9914182c35b00b7ee"))
 (when (modulep! :lang crystal)
   (package! ob-crystal :pin "d84c1adee4b269cdba06a97caedb8071561a09af"))
 (when (modulep! :lang elixir)
