@@ -810,7 +810,7 @@ appropriately against `noninteractive' or the `cli' context."
           (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook)
                             (lambda ()
                               (not (member (buffer-name)
-                                           (list "*scratch*" (buffer-name (doom-fallback-buffer)))))))
+                                           `("*scratch*" ,doom-fallback-buffer-name)))))
 
           ;; If the user's already opened something (e.g. with command-line
           ;; arguments), then we should assume nothing about the user's
