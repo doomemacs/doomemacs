@@ -115,7 +115,7 @@ line."
   ;; TODO: Make this more robust
   (with-doom-context 'reload
     (dolist (file (mapcar #'car doom-profile-generators))
-      (when (string-match-p "/[0-9]+-loaddefs[.-]" file)
+      (when (string-match-p "^[0-9]+-loaddefs[.-]" file)
         (load (doom-path doom-profile-dir doom-profile-init-dir-name file)
               'noerror)))))
 
