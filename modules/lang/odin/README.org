@@ -1,0 +1,72 @@
+#+title: :lang Odin
+#+subtitle: C but better
+#+created: February 24, 2026
+#+since: NA
+
+* Description :unfold:
+
+To get started with Odin, you need a functional installation of [[https://odin-lang.org][Odin]], with optional LSP support for LSP via [[https://github.com/DanielGavin/ols][OLS]].
+
+- Syntax highlighting (~odinfmt~)
+- Syntax checking (~ols~)
+- Code completion and LSP integration (~ols~)
+
+** Maintainers
+- [[doom-user][@yar_oracool]]
+** Module flags
+- +lsp ::
+  Enables LSP support for ~odin-mode~ and ~odin-ts-mode~. Requires [[doom-module::tools lsp]] and the lsp server, =ols=.
+
+** Packages
+- [[doom-package:odin]]
+- doom-package:odin-ts-mode if [[doon-module:+tree-sitter]]
+** Hacks
+/No hacks documented for this module... yet./
+** TODO Change log
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a change log yet.
+* Installation
+[[][Enable this module in your ~doom!~ block.]]
+
+To get started with Odin, you need the Odin tool. You can download from [https://odin-lang.org/docs/install/#official-releases] and add to $PATH or from [[https://odin-lang.org/docs/install/#package-managers][System Package Manager]].
+
+~ols~ is the language server for Odin, which provides:
+- Completion
+- Go to definition
+- Semantic tokens
+- Document symbols
+- Rename
+- References
+- Signature help
+- Hover
+
+* Usage
+#+begin_quote
+ 󱌣 /This modules has more features coming... maybe.
+#+end_quote
+** LSP support
+
+This module supports LSP integration. For it to work you’ll need:
+
+ 1. ~ols~ is downloaded
+ 2. ~ols~ is compiled
+ 3. ~ols~ is in $PATH
+ 4. The [[doom-module::tools lsp]]
+** Keybinds
+| Binding           | Description |
+|-------------------+-------------|
+| [[kbd:][<localleader> b b]] | ~odin-build~  |
+| [[kbd:][<localleader> t t]] | ~odin-test~   |
+
+* Configuration
+** Customize ols path
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
+(setq lsp-odin-ols-binary-path "~/path/to/ols")
+#+end_src
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+* Appendix
+Spesial thanks to [[doom-user:][@hlissner]] and a man who wanted to remain in the shadows for helping me cobble this together.
