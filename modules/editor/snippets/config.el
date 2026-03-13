@@ -31,7 +31,7 @@
   (add-transient-hook! #'company-yasnippet (require 'yasnippet))
 
   :config
-  (set-debug-variable! 'yas-verbosity 3)
+  (set-debug-var! 'yas-verbosity 3)
 
   ;; Allow private snippets in DOOMDIR/snippets
   (add-to-list 'yas-snippet-dirs '+snippets-dir)

@@ -42,8 +42,8 @@ This is controlled by `+format-on-save-disabled-modes'."
     (add-hook 'lsp-managed-mode-hook #'+format-with-lsp-toggle-h))
 
   :config
-  (set-debug-variable! 'apheleia-log-only-errors nil)
-  (set-debug-variable! 'apheleia-log-debug-info t 2)
+  (set-debug-var! 'apheleia-log-only-errors nil)
+  (set-debug-var! 'apheleia-log-debug-info t 2)
 
   ;; UX: Use prefix-arg on `save-buffer' or `basic-save-buffer' to inhibit
   ;;   format-on-save behavior.

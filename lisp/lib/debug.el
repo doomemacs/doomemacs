@@ -27,7 +27,7 @@
 
 ;;;###autoload
 (progn
-  (cl-defun set-debug-variable! (var &optional (debug-val t) (level 1))
+  (cl-defun set-debug-var! (var &optional (debug-val t) (level 1))
     "Set VAR to DEBUG-VAL (or `t') when `doom-debug-mode' is active at >=LEVEL."
     (setf (alist-get var doom-debug--variables) (cons debug-val level))))
 

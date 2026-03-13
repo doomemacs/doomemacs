@@ -3,7 +3,7 @@
 (use-package! envrc
   :hook (doom-first-file . envrc-global-mode)
   :config
-  (set-debug-variable! 'envrc-debug)
+  (set-debug-var! 'envrc-debug)
 
   (set-popup-rule! "^\\*envrc\\*" :quit t :ttl 0)
 

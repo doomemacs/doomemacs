@@ -44,7 +44,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     (setq lsp-keymap-prefix nil))
 
   :config
-  (set-debug-variable! 'lsp-log-io t 2)
+  (set-debug-var! 'lsp-log-io t 2)
 
   (setq lsp-intelephense-storage-path (file-name-concat doom-profile-data-dir "lsp-intelephense/")
         lsp-vetur-global-snippets-dir

@@ -1291,7 +1291,7 @@ between the two."
     (run-hooks 'org-load-hook))
 
   :config
-  (set-debug-variable! 'org-export-async-debug)
+  (set-debug-var! 'org-export-async-debug)
 
   (set-company-backend! 'org-mode 'company-capf)
   (set-eval-handler! 'org-mode #'+org-eval-handler)
