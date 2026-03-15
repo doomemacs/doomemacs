@@ -1,11 +1,19 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
-(defvar +emacs-lisp-enable-extra-fontification t
-  "If non-nil, highlight special forms, and defined functions and variables.")
+(defgroup +emacs-lisp nil
+  "Enhances support for Emacs Lisp in Emacs."
+  :group 'doom+)
 
-(defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
+(defcustom +emacs-lisp-enable-extra-fontification t
+  "If non-nil, highlight special forms, and defined functions and variables."
+  :type 'boolean
+  :group '+emacs-lisp)
+
+(defcustom +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
-This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
+This marks a foldable marker for `outline-minor-mode' in elisp buffers."
+  :type 'regexp
+  :group '+emacs-lisp)
 
 (defvar +emacs-lisp-linter-warnings
   '(not free-vars    ; don't complain about unknown variables
@@ -139,6 +147,7 @@ Use `+emacs-lisp/change-working-buffer' to change this. Only applies to
           "f" #'find-function
           "v" #'find-variable
           "l" #'find-library)))
+
 
 (use-package! ielm
   :defer t
