@@ -238,10 +238,7 @@ tell you about it. Very annoying. This prevents that."
 
 (use-package! autorevert
   ;; revert buffers when their files/state have changed
-  :hook (after-save . doom-auto-revert-buffers-h)
-  :hook (doom-switch-buffer . doom-auto-revert-buffer-h)
-  :hook (doom-switch-window . doom-auto-revert-buffer-h)
-  :hook (doom-switch-frame . doom-auto-revert-buffers-h)
+  :hook (doom-first-file . doom-auto-revert-mode)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
@@ -263,6 +260,18 @@ tell you about it. Very annoying. This prevents that."
   ;;   single buffer and, at maximum, ~10 x F buffers, where F = number of open
   ;;   frames (after all, when do you ever have more than 10 windows in any
   ;;   single frame?).
+  (define-minor-mode doom-auto-revert-mode
+    "A more performant alternative to `global-auto-revert-mode'."
+    :global t
+    :group 'doom
+    (when global-auto-revert-mode
+      (setq doom-auto-revert-mode nil))
+    (let ((fn (if doom-auto-revert-mode #'add-hook #'remove-hook)))
+      (funcall fn 'doom-switch-buffer-hook #'doom-auto-revert-buffer-h)
+      (funcall fn 'doom-switch-window-hook #'doom-auto-revert-buffer-h)
+      (funcall fn 'doom-switch-frame-hook #'doom-auto-revert-buffers-h)
+      (funcall fn 'after-save-hook #'doom-auto-revert-buffers-h)))
+
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode
