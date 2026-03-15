@@ -112,8 +112,9 @@ or if the current buffer is read-only or not file-visiting."
   ;; Reduced from the default of 5000 for slightly faster analysis
   (setq dtrt-indent-max-lines 2000)
 
-  ;; Always keep tab-width up-to-date
-  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width))
+  ;; Doom sets `tab-width' and `evil-shift-width' for us in `doom-set-indent'.
+  (dolist (var (get 'tab-width 'indent-vars))
+    (cl-callf2 rassq-delete-all var dtrt-indent-hook-generic-mapping-list))
 
   ;; Add missing language support
   ;; REVIEW: PR these upstream.

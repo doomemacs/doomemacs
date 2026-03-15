@@ -113,14 +113,8 @@ directives. By default, this only recognizes C directives.")
   (defun +evil-emacs-cursor-fn ()
     (evil-set-cursor-color (get 'cursor 'evil-emacs-color)))
 
-  ;; HACK: Ensure `evil-shift-width' always matches `tab-width'; evil does not
-  ;;   police this itself, so we must. Except in org-mode, where `tab-width'
-  ;;   *must* default to 8, which isn't a sensible default for
-  ;;   `evil-shift-width'.
-  (add-hook! 'after-change-major-mode-hook
-    (defun +evil-adjust-shift-width-h ()
-      (unless (derived-mode-p 'org-mode)
-        (setq-local evil-shift-width tab-width))))
+  ;; HACK: Ensure `evil-shift-width' always matches `tab-width'.
+  (set-indent-vars! t 'evil-shift-width)
 
 
   ;; --- keybind fixes ----------------------

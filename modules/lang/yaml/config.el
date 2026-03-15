@@ -4,8 +4,7 @@
   :mode "Procfile\\'"
   :config
   (when (modulep! +lsp)
-    (add-hook 'yaml-mode-local-vars-hook #'lsp! 'append))
-  (setq-hook! 'yaml-mode-hook tab-width yaml-indent-offset))
+    (add-hook 'yaml-mode-local-vars-hook #'lsp! 'append)))
 
 
 (use-package! yaml-ts-mode  ; 29.1+ only
