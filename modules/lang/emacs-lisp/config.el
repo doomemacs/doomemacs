@@ -69,20 +69,6 @@ Use `+emacs-lisp/change-working-buffer' to change this. Only applies to
     outline-regexp +emacs-lisp-outline-regexp
     outline-level #'+emacs-lisp-outline-level)
 
-  ;; DEPRECATED: Remove when 27.x support is dropped.
-  (when (< emacs-major-version 28)
-    ;; As of Emacs 28+, `emacs-lisp-mode' uses a shorter label in the mode-line
-    ;; ("ELisp/X", where X = l or d, depending on `lexical-binding'). In <=27,
-    ;; it uses "Emacs-Lisp". The former is more useful, so I backport it:
-    (setq-hook! 'emacs-lisp-mode-local-vars-hook
-      mode-name `("ELisp"
-                  (lexical-binding (:propertize "/l"
-                                    help-echo "Using lexical-binding mode")
-                                   (:propertize "/d"
-                                    help-echo "Using old dynamic scoping mode"
-                                    face warning
-                                    mouse-face mode-line-highlight)))))
-
   ;; Introduces logic to improve plist indentation in emacs-lisp-mode.
   (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
 
