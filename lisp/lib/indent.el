@@ -42,7 +42,8 @@ with `set-indent-vars!'."
                          -tab-width
                          -basic-offset)))
         (cl-loop for suffix in suffixes
-                 if (intern-soft (format "%s%s" mode** suffix))
+                 if (let ((sym (intern-soft (format "%s%s" mode** suffix))))
+                      (and sym (boundp sym) sym))
                  return it))))
 
   (defun doom-indent-vars-for-mode (mode)
