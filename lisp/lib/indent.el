@@ -42,8 +42,9 @@ with `set-indent-vars!'."
                          -tab-width
                          -basic-offset)))
         (cl-loop for suffix in suffixes
-                 if (intern-soft (format "%s%s" mode** suffix))
-                 return it))))
+                 for sym = (intern-soft (format "%s%s" mode** suffix))
+                 if (and sym (boundp sym))
+                 return sym))))
 
   (defun doom-indent-vars-for-mode (mode)
     "Try to auto-detect the indent variables for major MODE."
