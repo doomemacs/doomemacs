@@ -18,7 +18,7 @@ be enabled. If any function returns non-nil, the mode will not be activated."
   :init
   (defun +indent-guides-startup-h ()
     "Set up indent-bars to activate after startup."
-    (add-hook 'after-change-major-mode-hook #'+indent-guides-init-maybe-h))
+    (add-hook 'after-change-major-mode-hook #'+indent-guides-init-maybe-h 95))
 
   (defun +indent-guides-init-maybe-h ()
     "Enable `indent-bars-mode' depending on `+indent-guides-inhibit-functions'."
