@@ -48,7 +48,12 @@ be enabled. If any function returns non-nil, the mode will not be activated."
         indent-bars-color '(font-lock-comment-face :face-bg nil :blend 0.425)
         ;; Don't highlight current level indentation; it's distracting and is
         ;; unnecessary overhead for little benefit.
-        indent-bars-highlight-current-depth nil)
+        indent-bars-highlight-current-depth nil
+        ;; The default is `t', which shows indent-bars even on blank lines
+        ;; beyond the end of an indented block. Setting it to `nil' will cause
+        ;; gaps in the indent guides, which looks odd. `least' is a good
+        ;; compromise, and doesn't suffer the scrolling issue.
+        indent-bars-display-on-blank-lines 'least)
 
   ;; indent-bars adds this to `enable-theme-functions', which was introduced in
   ;; 29.1, which will be redundant with `doom-load-theme-hook'.
