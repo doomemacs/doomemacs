@@ -865,8 +865,6 @@
         :desc "Spell checker"              "s" #'spell-fu-mode)
        (:when (modulep! :checkers spell +flyspell)
         :desc "Spell checker"              "s" #'flyspell-mode)
-       (:when (modulep! :lang org +pomodoro)
-        :desc "Pomodoro timer"             "t" #'org-pomodoro)
        :desc "Visible mode"                 "v" #'visible-mode
        :desc "Soft line wrapping"           "w" #'visual-line-mode
        (:when (modulep! :editor word-wrap)

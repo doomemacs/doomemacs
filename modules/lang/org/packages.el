@@ -54,21 +54,9 @@
 (package! toc-org :pin "6d3ae0fc47ce79b1ea06cabe21a3c596395409cd")
 (package! org-cliplink :pin "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
 
-;; TODO: Adjust when this is added to GNU ELPA
-(when (modulep! +contacts)
-  (package! org-contacts
-    :recipe (:host github :repo "doomelpa/org-contacts")
-    :pin "b06a59736800865b8a7e8d6d45774169cb31528a"))
-
 (when (and (featurep :system 'macos)
            (modulep! :os macos))
   (package! org-mac-link :pin "e30171a6e98db90787ab8a23b3a7dc4fd13b10f9"))
-
-(when (modulep! +passwords)
-  (package! org-passwords
-    :pin "61584aa701defcc0c435d3e7552916235cb655a6"
-    :recipe (:host github
-             :repo "alfaromurillo/org-passwords.el")))
 
 (when (modulep! :editor evil +everywhere)
   (package! evil-org
@@ -85,8 +73,6 @@
   (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
 (when (modulep! +noter)
   (package! org-noter :pin "81765d267e51efd8b4f5b7276000332ba3eabbf5"))
-(when (modulep! +pomodoro)
-  (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
   (package! org-modern :pin "f514a2570da0f7a8ff0d72641458dbcf96ccf702")
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
@@ -138,9 +124,5 @@
 ;;; Export
 (when (modulep! +pandoc)
   (package! ox-pandoc :pin "1caeb56a4be26597319e7288edbc2cabada151b4"))
-(when (modulep! +hugo)
-  (package! ox-hugo
-    :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "b7dc44dc28911b9d8e3055a18deac16c3b560b03"))
 (when (modulep! :lang rst)
   (package! ox-rst :pin "b73eff187eebac24b457688bfd27f09eff434860"))

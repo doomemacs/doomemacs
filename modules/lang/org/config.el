@@ -627,10 +627,6 @@ relative to `org-directory', unless it is an absolute path."
   (when (modulep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
 
-  (use-package! ox-hugo
-    :when (modulep! +hugo)
-    :after ox)
-
   (use-package! ox-pandoc
     :when (modulep! +pandoc)
     :when (executable-find "pandoc")

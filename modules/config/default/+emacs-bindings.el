@@ -340,8 +340,6 @@
         :desc "Spell checker"              "s" #'spell-fu-mode)
        (:when (modulep! :checkers spell +flyspell)
         :desc "Spell checker"              "s" #'flyspell-mode)
-       (:when (modulep! :lang org +pomodoro)
-        :desc "Pomodoro timer"             "t" #'org-pomodoro)
        (:when (modulep! :ui zen)
         :desc "Zen mode"                   "z" #'+zen/toggle
         :desc "Zen mode (fullscreen)"      "Z" #'+zen/toggle-fullscreen))
