@@ -92,7 +92,7 @@ inserting the link."
     org-id-link-to-org-use-id +org-roam-link-to-org-use-id)
 
   ;; Normally, the org-roam buffer won't open until `org-roam-buffer-toggle' is
-  ;; explicitly called. If `+org-roam-open-buffer-on-find-file' is non-nil, the
+  ;; explicitly called. If `+org-roam-auto-backlinks-buffer' is non-nil, the
   ;; org-roam buffer will automatically open whenever a file in
   ;; `org-roam-directory' is visited and closed when no org-roam buffers remain.
   (add-hook! 'org-roam-find-file-hook :append
