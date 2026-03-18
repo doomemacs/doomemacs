@@ -443,9 +443,21 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                 #'doom-apply-ansi-color-to-compilation-buffer-h
               #'ansi-color-compilation-filter))
   ;; Automatically truncate compilation buffers so they don't accumulate too
-  ;; much data and bog down the rest of Emacs.
+  ;; much data and grind Emacs' GC to a halt or crash. Also rate-limit expensive
+  ;; calls to `comint-truncate-buffer'.
   (autoload 'comint-truncate-buffer "comint" nil t)
-  (add-hook 'compilation-filter-hook #'comint-truncate-buffer))
+  (add-hook! 'compilation-filter-hook
+    (defun doom-comint-truncate-buffer-h (&optional _string)
+      "Rate-limit `comint-truncate-buffer' in compilation-mode buffers."
+      (if (> (buffer-size)
+             ;; HACK: Approximate this because counting lines is prohibitively
+             ;;   expensive in longer buffers, especially in
+             ;;   `compilation-filter-hook' which fires rapidly.
+             (* 80 comint-buffer-maximum-size))
+          (let ((gc-cons-threshold most-positive-fixnum)
+                (gc-cons-percentage 1.0))
+            (with-silent-modifications
+              (comint-truncate-buffer)))))))
 
 
 (after! ediff
