@@ -381,14 +381,15 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (add-hook 'comint-exec-hook #'buffer-disable-undo)
   (defadvice! doom--comint-enable-undo-a (process _string)
     :after #'comint-output-filter
-    (with-current-buffer (process-buffer process)
-      (when-let* ((start-marker comint-last-output-start))
-        (when (and (< start-marker
-                      (or (if process (process-mark process))
-                          (point-max-marker)))
-                   (eq (char-before start-marker) ?\n)) ;; Account for some of the IELM’s wilderness.
-          (buffer-enable-undo)
-          (setq buffer-undo-list nil)))))
+    (unless buffer-read-only  ; don't affect output-only buffers like `compilation-mode'
+      (with-current-buffer (process-buffer process)
+        (when-let* ((start-marker comint-last-output-start))
+          (when (and (< start-marker
+                        (or (if process (process-mark process))
+                            (point-max-marker)))
+                     (eq (char-before start-marker) ?\n)) ;; Account for some of the IELM’s wilderness.
+            (buffer-enable-undo)
+            (setq buffer-undo-list nil))))))
 
   ;; Protect prompts from accidental modifications.
   (setq-default comint-prompt-read-only t)
@@ -428,8 +429,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
   (add-hook! 'comint-mode-hook
     (defun doom--comint-init-move-cursor-to-prompt-h ()
-      (add-hook 'pre-command-hook #'doom--comint-move-cursor-to-prompt-h
-                nil t))))
+      (unless buffer-read-only  ; don't affect output-only buffers like `compilation-mode'
+        (add-hook 'pre-command-hook #'doom--comint-move-cursor-to-prompt-h
+                  nil t)))))
 
 
 (after! compile
