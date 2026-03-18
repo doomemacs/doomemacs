@@ -437,6 +437,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (after! compile
   (setq compilation-always-kill t       ; kill compilation process before starting another
         compilation-ask-about-save nil  ; save all buffers on `compile'
+        compilation-max-output-line-length nil  ; slows down verbose processes
         compilation-scroll-output 'first-error)
   (add-hook 'compilation-filter-hook
             (if (< emacs-major-version 28)
