@@ -84,10 +84,11 @@
 ;; when it's idle. However, if the idle delay is too long, we run the risk of
 ;; runaway memory usage in busy sessions. And if it's too low, then we may as
 ;; well not be using gcmh at all.
-(setq gcmh-idle-delay 'auto  ; default is 15s
-      gcmh-auto-idle-delay-factor 10
-      gcmh-high-cons-threshold (* 64 1024 1024))  ; 64mb
-(add-hook 'doom-first-buffer-hook #'gcmh-mode)
+(unless (featurep 'igc)
+  (setq gcmh-idle-delay 'auto  ; default is 15s
+        gcmh-auto-idle-delay-factor 10
+        gcmh-high-cons-threshold (* 64 1024 1024))  ; 64mb
+  (add-hook 'doom-first-buffer-hook #'gcmh-mode))
 
 
 ;;; Disable UI elements early
