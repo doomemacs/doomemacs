@@ -190,7 +190,10 @@ PLIST can have the following properties:
   (add-hook 'post-command-hook #'+doom-dashboard-reposition-point-h nil 'local)
   ;; hl-line produces an ugly cut-off line highlight in the dashboard, so don't
   ;; activate it there (by pretending it's already active).
-  (setq-local hl-line-mode t))
+  (setq-local hl-line-mode t)
+  ;; Local variables are never important in the dashboard, and may cause repeat
+  ;; prompts about unsafe/risky variables.
+  (setq-local enable-local-variables nil))
 
 (define-key! +doom-dashboard-mode-map
   [left-margin mouse-1]   #'ignore
