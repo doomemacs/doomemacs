@@ -88,8 +88,9 @@ or if the current buffer is read-only or not file-visiting."
   :when (modulep! +guess)
   ;; Automatic detection of indent settings
   :unless noninteractive
-  ;; I'm not using `global-dtrt-indent-mode' because it has hard-coded and rigid
-  ;; major mode checks, so I implement it in `+whitespace-guess-indentation-h'.
+  ;; HACK: I'm not using `global-dtrt-indent-mode' because it has hard-coded and
+  ;;   rigid major mode checks and activates itself too late (before
+  ;;   indent-aware plugins like `indent-bars-mode' are likely to be activated).
   :hook ((change-major-mode-after-body read-only-mode) . +whitespace-guess-indentation-h)
   :config
   (defun +whitespace-guess-indentation-h ()
