@@ -1,13 +1,19 @@
 ;;; ui/zen/config.el -*- lexical-binding: t; -*-
 
-(defvar +zen-mixed-pitch-modes '(adoc-mode rst-mode markdown-mode org-mode)
-  "What major-modes to enable `mixed-pitch-mode' in with `writeroom-mode'.")
+(defcustom +zen-mixed-pitch-modes '(adoc-mode rst-mode markdown-mode org-mode)
+  "What major-modes to enable `mixed-pitch-mode' in with `writeroom-mode'."
+  :type '(repeat symbol)
+  :group '+zen)
 
-(defvar +zen-text-scale 2
-  "The text-scaling level for `writeroom-mode'.")
+(defcustom +zen-text-scale 2.0
+  "The text-scaling level for `writeroom-mode'."
+  :type 'float
+  :group '+zen)
 
-(defvar +zen-window-divider-size 4
-  "Pixel size of window dividers when `writeroom-mode' is active.")
+(defcustom +zen-window-divider-size 4
+  "Pixel size of window dividers when `writeroom-mode' is active."
+  :type 'integer
+  :group '+zen)
 
 (defvar +zen--old-window-divider-size nil)
 
