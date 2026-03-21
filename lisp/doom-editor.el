@@ -2,59 +2,21 @@
 ;;; Commentary:
 ;;; Code:
 
-(defvar doom-inhibit-large-file-detection nil
-  "If non-nil, inhibit large/long file detection when opening files.")
+(defvar doom-file-lines-threshold-alist
+  `(("." . ,(cond ((featurep 'igc) 25000)
+                  ((featurep 'native-compile) 20000)
+                  (15000))))
+  "An alist mapping regexps (like `auto-mode-alist') to line number thresholds.
 
-(defvar doom-large-file-p nil)
-(put 'doom-large-file-p 'permanent-local t)
+If a file is opened and discovered to have more lines than this, Doom enables
+`so-long-minor-mode' to prevent Emacs from hanging, crashing, or becoming
+unusably slow, by disabling non-essential functionality.
 
-(defvar doom-large-file-size-alist '(("." . 1.0))
-  "An alist mapping regexps (like `auto-mode-alist') to filesize thresholds.
-
-If a file is opened and discovered to be larger than the threshold, Doom
-performs emergency optimizations to prevent Emacs from hanging, crashing or
-becoming unusably slow.
-
-These thresholds are in MB, and is used by `doom--optimize-for-large-files-a'.")
-
-(defvar doom-large-file-excluded-modes
-  '(so-long-mode special-mode archive-mode tar-mode jka-compr
-    git-commit-mode image-mode doc-view-mode doc-view-mode-maybe
-    ebrowse-tree-mode pdf-view-mode tags-table-mode)
-  "Major modes that `doom-check-large-file-h' will ignore.")
+Used by `doom-so-long-p'.")
 
 
 ;;
 ;;; File handling
-
-(defadvice! doom--prepare-for-large-files-a (size _ filename &rest _)
-  "Sets `doom-large-file-p' if the file is considered large.
-
-Uses `doom-large-file-size-alist' to determine when a file is too large. When
-`doom-large-file-p' is set, other plugins can detect this and reduce their
-runtime costs (or disable themselves) to ensure the buffer is as fast as
-possible."
-  :before #'abort-if-file-too-large
-  (and (numberp size)
-       (null doom-inhibit-large-file-detection)
-       (ignore-errors
-         (> size
-            (* 1024 1024
-               (assoc-default filename doom-large-file-size-alist
-                              #'string-match-p))))
-       (setq-local doom-large-file-p size)))
-
-(add-hook! 'find-file-hook :depth -90
-  (defun doom-optimize-for-large-files-h ()
-    "Trigger `so-long-minor-mode' if the file is large."
-    (when (and doom-large-file-p buffer-file-name)
-      (if (or doom-inhibit-large-file-detection
-              (memq major-mode doom-large-file-excluded-modes))
-          (kill-local-variable 'doom-large-file-p)
-        (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
-          (so-long-minor-mode +1))
-        (message "Large file detected! Cutting a few corners to improve performance...")))))
-
 
 ;; Resolve symlinks when opening files, so that any operations are conducted
 ;; from the file's true directory (like `find-file').
@@ -384,7 +346,7 @@ the unwritable tidbits."
 
   (defadvice! doom--inhibit-saveplace-in-long-files-a (fn &rest args)
     :around #'save-place-to-alist
-    (unless doom-large-file-p
+    (unless (bound-and-true-p so-long-minor-mode)
       (apply fn args)))
 
   (defadvice! doom--inhibit-saveplace-if-point-not-at-bol-a (&rest _)
@@ -544,35 +506,40 @@ on."
 
 
 (use-package! so-long
+  :when (fboundp 'buffer-line-statistics)  ; only 29+
   :hook (doom-first-file . global-so-long-mode)
   :config
-  ;; Emacs 29 introduced faster long-line detection, so they can afford a much
-  ;; larger `so-long-threshold' and its default `so-long-predicate'.
-  (if (fboundp 'buffer-line-statistics)
-      (unless (featurep 'native-compile)
-        (setq so-long-threshold 5000))
-    ;; reduce false positives w/ larger threshold
-    (setq so-long-threshold 400)
+  (unless (featurep 'native-compile)
+    (setq so-long-threshold 5000))
 
-    (defun doom-buffer-has-long-lines-p ()
-      (unless (bound-and-true-p visual-line-mode)
-        (let ((so-long-skip-leading-comments
-               ;; HACK: Fix #2183: `so-long-detected-long-line-p' calls
-               ;;   `comment-forward' which tries to use comment syntax, which
-               ;;   throws an error if comment state isn't initialized, leading
-               ;;   to a wrong-type-argument: stringp error.
-               ;; DEPRECATED: Fixed in Emacs 28.
-               (bound-and-true-p comment-use-syntax)))
-          (so-long-detected-long-line-p))))
-    (setq so-long-predicate #'doom-buffer-has-long-lines-p))
+  ;; HACK: I exploit so-long to implement a "large file" minor mode that
+  ;;   activates if a file is too large or has lines whose width exceed
+  ;;   `so-long-threshold' (particularly minified files), and disables
+  ;;   non-essential functionality to speed Emacs up.
+  (defun doom-so-long-p ()
+    "A `so-long-predicate' to determine if the current buffer is too large.
 
-  ;; HACK: so-long triggers in places where we don't want it, like special
-  ;;   buffers (e.g. magit status) or temp buffers.
-  (defadvice! doom--exclude-special-modes-a (&rest _)
-    :before-while #'so-long-statistics-excessive-p
-    :before-while #'so-long-detected-long-line-p
-    (not (or (doom-temp-buffer-p (current-buffer))
-             (doom-special-buffer-p (current-buffer) t))))
+This is determined by the longest line (whether it exceeds `so-long-threshold')
+and whether the line count of the buffer exceeds that matching entry in
+`doom-file-lines-threshold-alist' (defaulting to 20k lines)."
+    (unless
+        ;; HACK: Prevent so-long in places where we don't want it, like special
+        ;;   buffers (e.g. magit status) or temp buffers.
+        (or (doom-temp-buffer-p (current-buffer))
+            (doom-special-buffer-p (current-buffer) t))
+      (let ((stats (buffer-line-statistics)))
+        (or (> (cadr stats) so-long-threshold)
+            (and buffer-file-name
+                 (when-let* ((maxlines
+                              (assoc-default buffer-file-name doom-file-lines-threshold-alist
+                                             #'string-match-p)))
+                   (> (car stats) maxlines)))))))
+  (setq so-long-predicate #'doom-so-long-p
+        so-long-function #'turn-on-so-long-minor-mode
+        so-long-revert-function #'turn-off-so-long-minor-mode)
+
+  (add-to-list 'so-long-target-modes 'conf-mode)
+  (add-to-list 'so-long-target-modes 'text-mode)
 
   ;; Don't disable syntax highlighting and line numbers, or make the buffer
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing

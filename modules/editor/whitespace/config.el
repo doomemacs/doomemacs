@@ -94,7 +94,7 @@ or if the current buffer is read-only or not file-visiting."
   :config
   (defun +whitespace-guess-indentation-h ()
     (unless (or (not after-init-time)
-                doom-large-file-p
+                (bound-and-true-p so-long-detected-p)
                 +whitespace-guess-inhibit
                 (eq major-mode 'fundamental-mode)
                 (member (substring (buffer-name) 0 1) '(" " "*"))

@@ -5,10 +5,6 @@
   (add-to-list 'projectile-project-root-files "build.boot")
   (add-to-list 'projectile-project-root-files "project.clj"))
 
-;; Large clojure buffers tend to be slower than large buffers of other modes, so
-;; it should have a lower threshold too.
-(add-to-list 'doom-large-file-size-alist '("\\.\\(?:clj[sc]?\\|dtm\\|edn\\)\\'" . 0.5))
-
 (defvar +clojure-load-clj-refactor-with-lsp nil
   "Whether or not to include clj-refactor along with clojure-lsp.")
 

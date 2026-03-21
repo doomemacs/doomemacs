@@ -55,7 +55,7 @@
   :init
   (add-hook! 'find-file-hook
     (defun +vc-init-smerge-mode-h ()
-      (or doom-large-file-p
+      (or (bound-and-true-p so-long-detected-p)
           (bound-and-true-p smerge-mode)
           (save-excursion
             (goto-char (point-min))

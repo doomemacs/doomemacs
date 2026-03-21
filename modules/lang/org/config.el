@@ -741,9 +741,9 @@ up to be fully-fledged org-mode buffers."
     (if-let* ((buf (org-find-base-buffer-visiting file)))
         buf
       (let ((recentf-exclude '(always))
-            (doom-inhibit-large-file-detection t)
             (doom-inhibit-local-var-hooks t)
             (org-inhibit-startup t)
+            so-long-target-modes
             vc-handled-backends
             enable-local-variables
             find-file-hook)
