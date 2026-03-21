@@ -106,7 +106,7 @@ inserting the link."
        :side right :width 0.33 :height 0.5 :ttl nil :modeline nil :quit nil :slot 2)))
 
   ;; Soft-wrap lines in the backlinks buffer
-  (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
+  (add-hook 'org-roam-mode-hook #'visual-line-mode)
 
   ;; Use a 'roam:X' link's description if X is empty.
   ;; REVIEW: PR this upstream?
