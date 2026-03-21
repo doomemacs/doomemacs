@@ -101,20 +101,45 @@ be enabled. If any function returns non-nil, the mode will not be activated."
     (after! magit-blame
       (add-to-list 'magit-blame-disable-modes 'indent-bars-mode)))
 
-  (when (modulep! :tools lsp)
-    ;; REVIEW: Report this upstream to `indent-bars'?
-    (defadvice! +indent-guides--remove-after-lsp-ui-peek-a (&rest _)
-      :after #'lsp-ui-peek--peek-new
-      (when (and indent-bars-mode
-                 (not indent-bars-prefer-character)
-                 (overlayp lsp-ui-peek--overlay))
-        (save-excursion
-          (let ((indent-bars--display-function #'ignore)
-                (indent-bars--display-blank-lines-function #'ignore))
-            (indent-bars--fontify (overlay-start lsp-ui-peek--overlay)
-                                  (1+ (overlay-end lsp-ui-peek--overlay))
-                                  nil)))))
-    (defadvice! +indent-guides--restore-after-lsp-ui-peek-a (&rest _)
-      :after #'lsp-ui-peek--peek-hide
-      (unless indent-bars-prefer-character
-        (indent-bars-setup)))))
+  (let ((hide
+         (lambda (beg end)
+           (save-excursion
+             (let ((indent-bars--display-function #'ignore)
+                   (indent-bars--display-blank-lines-function #'ignore))
+               (indent-bars--fontify beg (1+ end) nil)))))
+        (restore
+         (lambda (beg end)
+           (save-excursion
+             (indent-bars--fontify beg (1+ end) nil)))))
+    (when (modulep! :tools lsp)
+      ;; REVIEW: Report this upstream to `indent-bars'?
+      (defadvice! +indent-guides--remove-after-lsp-ui-peek-a (&rest _)
+        :after #'lsp-ui-peek--peek-new
+        (when (and indent-bars-mode
+                   (not indent-bars-prefer-character)
+                   (overlayp lsp-ui-peek--overlay))
+          (funcall hide
+                   (overlay-start lsp-ui-peek--overlay)
+                   (overlay-end lsp-ui-peek--overlay))))
+      (defadvice! +indent-guides--restore-after-lsp-ui-peek-a (&rest _)
+        :before #'lsp-ui-peek--peek-hide
+        (when (and indent-bars-mode indent-bars-prefer-character)
+          (funcall restore
+                   (overlay-start lsp-ui-peek--overlay)
+                   (overlay-end lsp-ui-peek--overlay)))))
+
+    (when (modulep! :editor fold)
+      (defadvice! +indent-guides--remove-overlays-in-vimish-fold-a (beg end)
+        :after #'vimish-fold
+        (when (and indent-bars-mode (not indent-bars-prefer-character))
+          (cl-destructuring-bind (beg . end) (vimish-fold--correct-region beg end)
+            (dolist (ov (vimish-fold--folds-in beg end))
+              (funcall hide (overlay-start ov) (overlay-end ov))))))
+      (defadvice! +indent-guides--fix-overlays-after-unfold-a (fn overlay)
+        :around #'vimish-fold--unfold
+        (when (vimish-fold--vimish-overlay-folded-p overlay)
+          (let ((beg (overlay-start overlay))
+                (end (overlay-end overlay)))
+            (prog1 (funcall fn overlay)
+              (when (and indent-bars-mode (not indent-bars-prefer-character))
+                (funcall restore beg end)))))))))
