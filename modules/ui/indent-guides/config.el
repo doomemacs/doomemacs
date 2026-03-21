@@ -73,9 +73,7 @@ be enabled. If any function returns non-nil, the mode will not be activated."
       (bound-and-true-p org-indent-mode))
     ;; Don't display indent guides in childframe popups (which are almost always
     ;; used for completion or eldoc popups).
-    ;; REVIEW: Swap with `frame-parent' when 27 support is dropped
-    (defun +indent-guides-in-childframe-p ()
-      (frame-parameter nil 'parent-frame)))
+    #'frame-parent)
 
   ;; HACK: The way `indent-bars-display-on-blank-lines' functions, it places
   ;;   text properties with a display property containing a newline, which
