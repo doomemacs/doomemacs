@@ -134,7 +134,9 @@ prevent the popup(s) from messing up the UI (or vice versa)."
     '(("^\\*Completions" :ignore t)
       ("^\\*Local Variables\\*$"
        :vslot -1 :slot 1 :size +popup-shrink-to-fit :modeline nil)
-      ("^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+      ("^\\*compilation"
+       :vslot -2 :size 0.3  :autosave t :quit t :ttl 0)
+      ("^\\*\\(?:[Cc]ompile-Log\\|Messages\\)"
        :vslot -2 :size 0.3  :autosave t :quit t :ttl nil)
       ("^\\*\\(?:doom \\|Pp E\\)"  ; transient buffers (no interaction required)
        :vslot -3 :size +popup-shrink-to-fit :autosave t :select ignore :quit t :ttl 0)
