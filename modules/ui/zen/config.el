@@ -65,3 +65,24 @@
                   org-done
                   font-lock-comment-face))
     (add-to-list 'mixed-pitch-fixed-pitch-faces face)))
+
+
+(use-package! focus
+  :when (modulep! +focus)
+  :hook (writeroom-mode . focus-mode))
+
+
+(use-package! lsp-focus
+  :when (modulep! +focus)
+  :when (modulep! :tools lsp -eglot)
+  :hook (focus-mode . +zen-lsp-focus-mode-h)
+  :config
+  (defun +zen-lsp-focus-mode-h ()
+    ;; HACK: lsp-focus-mode doesn't do its own checks, throwing an error if
+    ;;   lsp-mode isn't active or the given client doesn't support
+    ;;   foldingRangeProvider, so we do our own checks.
+    ;; REVIEW: PR a safe activator function upstream, maybe?
+    (when (bound-and-true-p lsp-mode)
+      (if (lsp--capability "foldingRangeProvider")
+          (lsp-focus-mode +1)
+        (doom-log "lsp-focus: client doesn't support foldingRangeProvider, falling back to naive boundary detection")))))

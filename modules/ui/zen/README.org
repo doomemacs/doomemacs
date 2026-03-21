@@ -30,11 +30,17 @@ These modes are:
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +focus ::
+  Dims surrounding code or text around the block or sentence you're currently
+  working on. Includes LSP support if [[doom-module::tools lsp]] is enabled (without
+  Eglot).
 
 ** Packages
 - [[doom-package:mixed-pitch]]
 - [[doom-package:writeroom-mode]]
+- if [[doom-module:+focus]]
+  - [[doom-package:focus]]
+  - [[doom-package:lsp-focus]] if [[doom-module::tools lsp]]
 
 ** Hacks
 + Doom has disabled all of writeroom-mode's "global" effects
