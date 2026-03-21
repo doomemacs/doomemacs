@@ -18,6 +18,7 @@ killing and opening many LSP/eglot-powered buffers.")
 
 (define-minor-mode +lsp-optimization-mode
   "Deploys universal GC and IPC optimizations for `lsp-mode' and `eglot'."
+  :group '+lsp
   :global t
   :init-value nil
   (if (not +lsp-optimization-mode)

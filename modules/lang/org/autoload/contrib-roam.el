@@ -91,7 +91,7 @@ Controlled by `+org-roam-auto-backlinks-buffer'."
 
 ;;;###autoload
 (defun org-roam-link-follow-link-with-description-a (args)
-  "Use a 'roam:X' link's description if X is empty."
+  "Use a roam:X link's description if X is empty."
   (when (or (string-empty-p (car args))
             (null (car args)))
     (setcar
