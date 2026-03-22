@@ -8,8 +8,16 @@
         migemo-user-dictionary nil
         migemo-regex-dictionary nil
         migemo-coding-system 'utf-8-unix
-        migemo-directory (file-name-concat doom-profile-data-dir "migemo/")
-        migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+        migemo-directory (file-name-concat doom-profile-data-dir "migemo/"))
+
+  (when-let*
+      ((dict (or (bound-and-true-p migemo-dictionary)
+                 (cl-find-if #'file-directory-p
+                             '("/opt/homebrew/share/migemo/utf-8/migemo-dict"
+                               "/usr/local/share/migemo/utf-8/migemo-dict"
+                               "/usr/share/migemo/utf-8/migemo-dict")))))
+    (setq migemo-dictionary dict))
+
   :config
   (when (executable-find migemo-command)
     (migemo-init)
