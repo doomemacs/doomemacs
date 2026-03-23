@@ -19,6 +19,7 @@ This module adds rudimentary support for the [[https://janet-lang.org/][Janet pr
 ** Packages
 - [[doom-package:janet-mode]]
 - [[doom-package:janet-ts-mode]] if [[doom-module:+tree-sitter]]
+- [[doom-package:flymake-janet]] if [[doom-module::checkers syntax -flymake]]
 
 ** Hacks
 #+begin_quote

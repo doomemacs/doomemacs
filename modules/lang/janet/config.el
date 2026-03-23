@@ -28,3 +28,8 @@
   (set-tree-sitter! 'janet-mode 'janet-ts-mode
     `((janet-simple :url "https://github.com/sogaiu/tree-sitter-janet-simple"
                     :cc ,(if (featurep :system 'windows) "gcc.exe")))))
+
+
+(use-package! flymake-janet
+  :when (modulep! :checkers syntax +flymake)
+  :hook ((janet-mode janet-ts-mode) . flymake-janet-setup))
