@@ -65,10 +65,3 @@ falling back on searching your PATH."
         (python-shell-interpreter-args
          (string-join (cdr +python-jupyter-command) " ")))
     (+python/open-repl)))
-
-;;;###autoload
-(defun +python/optimize-imports ()
-  "organize imports"
-  (interactive)
-  (pyimport-remove-unused)
-  (py-isort-buffer))
