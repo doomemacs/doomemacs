@@ -56,8 +56,7 @@ If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
         corfu-quit-at-boundary (if (or (modulep! :completion vertico)
                                        (modulep! +orderless))
                                    'separator t)
-        corfu-quit-no-match corfu-quit-at-boundary
-        tab-always-indent 'complete)
+        corfu-quit-no-match corfu-quit-at-boundary)
 
   (add-to-list 'completion-category-overrides `(lsp-capf (styles ,@completion-styles)))
   (add-to-list 'corfu-continue-commands #'+corfu/move-to-minibuffer)
