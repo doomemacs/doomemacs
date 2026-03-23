@@ -18,6 +18,7 @@ This module adds rudimentary support for the [[https://janet-lang.org/][Janet pr
 
 ** Packages
 - [[doom-package:janet-mode]]
+- [[doom-package:janet-ts-mode]] if [[doom-module:+tree-sitter]]
 
 ** Hacks
 #+begin_quote
