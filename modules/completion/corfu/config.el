@@ -1,37 +1,59 @@
 ;;; completion/corfu/config.el -*- lexical-binding: t; -*-
 
-(defvar +corfu-want-ret-to-confirm t
+(defcustom +corfu-want-ret-to-confirm t
   "Configure how the user expects RET to behave.
+
 Possible values are:
 - t (default): Insert candidate if one is selected, pass-through otherwise;
 - nil: Pass-through without inserting;
 - `both': Insert candidate if one is selected, then pass-through;
-- `minibuffer': Behaves like `both` in the minibuffer and `t` otherwise.")
+- `minibuffer': Behaves like `both` in the minibuffer and `t` otherwise."
+  :type '(choice (const :tag "Insert if selected, passthrough otherwise" t)
+                 (const :tag "Passthrough without insertion" nil)
+                 (const :tag "Insert if selected, then passthrough" both)
+                 (const :tag "Behaves like `both' in minibuffer, `t' otherwise" minibuffer))
+  :group '+corfu)
 
-(defvar +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
-  "Size limit for a buffer to be scanned by `cape-dabbrev'.")
+(defcustom +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
+  "Size limit in bytes for a buffer to be scanned by `cape-dabbrev'."
+  :type 'integer
+  :group '+corfu)
 
-(defvar +corfu-want-minibuffer-completion t
+(defcustom +corfu-want-minibuffer-completion t
   "Whether to enable Corfu in the minibuffer.
-Setting this to `aggressive' will enable Corfu in more commands which
-use the minibuffer such as `query-replace'.")
 
-(defvar +corfu-want-tab-prefer-expand-snippets nil
-  "If non-nil, prefer expanding snippets over cycling candidates with
-TAB.")
+Possible values are:
+- t: enable Corfu only if `completion-at-point' is bound in the minibuffer's
+  `current-local-map'.
+- nil: Corfu is disabled in the minibuffer.
+- aggressive: enable Corfu even when no recognized completion framework is
+  active."
+  :type '(choice (const :tag "Disabled" nil)
+                 (const :tag "Aggressive" aggressive)
+                 (const :tag "Only when bound" t))
+  :group '+corfu)
 
-(defvar +corfu-want-tab-prefer-navigating-snippets nil
-  "If non-nil, prefer navigating snippets over cycling candidates with
-TAB/S-TAB.")
+(defcustom +corfu-want-tab-prefer-expand-snippets nil
+  "If non-nil, expand snippets over cycling candidates with TAB."
+  :type 'boolean
+  :group '+corfu)
 
-(defvar +corfu-want-tab-prefer-navigating-org-tables nil
-  "If non-nil, prefer navigating org tables over cycling candidates with
-TAB/S-TAB.")
+(defcustom +corfu-want-tab-prefer-navigating-snippets nil
+  "If non-nil, navigate snippets over cycling candidates with TAB/S-TAB."
+  :type 'boolean
+  :group '+corfu)
 
-(defvar +corfu-inhibit-auto-functions ()
+(defcustom +corfu-want-tab-prefer-navigating-org-tables nil
+  "If non-nil, navigate org tables over cycling candidates with TAB/S-TAB."
+  :type 'boolean
+  :group '+corfu)
+
+(defcustom +corfu-inhibit-auto-functions ()
   "A list of predicate functions that take no arguments.
 
-If any return non-nil, `corfu-auto' will not invoke as-you-type completion.")
+If any return non-nil, `corfu-auto' will not invoke as-you-type completion."
+  :type 'hook
+  :group '+corfu)
 
 
 ;;
@@ -80,17 +102,10 @@ systems is active, Corfu should not enable its own completion."
         (where-is-internal 'minibuffer-complete (list (current-local-map)))
         (memq #'ivy--queue-exhibit post-command-hook)))
 
-  ;; Return non-nil if Corfu should be enabled in the minibuffer.
-  ;; This respects `+corfu-want-minibuffer-completion'.
   (defun +corfu-enable-in-minibuffer-p ()
     "Return non-nil if Corfu should be enabled in the minibuffer.
 
-This function respects the value of `+corfu-want-minibuffer-completion':
-- If set to nil, Corfu is disabled.
-- If set to 'aggressive, enable Corfu when no other completion
-  framework is active.
-- Otherwise, enable Corfu only when there’s a bound completion
-  command in the current local keymap."
+See `+corfu-want-minibuffer-completion'."
     (pcase +corfu-want-minibuffer-completion
       ('nil nil)
       ('aggressive (not (+corfu--other-completion-active-p)))
