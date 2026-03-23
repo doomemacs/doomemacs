@@ -51,7 +51,7 @@
   "Like `cape-dabbrev', but only scans current buffer."
   (interactive)
   (require 'cape)
-  (let ((cape-dabbrev-check-other-buffers nil))
+  (let ((cape-dabbrev-buffer-function #'current-buffer))
     (cape-dabbrev t)))
 
 ;;;###autoload
@@ -70,30 +70,34 @@
 
 ;;;###autoload
 (defun +corfu/dabbrev-or-next (&optional arg)
-  "Trigger corfu popup and select the first candidate.
+  "Invoke `cape-dabbrev' but respect `evil-complete-all-buffers'.
 
 Intended to mimic `evil-complete-next', unless the popup is already open."
   (interactive "p")
   (if corfu--candidates
       (corfu-next arg)
     (require 'cape)
-    (let ((cape-dabbrev-check-other-buffers
-           (bound-and-true-p evil-complete-all-buffers)))
+    (let ((cape-dabbrev-buffer-function
+           (if (bound-and-true-p evil-complete-all-buffers)
+               #'cape-same-mode-buffers
+             #'current-buffer)))
       (cape-dabbrev t)
       (when (> corfu--total 0)
         (corfu--goto (or arg 0))))))
 
 ;;;###autoload
 (defun +corfu/dabbrev-or-last (&optional arg)
-  "Trigger corfu popup and select the first candidate.
+  "Invoke `cape-dabbrev' but respect `evil-complete-all-buffers'.
 
 Intended to mimic `evil-complete-previous', unless the popup is already open."
   (interactive "p")
   (if corfu--candidates
       (corfu-previous arg)
     (require 'cape)
-    (let ((cape-dabbrev-check-other-buffers
-           (bound-and-true-p evil-complete-all-buffers)))
+    (let ((cape-dabbrev-buffer-function
+           (if (bound-and-true-p evil-complete-all-buffers)
+               #'cape-same-mode-buffers
+             #'current-buffer)))
       (cape-dabbrev t)
       (when (> corfu--total 0)
         (corfu--goto (- corfu--total (or arg 1)))))))
