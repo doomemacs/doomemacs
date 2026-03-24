@@ -12,7 +12,7 @@
 
   (when-let*
       ((dict (or (bound-and-true-p migemo-dictionary)
-                 (cl-find-if #'file-directory-p
+                 (cl-find-if #'file-exists-p
                              '("/opt/homebrew/share/migemo/utf-8/migemo-dict"
                                "/usr/local/share/migemo/utf-8/migemo-dict"
                                "/usr/share/migemo/utf-8/migemo-dict")))))
