@@ -15,10 +15,10 @@
 (unless (executable-find "ruby")
   (warn! "Ruby isn't installed."))
 
-(when (and (executable-find "rbenv") (modulep! +rbenv))
+(when (and (modulep! +rbenv) (executable-find "rbenv"))
   (unless (split-string (shell-command-to-string "rbenv versions --bare") "\n" t)
     (warn! "No versions of ruby are available via rbenv, did you forget to install one?")))
 
-(when (and (executable-find "chruby") (modulep! +chruby))
+(when (and (modulep! +chruby) (executable-find "chruby"))
   (unless (split-string (shell-command-to-string "chruby") "\n" t)
     (warn! "No versions of ruby are available via chruby, did you forget to install one?")))

@@ -23,7 +23,7 @@
     (add-hook 'ruby-mode-local-vars-hook #'lsp! 'append))
 
   (after! inf-ruby
-    ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
+    ;; Switch to inf-ruby from compile if a breakpoint is detected
     (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter))
 
   ;; so class and module pairs work
@@ -33,7 +33,6 @@
         :map ruby-mode-map
         "[" #'ruby-toggle-block
         "{" #'ruby-toggle-block))
-
 
 (use-package! ruby-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
@@ -48,10 +47,8 @@
   (when (modulep! +lsp)
     (add-hook 'ruby-ts-mode-local-vars-hook #'lsp! 'append)))
 
-
 (use-package! yard-mode
   :hook ruby-mode)
-
 
 (use-package! ruby-json-to-hash
   :defer t
