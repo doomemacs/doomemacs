@@ -22,5 +22,7 @@ Enables `electric-indent-local-mode' in MODES.
                      (cl-destructuring-bind (&key chars words) plist
                        (electric-indent-local-mode +1)
                        (if chars (setq-local electric-indent-chars chars))
-                       (if words (setq +electric-indent-words words))))))
+                       (if words (setq-local +electric-indent-words words))))))
              (add-hook hook fn))))))
+
+;;; autoload.el ends here

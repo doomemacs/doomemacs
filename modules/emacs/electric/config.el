@@ -1,17 +1,24 @@
 ;;; emacs/electric/config.el -*- lexical-binding: t; -*-
 
-;; Smarter, keyword-based electric-indent
-
-(defvar-local +electric-indent-words '()
+(defcustom +electric-indent-words '()
   "The list of electric words. Typing these will trigger reindentation of the
-current line.")
+current line."
+  :type '(repeat string)
+  :group '+electric)
+
 
 ;;
-(after! electric
+;;; Packages
+
+(use-package! electric
+  :defer t
+  :init
   (setq-default electric-indent-chars '(?\n ?\^?))
 
+  :config
   (add-hook! 'electric-indent-functions
     (defun +electric-indent-char-fn (_c)
+      "Indent current line if user has typed one of `+electric-indent-words'."
       (when (and (eolp) +electric-indent-words)
         (save-excursion
           (backward-word)
