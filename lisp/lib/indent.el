@@ -30,7 +30,7 @@ MODE-tab-width, or MODE-basic-offset. It is also not necessary if you have
 
 Modes for whom this fails need to have their indent vars manually registered
 with `set-indent-vars!'."
-    (unless (provided-mode-derived-p mode doom-indent-excluded-modes)
+    (unless (apply #'provided-mode-derived-p mode doom-indent-excluded-modes)
       (let* ((mode* (symbol-name mode))
              (mode** (cl-loop for s in '("-mode" "-base" "-ts")
                               do (setq mode* (string-remove-suffix s mode*))

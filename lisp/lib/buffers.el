@@ -94,7 +94,8 @@ If CONSIDER-MODE? is non-nil, returns non-nil if BUF's mode is derived from
 `special-mode'."
   (or (char-equal ?* (aref (buffer-name buf) 0))
       (and consider-mode?
-           (provided-mode-derived-p (buffer-local-value 'major-mode buf) 'special-mode))))
+           (provided-mode-derived-p (buffer-local-value 'major-mode buf)
+                                    'special-mode))))
 
 ;;;###autoload
 (defun doom-temp-buffer-p (buf)
@@ -150,8 +151,8 @@ If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
     (and (buffer-live-p buf)
          (not (doom-temp-buffer-p buf))
          (or (buffer-local-value 'doom-real-buffer-p buf)
-             (provided-mode-derived-p (buffer-local-value 'major-mode buf)
-                                      doom-real-buffer-modes)
+             (apply #'provided-mode-derived-p (buffer-local-value 'major-mode buf)
+                    doom-real-buffer-modes)
              (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
              (not (run-hook-with-args-until-success 'doom-unreal-buffer-functions buf))))))
 
