@@ -489,17 +489,17 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (with-no-warnings
     (if (boundp 'global-hl-line-buffers)
         (setq global-hl-line-buffers
-              `(not (or (lambda (b) (buffer-local-value 'hl-line-mode b))
-                        (lambda (b)
-                          (when global-hl-line-modes
-                            (let ((mode (buffer-local-value 'major-mode b)))
-                              (if (eq (car global-hl-line-modes) 'not)
-                                  (provided-mode-derived-p mode global-hl-line-modes)
-                                (not (provided-mode-derived-p mode global-hl-line-modes))))))
-                        (lambda (b) (with-current-buffer b (doom-region-active-p)))
-                        (lambda (b) (buffer-local-value 'cursor-face-highlight-mode b))
-                        (lambda (b) (string-match-p "\\` " (buffer-name b)))
-                        minibufferp))
+              (lambda (b)
+                (with-current-buffer b
+                  (not (or hl-line-mode
+                           (when global-hl-line-modes
+                             (if (eq (car global-hl-line-modes) 'not)
+                                 (derived-mode-p (cdr global-hl-line-modes))
+                               (not (derived-mode-p global-hl-line-modes))))
+                           (doom-region-active-p)
+                           cursor-face-highlight-mode
+                           (doom-temp-buffer-p b)
+                           (minibufferp)))))
               ;; Don't display line highlights in non-focused windows, for
               ;; performance sake and to reduce UI clutter.
               global-hl-line-sticky-flag 'window)
@@ -512,31 +512,29 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                      ((null global-hl-line-modes) nil)
                      ((eq global-hl-line-modes t))
                      ((eq (car global-hl-line-modes) 'not)
-                      (not (derived-mode-p global-hl-line-modes)))
-                     ((apply #'derived-mode-p global-hl-line-modes)))
+                      (not (derived-mode-p (cdr global-hl-line-modes))))
+                     ((derived-mode-p global-hl-line-modes)))
                (hl-line-mode +1)))
         :group 'hl-line)))
 
   ;; Temporarily disable `hl-line-mode' when selection is active, since it
-  ;; doesn't serve much purpose when the selection is so much more visible.
+  ;; obscures the bounds of the selection, depending on the active theme.
   (defvar doom--hl-line-mode nil)
-
-  (add-hook! 'hl-line-mode-hook
-    (defun doom-truly-disable-hl-line-h ()
-      (unless hl-line-mode
-        (setq-local doom--hl-line-mode nil))))
-
-  ;; TODO: Use (de)activate-mark-hook in the absence of evil
-  (add-hook! 'evil-visual-state-entry-hook
+  (add-hook! 'activate-mark-hook
     (defun doom-disable-hl-line-h ()
       (when hl-line-mode
         (hl-line-mode -1)
         (setq-local doom--hl-line-mode t))))
-
-  (add-hook! 'evil-visual-state-exit-hook
+  (add-hook! 'deactivate-mark-hook
     (defun doom-enable-hl-line-maybe-h ()
       (when doom--hl-line-mode
-        (hl-line-mode +1)))))
+        (hl-line-mode +1)
+        (kill-local-variable 'doom--hl-line-mode))))
+  ;; Don't resurrect itself if manually disabled then a selection is disengaged.
+  (add-hook! 'hl-line-mode-hook
+    (defun doom-truly-disable-hl-line-h ()
+      (unless hl-line-mode
+        (kill-local-variable 'doom--hl-line-mode)))))
 
 
 (use-package! winner
