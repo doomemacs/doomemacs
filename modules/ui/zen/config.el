@@ -15,8 +15,6 @@
   :type 'integer
   :group '+zen)
 
-(defvar +zen--old-window-divider-size nil)
-
 
 ;;
 ;;; Packages
