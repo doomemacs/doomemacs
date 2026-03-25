@@ -161,7 +161,7 @@ dashboard reloading is inhibited.")
   :syntax-table nil
   :abbrev-table nil
   (buffer-disable-undo)
-  (setq-local revert-buffer-function #'+dashboard-reload)
+  (setq-local revert-buffer-function #'+dashboard-revert-buffer-fn)
   (setq truncate-lines t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
@@ -256,6 +256,10 @@ dashboard reloading is inhibited.")
 
 ;;
 ;;; Hooks
+
+(defun +dashboard-revert-buffer-fn (&optional _ignore-auto _no-confirm)
+  "`revert-buffer-function' for `+dashboard-mode'."
+  (+dashboard-reload t))
 
 (defun +dashboard-reposition-point-h ()
   "Trap the point in the buttons."
