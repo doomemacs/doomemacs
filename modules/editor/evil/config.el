@@ -1,16 +1,22 @@
 ;;; editor/evil/config.el -*- lexical-binding: t; -*-
 
-(defvar +evil-want-o/O-to-continue-comments t
+(defcustom +evil-want-o/O-to-continue-comments t
   "If non-nil, the o/O keys will continue comment lines if the point is on a
-line with a linewise comment.")
+line with a linewise comment."
+  :type 'boolean
+  :group '+evil)
 
-(defvar +evil-want-move-window-to-wrap-around nil
-  "If non-nil, `+evil/window-move-*' commands will wrap around.")
+(defcustom +evil-want-move-window-to-wrap-around nil
+  "If non-nil, `+evil/window-move-*' commands will wrap around."
+  :type 'boolean
+  :group '+evil)
 
-(defvar +evil-preprocessor-regexp "^\\s-*#[a-zA-Z0-9_]"
+(defcustom +evil-preprocessor-regexp "^\\s-*#[a-zA-Z0-9_]"
   "The regexp used by `+evil/next-preproc-directive' and
 `+evil/previous-preproc-directive' on ]# and [#, to jump between preprocessor
-directives. By default, this only recognizes C directives.")
+directives. By default, this only recognizes C directives."
+  :type 'regexp
+  :group '+evil)
 
 
 ;;
@@ -335,7 +341,7 @@ don't offer any/enough real value to users.")
   ;;   buffer-localize `embrace--pairs-list' (which happens right after it calls
   ;;   `embrace--setup-defaults'), otherwise any new, global default pairs we
   ;;   define won't be in scope.
-  (defadvice! +evil--embrace-init-escaped-pairs-a (&rest args)
+  (defadvice! +evil--embrace-init-escaped-pairs-a (&rest _)
     "Add escaped-sequence support to embrace."
     :after #'embrace--setup-defaults
     (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" #'+evil--embrace-escaped
@@ -422,11 +428,11 @@ don't offer any/enough real value to users.")
 
 
 (use-package! evil-surround
+  :hook (doom-first-input . global-evil-surround-mode)
   :commands (global-evil-surround-mode
              evil-surround-edit
              evil-Surround-edit
-             evil-surround-region)
-  :config (global-evil-surround-mode 1))
+             evil-surround-region))
 
 
 (use-package! evil-textobj-anyblock
