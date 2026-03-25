@@ -46,7 +46,8 @@
   "TODO"
   (interactive)
   (apply #'calfw-org-open-calendar nil "org-agenda" (face-foreground 'default)
-         args))
+         args)
+  (calfw-navi-goto-today-command))
 
 ;;;###autoload
 (defun +calendar-calfw-render-button-a (title command &optional state)
