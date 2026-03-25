@@ -8,7 +8,8 @@
   (require 'calfw)
   (if-let* ((win (get-buffer-window calfw-calendar-buffer-name)))
       (select-window win)
-    (call-interactively +calendar-open-function)))
+    (call-interactively +calendar-open-function)
+    (calfw-navi-goto-today-command)))
 
 ;;;###autoload
 (defun =calendar ()
