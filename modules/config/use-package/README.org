@@ -1,0 +1,81 @@
+:PROPERTIES:
+:ID:       20010bc4-a661-4289-bb8b-8635329f83fb
+:END:
+#+title:     :config use-package
+#+subtitle:  Make =use-package= behave
+#+created:   March 24, 2026
+#+since:     26.04.0 (#COMMIT-OR-PR-REF)
+
+* Description :unfold:
+This module restores support for =use-package= in Doom Emacs.
+
+Doom provides its own macros (=use-package!=, =after!=, etc.) for package
+configuration, but users coming from vanilla Emacs—or those who prefer upstream
+conventions—may still want =use-package=. This module ensures it works smoothly
+within Doom’s ecosystem.
+
+It tweaks =use-package= to cooperate with Doom’s package manager and lazy
+loading system, while adding a couple of extra keywords to better match Doom’s
+behavior.
+
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:use-package]]
+- [[doom-package:bind-key]]
+
+** Hacks
+- Disables =:ensure= by default (Doom doesn’t use =package.el=).
+- Adds =:after-call= and =:defer-incrementally= for extra lazy-loading control.
+- Adjusts =:load-path= to be relative to the declaring file.
+
+** TODO Changelog
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+#+begin_src emacs-lisp
+(doom!
+ :config
+ use-package)
+#+end_src
+
+/This module has no external requirements./
+
+* Usage
+Use =use-package= as you would in vanilla Emacs:
+
+#+begin_src emacs-lisp
+(use-package some-package
+  :defer t
+  :config
+  (message "Loaded!"))
+#+end_src
+
+Packages must still be declared in =packages.el=:
+
+#+begin_src emacs-lisp
+(package! some-package)
+#+end_src
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+[[doom-suggest-faq:][Ask a question?]]
+
+** Why is =:ensure t= ignored?
+Doom uses =straight.el=. Declare packages in =packages.el= instead.
+
+** Should I use this over Doom macros?
+Only if you prefer =use-package= or are porting an existing config.
+
+* TODO Appendix
+#+begin_quote
+This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
