@@ -29,11 +29,11 @@
   (setq writeroom-global-effects nil)
   (setq writeroom-maximize-window nil)
 
-  (add-hook! 'writeroom-mode-hook :append
-    (defun +zen-enable-text-scaling-mode-h ()
+  (add-hook! 'writeroom-local-effects :append
+    (defun +zen-enable-text-scaling-mode-h (arg)
       "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
       (when (/= +zen-text-scale 0)
-        (text-scale-set (if writeroom-mode +zen-text-scale 0))
+        (text-scale-set (if (= arg 1) +zen-text-scale 0))
         (visual-fill-column-adjust))))
 
   ;; Adjust margins when text size is changed
@@ -41,13 +41,14 @@
 
 
 (use-package! mixed-pitch
-  :hook (writeroom-mode . +zen-enable-mixed-pitch-mode-h)
+  :defer t
+  :init
+  (add-hook! 'writeroom-local-effects
+    (defun +zen-enable-mixed-pitch-mode-h (arg)
+      "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
+      (if (apply #'derived-mode-p +zen-mixed-pitch-modes)
+          (mixed-pitch-mode arg))))
   :config
-  (defun +zen-enable-mixed-pitch-mode-h ()
-    "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
-    (when (apply #'derived-mode-p +zen-mixed-pitch-modes)
-      (mixed-pitch-mode (if writeroom-mode +1 -1))))
-
   (dolist (face '(solaire-line-number-face
                   org-date
                   org-footnote
@@ -69,7 +70,9 @@
 
 (use-package! focus
   :when (modulep! +focus)
-  :hook (writeroom-mode . focus-mode))
+  :defer t
+  :init
+  (add-hook 'writeroom-local-effects #'focus-mode t))
 
 
 (use-package! lsp-focus
