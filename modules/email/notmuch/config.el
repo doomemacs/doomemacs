@@ -1,10 +1,13 @@
 ;;; email/notmuch/config.el -*- lexical-binding: t; -*-
 
-(defvar +notmuch-home-function #'notmuch
-  "Function for customizing the landing page for doom-emacs =notmuch.")
+(defcustom +notmuch-home-function #'notmuch
+  "Function for customizing the landing page for doom-emacs =notmuch."
+  :type 'function
+  :group '+notmuch)
 
-(defvar +notmuch-sync-backend 'gmi
+(defcustom +notmuch-sync-backend 'gmi
   "Which backend to use to synchrone email.
+
 Accepts a symbol or a shell command string.
 
 More specifically, this accepts one of the following symbols (see
@@ -18,20 +21,30 @@ OR a shell command string such as
 
   \"path/to/some/shell-script.sh\"
   \"offlineimap && notmuch new && afew -n -t\"
-  \"mbsync %s -a && notmuch new && afew -n -t\"")
+  \"mbsync %s -a && notmuch new && afew -n -t\""
+  :type '(choice (const :tag "gmailieer" gmi)
+                 (const :tag "isync/mbsync" mbsync)
+                 (const :tag "offlineimap" offlineimap)
+                 (string :tag "An arbitrary shell command"))
+  :group '+notmuch)
 
-(defvar +notmuch-mail-folder "~/.mail/account.gmail"
-  "Where your email folder is located (for use with gmailieer).")
+(defcustom +notmuch-mail-folder "~/.mail/account.gmail"
+  "Where your email folder is located (for use with gmailieer)."
+  :type 'directory
+  :group '+notmuch)
 
-(defvar +notmuch-delete-tags '("+trash" "-inbox" "-unread")
+(defcustom +notmuch-delete-tags '("+trash" "-inbox" "-unread")
   "Tags applied to mark email for deletion.
 
-When replacing the +trash tag by a different tag such as
-+deleted, you will need to update the notmuch-saved-searches
-variable accordingly.")
+When replacing the +trash tag by a different tag such as +deleted, you will need
+to update the notmuch-saved-searches variable accordingly."
+  :type '(repeat string)
+  :group '+notmuch)
 
-(defvar +notmuch-spam-tags '("+spam" "-inbox" "-unread")
-  "Tags applied to mark email as spam.")
+(defcustom +notmuch-spam-tags '("+spam" "-inbox" "-unread")
+  "Tags applied to mark email as spam."
+  :type '(repeat string)
+  :group '+notmuch)
 
 
 ;;
@@ -83,7 +96,11 @@ variable accordingly.")
 
   (add-hook 'doom-real-buffer-functions #'notmuch-interesting-buffer)
 
-  (advice-add #'notmuch-start-notmuch-sentinel :around #'+notmuch-dont-confirm-on-kill-process-a)
+  (defadvice! +notmuch-dont-confirm-on-kill-process-a (fn &rest args)
+    "Don't prompt for confirmation when killing notmuch sentinel."
+    :around #'notmuch-start-notmuch-sentinel
+    (let (confirm-kill-processes)
+      (apply fn args)))
 
   ;; modeline doesn't have much use in these modes
   (add-hook! '(notmuch-show-mode-hook

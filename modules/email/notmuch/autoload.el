@@ -23,16 +23,19 @@
 
 
 ;;
-;; Commands
+;;; Library
 
 ;;;###autoload
-(defun +notmuch/quit ()
-  "TODO"
-  (interactive)
-  ;; (+popup/close (get-buffer-window "*notmuch-hello*"))
-  (doom-kill-matching-buffers "^\\*notmuch")
-  (when (modulep! :ui workspaces)
-    (+workspace/kill +notmuch-workspace-name)))
+(defun +notmuch-show-expand-only-unread-h ()
+  (let (unread)
+    (notmuch-show-get-message-ids-for-open-messages)  ; REVIEW: Is this needed?
+    (notmuch-show-mapc (lambda ()
+                         (when (member "unread" (notmuch-show-get-tags))
+                           (setq unread t))))
+    (when unread
+      (let ((notmuch-show-hook
+             (remq '+notmuch-show-expand-only-unread-h notmuch-show-hook)))
+        (notmuch-show-filter-thread "tag:unread")))))
 
 (defun +notmuch-get-sync-command ()
   "Return a shell command string to synchronize your notmuch mail with."
@@ -59,6 +62,19 @@
         (format "%s && %s" sync-cmd afew-cmd)
       sync-cmd)))
 
+
+;;
+;;; Commands
+
+;;;###autoload
+(defun +notmuch/quit ()
+  "TODO"
+  (interactive)
+  ;; (+popup/close (get-buffer-window "*notmuch-hello*"))
+  (doom-kill-matching-buffers "^\\*notmuch")
+  (when (modulep! :ui workspaces)
+    (+workspace/kill +notmuch-workspace-name)))
+
 ;;;###autoload
 (defun +notmuch/update ()
   "Sync notmuch emails with server."
@@ -75,8 +91,7 @@
               (notmuch-refresh-all-buffers)
               (message "Notmuch sync successful"))
           (user-error "Failed to sync notmuch data")))
-      nil
-      'local))))
+      nil 'local))))
 
 ;;;###autoload
 (defun +notmuch/search-delete ()
@@ -136,31 +151,9 @@
     (doom-call-process "cp" msg-path temp)
     (start-process-shell-command "email" nil (format "xdg-open '%s'" temp))))
 
-
 ;;;###autoload
 (defun +notmuch/show-filter-thread ()
   "Show the current thread with a different filter"
   (interactive)
   (setq notmuch-show-query-context (notmuch-read-query "Filter thread: "))
   (notmuch-show-refresh-view t))
-
-;;;###autoload
-(defun +notmuch-show-expand-only-unread-h ()
-  (interactive)
-  (let ((unread nil)
-        (open (notmuch-show-get-message-ids-for-open-messages)))
-    (notmuch-show-mapc (lambda ()
-                         (when (member "unread" (notmuch-show-get-tags))
-                           (setq unread t))))
-    (when unread
-      (let ((notmuch-show-hook (remove '+notmuch-show-expand-only-unread-h notmuch-show-hook)))
-        (notmuch-show-filter-thread "tag:unread")))))
-
-;;
-;; Advice
-
-;;;###autoload
-(defun +notmuch-dont-confirm-on-kill-process-a (fn &rest args)
-  "Don't prompt for confirmation when killing notmuch sentinel."
-  (let (confirm-kill-processes)
-    (apply fn args)))
