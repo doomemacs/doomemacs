@@ -1,19 +1,28 @@
 ;;; lang/swift/config.el -*- lexical-binding: t; -*-
 
-(use-package! swift-mode
-  :defer t
-  :init
-  (when (modulep! +tree-sitter)
-    (set-tree-sitter! 'swift-mode 'swift-ts-mode
-      '((swift :url "https://github.com/alex-pinkus/tree-sitter-swift"
-               :rev "0.7.1-with-generated-files"))))
-
-  :config
-  (set-repl-handler! 'swift-mode #'run-swift)
-  (set-eglot-client! 'swift-mode '("sourcekit-lsp"))
+(defun +swift-common-config (mode)
+  (set-repl-handler! mode #'run-swift)
+  (set-eglot-client! mode '("sourcekit-lsp"))
 
   (when (modulep! +lsp)
-    (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)))
+    (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append)))
+
+
+(use-package! swift-mode
+  :defer t
+  :config
+  (+swift-common-config 'swift-mode))
+
+
+(use-package! swift-ts-mode
+  :when (modulep! +tree-sitter)
+  :defer t
+  :init
+  (set-tree-sitter! 'swift-mode 'swift-ts-mode
+    '((swift :url "https://github.com/alex-pinkus/tree-sitter-swift"
+             :rev "0.7.1-with-generated-files")))
+  :config
+  (+swift-common-config 'swift-ts-mode))
 
 
 (use-package! flycheck-swift
@@ -35,7 +44,6 @@
   :when (modulep! +lsp)
   :when (modulep! :tools lsp -eglot)
   :defer t
-  :init (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
   :config
   (set-formatter! 'swiftformat '("swiftformat" "--output" "stdout"))
   (setq lsp-sourcekit-executable
