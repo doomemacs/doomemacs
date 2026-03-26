@@ -26,6 +26,7 @@ utilities. It includes:
 ** Packages
 - [[doom-package:lsp-treemacs]] if [[doom-module:+lsp]]
 - [[doom-package:treemacs]]
+- [[doom-package:treemacs-nerd-icons]]
 - [[doom-package:treemacs-evil]] if [[doom-module::editor evil +everywhere]]
 - [[doom-package:treemacs-magit]] if [[doom-module::tools magit]]
 - [[doom-package:treemacs-persp]] if [[doom-module::ui workspaces]]
