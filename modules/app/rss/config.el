@@ -4,9 +4,6 @@
 ;; by apps Reeder and Readkit. It can be invoked via `=rss'. Otherwise, if you
 ;; don't care for the UI you can invoke elfeed directly with `elfeed'.
 
-(defvar +rss-split-direction 'below
-  "What direction to pop up the entry buffer in elfeed.")
-
 (defvar +rss-enable-sliced-images t
   "Automatically slice images shown in elfeed-show-mode buffers, making them
 easier to scroll through.")
