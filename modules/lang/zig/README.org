@@ -53,7 +53,7 @@ systems are available for download from [[https://ziglang.org/download/]] or fro
 This module supports LSP integration. For it to work you'll need:
 
 1. zls installed,
-2. The [[doom-module::tools lsp]] module enabled. Only [[doom-package:lsp-mode]] is supported for now,
+2. The [[doom-module::tools lsp]] module enabled.
 3. The [[doom-module:+lsp]] flag on this module enabled.
 
 ** Keybinds
