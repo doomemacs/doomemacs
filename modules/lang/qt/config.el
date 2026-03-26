@@ -1,8 +1,8 @@
 ;;; lang/qt/config.el -*- lexical-binding: t; -*-
 
 (defun +qt-common-config (mode)
+  (set-eglot-client! mode '("qmlls"))
   (when (modulep! +lsp)
-    (set-eglot-client! mode '("qmlls"))
     (add-hook (intern (format "%s-local-vars-hook" mode)) #'lsp! 'append)))
 
 
