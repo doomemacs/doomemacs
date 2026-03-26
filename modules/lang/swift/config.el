@@ -26,7 +26,7 @@
 
 
 (use-package! flycheck-swift
-  :when (modulep! :checkers syntax)
+  :when (modulep! :checkers syntax -flymake)
   :unless (modulep! +lsp)
   :after swift-mode
   :config (flycheck-swift-setup))
