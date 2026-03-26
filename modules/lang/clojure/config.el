@@ -89,16 +89,25 @@
   :hook (clojurec-mode-local-vars . cider-mode)
   :hook (clojurescript-mode-local-vars . cider-mode)
   :hook (clojure-ts-mode-local-vars . cider-mode)
+  :hook (clojure-ts-clojurescript-mode-local-vars . cider-mode)
+  :hook (clojure-ts-clojurec-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode
-    (set-repl-handler! '(clojure-mode clojure-ts-mode
-                         clojurec-mode clojure-ts-clojurec-mode)
+    (set-repl-handler! '(clojure-mode clojurec-mode)
       #'+clojure/open-repl :persist t)
-    (set-repl-handler! '(clojurescript-mode clojure-ts-clojurescript-mode)
+    (set-repl-handler! 'clojurescript-mode
       #'+clojure/open-cljs-repl :persist t)
-    (set-eval-handler! '(clojure-mode clojure-ts-mode
-                         clojurescript-mode clojure-ts-clojurescript-mode
-                         clojurec-mode clojure-ts-clojurec-mode)
+    (set-eval-handler! '(clojure-mode clojurescript-mode clojurec-mode)
+      #'cider-eval-region))
+
+  (after! clojure-ts-mode
+    (set-repl-handler! '(clojure-ts-mode clojurec-ts-mode)
+      #'+clojure/open-repl :persist t)
+    (set-repl-handler! 'clojure-ts-clojurescript-mode
+      #'+clojure/open-cljs-repl :persist t)
+    (set-eval-handler! '(clojure-ts-mode
+                         clojure-ts-clojurescript-mode
+                         clojure-ts-clojurec-mode)
       #'cider-eval-region))
 
   ;; HACK: Fix radian-software/radian#446: CIDER tries to calculate the frame's
