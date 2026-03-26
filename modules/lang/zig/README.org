@@ -38,23 +38,17 @@ This module adds [[https://ziglang.org/][Zig]] support, with optional (but recom
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-To get started with Zig, you need the ~zig~ tool. Pre-built binaries for most
-systems are available for download from [[https://ziglang.org/download/]] or from
-[[https://github.com/ziglang/zig/wiki/Install-Zig-from-a-Package-Manager][system package managers]].
+- This module requires a working installing of Zig. Pre-built binaries are
+  available from [[https://ziglang.org/download/]] or from [[https://github.com/ziglang/zig/wiki/Install-Zig-from-a-Package-Manager][system package managers]].
 
-=zls= is a language server for Zig, which provides code completion,
+- For LSP support, enable the [[doom-module:+lsp]] flag and the [[doom-module::tools
+  lsp]] module, then ensure =zls= (the Zig Language Server) is present on your
+  system and in your ~$PATH~.
 
 * TODO Usage
 #+begin_quote
  󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
-
-** LSP support
-This module supports LSP integration. For it to work you'll need:
-
-1. zls installed,
-2. The [[doom-module::tools lsp]] module enabled. Only [[doom-package:lsp-mode]] is supported for now,
-3. The [[doom-module:+lsp]] flag on this module enabled.
 
 ** Keybinds
 | Binding           | Description         |
