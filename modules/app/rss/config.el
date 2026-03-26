@@ -4,12 +4,16 @@
 ;; by apps Reeder and Readkit. It can be invoked via `=rss'. Otherwise, if you
 ;; don't care for the UI you can invoke elfeed directly with `elfeed'.
 
-(defvar +rss-enable-sliced-images t
+(defcustom +rss-enable-sliced-images t
   "Automatically slice images shown in elfeed-show-mode buffers, making them
-easier to scroll through.")
+easier to scroll through."
+  :type 'boolean
+  :group '+rss)
 
-(defvar +rss-workspace-name "*rss*"
-  "Name of the workspace that contains the elfeed buffer.")
+(defcustom +rss-workspace-name "*rss*"
+  "Name of the workspace that contains the elfeed buffer."
+  :type 'string
+  :group '+rss)
 
 
 ;;
@@ -62,7 +66,6 @@ easier to scroll through.")
     (map! :map elfeed-show-mode-map
           :n "gc" nil
           :n "gc" #'+rss/copy-link)))
-
 
 
 (use-package! elfeed-org

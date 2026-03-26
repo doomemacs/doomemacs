@@ -67,8 +67,10 @@
     (when link
       (kill-new link)
       (message "Copied %s to clipboard" link))))
+
+
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
 (defun +rss-elfeed-wrap-h ()
@@ -117,7 +119,7 @@
 
 
 ;;
-;; Functions
+;;; Functions
 
 ;;;###autoload
 (defun +rss-dead-feeds (&optional years)
