@@ -11,8 +11,8 @@ This module adds support for the [[https://developer.apple.com/swift/][Swift pro
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~swift-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports sourcekit).
+  Enable LSP support for ~swift-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver (supports sourcekit).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
@@ -20,11 +20,9 @@ This module adds support for the [[https://developer.apple.com/swift/][Swift pro
 ** Packages
 - [[doom-package:swift-mode]]
 - [[doom-package:swift-ts-mode]] if [[doom-module:+tree-sitter]]
-- if [[doom-module:+lsp]]
-  - [[doom-package:lsp-sourcekit]]
-- else
-  - [[doom-package:company-sourcekit]] if [[doom-module::completion company]]
-  - [[doom-package:flycheck-sourcekit]] if [[doom-module::checkers syntax]]
+- [[doom-package:lsp-sourcekit]] if [[doom-module:+lsp]]
+- [[doom-package:company-sourcekit]] if [[doom-module::completion company]]
+- [[doom-package:flycheck-sourcekit]] if [[doom-module::checkers syntax -flymake]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -37,8 +35,8 @@ This module adds support for the [[https://developer.apple.com/swift/][Swift pro
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
 ** Formatter
-
-Formatting is handled using the [[doom-module::editor format]] module via [[https://github.com/nicklockwood/SwiftFormat#command-line-tool][swiftformat]].
+Formatting is handled using the [[doom-module::editor format]] module via
+[[https://github.com/nicklockwood/SwiftFormat#command-line-tool][swiftformat]].
 
 #+begin_quote
  󱌣 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
