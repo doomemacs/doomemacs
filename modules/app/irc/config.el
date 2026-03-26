@@ -1,30 +1,42 @@
 ;;; app/irc/config.el -*- lexical-binding: t; -*-
 
-(defvar +irc-left-padding 13
+(defcustom +irc-left-padding 13
   "By how much spaces the left hand side of the line should be padded.
 Below a value of 12 this may result in uneven alignment between the various
-types of messages.")
+types of messages."
+  :type 'integer
+  :group '+irc)
 
-(defvar +irc-truncate-nick-char ?…
-  "Character to displayed when nick > `+irc-left-padding' in length.")
+(defcustom +irc-truncate-nick-char ?…
+  "Character to displayed when nick > `+irc-left-padding' in length."
+  :type 'character
+  :group '+irc)
 
-(defvar +irc-scroll-to-bottom-on-commands
+(defcustom +irc-scroll-to-bottom-on-commands
   '(self-insert-command yank hilit-yank
     evil-paste-after evil-paste-before evil-open-above evil-open-below)
-  "If these commands are called pre prompt the buffer will scroll to `point-max'.")
+  "Commands which will trigger scrolling to the bottom of the IRC buffer."
+  :type '(repeat function)
+  :group '+irc)
 
-(defvar +irc-disconnect-hook nil
+(defcustom +irc-disconnect-hook nil
   "Runs each hook when circe noticies the connection has been disconnected.
-Useful for scenarios where an instant reconnect will not be successful.")
+Useful for scenarios where an instant reconnect will not be successful."
+  :type 'hook
+  :group '+irc)
 
-(defvar +irc-bot-list '("fsbot" "rudybot")
-  "Nicks listed have `circe-fool-face' applied and will not be tracked.")
+(defcustom +irc-bot-list '("fsbot" "rudybot")
+  "Nicks listed have `circe-fool-face' applied and will not be tracked."
+  :type '(repeat string)
+  :group '+irc)
 
-(defvar +irc-defer-notifications nil
+(defcustom +irc-defer-notifications nil
   "How long to defer enabling notifications, in seconds (e.g. 5min = 300).
 
 Useful for ZNC users who want to avoid the deluge of notifications during buffer
-playback.")
+playback."
+  :type 'integer
+  :group '+irc)
 
 (defvar +irc--defer-timer nil)
 
@@ -82,7 +94,7 @@ playback.")
         circe-format-server-lurker-activity
         (+irc--pad "Lurk" "{nick} joined {joindelta} ago"))
 
-  (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
+  (add-to-list 'doom-real-buffer-modes 'circe-mode)
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'circe-mode-hook #'+irc--add-circe-buffer-to-persp-h)
   (add-hook 'circe-mode-hook #'turn-off-smartparens-mode)
