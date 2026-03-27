@@ -14,6 +14,8 @@
 (package! elisp-demos :pin "1a108d1c5011f9ced58be2ca98bea1fbd4130a2f")
 (when (modulep! :checkers syntax -flymake)
   (package! flycheck-package :pin "a52e4e95f3151898b36739dfdb4a98b368626fc0"))
+(when (modulep! :checkers syntax +flymake)
+  (package! package-lint-flymake :pin "1c37329703a507fa357302cf6fc29d4f2fe631a8"))
 
 ;; Libraries
 (package! buttercup :pin "cc5a2ab7c7f18aaaf525fac61fe59bae5ad018dd")

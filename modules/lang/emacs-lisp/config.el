@@ -194,6 +194,12 @@ Use `+emacs-lisp/change-working-buffer' to change this. Only applies to
   :config (flycheck-package-setup))
 
 
+(use-package! package-lint-flymake
+  :when (modulep! :checkers syntax +flymake)
+  :after flymake
+  :config (package-lint-flymake-setup))
+
+
 (use-package! elisp-demos
   :defer t
   :init
