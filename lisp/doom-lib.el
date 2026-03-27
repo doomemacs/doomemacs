@@ -466,7 +466,7 @@ sessions, this truly suppress all output from FORMS."
        (progn ,@forms)
      (letf! ((standard-output (lambda (&rest _)))
              (defun message (&rest _))
-             (defun load (file &optional noerror nomessage nosuffix must-suffix)
+             (defun load (file &optional noerror _nomessage nosuffix must-suffix)
                (funcall load file noerror t nosuffix must-suffix))
              (defun write-region (start end filename &optional append visit lockname mustbenew)
                (unless visit (setq visit 'no-message))
