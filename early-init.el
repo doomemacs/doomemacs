@@ -28,13 +28,12 @@
 
 ;; PERF: Garbage collection is a big contributor to startup times in both
 ;;   interactive and CLI sessions, so I defer it.
+(setq gc-cons-percentage 1.0)
 (if noninteractive  ; in CLI sessions
     ;; PERF: GC deferral is less important in the CLI, but still helps script
     ;;   startup times. Just don't set it too high to avoid runaway memory usage
     ;;   in long-running elisp shell scripts.
-    (setq gc-cons-threshold 134217728  ; 128mb
-          ;; Backported from 29 (see emacs-mirror/emacs@73a384a98698)
-          gc-cons-percentage 1.0)
+    (setq gc-cons-threshold 134217728)  ; 128mb
   ;; PERF: Doom relies on `gcmh-mode' to reset this while the user is idle, so I
   ;;   effectively disable GC during startup. DON'T COPY THIS BLINDLY! If it's
   ;;   not reset later there will be stuttering, freezes, and crashes.
@@ -137,7 +136,8 @@
           ;;   to `most-positive-fixnum' is dangerous if downstream does not
           ;;   reset it later to something reasonable, so I use 16mb as a best
           ;;   fit guess. It's better than Emacs' 80kb default.
-          (setq gc-cons-threshold (* 16 1024 1024))
+          (setq gc-cons-threshold (* 16 1024 1024)
+                gc-cons-percentage 0.1)
           nil))
       ;; Sets up Doom (particularly `doom-profile') for the session ahead. This
       ;; loads the profile's init file, if it's available. In interactive
