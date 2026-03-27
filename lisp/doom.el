@@ -155,8 +155,6 @@
     (push 'jansson features))
 (if (string-match-p "HARFBUZZ" system-configuration-features) ; no alternative
     (push 'harfbuzz features))
-(if (fboundp 'igc-info)
-    (push 'igc features))
 
 ;; The `native-compile' feature exists whether or not it is functional (e.g.
 ;; libgcc is available or not). This seems silly, as some packages will blindly

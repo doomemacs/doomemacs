@@ -3,7 +3,7 @@
 ;;; Code:
 
 (defvar doom-file-lines-threshold-alist
-  `(("." . ,(cond ((featurep 'igc) 25000)
+  `(("." . ,(cond ((fboundp 'igc-info) 25000)
                   ((featurep 'native-compile) 20000)
                   (15000))))
   "An alist mapping regexps (like `auto-mode-alist') to line number thresholds.

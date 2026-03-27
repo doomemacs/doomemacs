@@ -7,7 +7,7 @@
 (package! compat
   :recipe (:host github :repo "emacs-compat/compat")
   :pin "38df650dce9f862c6b523de5b683573df590ab85")
-(unless (featurep 'igc)
+(unless (fboundp 'igc-info)
   (package! gcmh
     :pin "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9"))
 
