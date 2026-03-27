@@ -8,4 +8,4 @@
   :recipe (:files ("bind-key.el"))
   :pin "e9ead409b17d8cf7c221f6c28e115a8c051be9e3")
 
-(package! use-package :pin "4090d3267fd34705764576b5e5f7b513c863c368")
+(package! use-package :pin "4b3484b550431f74ab9cda060a8dc983fe482131")
