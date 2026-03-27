@@ -261,7 +261,7 @@ based on the print level of the message. For example:
              collect (cons t spec)
              else
              collect (cons (or (eq level t)
-                               (doom-partial
+                               (apply-partially
                                 car
                                 (get level 'print-level)
                                 (get (car spec) 'print-level)))
@@ -372,7 +372,7 @@ based on the print level of the message. For example:
   "Ensure SEQUENCE is joined with SEPARATOR.
 
 `nil' and empty strings in SEQUENCE are omitted."
-  (mapconcat (doom-partial #'format "%s")
+  (mapconcat (apply-partially #'format "%s")
              (seq-remove (fn! (or (null %)
                                   (and (stringp %)
                                        (string-empty-p %))))

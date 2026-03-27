@@ -302,7 +302,7 @@ prepended, and the keyword is in front."
 
 COMMAND should either be a command list (e.g. \\='(doom foo bar)) or a
 `doom-cli' struct."
-  (mapconcat (doom-partial #'format "%s")
+  (mapconcat (apply-partially #'format "%s")
              (doom-cli--command command)
              " "))
 
@@ -1908,8 +1908,8 @@ errors to `doom-cli-error-file')."
     (let* ((args (flatten-list args))
            (context (make-doom-cli-context :prefix prefix :whole args))
            (doom-cli--context context)
-           (write-logs-fn (doom-partial #'doom-cli--output-write-logs-h context))
-           (show-benchmark-fn (doom-partial #'doom-cli--output-benchmark-h context)))
+           (write-logs-fn (apply-partially #'doom-cli--output-write-logs-h context))
+           (show-benchmark-fn (apply-partially #'doom-cli--output-benchmark-h context)))
       ;; Clone output to stdout/stderr buffers for logging.
       (doom-cli-redirect-output context
         (doom-log "run!: %s %s" prefix (combine-and-quote-strings args))
@@ -1991,7 +1991,7 @@ errors to `doom-cli-error-file')."
 (defalias 'sh!! #'doom-exec-process)
 
 ;; TODO: Make `git!' into a more sophisticated wrapper around git
-(defalias 'git! (doom-partial #'straight--process-run "git"))
+(defalias 'git! (apply-partially #'straight--process-run "git"))
 
 (defun get! (key) (doom-cli-context-get doom-cli--context key))
 

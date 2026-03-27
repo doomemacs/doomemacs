@@ -377,7 +377,7 @@ FILL-COLUMN determines the column at which lines will be broken."
                    (indent
                     (fill
                      (if (listp (cdr spec))
-                         (mapconcat (doom-partial #'format "%s")
+                         (mapconcat (apply-partially #'format "%s")
                                     (cdr spec)
                                     " ")
                        (cdr spec))

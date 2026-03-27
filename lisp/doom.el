@@ -491,8 +491,8 @@ uses a straight or package.el command directly).")
       (define-advice tty-run-terminal-initialization (:override (&rest _) defer)
         (advice-remove #'tty-run-terminal-initialization #'tty-run-terminal-initialization@defer)
         (add-hook 'window-setup-hook
-                  (doom-partial #'tty-run-terminal-initialization
-                                (selected-frame) nil t))))
+                  (apply-partially #'tty-run-terminal-initialization
+                                   (selected-frame) nil t))))
 
     ;; These optimizations are brittle, difficult to debug, and obscure other
     ;; issues, so bow out when debug mode is on.
@@ -646,7 +646,7 @@ safely cleaned up with \\='doom sync' or \\='doom gc'."
     ;;   to consult this variable when building packages.
     (require 'comp-run nil t)
     ;; HACK: Disable native-compilation for some troublesome packages
-    (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
+    (mapc (apply-partially #'add-to-list 'native-comp-deferred-compilation-deny-list)
           (list "/seq-tests\\.el\\'"
                 "/emacs-jupyter.*\\.el\\'"
                 "/evil-collection-vterm\\.el\\'"
@@ -853,7 +853,7 @@ appropriately against `noninteractive' or the `cli' context."
         ;; be generated/loaded yet.
         (require 'seq)
         (require 'map)
-        (mapc (doom-partial #'doom-require 'doom-lib)
+        (mapc (apply-partially #'doom-require 'doom-lib)
               '(process
                 system
                 git
