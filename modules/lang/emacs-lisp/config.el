@@ -188,6 +188,16 @@ Use `+emacs-lisp/change-working-buffer' to change this. Only applies to
 (remove-hook 'emacs-lisp-mode-hook #'overseer-enable-mode)
 
 
+(use-package! package-lint
+  :when (modulep! :checkers syntax)
+  :defer t
+  :config
+  (setq package-lint--sane-prefixes
+        (concat "\\`\\(?:doom-\\(?:package\\|source\\|module\\)\\)\\|"
+                (with-memoization (get 'package-lint--sane-prefixes 'initial-value)
+                  package-lint--sane-prefixes))))
+
+
 (use-package! flycheck-package
   :when (modulep! :checkers syntax -flymake)
   :after flycheck
