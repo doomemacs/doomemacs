@@ -1,7 +1,11 @@
 ;;; tools/terraform/config.el -*- lexical-binding: t; -*-
 
-(defvar +terraform-runner (if (executable-find "terragrunt") "terragrunt" "terraform")
-  "The default runner - terraform or terragrunt")
+(defcustom +terraform-runner
+  (if (executable-find "terragrunt") "terragrunt" "terraform")
+  "The default runner - terraform or terragrunt."
+  :safe #'stringp
+  :type 'string
+  :group '+terraform)
 
 
 ;;
@@ -11,10 +15,11 @@
   :mode "\\.tofu\\'"
   :config
   (set-docsets! 'terraform-mode "Terraform")
+  (set-eglot-client! 'terraform-mode '("tofu-ls" "serve") '("terraform-ls" "serve"))
+
   (setq-hook! 'terraform-mode-hook compile-command +terraform-runner)
 
   (when (modulep! +lsp)
-    (set-eglot-client! 'terraform-mode '("tofu-ls" "serve") '("terraform-ls" "serve"))
     (add-hook 'terraform-mode-local-vars-hook #'lsp! 'append))
 
   (map! :map terraform-mode-map
