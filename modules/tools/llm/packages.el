@@ -3,7 +3,7 @@
 
 (package! gptel
   :recipe (:nonrecursive t)
-  :pin "ecb6276a94267f1373dd258ec6e9334ee40f4e75")
+  :pin "0239c93d478f5faef47d59a0d53175551791a64d")
 
 (package! gptel-quick
   :recipe (:host github :repo "karthink/gptel-quick")
@@ -19,4 +19,4 @@
 (when (modulep! :lang org)
   (package! ob-gptel
     :recipe (:host github :repo "jwiegley/ob-gptel")
-    :pin "60e704a390d767a7d06c8d3845ba8786b75f7da3"))
+    :pin "cbed018a7d81de9ba8dc3220e1c4d10b7bb29b11"))

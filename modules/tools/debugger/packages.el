@@ -1,4 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/debugger/packages.el
 
-(package! dape :pin "d5ce5950338cd14f07d29d80023c455f911dfc2d")
+(package! dape
+  :recipe (:host github :repo "svaante/dape")
+  :pin "1e86212784198f6d3185d712dd6b724601052118")
