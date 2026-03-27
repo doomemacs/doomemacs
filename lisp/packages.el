@@ -22,7 +22,7 @@
   :pin "09b789a8596cacca6bbff866500373541a85ffa2")
 
 ;; doom-ui.el
-(package! nerd-icons :pin "9a7f44db9a53567f04603bc88d05402cad49c64c")
+(package! nerd-icons :pin "1db0b0b9203cf293b38ac278273efcfc3581a05f")
 (package! hide-mode-line :pin "ddd154f1e04d666cd004bf8212ead8684429350d")
 
 ;; doom-editor.el
