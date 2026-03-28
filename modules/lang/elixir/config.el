@@ -61,7 +61,8 @@
                  (executable-find "elixir-ls"))
         (setq lsp-elixir-server-command '("elixir-ls")))))
   :config
-  (+elixir-common-config 'elixir-mode))
+  (+elixir-common-config 'elixir-mode)
+  (set-indent-vars! 'elixir-mode 'elixir-smie-indent-basic))
 
 
 (use-package! elixir-ts-mode  ; 30.1+ only

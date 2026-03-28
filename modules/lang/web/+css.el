@@ -15,6 +15,8 @@ If set to `nil', disable all the above behaviors.")
 ;;
 ;;; Major modes
 
+(set-indent-vars! '(scss-mode less-css-mode) 'css-indent-offset)
+
 (setq-hook! 'css-mode-hook
   ;; Correctly continue /* and // comments on newline-and-indent
   comment-line-break-function #'+css/comment-indent-new-line

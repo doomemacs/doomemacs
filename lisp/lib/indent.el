@@ -68,7 +68,11 @@ with `set-indent-vars!'."
       (dolist (var (append (get 'tab-width 'indent-vars) vars))
         (set (make-local-variable var) width*))))
 
-  (add-hook 'change-major-mode-after-body-hook #'doom-set-indent -100))
+  (add-hook 'change-major-mode-after-body-hook #'doom-set-indent -100)
+
+  (set-indent-vars! '(lisp-mode lisp-interaction-mode lisp-data-mode)
+                    'lisp-body-indent)
+  (set-indent-vars! 'ps-mode 'ps-mode-tab))
 
 
 ;;

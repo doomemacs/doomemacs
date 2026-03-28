@@ -52,7 +52,8 @@
     comment-line-break-function #'+scala-comment-indent-new-line-fn
     lsp-enable-indentation nil)
 
-  (+scala-common-config 'scala-mode))
+  (+scala-common-config 'scala-mode)
+  (set-indent-vars! 'scala-mode 'scala-indent:step))
 
 
 (use-package! scala-ts-mode

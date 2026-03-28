@@ -21,6 +21,8 @@
 ;; library included with Doom).
 (setq coq-mode-abbrev-table '())
 
+(set-indent-vars! 'coq-mode 'coq-indent-basic)
+
 (map! :after coq-mode
       :map coq-mode-map
       :localleader

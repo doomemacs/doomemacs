@@ -12,6 +12,7 @@
     (set-company-backend! 'fsharp-mode 'fsharp-ac/company-backend))
   (set-repl-handler! 'fsharp-mode #'run-fsharp)
   (set-formatter! 'fantomas '("fantomas" "--stdin") :modes '(fsharp-mode))
+  (set-indent-vars! 'fsharp-mode 'fsharp-indent-offset 'fsharp-continuation-offset)
   (map! :localleader
         :map fsharp-mode-map
         "b" #'fsharp-ac/pop-gotodefn-stack ; Useful for re-tracing your steps

@@ -62,6 +62,7 @@
   :defer t
   :config
   (+php-common-config 'php-mode)
+  (set-indent-vars! 'php-mode 'c-basic-offset)
 
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
   ;; php+html. Use the .phtml extension instead.

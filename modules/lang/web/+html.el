@@ -24,6 +24,11 @@
   :mode "\\.vue\\'"
   :config
   (set-docsets! 'web-mode "HTML" "CSS" "Twig" "WordPress")
+  (set-indent-vars! 'web-mode
+                    'web-mode-code-indent-offset
+                    'web-mode-css-indent-offset
+                    'web-mode-markup-indent-offset
+                    'web-mode-sql-indent-offset)
 
   ;; tidy is already defined by the format-all package. We redefine it to add
   ;; more sensible arguments to the tidy command.

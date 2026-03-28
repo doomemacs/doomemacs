@@ -72,6 +72,7 @@ This is ignored by ccls.")
     :for "for"
     :return "return"
     :yield "#require")
+  (set-indent-vars! 'objc-mode 'c-basic-offset)
 
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.c\\(c\\|pp\\)?\\'" "\\1.h\\(h\\|pp\\)?\\'"))
   (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.h\\(h\\|pp\\)?\\'" "\\1.c\\(c\\|pp\\)?\\'"))

@@ -16,6 +16,15 @@
       compilation-buffer-name-function #'+fortran-compilation-buffer-name-fn))
   (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
+  (set-indent-vars! 'f90-mode
+                    'f90-associate-indent
+                    'f90-continuation-indent
+                    'f90-critical-indent
+                    'f90-do-indent
+                    'f90-if-indent
+                    'f90-program-indent
+                    'f90-type-indent)
+
   ;; --- LSP Configuration --- ;;
   (when (modulep! +lsp)
     (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))

@@ -33,6 +33,12 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 ;;
 ;;; Common packages
 
+(use-package! cc-mode  ; where `java-mode' lives
+  :defer t
+  :config
+  (set-indent-vars! 'java-mode 'c-basic-offset))
+
+
 (use-package! java-ts-mode  ; 29.1+ only
   :when (modulep! +tree-sitter)
   :defer t
