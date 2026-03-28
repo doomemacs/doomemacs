@@ -1,10 +1,17 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defvar +python-ipython-command '("ipython" "-i" "--simple-prompt" "--no-color-info")
-  "Command to initialize the ipython REPL for `+python/open-ipython-repl'.")
+(defcustom +python-ipython-command '("ipython" "-i" "--simple-prompt" "--no-color-info")
+  "Command to initialize the ipython REPL for `+python/open-ipython-repl'."
+  :safe #'list-of-strings-p
+  :type '(repeat string)
+  :group '+python)
 
-(defvar +python-jupyter-command '("jupyter" "console" "--simple-prompt")
-  "Command to initialize the jupyter REPL for `+python/open-jupyter-repl'.")
+(defcustom +python-jupyter-command '("jupyter" "console" "--simple-prompt")
+  "Command to initialize the jupyter REPL for `+python/open-jupyter-repl'."
+  :safe #'list-of-strings-p
+  :type '(repeat string)
+  :group '+python)
+
 
 (after! projectile
   (add-to-list 'projectile-project-root-files "setup.py")
@@ -142,8 +149,57 @@
         "p" #'python-pytest-dispatch))
 
 
+(use-package! cython-mode
+  :when (modulep! +cython)
+  :defer t
+  :config
+  (setq cython-default-compile-format "cython -a %s")
+  (map! :map cython-mode-map
+        :localleader
+        :prefix "c"
+        :desc "Cython compile buffer"    "c" #'cython-compile))
+
+
+(use-package! flycheck-cython
+  :when (modulep! +cython)
+  :when (modulep! :checkers syntax -flymake)
+  :after cython-mode)
+
+
+(use-package! pip-requirements
+  :defer t
+  :config
+  ;; HACK: `pip-requirements-mode' performs a sudden HTTP request to
+  ;;   https://pypi.org/simple, which causes unexpected hangs (see #5998). This
+  ;;   advice defers this behavior until the first time completion is invoked.
+  ;; REVIEW: More sensible behavior should be PRed upstream.
+  (defadvice! +python--init-completion-a (&rest _)
+    "Call `pip-requirements-fetch-packages' first time completion is invoked."
+    :before #'pip-requirements-complete-at-point
+    (unless pip-packages (pip-requirements-fetch-packages)))
+  (defadvice! +python--inhibit-pip-requirements-fetch-packages-a (fn &rest args)
+    "No-op `pip-requirements-fetch-packages', which can be expensive."
+    :around #'pip-requirements-mode
+    (letf! ((#'pip-requirements-fetch-packages #'ignore))
+      (apply fn args))))
+
+
 ;;
 ;;; Environment management
+
+(use-package! pyvenv
+  :after python
+  :init
+  (when (modulep! :ui modeline)
+    (add-hook 'pyvenv-post-activate-hooks #'+modeline-update-env-in-all-windows-h)
+    (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline-clear-env-in-all-windows-h))
+  :config
+  (add-hook! '(python-mode-local-vars-hook python-ts-mode-local-vars-hook)
+             #'pyvenv-track-virtualenv)
+  (add-to-list 'global-mode-string
+               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
+               'append))
+
 
 (use-package! pipenv
   :commands pipenv-project-p
@@ -169,21 +225,6 @@
         :desc "run"         "r" #'pipenv-run
         :desc "shell"       "s" #'pipenv-shell
         :desc "uninstall"   "u" #'pipenv-uninstall))
-
-
-(use-package! pyvenv
-  :after python
-  :init
-  (when (modulep! :ui modeline)
-    (add-hook 'pyvenv-post-activate-hooks #'+modeline-update-env-in-all-windows-h)
-    (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline-clear-env-in-all-windows-h))
-  :config
-  (add-hook! '(python-mode-local-vars-hook python-ts-mode-local-vars-hook)
-             #'pyvenv-track-virtualenv)
-  (add-to-list 'global-mode-string
-               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
-               'append))
-
 
 
 (use-package! pyenv-mode
@@ -236,41 +277,6 @@
   :after python
   :hook (doom-first-buffer . poetry-tracking-mode)
   :init (setq poetry-tracking-strategy 'switch-buffer))
-
-
-(use-package! cython-mode
-  :when (modulep! +cython)
-  :defer t
-  :config
-  (setq cython-default-compile-format "cython -a %s")
-  (map! :map cython-mode-map
-        :localleader
-        :prefix "c"
-        :desc "Cython compile buffer"    "c" #'cython-compile))
-
-
-(use-package! flycheck-cython
-  :when (modulep! +cython)
-  :when (modulep! :checkers syntax -flymake)
-  :after cython-mode)
-
-
-(use-package! pip-requirements
-  :defer t
-  :config
-  ;; HACK: `pip-requirements-mode' performs a sudden HTTP request to
-  ;;   https://pypi.org/simple, which causes unexpected hangs (see #5998). This
-  ;;   advice defers this behavior until the first time completion is invoked.
-  ;; REVIEW: More sensible behavior should be PRed upstream.
-  (defadvice! +python--init-completion-a (&rest _)
-    "Call `pip-requirements-fetch-packages' first time completion is invoked."
-    :before #'pip-requirements-complete-at-point
-    (unless pip-packages (pip-requirements-fetch-packages)))
-  (defadvice! +python--inhibit-pip-requirements-fetch-packages-a (fn &rest args)
-    "No-op `pip-requirements-fetch-packages', which can be expensive."
-    :around #'pip-requirements-mode
-    (letf! ((#'pip-requirements-fetch-packages #'ignore))
-      (apply fn args))))
 
 
 ;;
