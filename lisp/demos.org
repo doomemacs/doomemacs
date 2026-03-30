@@ -253,41 +253,6 @@ Or to create aliases for functions that behave differently:
        :config
        literate
        (default +bindings +smartparens))
-
-(doom!
- (pin "v3.0.0")
-
- (source "modules/")  ; Modules in $DOOMDIR/modules/*/*
- (source :name doom :repo "doomemacs/modules" :pin "v21.12.0")  ; Doom's default modules
- (source :name contrib :repo "doomemacs/contrib-modules" :pin "v21.12.0")  ; Community-contributed
- ;; Examples:
- (source :name my :repo "my/modules" :root "unorthodox/path/to/modules/")
- (source :name more :host gitlab :repo "more/modules")
-
- ;;; To enable (or disable) flags globally, they can be given at top-level:
- +lsp -tree-sitter
-
- ;;;; Examples of explicit and/or remote modules:
- :lang
- (rust   :repo "doomemacs/modules" :branch "somePR" :pin "1a2b3c4d"
-         :path "lang/rust"
-         :flags '(-lsp))
- ;; A local, out-of-tree module
- (python :path "/nonstandard/location/for/modules/python"
-         :flags '(+pyenv +conda))
- (cc     :source 'doom)         ; explicit source
- (agda   :source '(doom more))  ; multiple sources
-
- :lang
- (clojure +lsp)  ; shorthand format still works for flags
- nix
-
- ;; Conditional modules
- (:os :if (featurep :system 'macos))  ; category-wide
- macos
- (tty :if (equal (system-name) "headless-machine"))  ; per-module
-
- ...)
 #+end_src
 
 * file-exists-p!
