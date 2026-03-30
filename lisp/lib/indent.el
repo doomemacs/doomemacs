@@ -61,7 +61,11 @@ with `set-indent-vars!'."
   (defun doom-set-indent (&optional width)
     "Ensure tab-width reflects the local major mode's indent variable."
     (when-let* ((vars (doom-indent-vars-for-mode major-mode))
-                (width* (or width (cl-some #'symbol-value vars))))
+                (width* (or width
+                            (cl-loop for v in vars
+                                     if (boundp v)
+                                     if (symbol-value v)
+                                     return it))))
       (doom-log 2 "doom-set-indent: %S = %S" `(tab-width standard-indent ,@vars) width*)
       (setq-local tab-width width*
                   standard-indent width*)
