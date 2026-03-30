@@ -24,7 +24,6 @@
   ;; Don't kill REPL popup on ESC/C-g
   (set-popup-rule! "^\\*haskell\\*" :quit nil)
   (set-indent-vars! 'haskell-mode
-                    'haskell-indent-offset
                     'haskell-indentation-layout-offset
                     'haskell-indentation-starter-offset
                     'haskell-indentation-left-offset
@@ -54,6 +53,9 @@
         "h" #'haskell-hide-toggle
         "H" #'haskell-hide-toggle-all))
 
+(after! haskell-indent-mode
+  (set-indent-vars! 'haskell-indent-mode
+                    'haskell-indent-offset))
 
 (use-package! haskell-ts-mode
   :when (modulep! +tree-sitter)
