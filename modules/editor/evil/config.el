@@ -107,13 +107,16 @@ directives. By default, this only recognizes C directives."
         '(("^\\*evil-registers" :size 0.3)
           ("^\\*Command Line"   :size 8)))))
 
-  ;; Change the cursor color in emacs state. We do it this roundabout way to
-  ;; ensure changes in theme doesn't break these colors.
-  (add-hook! '(doom-load-theme-hook doom-after-modules-config-hook)
+  ;; We want to update the colors after a new theme has been enabled, but this
+  ;; is tricky: whenever a cursor color is applied, Emacs will automatically
+  ;; change the 'cursor face accordingly to keep it in sync. As a result, we
+  ;; read and store the new theme colors as early as possible, and in particular
+  ;; before evil performs its next cursor refresh.
+  (add-hook! '(doom-load-theme-hook doom-after-modules-config-hook) :depth -100
     (defun +evil-update-cursor-color-h ()
+      ;; Use a flashy color for emacs state.
       (put 'cursor 'evil-emacs-color  (face-foreground 'warning))
       (put 'cursor 'evil-normal-color (face-background 'cursor))))
-
   (defun +evil-default-cursor-fn ()
     (evil-set-cursor-color (get 'cursor 'evil-normal-color)))
   (defun +evil-emacs-cursor-fn ()
