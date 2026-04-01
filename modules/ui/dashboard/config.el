@@ -248,7 +248,8 @@ dashboard reloading is inhibited.")
 
 ;; PERF: Make sure the dashboard is ready early, so as to avoid triggering
 ;;   `doom-first-buffer-hook' later, when switching to it.
-(when (equal (buffer-name) "*scratch*")
+(when (and (doom-context-p 'startup)
+           (equal (buffer-name) "*scratch*"))
   (let (buffer-list-update-hook
         doom-first-buffer-hook)
     (switch-to-buffer +dashboard-name)))
