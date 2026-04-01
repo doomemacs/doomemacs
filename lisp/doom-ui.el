@@ -633,7 +633,20 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                 (when (display-multi-font-p frame)
                   (set-face-attribute face frame
                                       :width 'normal :weight 'normal
-                                      :slant 'normal :font font))
+                                      :slant 'normal :font font)
+                  ;; Setting :font above bakes in an absolute :height from the
+                  ;; font-spec's :size.  Non-default faces should use a relative
+                  ;; :height so they scale with `doom/increase-font-size' (which
+                  ;; only adjusts `doom-font' for the default face, then calls
+                  ;; `doom-init-fonts-h' to propagate).  Convert now, before
+                  ;; `custom-push-theme' snapshots the value.
+                  (unless (eq face 'default)
+                    (let ((default-height (face-attribute 'default :height frame)))
+                      (when (and (integerp default-height) (> default-height 0))
+                        (set-face-attribute
+                         face frame :height
+                         (/ (float (face-attribute face :height frame))
+                            default-height))))))
                 (custom-push-theme
                  'theme-face face 'user 'set
                  (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
