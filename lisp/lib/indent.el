@@ -24,7 +24,7 @@ MODE-tab-width, or MODE-basic-offset. It is also not necessary if you have
     (let ((vars (ensure-list vars)))
       (if (eq modes t)
           (put 'tab-width 'indent-vars vars)
-        (dolist (mode modes)
+        (dolist (mode (ensure-list modes))
           (put mode 'indent-vars vars)))))
 
   (defun doom-indent-var-for-mode (mode)
