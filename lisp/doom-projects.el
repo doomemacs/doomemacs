@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(define-obsolete-variable-alias 'doom-projectile-fd-binary 'doom-fd-executable "3.0.0")
+(define-obsolete-variable-alias 'doom-projectile-fd-binary 'doom-fd-executable "2.1.0")
 (defvar doom-fd-executable (cl-find-if #'executable-find (list "fdfind" "fd"))
   "The filename of the fd executable.
 

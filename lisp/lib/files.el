@@ -76,7 +76,7 @@ If the glob ends in a slash, only returns matching directories."
       (file-expand-wildcards path))))
 
 ;;;###autoload
-(define-obsolete-function-alias 'doom-dir 'doom-path "3.0.0")
+(define-obsolete-function-alias 'doom-dir 'doom-path "2.1.0")
 
 ;;;###autoload
 (cl-defun doom-files-in

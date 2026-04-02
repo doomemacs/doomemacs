@@ -2,7 +2,7 @@
 
 ;; DEPRECATED
 ;;;###autodef
-(define-obsolete-function-alias 'set-pretty-symbols! 'set-ligatures! "3.0.0")
+(define-obsolete-function-alias 'set-pretty-symbols! 'set-ligatures! "2.1.0")
 
 ;;;###autodef
 (defun set-ligatures! (modes &rest plist)

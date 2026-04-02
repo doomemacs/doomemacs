@@ -20,7 +20,7 @@
 ;;; Library
 
 ;;;###autoload
-(define-obsolete-function-alias 'doom-plist-get #'cl-getf "3.0.0")
+(define-obsolete-function-alias 'doom-plist-get #'cl-getf "2.1.0")
 
 ;;;###autoload
 (defun doom-plist-map (fn plist)

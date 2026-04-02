@@ -175,17 +175,17 @@
   (defconst MODULES     (featurep 'dynamic-modules))
   (defconst NATIVECOMP  (featurep 'native-compile))
 
-  (make-obsolete-variable 'IS-MAC     "Use (featurep :system 'macos) instead" "3.0.0")
-  (make-obsolete-variable 'IS-LINUX   "Use (featurep :system 'linux) instead" "3.0.0")
-  (make-obsolete-variable 'IS-WINDOWS "Use (featurep :system 'windows) instead" "3.0.0")
-  (make-obsolete-variable 'IS-BSD     "Use (featurep :system 'bsd) instead" "3.0.0")
-  (make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "3.0.0")
-  (make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "3.0.0")
-  (make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "3.0.0")
-  (make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "3.0.0")
+  (make-obsolete-variable 'IS-MAC     "Use (featurep :system 'macos) instead" "2.1.0")
+  (make-obsolete-variable 'IS-LINUX   "Use (featurep :system 'linux) instead" "2.1.0")
+  (make-obsolete-variable 'IS-WINDOWS "Use (featurep :system 'windows) instead" "2.1.0")
+  (make-obsolete-variable 'IS-BSD     "Use (featurep :system 'bsd) instead" "2.1.0")
+  (make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "2.1.0")
+  (make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "2.1.0")
+  (make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "2.1.0")
+  (make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "2.1.0")
 
-  (define-obsolete-variable-alias 'doom-private-dir 'doom-user-dir "3.0.0")
-  (define-obsolete-variable-alias 'doom-etc-dir 'doom-data-dir "3.0.0"))
+  (define-obsolete-variable-alias 'doom-private-dir 'doom-user-dir "2.1.0")
+  (define-obsolete-variable-alias 'doom-etc-dir 'doom-data-dir "2.1.0"))
 
 ;; HACK: Silence obnoxious obsoletion warnings about (if|when)-let in >=31.
 ;;   These warnings are unhelpful to end-users, and many packages use these

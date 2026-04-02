@@ -47,7 +47,7 @@ An omitted font size means to inherit `doom-font''s size."
   :type '(restricted-sexp :match-alternatives (fontp stringp 'nil))
   :group 'doom)
 
-(define-obsolete-variable-alias 'doom-unicode-font 'doom-symbol-font "3.0.0")
+(define-obsolete-variable-alias 'doom-unicode-font 'doom-symbol-font "2.1.0")
 (defcustom doom-symbol-font nil
   "Fallback font for symbols.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See

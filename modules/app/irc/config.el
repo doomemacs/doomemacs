@@ -44,8 +44,8 @@ playback."
   (format (format "%%%ds | %%s" +irc-left-padding)
           (concat "*** " left) right))
 
-(define-obsolete-variable-alias '+irc-notifications-watch-strings 'circe-notifications-watch-strings "3.0.0")
-(define-obsolete-variable-alias '+irc-time-stamp-format 'lui-time-stamp-format "3.0.0")
+(define-obsolete-variable-alias '+irc-notifications-watch-strings 'circe-notifications-watch-strings "2.1.0")
+(define-obsolete-variable-alias '+irc-time-stamp-format 'lui-time-stamp-format "2.1.0")
 
 
 ;;

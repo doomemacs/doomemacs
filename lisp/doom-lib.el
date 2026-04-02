@@ -128,7 +128,7 @@ list is returned as-is."
 ;;
 ;;; Public library
 
-(define-obsolete-function-alias 'doom-enlist 'ensure-list "3.0.0")
+(define-obsolete-function-alias 'doom-enlist 'ensure-list "2.1.0")
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."
@@ -386,7 +386,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (let (file-name-handler-alist)
     (file-name-directory (macroexpand '(file!)))))
 
-(define-obsolete-function-alias 'letenv! 'with-environment-variables "3.0.0")
+(define-obsolete-function-alias 'letenv! 'with-environment-variables "2.1.0")
 
 (put 'defun* 'lisp-indent-function 'defun)
 (defmacro letf! (bindings &rest body)
@@ -488,8 +488,8 @@ echo-area, but not to *Messages*."
                (save-silently t))
            (prog1 ,@forms (message ""))))))
 
-(define-obsolete-function-alias 'eval-if! 'static-if "3.0.0")
-(define-obsolete-function-alias 'eval-when! 'static-when "3.0.0")
+(define-obsolete-function-alias 'eval-if! 'static-if "2.1.0")
+(define-obsolete-function-alias 'eval-when! 'static-when "2.1.0")
 
 (defmacro versionp! (v1 comp v2 &rest comps)
   "Perform compound version checks.
@@ -835,18 +835,18 @@ issues"
 ;; DEPRECATED: Remove in v3.0
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
-  (declare (obsolete "Use `cl-callf2' instead" "3.0.0"))
+  (declare (obsolete "Use `cl-callf2' instead" "2.1.0"))
   `(setq ,sym (append ,sym ,@lists)))
 
 ;; DEPRECATED: Remove in v3
-(define-obsolete-function-alias 'setq! 'setopt "3.0.0")
+(define-obsolete-function-alias 'setq! 'setopt "2.1.0")
 
 ;; DEPRECATED: Remove in v3.0
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 
 If FETCHER is a function, ELT is used as the key in LIST (an alist)."
-  (declare (obsolete "Use `cl-callf2' or `alist-get' instead" "3.0.0"))
+  (declare (obsolete "Use `cl-callf2' or `alist-get' instead" "2.1.0"))
   `(setq ,list (delq ,(if fetcher
                           `(funcall ,fetcher ,elt ,list)
                         elt)
@@ -856,7 +856,7 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
 (defmacro pushnew! (place &rest values)
   "Push VALUES sequentially into PLACE, if they aren't already present.
 This is a variadic `cl-pushnew'."
-  (declare (obsolete "Use a loop with `add-to-list' or `cl-pushnew' instead" "3.0.0"))
+  (declare (obsolete "Use a loop with `add-to-list' or `cl-pushnew' instead" "2.1.0"))
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
        (cl-pushnew ,var ,place :test #'equal))))
@@ -864,7 +864,7 @@ This is a variadic `cl-pushnew'."
 ;; DEPRECATED: Remove in v3.0
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
-  (declare (obsolete "Use `cl-callf2' instead" "3.0.0"))
+  (declare (obsolete "Use `cl-callf2' instead" "2.1.0"))
   `(setq ,sym (append ,@lists ,sym)))
 
 
@@ -1547,7 +1547,7 @@ in these blocks dictates their load order (unless given an explicit :depth)."
      t))
 
 ;; DEPRECATED: Remove in v3
-(define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
+(define-obsolete-function-alias 'featurep! 'modulep! "2.1.0")
 
 (defmacro modulep! (group &optional module &rest flags)
   "Return t if :GROUP MODULE (and +FLAGS) are enabled.

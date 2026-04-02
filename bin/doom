@@ -273,9 +273,9 @@ SEE ALSO:
     (defcli-autoload! (gc))
     (defcli-autoload! (install))
 
-    (defcli-obsolete! (profiles sync) (profile sync "--all") "3.0.0")
-    (defcli-obsolete! ((build b)) (sync "--rebuild") "3.0.0")
-    (defcli-obsolete! ((purge p)) (gc) "3.0.0")
+    (defcli-obsolete! (profiles sync) (profile sync "--all") "2.1.0")
+    (defcli-obsolete! ((build b)) (sync "--rebuild") "2.1.0")
+    (defcli-obsolete! ((purge p)) (gc) "2.1.0")
 
     ;; TODO Post-3.0 commands
     (defcli-stub! module)
@@ -288,7 +288,7 @@ SEE ALSO:
     (defcli-autoload! (ci))
     (defcli-autoload! (make))
     (defcli-autoload! (emacs))
-    (defcli-obsolete! (run) (emacs) "3.0.0")
+    (defcli-obsolete! (run) (emacs) "2.1.0")
 
     ;; TODO Post-3.0 commands
     (defcli-stub! test))

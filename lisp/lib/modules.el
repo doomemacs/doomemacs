@@ -6,7 +6,7 @@
   "A table of enabled modules and metadata. See `doom-modules-initialize'.")
 
 ;; DEPRECATED: Remove in v3, as it will be handled in the CLI
-(make-obsolete-variable 'doom-obsolete-modules nil "3.0.0")
+(make-obsolete-variable 'doom-obsolete-modules nil "2.1.0")
 (defconst doom-obsolete-modules
   '((:feature (version-control  (:emacs vc) (:ui vc-gutter))
               (spellcheck       (:checkers spell))
@@ -49,7 +49,7 @@ syntax-checker modules obsolete. e.g. If :feature version-control is found in
 your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 :ui vc-gutter.")
 
-(make-obsolete-variable 'doom-inhibit-module-warnings nil "3.0.0")
+(make-obsolete-variable 'doom-inhibit-module-warnings nil "2.1.0")
 (defvar doom-inhibit-module-warnings (not noninteractive)
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 

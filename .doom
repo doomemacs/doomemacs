@@ -1,6 +1,6 @@
-"3.0.0-pre"
+"2.1.0"
 ((name . doom)
- (version . "3.0.0-pre")
+ (version . "2.1.0")
  (homepage . "https://doomemacs.org")
 
  (commit
