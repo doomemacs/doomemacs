@@ -337,6 +337,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Minibuffer
 
+;; Hide irrelevant commands in M-x menu.
+(setq read-extended-command-predicate #'command-completion-default-include-p)
+
 ;; Allow for minibuffer-ception. Sometimes we need another minibuffer command
 ;; while we're in the minibuffer.
 (setq enable-recursive-minibuffers t)
