@@ -2,7 +2,7 @@
 
 (use-package! hl-todo
   :hook (prog-mode . hl-todo-mode)
-  :hook (yaml-mode . hl-todo-mode)
+  :hook (yaml-mode yaml-ts-mode)
   :config
   (setq hl-todo-highlight-punctuation ":"
         hl-todo-keyword-faces
