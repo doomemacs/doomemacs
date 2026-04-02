@@ -22,6 +22,22 @@
   (cl-callf2 rassq-delete-all 'rust-mode auto-mode-alist)
   (cl-callf2 rassq-delete-all 'rustic-mode auto-mode-alist)
 
+  ;; HACK: Emacs 31's built-in `rust-ts-mode' calls
+  ;;   (derived-mode-add-parents 'rust-ts-mode '(rust-mode))
+  ;;   so that hooks on `rust-mode' also fire in `rust-ts-mode' buffers. But
+  ;;   when `rust-mode-treesitter-derive' is non-nil, `rust-mode' derives FROM
+  ;;   `rust-ts-mode', creating a cycle in `derived-mode-all-parents':
+  ;;     rust-mode → rust-ts-mode → rust-mode
+  ;;   Remove the extra parent to break the cycle. The derive direction already
+  ;;   ensures `rust-mode' hooks fire (since `rust-mode' IS a `rust-ts-mode').
+  (when (and rust-mode-treesitter-derive
+             (>= emacs-major-version 31))
+    (after! rust-ts-mode
+      (put 'rust-ts-mode 'derived-mode-extra-parents
+           (remq 'rust-mode (get 'rust-ts-mode 'derived-mode-extra-parents)))
+      (put 'rust-ts-mode 'derived-mode--all-parents nil)
+      (put 'rust-mode 'derived-mode--all-parents nil)))
+
   ;; HACK: If rustic isn't loaded *after* `rust-mode' is defined, chaos and
   ;;   errors can ensue, but `rust-mode' is defined *after* it `provide's the
   ;;   `rust-mode' package, so (after! rust-mode ...) isn't sufficient. Sigh.
