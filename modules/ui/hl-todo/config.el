@@ -1,10 +1,12 @@
 ;;; ui/hl-todo/packages.el -*- lexical-binding: t; -*-
 
 (use-package! hl-todo
-  :hook (prog-mode . hl-todo-mode)
-  :hook (yaml-mode . hl-todo-mode)
+  :hook (doom-first-buffer . global-hl-todo-mode)
   :config
   (setq hl-todo-highlight-punctuation ":"
+        ;; Don't highlight todo keywords in text-mode derivatives unless in
+        ;; comments (e.g. data formats like yaml, json, etc).
+        hl-todo-text-modes nil
         hl-todo-keyword-faces
         '(;; For reminders to change or add something at a later date.
           ("TODO" warning bold)
@@ -32,7 +34,6 @@
           ;; or B) it's a comment about a large section of code beyond the scope
           ;; of adjacent lines.
           ("NOTE" success bold)))
-
 
   (defadvice! +hl-todo-clamp-font-lock-fontify-region-a (fn &rest args)
     "Fix an `args-out-of-range' error in some modes."
