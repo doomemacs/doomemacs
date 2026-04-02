@@ -220,7 +220,7 @@
   :link '(url-link :tag "Website" "https://doomemacs.org")
   :group 'emacs)
 
-(defconst doom-version "3.0.0-pre"
+(defconst doom-version "2.1.0"
   "Current version of Doom Emacs core.")
 
 ;; DEPRECATED: Remove these when the modules are moved out of core.
