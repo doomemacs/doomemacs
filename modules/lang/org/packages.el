@@ -65,8 +65,7 @@
 (when (modulep! +dragndrop)
   (package! org-download :pin "c8be2611786d1d8d666b7b4f73582de1093f25ac"))
 (when (modulep! +gnuplot)
-  ;; REVIEW: Frozen until #6080 is addressed upstream
-  (package! gnuplot :pin "4c6b18f71ff7604e2640033207f5a882ddce78af" :freeze t)
+  (package! gnuplot :pin "1a1481109b53a21429f3b919721464dbf3a0b814")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
   (package! jupyter :pin "3b9caed3e4cc5f4bc0348eb65d17098de76904e4"))
