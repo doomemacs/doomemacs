@@ -551,6 +551,8 @@ Grabs the latest commit id of the package using git."
   (cl-destructuring-bind (&key package plist _beg end)
       (or (doom--package-at-point)
           (user-error "Not on a `package!' call"))
+    (when (plist-get plist :freeze)
+      (user-error "%s: package is frozen" package))
     (let* ((recipe (doom--package-merge-recipes package plist))
            (branch (plist-get recipe :branch))
            (oldid (or (plist-get plist :pin)

@@ -1599,7 +1599,7 @@ For more about modules and flags, see `doom!'."
 ;;; `doom-package'
 
 (cl-defmacro package!
-    (name &rest plist &key built-in recipe ignore _type _pin _disable _env)
+    (name &rest plist &key built-in recipe ignore _type _pin _disable _env _freeze)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -1639,6 +1639,8 @@ Accepts the following properties:
  :env ALIST
    Parameters and envvars to set while the package is building. If these values
    change, the package will be rebuilt on next \\='doom sync'.
+ :freeze BOOL
+   Whether or not bump commands will touch this package.
 
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
