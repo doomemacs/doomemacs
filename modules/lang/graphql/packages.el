@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/graphql/packages.el
 
-(package! graphql-mode :pin "d7f105a4bfcffa54bdc6a6f3d6eb740c561355c2")
+(package! graphql-mode :pin "dd3e2efc5a4216d6274c45fb5ab6bd512e90bb9f")
 (package! graphql-doc :pin "17755a2466a1acef68eac664093fcd13cd51494a")
 (unless (modulep! +lsp)
   (package! company-graphql

@@ -5,7 +5,7 @@
   (when (modulep! :completion company)
     (package! company-shell :pin "5f959a63a6e66eb0cbdac3168cad523a62cc2ccd"))
   (when (modulep! :completion corfu)
-    (package! bash-completion :pin "5b621db96efc549c64436011a81fd658c6dcf6a0")))
+    (package! bash-completion :pin "e2ae243588db8e03f4d0485bb09b670abbc63eaf")))
 
 (when (modulep! +fish)
   (package! fish-mode :pin "2526b1803b58cf145bc70ff6ce2adb3f6c246f89"))

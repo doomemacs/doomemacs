@@ -45,4 +45,9 @@
   (set-tree-sitter! 'zig-mode 'zig-ts-mode
     '((zig :url "https://github.com/tree-sitter-grammars/tree-sitter-zig")))
   :config
-  (+zig-common-config 'zig-ts-mode))
+  (+zig-common-config 'zig-ts-mode)
+
+  ;; HACK: Rely on `major-mode-remap-defaults' instead (upstream also doesn't
+  ;;   check if the grammars are ready before adding these entries, which will
+  ;;   bork zig buffers).
+  (cl-callf2 rassq-delete-all 'zig-ts-mode auto-mode-alist))

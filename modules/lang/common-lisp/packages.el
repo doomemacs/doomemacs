@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/common-lisp/packages.el
 
-(when (package! sly :pin "b01993cf1d6626d541998a77dd802483c9687789")
+(when (package! sly :pin "759c0ff8741ced8793257f2b7ed95a23e13e1407")
   (package! sly-asdf :pin "6f9d751469bb82530db1673c22e7437ca6c95f45")
   (package! sly-quicklisp :pin "34c73d43dd9066262387c626c17a9b486db07b2d")
   (package! sly-stepper :recipe (:host github :repo "joaotavora/sly-stepper"

@@ -7,7 +7,7 @@
   (package! dart-ts-mode
     :recipe (:host github
              :repo "50ways2sayhard/dart-ts-mode")
-    :pin "0e42336bf7d74546dfadf4060d918e2d81952e03"))
+    :pin "0dc52bdcf8fb5d6996cbcb67fc41c92986655afe"))
 
 (when (and (modulep! +lsp)
            (modulep! :tools lsp -eglot))
