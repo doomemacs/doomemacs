@@ -31,7 +31,7 @@
   (when (modulep! +tree-sitter)
     (set-tree-sitter! 'rust-mode 'rustic-mode
       `((rust :url "https://github.com/tree-sitter/tree-sitter-rust"
-              :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.2" "v0.24.0")))))
+              :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.2" "v0.24.2")))))
 
   ;; HACK: Certainly, `rustic-babel' does this, but the package (and many other
   ;;   rustic packages) must be loaded in order for them to take effect. To lazy
