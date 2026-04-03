@@ -114,17 +114,18 @@
   :when (modulep! :term vterm)
   :hook (julia-mode . julia-snail-mode)
   :hook (julia-ts-mode . julia-snail-mode)
-  :config
-  (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
-
-  (setq-default julia-snail-multimedia-enable t)
-
+  :init
   (after! julia-mode
     (set-repl-handler! 'julia-mode #'+julia/open-snail-repl
       :persist t
       ;; FIXME: These aren't working as expected
       :send-region #'julia-snail-send-region
       :send-buffer #'julia-snail-send-buffer-file))
+
+  :config
+  (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
+
+  (setq-default julia-snail-multimedia-enable t)
 
   (map! (:localleader
          (:map (julia-snail-mode-map)
