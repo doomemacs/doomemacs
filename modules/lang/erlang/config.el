@@ -9,7 +9,8 @@
     :modes '(erlang-mode erlang-ts-mode))
   (set-repl-handler! '(erlang-mode erlang-ts-mode) #'inferior-erlang)
   (when (modulep! +lsp)
-    (add-hook 'erlang-mode-local-vars-hook #'lsp! 'append)))
+    (add-hook 'erlang-mode-local-vars-hook #'lsp! 'append)
+    (add-hook 'erlang-ts-mode-local-vars-hook #'lsp! 'append)))
 
 
 (use-package! erlang-ts
