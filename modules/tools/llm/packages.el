@@ -3,7 +3,7 @@
 
 (package! gptel
   :recipe (:nonrecursive t)
-  :pin "0239c93d478f5faef47d59a0d53175551791a64d")
+  :pin "c3d5d7f758b8fbb071abbd18d599d1eacb0f2fbd")
 
 (package! gptel-quick
   :recipe (:host github :repo "karthink/gptel-quick")
