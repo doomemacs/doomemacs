@@ -26,7 +26,9 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
 Accapted value types can be one or more of ref, hash, url, username, or name.")
 
 (defvar doom-ci-commit-types
-  '(bump dev docs feat fix merge nit perf refactor release revert test tweak)
+  '(bump dev docs feat fix merge nit perf refactor release revert test tweak
+    ;; DEPRECATED: doom-core specific (will be moved out in v3)
+    module)
   "A list of valid commit types.")
 
 (defvar doom-ci-commit-scopeless-types '(bump merge release revert)
@@ -35,7 +37,12 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
   Don't: \"bump(SCOPE): ...\"
   Do:    \"bump: SCOPE\"")
 
-(defvar doom-ci-commit-scopes '("ci" doom-ci-enforce-scopeless-types)
+(defvar doom-ci-commit-scopes
+  '("ci"
+    ;; DEPRECATED: doom-core specific (will be moved out in v3)
+    "cli" "lib" "modules" "docs"
+    doom-ci-enforce-scopeless-types
+    doom-ci-module-scopes)
   "A list of valid commit scopes as strings, predicate functions, or lists.
 
 These are checked against each item in the comma-delimited scope field of the
@@ -368,6 +375,14 @@ Prevents pushing if there are unrebased or WIP commits."
   (when (memq type doom-ci-commit-scopeless-types)
     (user-error "Scopes for %s commits should go after the colon, not before"
                 type)))
+
+;; DEPRECATED: Will be made project-specific in v3.
+(defun doom-ci-module-scopes (scope _plist)
+  "Checks if SCOPE is a valid module scope."
+  (doom-glob
+   doom-modules-dir (if (string-prefix-p ":" scope)
+                        (format "%s" (substring scope 1))
+                      (format "*/%s" scope))))
 
 
 (defun doom-ci--parse-commit (commit-msg)
