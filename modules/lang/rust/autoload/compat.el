@@ -17,6 +17,18 @@
   ;;   have to worry about for Rust support in Emacs.
   (setq rust-mode-treesitter-derive (modulep! :lang rust +tree-sitter))
 
+  ;; HACK: Emacs 31's built-in `rust-ts-mode' calls (derived-mode-add-parents
+  ;;   'rust-ts-mode '(rust-mode)) so that hooks on `rust-mode' also fire in
+  ;;   `rust-ts-mode' buffers. But when `rust-mode-treesitter-derive' is
+  ;;   non-nil, `rust-mode' derives FROM `rust-ts-mode', creating a cycle in
+  ;;   `derived-mode-all-parents': rust-mode → rust-ts-mode → rust-mode. Remove
+  ;;   the extra parent to break the cycle. The derive direction already ensures
+  ;;   `rust-mode' hooks fire (since `rust-mode' IS a `rust-ts-mode').
+  (after! rust-mode-treesitter
+    (cl-callf2 delq 'rust-mode (get 'rust-ts-mode 'derived-mode-extra-parents))
+    (put 'rust-mode 'derived-mode--all-parents nil)
+    (put 'rust-ts-mode 'derived-mode--all-parents nil))
+
   ;; HACK: Prevent `auto-mode-alist' conflicts between rust-mode, rust-ts-mode,
   ;;   and rustic, caused by their own cludgy attempts to do the same.
   (cl-callf2 rassq-delete-all 'rust-mode auto-mode-alist)
