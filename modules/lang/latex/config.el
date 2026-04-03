@@ -1,6 +1,6 @@
 ;;; lang/latex/config.el -*- lexical-binding: t; -*-
 
-(defconst +latex-indent-item-continuation-offset 'align
+(defcustom +latex-indent-item-continuation-offset 'align
   "Level to indent continuation of enumeration-type environments.
 
 I.e., this affects \\item, \\enumerate, and \\description.
@@ -21,24 +21,31 @@ indentation level.
 Set this to `nil' to disable all this behavior.
 
 You'll need to adjust `LaTeX-item-indent' to control indentation of \\item
-itself.")
+itself."
+  :type 'symbol
+  :group '+latex)
 
-(defvar +latex-enable-unicode-math nil
+(defcustom +latex-enable-unicode-math nil
   "If non-nil, use `company-math-symbols-unicode' backend in `LaTeX-mode',
 enabling unicode symbols in math regions. This requires the unicode-math LaTeX
-package to be installed.")
+package to be installed."
+  :type 'boolean
+  :group '+latex)
 
-(defvar +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
-  "A list of enabled LaTeX viewers to use, in this order. If they don't exist,
-they will be ignored. Recognized viewers are skim, evince, sumatrapdf, zathura,
-okular and pdf-tools.")
+(defcustom +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
+  "A list of enabled LaTeX viewers to use, in this order.
+
+If they don't exist, they will be ignored. Recognized viewers are skim, evince,
+sumatrapdf, zathura, okular and pdf-tools."
+  :type '(repeat (choice skim evince sumatrapdf zathura okular pdf-tools))
+  :group '+latex)
 
 ;;
 (defvar +latex--company-backends nil)
 
 
 ;;
-;; Packages
+;;; Packages
 
 ;; HACK: Doom sets `custom-dont-initialize' during the early parts of its
 ;;   startup process. This stops tex-site's setter on `TeX-modes' from
@@ -209,8 +216,7 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
       (dolist (item '("itemize" "enumerate" "description"))
         (setf (alist-get item LaTeX-indent-environment-list nil t #'equal) nil))
-      (apply fn args)))
-  )
+      (apply fn args))))
 
 
 (use-package! preview
@@ -283,5 +289,46 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))
 
 
-;; BibTeX + RefTeX.
-(load! "+ref")
+;;
+;;; BibTeX + RefTeX.
+
+(use-package! reftex
+  :hook (LaTeX-mode . reftex-mode)
+  :config
+  ;; Set up completion for citations and references.
+  (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations)
+  ;; Get RefTeX working with BibLaTeX, see
+  ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992.
+  (setq reftex-cite-format
+        '((?a . "\\autocite[]{%l}")
+          (?b . "\\blockcquote[]{%l}{}")
+          (?c . "\\cite[]{%l}")
+          (?f . "\\footcite[]{%l}")
+          (?n . "\\nocite{%l}")
+          (?p . "\\parencite[]{%l}")
+          (?s . "\\smartcite[]{%l}")
+          (?t . "\\textcite[]{%l}"))
+        reftex-plug-into-AUCTeX t
+        reftex-toc-split-windows-fraction 0.3
+        ;; This is needed when `reftex-cite-format' is set. See
+        ;; https://superuser.com/a/1386206
+        LaTeX-reftex-cite-format-auto-activate nil)
+  (when (modulep! :editor evil)
+    (add-hook 'reftex-mode-hook #'evil-normalize-keymaps))
+  (map! :map reftex-mode-map
+        :localleader
+        ";" 'reftex-toc)
+  (add-hook! 'reftex-toc-mode-hook
+    (reftex-toc-rescan)
+    (map! :map 'local
+          :e "j"   #'next-line
+          :e "k"   #'previous-line
+          :e "q"   #'kill-buffer-and-window
+          :e "ESC" #'kill-buffer-and-window)))
+
+;; Set up mode for bib files.
+(after! bibtex
+  (setq bibtex-dialect 'biblatex
+        bibtex-align-at-equal-sign t
+        bibtex-text-indentation 20)
+  (define-key bibtex-mode-map (kbd "C-c \\") #'bibtex-fill-entry))
