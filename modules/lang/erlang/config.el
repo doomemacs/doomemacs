@@ -7,6 +7,7 @@
   :config
   (set-formatter! 'erlfmt '("rebar3" "format")
     :modes '(erlang-mode erlang-ts-mode))
+  (set-repl-handler! '(erlang-mode erlang-ts-mode) #'inferior-erlang)
   (when (modulep! +lsp)
     (add-hook 'erlang-mode-local-vars-hook #'lsp! 'append)))
 
