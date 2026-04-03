@@ -38,7 +38,8 @@ with `set-indent-vars!'."
                               do (setq mode* (string-remove-suffix s mode*))
                               finally return mode*))
              (suffixes `(,@(if (string-suffix-p "-ts-mode" mode*)
-                               '(-ts-mode-indent-offset))
+                               '(-ts-mode-indent-offset
+                                 -ts-indent-offset))
                          -indent-offset
                          -indent-level
                          -tab-width
