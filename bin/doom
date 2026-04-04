@@ -71,6 +71,10 @@
 ;;   symlinked to in the esoteric OSes/distros Emacs users use.
 ;; - The user may have mounted /tmp with a noexec flag, so pass the exit script
 ;;   to /bin/sh rather than executing them directly.
+;; - The (setq warning-inhibit-types '((files missing-lexbind-cookie))) is
+;;   necessary on later versions of Emacs 31, where Emacs will throw warnings
+;;   when loading elisp that lack 'lexical-binding: t' header line. Setting it
+;;   here or in lisp/doom.el is not enough, though I do it anyway.
 
 ;; Doom's core sets up everything we need; including `doom-*-dir' variables,
 ;; universal defaults, and autoloads for doom-*-initialize functions.

@@ -35,18 +35,6 @@ case "$EMACS" in
        ;;
 esac
 
-# Careful not to use -Q! It implies --no-site-lisp; it omits the site-lisp
-# directory from `load-path' which prevent Doom from manually loading the site
-# files later. Site files are important on some systems or deployment methods
-# (like Snap or NixOS).
-emacs="$EMACS -q --no-site-file --batch"
-
-# Emacs complains about missing lexical-binding settings in elisp files, but
-# this warning is unhelpful to end users, polluting the output of any shell
-# script derived from this script, so silence it (it's not enough to set it *in*
-# lisp/doom.el, unfortunately).
-emacs="$emacs --eval \"(setq warning-inhibit-types '((files missing-lexbind-cookie)))\" "
-
 # The emacs-plus formula on homebrew will inject redundant/extra entries into
 # $PATH, causing issues. This suppresses that behavior, and does nothing
 # everywhere else.
@@ -81,7 +69,9 @@ export __DOOMPIPE=
 # loaded first.
 script="$1"
 shift
-$emacs --load "$EMACSDIR/early-init" \
+$EMACS -q --no-site-file --batch \
+       --eval "(setq warning-inhibit-types '((files missing-lexbind-cookie)))" \
+       --load "$EMACSDIR/early-init" \
        --load "$script" \
        -- "$@"
 exit=$?
@@ -92,7 +82,7 @@ if [ "${exit:-0}" -eq 254 ]; then
     # $TMPDIR (or $TEMP and $TMP on Windows) aren't guaranteed to have values,
     # and mktemp isn't available on all systems, but you know what is? Emacs! So
     # I rely on it to provide TMPDIR.
-    export TMPDIR="${TMPDIR:-${TMP:-${TEMP:-$($emacs -Q --eval '(princ (temporary-file-directory))' 2>/dev/null)}}}"
+    export TMPDIR="${TMPDIR:-${TMP:-${TEMP:-$($EMACS -Q --batch --eval '(princ (temporary-file-directory))' 2>/dev/null)}}}"
 
     # /tmp may be mounted with the noexec flag, so the exit-script can't be
     # executed directly.
