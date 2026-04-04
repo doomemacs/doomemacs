@@ -68,7 +68,7 @@
   (package! gnuplot :pin "1a1481109b53a21429f3b919721464dbf3a0b814")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "3b9caed3e4cc5f4bc0348eb65d17098de76904e4"))
+  (package! jupyter :pin "242fdc709ce0faa3b9ee81dcc48cfd791898e6b8" :freeze t))
 (when (modulep! +journal)
   (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
 (when (modulep! +noter)
