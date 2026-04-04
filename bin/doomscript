@@ -41,6 +41,12 @@ esac
 # (like Snap or NixOS).
 emacs="$EMACS -q --no-site-file --batch"
 
+# Emacs complains about missing lexical-binding settings in elisp files, but
+# this warning is unhelpful to end users, polluting the output of any shell
+# script derived from this script, so silence it (it's not enough to set it *in*
+# lisp/doom.el, unfortunately).
+emacs="$emacs --eval \"(setq warning-inhibit-types '((files missing-lexbind-cookie)))\" "
+
 # The emacs-plus formula on homebrew will inject redundant/extra entries into
 # $PATH, causing issues. This suppresses that behavior, and does nothing
 # everywhere else.
