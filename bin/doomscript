@@ -41,6 +41,11 @@ esac
 # (like Snap or NixOS).
 emacs="$EMACS -q --no-site-file --batch"
 
+# The emacs-plus formula on homebrew will inject redundant/extra entries into
+# $PATH, causing issues. This suppresses that behavior, and does nothing
+# everywhere else.
+export EMACS_PLUS_NO_PATH_INJECTION=1
+
 # Doom respects $EMACSDIR to tell it where Doom lives. If it fails, then this is
 # either isn't bash, or it's a posix shell being directly sourced with sh, which
 # is unsupported.
