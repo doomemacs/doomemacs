@@ -1023,7 +1023,7 @@ Must be run from a magit diff buffer."
                                                     (env (plist-get plist :env)))
                                           (cl-loop for (var . val) in env
                                                    if (and (symbolp var)
-                                                           (string-prefix-p "_" (symbol-name var)))
+                                                           (not (string-prefix-p "_" (symbol-name var))))
                                                    do (set-default var val)
                                                    else if (and (stringp var) val)
                                                    do (setenv var val))))
