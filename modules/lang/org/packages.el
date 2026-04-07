@@ -42,7 +42,8 @@
                (insert-file-contents "org-loaddefs.el")
                (save-excursion (insert "\n"))
                (insert-file-contents afile))))
-  :pin "89df5bf46ba214db44eea898cc7cacc0b27fd760")  ; release_9.8
+  :pin "c1bb5ae59101181708fc061666b6f2e402911c7b"  ; release_9.8.1
+  :env `((org--inhibit-version-check . t)))
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
