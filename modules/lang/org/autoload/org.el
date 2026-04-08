@@ -265,8 +265,12 @@ If on a:
         (`link
          (let* ((lineage (org-element-lineage context '(link) t))
                 (path (org-element-property :path lineage)))
-           (if (or (equal (org-element-property :type lineage) "img")
-                   (and path (image-type-from-file-name path)))
+           (if (and (not org-return-follows-link)
+                    (or (null path) (image-supported-file-p path))
+                    (functionp
+                     (plist-get (cdr (assoc (org-element-property :type lineage)
+                                            org-link-parameters))
+                                :preview)))
                (+org--toggle-inline-images-in-subtree
                 (org-element-property :begin lineage)
                 (org-element-property :end lineage))
