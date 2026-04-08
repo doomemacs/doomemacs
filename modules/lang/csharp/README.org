@@ -4,8 +4,8 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module adds C# support to Emacs, powered by Omnisharp (directly or through
-LSP).
+This module adds C# support to Emacs, together with LSP support (via
+[[https://github.com/dotnet/roslyn/tree/main/src/LanguageServer/Microsoft.CodeAnalysis.LanguageServer][roslyn-language-server]] or [[https://github.com/OmniSharp/omnisharp-roslyn][omnisharp-roslyn]]).
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -14,8 +14,9 @@ LSP).
 - +dotnet ::
   Enable Dotnet transient interface with Sharper
 - +lsp ::
-  Enable LSP support for ~csharp-mode~. Requires [[doom-module::tools lsp]] and a langserver
-  (supports =omnisharp-roslyn=).
+  Enable LSP support for ~csharp-mode~ and ~csharp-ts-mode~. Requires
+  [[doom-module::tools lsp]] and a langserver (e.g. [[https://github.com/dotnet/roslyn/tree/main/src/LanguageServer/Microsoft.CodeAnalysis.LanguageServer][roslyn-language-server]] or
+  [[https://github.com/OmniSharp/omnisharp-roslyn][omnisharp-roslyn]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires Emacs 29.1+ and [[doom-module::tools tree-sitter]].
