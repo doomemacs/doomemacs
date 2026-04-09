@@ -556,10 +556,10 @@ ARGLIST."
 (setplist 'doom--fn-crawl '(%2 2 %3 3 %4 4 %5 5 %6 6 %7 7 %8 8 %9 9))
 (defun doom--fn-crawl (data args)
   (cond ((symbolp data)
-         (when-let
-             (pos (cond ((eq data '%*) 0)
-                        ((memq data '(% %1)) 1)
-                        ((get 'doom--fn-crawl data))))
+         (when-let*
+             ((pos (cond ((eq data '%*) 0)
+                         ((memq data '(% %1)) 1)
+                         ((get 'doom--fn-crawl data)))))
            (when (and (= pos 1)
                       (aref args 1)
                       (not (eq data (aref args 1))))
