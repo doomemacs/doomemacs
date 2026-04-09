@@ -813,14 +813,6 @@ appropriately against `noninteractive' or the `cli' context."
                               (not (member (buffer-name)
                                            `("*scratch*" ,doom-fallback-buffer-name)))))
 
-          ;; If the user's already opened something (e.g. with command-line
-          ;; arguments), then we should assume nothing about the user's
-          ;; intentions and simply treat this session as fully initialized.
-          (add-hook! 'doom-after-init-hook :depth 100
-            (defun doom-run-first-hooks-if-files-open-h ()
-              (when file-name-history
-                (doom-run-hooks 'doom-first-file-hook 'doom-first-buffer-hook))))
-
           ;; These fire `MAJOR-MODE-local-vars-hook' hooks, which is a Doomism.
           ;; See the `MODE-local-vars-hook' section above.
           (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-maybe-h 100)
@@ -898,6 +890,12 @@ appropriately against `noninteractive' or the `cli' context."
 
 Triggers `doom-after-init-hook' and sets `doom-init-time.'"
   (when (doom-context-pop 'startup)
+    ;; If the user's already opened something (e.g. with command-line
+    ;; arguments), then we should assume nothing about the user's intentions and
+    ;; simply treat this session as fully initialized.
+    (when (and file-name-history (doom-context-p 'emacs))
+      (doom-run-hooks 'doom-first-file-hook 'doom-first-buffer-hook))
+
     (setq doom-init-time (float-time (time-subtract (current-time) before-init-time)))
     (doom-run-hooks 'doom-after-init-hook)
 
