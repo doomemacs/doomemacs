@@ -371,10 +371,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Built-in packages
 
-;;;###package ansi-color
-(setq ansi-color-for-comint-mode t)
-
-
 (after! comint
   (setq-default comint-buffer-maximum-size 2048)  ; double the default
 
