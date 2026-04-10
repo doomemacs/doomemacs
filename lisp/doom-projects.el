@@ -124,6 +124,17 @@ Must end with a slash.")
       (cond ((file-exists-p! (or projectile-dirconfig-file ".project") proot))
             ((expand-file-name ".project" proot)))))
 
+  ;; HACK: `projectile-files-to-ensure' binds `default-directory' to the result
+  ;;   of `projectile-project-root', which returns nil when called from a buffer
+  ;;   outside of a project, poisoning the entire downstream call chain with a
+  ;;   wrong-type-argument error.
+  (defadvice! doom--projectile-files-to-ensure-a ()
+    :override #'projectile-files-to-ensure
+    (when-let* ((root (projectile-project-root)))
+      (let ((default-directory root))
+        (flatten-tree (mapcar #'file-expand-wildcards
+                              (projectile-patterns-to-ensure))))))
+
   ;; Disable commands that won't work, as is, and that Doom already provides a
   ;; better alternative for.
   (put 'projectile-ag 'disabled "Use +default/search-project instead")
