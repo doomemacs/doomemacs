@@ -91,6 +91,7 @@
   :hook (clojure-ts-mode-local-vars . cider-mode)
   :hook (clojure-ts-clojurescript-mode-local-vars . cider-mode)
   :hook (clojure-ts-clojurec-mode-local-vars . cider-mode)
+  :hook (clojure-ts-jank-mode . cider-mode)
   :init
   (after! clojure-mode
     (set-repl-handler! '(clojure-mode clojurec-mode)
