@@ -14,10 +14,13 @@
 (use-package! gdscript-mode
   :interpreter "gdscript[0-9.]*"
   :config
-  (set-lookup-handlers! 'gdscript-mode
+  (set-lookup-handlers! '(gdscript-mode gdscript-ts-mode)
     :documentation '(gdscript-docs-browse-symbol-at-point :async t))
-  (set-formatter! 'gdformat '("gdformat" "-") :modes '(gdscript-mode))
+  (set-formatter! 'gdformat '("gdformat" "-") :modes '(gdscript-mode gdscript-ts-mode))
   (set-popup-rule! "^\\*godot " :ttl 0 :quit t)
+
+  (when (modulep! +lsp)
+    (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
   (defadvice! +gdscript--dont-focus-output-buffer-a (fn &rest args)
     "Don't move cursor into gdscript compilation window."
@@ -36,9 +39,6 @@
         (cond ((executable-find gdscript-godot-executable) gdscript-godot-executable)
               ((executable-find "godot") "godot")
               ((executable-find "godot4") "godot4")))
-
-  (when (modulep! +lsp)
-    (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
   (map! :localleader
         :map gdscript-mode-map
@@ -66,4 +66,12 @@
     `((gdscript :url "https://github.com/PrestonKnopp/tree-sitter-gdscript.git"
                 :rev ,(if (< (treesit-library-abi-version) 15) "v5.0.1" "v6.1.0"))))
   :config
+  (set-eglot-client! 'gdscript-ts-mode #'gdscript-eglot-contact)
+
+  (when (modulep! +lsp)
+    (add-hook 'gdscript-ts-mode-local-vars-hook #'lsp! 'append))
+
+  ;; HACK: The mode modifies `auto-mode-alist' and `interpreter-mode-alist' on
+  ;;   every invocation.
+  ;; REVIEW: PR this upstream.
   (advice-add 'gdscript-ts-mode :around #'+tree-sitter-ts-mode-inhibit-side-effects-a))
