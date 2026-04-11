@@ -39,8 +39,8 @@
   :defer t
   :init
   (set-tree-sitter! 'fsharp-mode 'fsharp-ts-mode
-    '((fsharp :url "https://github.com/ionide/tree-sitter-fsharp"
-              :rev "v0.2.0"
+    `((fsharp :url "https://github.com/ionide/tree-sitter-fsharp"
+              :rev ,(if (< (treesit-library-abi-version) 15) "v0.1.0" "v0.2.0")
               :commit "594c500ecace8618db32dd1144307897277db067")))
   :config
   (+fsharp-common-config 'fsharp-ts-mode))
