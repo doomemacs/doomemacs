@@ -110,8 +110,7 @@
 ;; to be refreshed.
 (let ((old-version (eval-when-compile emacs-major-version)))
   (unless (= emacs-major-version old-version)
-    (user-error (concat "Doom was compiled with Emacs %s, but was loaded with %s. Run 'doom sync' to"
-                        "recompile it.")
+    (user-error (concat "Doom core was compiled with Emacs %s, but loaded with %s. Recompile it!")
                 emacs-major-version old-version)))
 
 ;;; Custom features & global constants
