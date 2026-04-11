@@ -64,7 +64,6 @@
   :init
   (set-tree-sitter! 'gdscript-mode 'gdscript-ts-mode
     `((gdscript :url "https://github.com/PrestonKnopp/tree-sitter-gdscript.git"
-                :rev ,(if (< (treesit-library-abi-version) 15) "v5.0.1" "v6.0.0")
-                :commit "598d483e150aca2d77ad8892923980144bed4919")))
+                :rev ,(if (< (treesit-library-abi-version) 15) "v5.0.1" "v6.1.0"))))
   :config
   (advice-add 'gdscript-ts-mode :around #'+tree-sitter-ts-mode-inhibit-side-effects-a))
