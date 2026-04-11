@@ -39,7 +39,9 @@
   :defer t
   :init
   (set-tree-sitter! 'sml-mode 'sml-ts-mode
-    '((sml :url "https://github.com/MatthewFluet/tree-sitter-sml")))
+    `((sml :url "https://github.com/MatthewFluet/tree-sitter-sml"
+           :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.0")
+           :commit "fd4b4955bb998262840ab8119885b3edf20ea75a")))
   :config
   ;; REVIEW: add to `eglot-server-programs' upstream!
   (set-eglot-client! 'sml-ts-mode (alist-get 'sml-mode eglot-server-programs))
