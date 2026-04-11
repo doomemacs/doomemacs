@@ -70,17 +70,18 @@ or session. Otherwise, the addition is permanent."
 (defun +spell/next-error ()
   "Jump to next flyspell error."
   (interactive)
-  (call-interactively
-   (if (featurep 'evil)
-       #'evil-next-flyspell-error
-     #'flyspell-goto-next-error)))
+  (if (fboundp #'evil-next-flyspell-error)
+      (evil-next-flyspell-error 1)
+    (flyspell-goto-next-error)))
 
 ;;;###autoload
 (defun +spell/previous-error ()
   "Jump to previous flyspell error."
   (interactive)
-  (call-interactively
-   (if (featurep 'evil)
-       #'evil-prev-flyspell-error
-     ;; TODO: Implement this
-     (user-error "Not supported"))))
+  (if (fboundp #'evil-prev-flyspell-error)
+      (evil-prev-flyspell-error 1)
+    (condition-case _
+        (flyspell-goto-next-error t)
+      ;; REVIEW: Remove when 28 support is dropped
+      (wrong-number-of-arguments
+       (user-error "Not supported in Emacs <= 28")))))
