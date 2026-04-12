@@ -66,6 +66,7 @@
   :unless (modulep! :editor evil)
   :hook ((prog-mode text-mode) . goggles-mode)
   :config
+  (goggles-delete 'disable) ; Consistent with `evil-goggles-enable-delete' setting
   (goggles-define +goggles-general-undo undo) ; goggles only supports `primitive-undo' by default
   (goggles-define +goggles-register-paste insert-register)
   (goggles-define +goggles-kill-word backward-kill-word kill-word)
