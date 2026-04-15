@@ -14,6 +14,16 @@
   ;;   buffers anyway.
   (setq-hook! 'emacs-everywhere-init-hooks doom-inhibit-local-var-hooks t)
 
+  ;; Support for Hyprland and Niri
+  (add-to-list 'emacs-everywhere-system-configs
+               '((wayland . Hyprland)
+                 :focus-command ("hyprctl" "dispatch" "focuswindow" "address:%w")
+                 :info-function +everywhere-app-info-hyprland))
+  (add-to-list 'emacs-everywhere-system-configs
+               '((wayland . niri)
+                 :focus-command ("niri" "msg" "action" "focus-window" "--id" "%w")
+                 :info-function +everywhere-app-info-niri))
+
   (after! doom-modeline
     (doom-modeline-def-segment emacs-everywhere
       (concat
