@@ -65,7 +65,20 @@ easier to scroll through."
       (kbd "M-RET") #'elfeed-search-browse-url)
     (map! :map elfeed-show-mode-map
           :n "gc" nil
-          :n "gc" #'+rss/copy-link)))
+          :n "gc" #'+rss/copy-link))
+
+  ;; HACK: Fix visual-line mode (evil) selecting +1 line when executing
+  ;;   elfeed-search operations on selected entries.
+  (defadvice! +rss--fix-elfeed-search-selected-off-by-one-a (fn &optional ignore-region-p)
+    :around #'elfeed-search-selected
+    (if (and (bound-and-true-p evil-local-mode)
+             (doom-region-active-p)
+             (let ((end (region-end)))
+               (and (> end (region-beginning))
+                    (save-excursion (goto-char end) (bolp)))))
+        (letf! (defun region-end () (1- (funcall region-end)))
+          (funcall fn ignore-region-p))
+      (funcall fn ignore-region-p))))
 
 
 (use-package! elfeed-org
