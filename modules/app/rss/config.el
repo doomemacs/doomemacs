@@ -52,6 +52,23 @@ easier to scroll through.")
       shr-put-image-function #'+rss-put-sliced-image-fn
       shr-external-rendering-functions '((img . +rss-render-image-tag-without-underline-fn))))
 
+  (defadvice! +rss--elfeed-search-selected-fix-a (fn &optional ignore-region-p)
+    "Prevent off-by-one when region ends at the beginning of the next line"
+    :around #'elfeed-search-selected
+    (if (and (not ignore-region-p)
+             (use-region-p)
+             (let ((end (region-end)))
+               (and (> end (region-beginning))
+                    (= end (save-excursion
+                             (goto-char end)
+                             (line-beginning-position))))))
+        (let ((orig-region-end (symbol-function 'region-end))
+              (fixed-end (1- (region-end))))
+          (fset 'region-end (lambda () fixed-end))
+          (unwind-protect (funcall fn ignore-region-p)
+            (fset 'region-end orig-region-end)))
+      (funcall fn ignore-region-p)))
+
   ;; Keybindings
   (after! elfeed-show
     (define-key! elfeed-show-mode-map
