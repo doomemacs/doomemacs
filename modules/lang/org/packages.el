@@ -42,7 +42,7 @@
                (insert-file-contents "org-loaddefs.el")
                (save-excursion (insert "\n"))
                (insert-file-contents afile))))
-  :pin "c1bb5ae59101181708fc061666b6f2e402911c7b"  ; release_9.8.1
+  :pin "2ef390bfaf7f8e9206b4c923ea0a849ad427be41"  ; release_9.8.2
   :env `((org--inhibit-version-check . t)))
 (package! org-contrib
   :recipe (:host github
@@ -71,9 +71,9 @@
 (when (modulep! +jupyter)
   (package! jupyter :pin "242fdc709ce0faa3b9ee81dcc48cfd791898e6b8" :freeze t))
 (when (modulep! +journal)
-  (package! org-journal :pin "831ecfd50a29057c239b9fa55ebc02d402a6d4a7"))
+  (package! org-journal :pin "6460f6f2b0835b4b8aa87d5fdf40cac7deb319f5"))
 (when (modulep! +noter)
-  (package! org-noter :pin "81765d267e51efd8b4f5b7276000332ba3eabbf5"))
+  (package! org-noter :pin "ab9628e449d76af8b2e5a9d5fead4e03ca76a03d"))
 (when (modulep! +pretty)
   (package! org-modern :pin "713beb72aed4db43f8a10feed72136e931eb674a")
   (package! org-appear :pin "32ee50f8fdfa449bbc235617549c1bccb503cb09"))
@@ -86,7 +86,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "8bbbcf83104b817f5882a0e04772b9f9e26b265b"))
+    :pin "b5b37a5fa8af4291ab6780f39514ed6508f9b073"))
 (when (or (modulep! +roam)
           (modulep! +roam2))
   (package! org-roam :pin "7cd906b6f8b18a21766228f074aff24586770934"))
