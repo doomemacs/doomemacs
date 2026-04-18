@@ -14,7 +14,6 @@
     (set-repl-handler! mode #'+javascript/open-repl
       :send-region #'nodejs-repl-send-region
       :send-buffer #'nodejs-repl-send-buffer)
-    (set-electric! mode :chars '(?\} ?\) ?. ?:))
     (set-ligatures! mode
       ;; Functional
       :def "function"
@@ -103,7 +102,8 @@
   :defer t
   :init
   :config
-  (+javascript-common-config 'nodejs-repl-mode))
+  (+javascript-common-config 'nodejs-repl-mode)
+  (set-electric! 'nodejs-repl-mode :chars '(?\} ?\) ?. ?:)))
 
 
 ;;

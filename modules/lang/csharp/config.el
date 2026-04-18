@@ -11,7 +11,6 @@
   :config
   (set-formatter! 'csharpier '("csharpier" "format" "--write-stdout")
     :modes '(csharp-mode csharp-ts-mode))
-  (set-electric! '(csharp-mode csharp-ts-mode) :chars '(?\n ?\}))
   (set-rotate-patterns! '(csharp-mode csharp-ts-mode)
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
