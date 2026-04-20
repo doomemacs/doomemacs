@@ -33,8 +33,9 @@ This is ignored by ccls.")
       `((c :url "https://github.com/tree-sitter/tree-sitter-c"
            :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.6" "v0.24.1"))))
     (set-tree-sitter! 'c++-mode 'c++-ts-mode
-      '((cpp :url "https://github.com/tree-sitter/tree-sitter-cpp"
-             :rev "v0.23.4"))))
+      `((cpp :url "https://github.com/tree-sitter/tree-sitter-cpp"
+             :rev ,(if (< (treesit-library-abi-version) 15) "v0.23.4")
+             :commit "80f5bd82d3b4a1acf07f34a569d88a4a29f74c42"))))
 
   (after! ffap
     (add-to-list 'ffap-alist '(c-mode . ffap-c-mode))
