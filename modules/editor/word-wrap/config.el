@@ -1,41 +1,53 @@
 ;;; editor/word-wrap/config.el -*- lexical-binding: t; -*-
 
-(defvar +word-wrap-extra-indent 'double
+(defcustom +word-wrap-extra-indent 'double
   "The amount of extra indentation for wrapped code lines.
 
-When 'double, indent by twice the major-mode indentation.
-When 'single, indent by the major-mode indentation.
+When \\='double, indent by twice the major-mode indentation.
+When \\='single, indent by the major-mode indentation.
 When a positive integer, indent by this fixed amount.
 When a negative integer, dedent by this fixed amount.
 
-Otherwise no extra indentation will be used.")
+Otherwise no extra indentation will be used."
+  :type '(choice (const :tag "Use major-mode indentation" single)
+                 (const :tag "Use twice major-mode indentation" double)
+                 (integer :tag "Fixed indentation"))
+  :group '+word-wrap)
 
-(defvar +word-wrap-fill-style nil
+(defcustom +word-wrap-fill-style nil
   "How to handle `fill-column' in `+word-wrap-mode'.
 
-When 'auto, long lines will soft-wrap at `fill-column'. If `auto-fill-mode' is
-enabled, its behaviour will not be affected.
+When \\='auto, long lines will soft-wrap at `fill-column'. If `auto-fill-mode'
+is enabled, its behaviour will not be affected.
 
-When 'soft, long lines will soft-wrap at `fill-column' and `auto-fill-mode' will
-be forcibly disabled.
+When \\='soft, long lines will soft-wrap at `fill-column' and `auto-fill-mode'
+will be forcibly disabled.
 
 Otherwise long lines will soft-wrap at the window margin and `auto-fill-mode'
-will not be affected.")
+will not be affected."
+  :type '(choice (const :tag "Soft-wrap at fill-column" auto)
+                 (const :tag "Soft-wrap at fill-column and disable auto-fill-mode" soft)
+                 (const :tag "Soft-wrap at window margin" nil))
+  :group '+word-wrap)
 
-(defvar +word-wrap-disabled-modes
-  '(fundamental-mode so-long-mode)
+(defcustom +word-wrap-disabled-modes '(fundamental-mode so-long-mode)
   "Major-modes where `+global-word-wrap-mode' should not enable
-`+word-wrap-mode'.")
+`+word-wrap-mode'."
+  :type '(repeat symbol)
+  :group '+word-wrap)
 
-(defvar +word-wrap-visual-modes
-  '(org-mode)
+(defcustom +word-wrap-visual-modes '(org-mode)
   "Major-modes where `+word-wrap-mode' should not use
 `adaptive-wrap-prefix-mode'.")
+  :type '(repeat symbol)
+  :group '+word-wrap)
 
-(defvar +word-wrap-text-modes
+(defcustom +word-wrap-text-modes
   '(text-mode markdown-mode markdown-view-mode gfm-mode gfm-view-mode rst-mode
     latex-mode LaTeX-mode)
-  "Major-modes where `+word-wrap-mode' should not provide extra indentation.")
+  "Major-modes where `+word-wrap-mode' should not provide extra indentation."
+  :type '(repeat symbol)
+  :group '+word-wrap)
 
 (when (memq 'visual-line-mode text-mode-hook)
   (remove-hook 'text-mode-hook #'visual-line-mode)
