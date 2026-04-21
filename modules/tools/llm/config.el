@@ -1,5 +1,9 @@
 ;;; tools/llm/config.el -*- lexical-binding: t; -*-
 
+(autoload 'gptel-org-set-topic "gptel-org" nil t)
+(autoload 'gptel-org-set-properties "gptel-org" nil t)
+
+
 (use-package! gptel
   :defer t
   :config
