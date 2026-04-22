@@ -16,7 +16,21 @@
   :config
   (set-popup-rule! "^\\*vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
 
-  (map! :map vterm-mode-map "C-q" #'vterm-send-next-key)
+  (map! :map vterm-mode-map "C-q" #'vterm-send-next-key
+        :n "0"  (cmd! (vterm-send-key "a" nil nil t)
+                      (evil-refresh-cursor))
+
+        :n "dd" (cmd! (vterm-send-key "e" nil nil t)
+                      (vterm-send-key "u" nil nil t)
+                      (evil-refresh-cursor))
+
+        :n "V"  (cmd! (let* ((beg (save-excursion
+                                    (beginning-of-line)
+                                    (re-search-forward "\\$ " (line-end-position) t)
+                                    (point)))
+                             (end (save-excursion (vterm-end-of-line) (point))))
+                        (evil-visual-make-region beg end))))
+
 
   ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
   ;; spawn another if want one.
