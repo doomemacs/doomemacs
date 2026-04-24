@@ -110,31 +110,52 @@ And these are text objects added by this module:
 - [[kbd:][x]] XML attributes (provided by ~exato~)
 
 ** Custom Ex Commands
-| Ex Command            | Description                                                                          |
-|-----------------------+--------------------------------------------------------------------------------------|
-| ~:@~                  | Apply macro on selected lines                                                        |
-| ~:al[ign][!] REGEXP~  | Align text to the first match of REGEXP. If BANG, align all matches on each line     |
-| ~:cp[!] NEWPATH~      | Copy the current file to NEWPATH                                                     |
-| ~:dash QUERY~         | Look up QUERY (or the symbol at point) in dash docsets                               |
-| ~:dehtml [INPUT]~     | HTML decode selected text / inserts result if INPUT is given                         |
-| ~:enhtml [INPUT]~     | HTML encode selected text / inserts result if INPUT is given                         |
-| ~:iedit REGEXP~       | Invoke iedit on all matches for REGEXP                                               |
-| ~:k[ill]all[!]~       | Kill all buffers (if BANG, affect buffer across workspaces)                          |
-| ~:k[ill]b~            | Kill all buried buffers                                                              |
-| ~:k[ill]m[!] REGEXP~  | Kill buffers whose name matches REGEXP (if BANG, affect buffers across workspaces)   |
-| ~:k[ill]o~            | Kill all other buffers besides the selected one                                      |
-| ~:k[ill]~             | Kill the current buffer                                                              |
-| ~:lo[okup] QUERY~     | Look up QUERY on an online search engine                                             |
-| ~:mc REGEXP~          | Invoke multiple cursors on all matches for REGEXP                                    |
-| ~:mv[!] NEWPATH~      | Move the current file to NEWPATH                                                     |
-| ~:na[rrow]~           | Narrow the buffer to the selection                                                   |
-| ~:pad~                | Open a scratch pad for running code quickly                                          |
-| ~:ral[ign][!] REGEXP~ | Right-Align text that matches REGEXP. If BANG, align all matches on each line        |
-| ~:repl~               | Open a REPL and/or copy the current selection to it                                  |
-| ~:retab~              | Convert indentation to the default within the selection                              |
-| ~:rev[erse]~          | Reverse the selected lines                                                           |
-| ~:rm[!] [PATH]~       | Delete the current buffer's file and buffer                                          |
-| ~:tcd[!]~             | Send =cd X= to tmux. X = the project root if BANG, X = ~default-directory~ otherwise |
+| Ex Command             | Description                                                                        |
+|------------------------+------------------------------------------------------------------------------------|
+| ~:@~                     | Apply macro on selected lines                                                      |
+| ~:a~                     | Open sibling file (e.g. .cpp -> .hpp, .scss -> .css, etc)                          |
+| ~:al[ign][!]/REGEXP~     | Align text to the first match of REGEXP. If BANG, align all matches on each line   |
+| ~:cap[ture]~             | Invoke ~org-capture~                                                                 |
+| ~:cd DIRECTORY~          | Change ~default-directory~ to =DIRECTORY=                                              |
+| ~:cp[!] NEWPATH~         | Copy the current file to NEWPATH                                                   |
+| ~:dash QUERY~            | Look up QUERY (or the symbol at point) in dash docsets                             |
+| ~:dehtml [INPUT]~        | HTML decode selected text / inserts result if INPUT is given                       |
+| ~:enhtml [INPUT]~        | HTML encode selected text / inserts result if INPUT is given                       |
+| ~:iedit REGEXP~          | Invoke iedit on all matches for REGEXP                                             |
+| ~:kill~                  | Kill the current buffer                                                            |
+| ~:killa[ll][!]~          | Kill all buffers (if BANG, affect buffer across workspaces)                        |
+| ~:killb[uried]~          | Kill all buried buffers                                                            |
+| ~:killm[atch][!] REGEXP~ | Kill buffers whose name matches REGEXP (if BANG, affect buffers across workspaces) |
+| ~:killo[ther]~           | Kill all other buffers besides the selected one                                    |
+| ~:l[ast]~                | Reopen last popup                                                                  |
+| ~:ldiff~                 | Ediff two regions (must be used twice)                                             |
+| ~:lo[okup] QUERY~        | Look up QUERY on an online search engine                                           |
+| ~:mc[!]/REGEXP~          | Invoke multiple cursors on all matches for REGEXP (if BANG, REGEXP is literal)     |
+| ~:msg~                   | Open \*Messages\* buffer                                                           |
+| ~:mv[!] NEWPATH~         | Move the current file to NEWPATH                                                   |
+| ~:na[rrow]~              | Narrow the buffer to the selection                                                 |
+| ~:pad~                   | Open a scratch pad for running code quickly                                        |
+| ~:pop[up]~               | Convert the selected window to a popup window                                      |
+| ~:pwd~                   | Display the current ~default-directory~ in echo area                                 |
+| ~:ral[ign][!]/REGEXP~    | Right-Align text that matches REGEXP. If BANG, align all matches on each line      |
+| ~:repl~                  | Open a REPL and/or copy the current selection to it                                |
+| ~:retab~                 | Convert indentation to the default within the selection                            |
+| ~:rev[erse]~             | Reverse the selected lines                                                         |
+| ~:rm[!] [PATH]~          | Delete the current buffer's file and buffer                                        |
+| ~:sh[ell] CMD~           | Execute a command in the last opened eshell buffer (or make one)                   |
+| ~:sclear~                | ([[doom-module::ui workspaces]]) Kill all workspaces                                   |
+| ~:sl[oad]~               | ([[doom-module::ui workspaces]]) Load the last saved session                           |
+| ~:ss[ave]~               | ([[doom-module::ui workspaces]]) Save the current session                              |
+| ~:tabc[lose]~            | ([[doom-module::ui workspaces]]) Close the current workspace                           |
+| ~:tabclear~              | ([[doom-module::ui workspaces]]) Kill all buffers in current workspace                 |
+| ~:tabl[ast]~             | ([[doom-module::ui workspaces]]) Switch to last focused workspace                      |
+| ~:tabload [NAME]~        | ([[doom-module::ui workspaces]]) Load a workspace from file                            |
+| ~:tabn[ew][!]~ [NAME]    | ([[doom-module::ui workspaces]]) Create a new workspace                                |
+| ~:tabnext~               | ([[doom-module::ui workspaces]]) Switch to next workspace                              |
+| ~:tabprev~               | ([[doom-module::ui workspaces]]) Switch to previous workspace                          |
+| ~:tabr[ename]~ NAME      | ([[doom-module::ui workspaces]]) Rename the current workspace to NAME                  |
+| ~:tabs~                  | ([[doom-module::ui workspaces]]) Display all workspaces in the echo area               |
+| ~:tabsave [NAME]~        | ([[doom-module::ui workspaces]]) Save the selected workspace to file                   |
 
 * TODO Configuration
 #+begin_quote
