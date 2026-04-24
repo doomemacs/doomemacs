@@ -21,24 +21,12 @@
 ;; TODO: (evil-ex-define-cmd "go[ogle]"    #'doom:google-search)
 (evil-ex-define-cmd "lo[okup]"    #'+lookup:online)
 (evil-ex-define-cmd "dash"        #'+lookup:dash)
-(evil-ex-define-cmd "http"        #'httpd-start)            ; start http server
 (evil-ex-define-cmd "repl"        #'+eval:repl)             ; invoke or send to repl
 (evil-ex-define-cmd "h[elp]"      #'+evil:help)
 
 ;; TODO: (evil-ex-define-cmd "rx"          'doom:regex)             ; open re-builder
 (evil-ex-define-cmd "sh[ell]"     #'+eshell:run)
 (evil-ex-define-cmd "pad"         #'+evil:open-scratch-buffer)
-
-;;; GIT
-(evil-ex-define-cmd "gist"        #'+gist:send)  ; send current buffer/region to gist
-(evil-ex-define-cmd "gistl"       #'+gist:list)  ; list gists by user
-(evil-ex-define-cmd "gbrowse"     #'+vc/browse-at-remote) ; show file/region in github/gitlab
-(evil-ex-define-cmd "gissues"     #'forge-browse-issues)  ; show github issues
-(evil-ex-define-cmd "git"         #'magit-status)         ; open magit status window
-(evil-ex-define-cmd "gstage"      #'magit-stage)
-(evil-ex-define-cmd "gunstage"    #'magit-unstage)
-(evil-ex-define-cmd "gblame"      #'magit-blame)
-(evil-ex-define-cmd "grevert"     #'+vc-gutter/revert-hunk)
 
 ;;; Dealing with buffers
 (evil-ex-define-cmd "k[ill]"      #'kill-current-buffer)
@@ -54,12 +42,6 @@
 (evil-ex-define-cmd "a"           #'find-sibling-file)
 (evil-ex-define-cmd "cd"          #'+evil:cd)
 (evil-ex-define-cmd "pwd"         #'+evil:pwd)
-
-(evil-define-command +evil:swiper (&optional search)
-  "Invoke `swiper' with SEARCH, otherwise with the symbol at point."
-  (interactive "<a>")
-  (swiper-isearch search))
-(evil-ex-define-cmd "sw[iper]" #'+evil:swiper)
 
 (cond ((modulep! :completion ivy)
        (evil-ex-define-cmd "pg[rep]"   #'+ivy:project-search)
