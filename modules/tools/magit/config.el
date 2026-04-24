@@ -40,7 +40,7 @@ FUNCTION
 
 (use-package! magit
   :commands magit-file-delete
-  :defer-incrementally (dash f s with-editor package eieio transient git-commit)
+  :defer-incrementally (compat with-editor eieio transient git-commit)
   :init
   (setq magit-auto-revert-mode nil)  ; we do this ourselves further down
   ;; Must be set early to prevent ~/.config/emacs/transient from being created
