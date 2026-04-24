@@ -17,7 +17,7 @@ current line."
 
   :config
   (add-hook! 'electric-indent-functions
-    (defun +electric-indent-char-fn (_c)
+    (defun +electric-indent-words-fn (_c)
       "Indent current line if user has typed one of `+electric-indent-words'."
       (when (and (eolp) +electric-indent-words)
         (save-excursion
