@@ -258,6 +258,9 @@
 ;;
 ;;; Keybinding fixes
 
+;; This section is dedicated to "fixing" certain keys so that they behave
+;; sensibly (and consistently with similar contexts).
+
 ;; Highjacks backspace to delete up to nearest column multiple of `tab-width' at
 ;; a time. If you have smartparens enabled, it will also:
 ;;  a) balance spaces inside brackets/parentheses ( | ) -> (|)
@@ -287,14 +290,13 @@
 Continues comments if executed from a commented line."
   :before-until #'newline-and-indent
   (interactive "*")
-  (when (and +default-want-RET-continue-comments
+  (when (and (or (not (bound-and-true-p electric-indent-mode))
+                 (bound-and-true-p electric-indent-inhibit))
+             +default-want-RET-continue-comments
              (doom-point-in-comment-p)
              (functionp comment-line-break-function))
     (funcall comment-line-break-function nil)
     t))
-
-;; This section is dedicated to "fixing" certain keys so that they behave
-;; sensibly (and consistently with similar contexts).
 
 ;; Consistently use q to quit windows
 (after! tabulated-list
