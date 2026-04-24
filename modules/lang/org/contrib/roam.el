@@ -27,7 +27,7 @@ of org-mode to properly utilize ID links.")
 
   :init
   (doom-load-packages-incrementally
-   '(ansi-color dash f rx seq magit-section emacsql))
+   '(ansi-color compat rx seq magit-section emacsql))
 
   :config
   (defun +org-init-roam-h ()
