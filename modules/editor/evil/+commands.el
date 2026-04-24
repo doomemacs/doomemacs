@@ -35,7 +35,7 @@
 (evil-ex-define-cmd "killo[ther]"  #'doom/kill-other-buffers)
 (evil-ex-define-cmd "killb[uried]" #'doom/kill-buried-buffers)
 (evil-ex-define-cmd "l[ast]"       #'+popup/restore)
-(evil-ex-define-cmd "messages"     #'view-echo-area-messages)
+(evil-ex-define-cmd "msg"          #'view-echo-area-messages)
 (evil-ex-define-cmd "pop[up]"      #'+popup/buffer)
 
 ;;; Project navigation
