@@ -275,7 +275,10 @@ dashboard reloading is inhibited.")
           (backward-button 1)))
       (ignore-errors
         (goto-char (point-min))
-        (forward-button 1))))
+        (forward-button 1)))
+  (unless (button-at (point))
+    (setq-local cursor-type nil
+                evil-normal-state-cursor nil)))
 
 (defun +dashboard-reload-maybe-h (&rest _)
   "Reload the dashboard or its state.
