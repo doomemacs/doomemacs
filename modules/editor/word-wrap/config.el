@@ -36,9 +36,8 @@ will not be affected."
   :type '(repeat symbol)
   :group '+word-wrap)
 
-(defcustom +word-wrap-visual-modes '(org-mode)
-  "Major-modes where `+word-wrap-mode' should not use
-`adaptive-wrap-prefix-mode'.")
+(defcustom +word-wrap-visual-modes '(org-indent-mode markdown-indent-mode)
+  "Major or minor modes where `adaptive-wrap-prefix-mode' show not be used."
   :type '(repeat symbol)
   :group '+word-wrap)
 

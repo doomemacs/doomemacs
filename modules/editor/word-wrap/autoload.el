@@ -48,7 +48,11 @@ wrapped at `fill-column' by configuring `+word-wrap-fill-style'."
       (progn
         (setq-local
          +word-wrap--major-mode-is-visual
-         (memq major-mode +word-wrap-visual-modes)
+         (cl-loop for mode in +word-wrap-visual-modes
+                  if (or (eq major-mode mode)
+                         (and (boundp mode)
+                              (symbol-value mode)))
+                  return t)
          +word-wrap--major-mode-is-text
          (memq major-mode +word-wrap-text-modes)
          +word-wrap--enable-adaptive-wrap-mode
