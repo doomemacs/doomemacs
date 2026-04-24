@@ -12,6 +12,7 @@
 (package! overseer :pin "7fdcf1a6fba6b1569a09c1666b4e51bcde266ed9")
 (package! elisp-def :pin "2451ed6594807448a24a63c51c917727713ed19d")
 (package! elisp-demos :pin "1a108d1c5011f9ced58be2ca98bea1fbd4130a2f")
+(package! let-completion :pin "001f10de44c66d998c2bd90f62192eca3ca0247a")
 (when (modulep! :checkers syntax -flymake)
   (package! flycheck-package :pin "a52e4e95f3151898b36739dfdb4a98b368626fc0"))
 (when (modulep! :checkers syntax +flymake)
