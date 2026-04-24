@@ -13,7 +13,7 @@
 (evil-ex-define-cmd "na[rrow]"     #'+evil:narrow-buffer)
 (evil-ex-define-cmd "retab"        #'+evil:retab)
 (evil-ex-define-cmd "rev[erse]"    #'+evil:reverse-lines)
-(evil-ex-define-cmd "l[ine]diff"   #'evil-quick-diff)
+(evil-ex-define-cmd "ldiff"        #'evil-quick-diff)
 
 ;;; External resources
 ;; TODO: (evil-ex-define-cmd "db"          #'doom:db)
@@ -29,14 +29,14 @@
 (evil-ex-define-cmd "pad"         #'+evil:open-scratch-buffer)
 
 ;;; Dealing with buffers
-(evil-ex-define-cmd "k[ill]"      #'kill-current-buffer)
-(evil-ex-define-cmd "k[ill]all"   #'+evil:kill-all-buffers)
-(evil-ex-define-cmd "k[ill]m"     #'+evil:kill-matching-buffers)
-(evil-ex-define-cmd "k[ill]o"     #'doom/kill-other-buffers)
-(evil-ex-define-cmd "k[ill]b"     #'doom/kill-buried-buffers)
-(evil-ex-define-cmd "l[ast]"      #'+popup/restore)
-(evil-ex-define-cmd "messages"    #'view-echo-area-messages)
-(evil-ex-define-cmd "pop[up]"     #'+popup/buffer)
+(evil-ex-define-cmd "kill"         #'kill-current-buffer)
+(evil-ex-define-cmd "killa[ll]"    #'+evil:kill-all-buffers)
+(evil-ex-define-cmd "killm[atch]"  #'+evil:kill-matching-buffers)
+(evil-ex-define-cmd "killo[ther]"  #'doom/kill-other-buffers)
+(evil-ex-define-cmd "killb[uried]" #'doom/kill-buried-buffers)
+(evil-ex-define-cmd "l[ast]"       #'+popup/restore)
+(evil-ex-define-cmd "messages"     #'view-echo-area-messages)
+(evil-ex-define-cmd "pop[up]"      #'+popup/buffer)
 
 ;;; Project navigation
 (evil-ex-define-cmd "a"           #'find-sibling-file)
@@ -44,14 +44,14 @@
 (evil-ex-define-cmd "pwd"         #'+evil:pwd)
 
 (cond ((modulep! :completion ivy)
-       (evil-ex-define-cmd "pg[rep]"   #'+ivy:project-search)
-       (evil-ex-define-cmd "pg[grep]d" #'+ivy:project-search-from-cwd))
+       (evil-ex-define-cmd "pg[rep]"  #'+ivy:project-search)
+       (evil-ex-define-cmd "pdg[rep]" #'+ivy:project-search-from-cwd))
       ((modulep! :completion helm)
-       (evil-ex-define-cmd "pg[rep]"   #'+helm:project-search)
-       (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd))
+       (evil-ex-define-cmd "pg[rep]"  #'+helm:project-search)
+       (evil-ex-define-cmd "pdg[rep]" #'+helm:project-search-from-cwd))
       ((modulep! :completion vertico)
-       (evil-ex-define-cmd "pg[rep]"   #'+vertico:project-search)
-       (evil-ex-define-cmd "pg[grep]d" #'+vertico:project-search-from-cwd)))
+       (evil-ex-define-cmd "pg[rep]"  #'+vertico:project-search)
+       (evil-ex-define-cmd "pdg[rep]" #'+vertico:project-search-from-cwd)))
 
 ;;; Project tools
 (evil-ex-define-cmd "com[pile]"   #'+evil:compile)
