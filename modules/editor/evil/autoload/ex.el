@@ -207,9 +207,3 @@ manual (with `doom/help-search-headings')."
                (user-error "Query too short (must be > 2 characters): %S" query))
               ((message "Searching for %S, this may take a while..." query)
                (apropos query t)))))))
-
-;;;###autoload (autoload '+evil:read "editor/evil/autoload/ex" nil t)
-(evil-define-command +evil:read (count file)
-  "Alternative version of `evil-read' that replaces filename modifiers in FILE."
-  (interactive "P<fsh>")
-  (evil-read count (evil-ex-replace-special-filenames file)))
