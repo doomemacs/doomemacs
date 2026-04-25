@@ -5,7 +5,7 @@
   :group 'doom+)
 
 (defcustom +dashboard-name "*doom*"
-  "The name to use for the dashboard buffer."
+  "The name of the dashboard buffer."
   :type 'string
   :group '+dashboard)
 
@@ -14,9 +14,10 @@
     +dashboard-widget-shortmenu
     +dashboard-widget-footer
     +dashboard-widget-loaded)
-  "List of widget functions to run in the dashboard buffer to construct the
-dashboard. These functions take no arguments and the dashboard buffer is current
-while they run."
+  "List of widget functions to run to construct the dashboard buffer.
+
+These functions take no arguments and the dashboard buffer is current while they
+run."
   :type 'hook
   :group '+dashboard)
 
@@ -402,12 +403,14 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
 
 ;; helpers
 (defun +dashboard-strlen (s)
+  "Return the unicode-aware string width of S."
   (let ((width (frame-char-width))
         (len (string-pixel-width s)))
     (+ (/ len width)
        (if (zerop (% len width)) 0 1))))
 
 (defun +dashboard-maxlen (str)
+  "Return the length of the longest line in multiline STR."
   (with-temp-buffer
     (insert str)
     (goto-char (point-min))
@@ -420,11 +423,13 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
       width)))
 
 (defun +dashboard-center (str)
+  "Return STR centered with `line-prefix' and `indent-prefix' text properties."
   (let* ((width (+dashboard-maxlen str))
          (prefix (propertize " " 'display `(space . (:align-to (- center ,(/ (float width) 2)))))))
     (propertize str 'line-prefix prefix 'indent-prefix prefix)))
 
 (defun +dashboard-insert-centered (&rest lines)
+  "Insert LINES into the dashboard buffer, centered with text properties."
   (let* ((width (+dashboard-maxlen (string-join lines "\n")))
          (prefix (propertize " " 'display `(space . (:align-to (- center ,(/ (float width) 2)))))))
     (add-text-properties
@@ -456,6 +461,7 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
 ;;; Widgets
 
 (defun +dashboard-draw-ascii-banner-fn ()
+  "Return Doom's default ASCII logo banner."
   (propertize
    (string-join
     '("=================     ===============     ===============   ========  ========"
@@ -481,6 +487,7 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
    'face '+dashboard-banner))
 
 (defun +dashboard-widget-banner ()
+  "Draw text and image banner widget in the dashboard buffer."
   (when-let*
       ((banner (and (functionp +dashboard-ascii-banner-fn)
                     (funcall +dashboard-ascii-banner-fn))))
@@ -507,12 +514,16 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
                           . (:height ,(or (cdr +dashboard-banner-vertical-padding) 0))))))))
 
 (defun +dashboard-widget-loaded ()
+  "Draw number of modules and packages loaded, and the session's startup time."
   (when doom-init-time
     (+dashboard-insert-centered
      (propertize (doom-display-benchmark-h 'return)
                  'face '+dashboard-loaded))))
 
 (defun +dashboard-widget-shortmenu ()
+  "Draw dashboard menu items and keybindings.
+
+See `+dashboard-menu-sections' to change the contents of the menu."
   (insert "\n")
   (dolist (section +dashboard-menu-sections)
     (cl-destructuring-bind (label &key icon action when face key) section
@@ -563,6 +574,7 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
          (propertize "\n" 'display '(space . (:relative-height 0.01))))))))
 
 (defun +dashboard-widget-footer ()
+  "Draw project links."
   (+dashboard-insert-centered
    (with-temp-buffer
      (insert (propertize " " 'display '(space . (:relative-height 2.0))) "\n")
