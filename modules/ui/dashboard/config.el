@@ -42,6 +42,16 @@ relative to `+dashboard-banner-dir'. If nil, always use the ASCII banner."
   :type '(cons integer integer)
   :group '+dashboard)
 
+(defcustom +dashboard-anchor '(center . center)
+  "How to vertically and horizontally align dashboard widgets."
+  :type '(cons (choice (const :tag "Top" top)
+                       (const :tag "Bottom" bottom)
+                       (const :tag "Centered" center))
+               (choice (const :tag "Left" left)
+                       (const :tag "Right" right)
+                       (const :tag "Centered" center)))
+  :group '+dashboard)
+
 (defcustom +dashboard-pwd-policy 'last-project
   "The policy to use when setting the `default-directory' in the dashboard.
 
@@ -327,10 +337,18 @@ whose dimensions may not be fully initialized by the time this is run."
                                            (point)))
             (insert
              (make-string
-              (+ (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                           (round (/ (count-lines (point-min) (point-max))
-                                     2))))
-                 (car +dashboard-banner-vertical-padding))
+              (max
+               0 (pcase (car-safe +dashboard-anchor)
+                   (`top 0)
+                   (`center
+                    (- (/ (window-height (get-buffer-window)) 2)
+                       (round (/ (count-lines (point-min) (point-max))
+                                 2))))
+                   (`bottom
+                    (- (window-height (get-buffer-window))
+                       (count-lines (point-min) (point-max))
+                       1))
+                   (_ 0)))
               ?\n))))))))
 
 (defun +dashboard--persp-detect-project-h (&rest _)
@@ -424,18 +442,34 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
 
 (defun +dashboard-center (str)
   "Return STR centered with `line-prefix' and `indent-prefix' text properties."
+  (declare (obsolete "Use `+dashboard-insert' and `+dashboard-anchor' set instead" "26.05"))
   (let* ((width (+dashboard-maxlen str))
-         (prefix (propertize " " 'display `(space . (:align-to (- center ,(/ (float width) 2)))))))
+         (prefix (propertize " " 'display `(space :align-to (- center ,(/ (float width) 2))))))
     (propertize str 'line-prefix prefix 'indent-prefix prefix)))
+
+(defun +dashboard-insert (&rest lines)
+  "Insert LINES into the dashboard buffer.
+
+Applies line-prefix and indent-prefix text properties to respect
+`+dashboard-anchor'."
+  (let ((lines (delq nil lines)))
+    (if-let* ((halign (cdr-safe +dashboard-anchor)))
+        (let* ((width (+dashboard-maxlen (string-join lines "\n")))
+               (prefix `(space :align-to
+                         (- ,halign ,(if (eq halign 'right)
+                                         (+ 2 width)
+                                       (/ width 2))))))
+          (add-text-properties
+           (point) (progn (mapc (lambda (l) (insert l "\n")) lines)
+                          (point))
+           `(line-prefix ,prefix indent-prefix ,prefix)))
+      (insert (string-join lines "\n")))))
 
 (defun +dashboard-insert-centered (&rest lines)
   "Insert LINES into the dashboard buffer, centered with text properties."
-  (let* ((width (+dashboard-maxlen (string-join lines "\n")))
-         (prefix (propertize " " 'display `(space . (:align-to (- center ,(/ (float width) 2)))))))
-    (add-text-properties
-     (point) (progn (mapc (lambda (l) (insert l "\n")) lines)
-                    (point))
-     `(line-prefix ,prefix indent-prefix ,prefix))))
+  (declare (obsolete "Use `+dashboard-insert' and `+dashboard-anchor' instead" "26.05"))
+  (let ((+dashboard-anchor (cons (car-safe +dashboard-anchor) 'center)))
+    (apply #'+dashboard-insert lines)))
 
 (defun +dashboard--pwd ()
   (let ((lastcwd +dashboard--last-cwd)
@@ -491,14 +525,28 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
   (when-let*
       ((banner (and (functionp +dashboard-ascii-banner-fn)
                     (funcall +dashboard-ascii-banner-fn))))
-    (let* ((width (+dashboard-maxlen banner))
-           (text-prefix `(space . (:align-to (- center ,(/ width 2)))))
+    (let* ((halign (cdr +dashboard-anchor))
+           (width (+dashboard-maxlen banner))
+           (text-prefix
+            `(space
+              :align-to (- ,halign
+                           ,(if (eq halign 'right)
+                                (+ 2 width)
+                              (/ width 2)))))
+           (top-pad (or (car-safe +dashboard-banner-vertical-padding) 0))
+           (bot-pad (or (cdr-safe +dashboard-banner-vertical-padding) 0))
            (beg (point)))
+      (when (> top-pad 0)
+        (insert "\n" (propertize " " 'display `(space :height ,top-pad))))
+
       (insert banner)
       (if-let* (((stringp fancy-splash-image))
                 ((file-readable-p fancy-splash-image))
                 (image (create-image (fancy-splash-image-file)))
-                (image-prefix `(space . (:align-to (- center (0.5 . ,image)))))
+                (image-prefix
+                 `(space :align-to (- ,halign
+                                      ,@(if (eq halign 'right)
+                                            `(,image 1) `((0.5 . ,image))))))
                 (prefix
                  (propertize
                   " " 'display `((when (display-graphic-p) . ,image-prefix)
@@ -507,16 +555,16 @@ What it is set to is controlled by `+dashboard-pwd-policy'."
             (add-text-properties
              beg (point) `(display ,image line-prefix ,prefix wrap-prefix ,prefix))
             (insert "\n"))
-        (add-text-properties beg (point) `(line-prefix ,text-prefix indent-prefix ,text-prefix)))
-      (insert
-       "\n" (propertize " " 'display
-                        `(space
-                          . (:height ,(or (cdr +dashboard-banner-vertical-padding) 0))))))))
+        (add-text-properties
+         beg (point) `(line-prefix ,text-prefix indent-prefix ,text-prefix)))
+
+      (when (> bot-pad 0)
+        (insert "\n" (propertize " " 'display `(space :height ,bot-pad)))))))
 
 (defun +dashboard-widget-loaded ()
   "Draw number of modules and packages loaded, and the session's startup time."
   (when doom-init-time
-    (+dashboard-insert-centered
+    (+dashboard-insert
      (propertize (doom-display-benchmark-h 'return)
                  'face '+dashboard-loaded))))
 
@@ -530,7 +578,7 @@ See `+dashboard-menu-sections' to change the contents of the menu."
       (when (and (fboundp action)
                  (or (null when)
                      (eval when t)))
-        (+dashboard-insert-centered
+        (+dashboard-insert
          (let ((icon (if (stringp icon) icon (eval icon t))))
            (format (format "%s%%s%%10s" (if icon "%3s\t" "%3s"))
                    (or icon "")
@@ -575,7 +623,7 @@ See `+dashboard-menu-sections' to change the contents of the menu."
 
 (defun +dashboard-widget-footer ()
   "Draw project links."
-  (+dashboard-insert-centered
+  (+dashboard-insert
    (with-temp-buffer
      (insert (propertize " " 'display '(space . (:relative-height 2.0))) "\n")
      (insert-text-button (or (nerd-icons-codicon "nf-cod-octoface" :face '+dashboard-footer-icon :height 1.3 :v-adjust -0.15)
@@ -583,9 +631,9 @@ See `+dashboard-menu-sections' to change the contents of the menu."
                          'action (lambda (_) (browse-url "https://github.com/doomemacs/doomemacs"))
                          'follow-link t
                          'help-echo "Open Doom Emacs github page")
-     (insert "\n" )
+     (insert "\n")
      (buffer-string))))
 
 (defun +dashboard-widget-spacer ()
-  (+dashboard-insert-centered
+  (+dashboard-insert
    (propertize "\n" 'display `(space . (:relative-height 0.5)))))
