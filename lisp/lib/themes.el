@@ -68,7 +68,12 @@ doom-themes' API without worry."
   (let* ((themes (copy-sequence custom-enabled-themes))
          (real-themes (cl-remove-if-not #'doom--theme-is-colorscheme-p themes)))
     (mapc #'disable-theme themes)
-    (mapc #'enable-theme (reverse themes))
+    (dolist (th (reverse themes))
+      (if (locate-file (concat (symbol-name th) "-theme.el")
+                       (custom-theme--load-path)
+                       '("" "c"))
+          (load-theme th t)
+        (enable-theme th)))
     (doom/reload-font)
     (message "%s %s"
              (propertize
