@@ -93,9 +93,24 @@
                                 (if (and args (string-prefix-p "--" (caar switches)))
                                     "=" "")))
                       (format "'[%s]%s'"
-                              (replace-regexp-in-string "'" "''" (cdr option))
+                              (escape-help-string (cdr option))
                               (or argspec "")))
               (or cr "\n")))))
+
+(defun escape-help-string (str)
+  " escape a string for use as an optname, explanation or action.
+    NOTE: this function's output is expected to be used inside single quotes "
+  ;; - literal backslashes are backslash escaped.
+  ;; - zshcompsys(1) explains that colons in optname, explanation, or action must
+  ;;   be backslash escaped.
+  ;; - from testing, square braces [] can also be backslash escaped to permit
+  ;;   them inside [explanations]
+  ;; - finally, single quotes are escaped as double quoted strings
+  (string-replace "'" "\'\"\'\"\'"
+  (string-replace ":" "\\:"
+  (string-replace "[" "\\["
+  (string-replace "]" "\\]"
+  (string-replace "\\" "\\\\" str))))))
 
 (defun doom-make-completions--zsh-insert-command (command)
   (let* ((commandstr (doom-cli-command-string command))
@@ -114,8 +129,9 @@
                       unless (string-prefix-p ":" (car command))
                       collect (format "'%s[%s]' "
                                       (car (last command))
-                                      (or (doom-cli-short-docs (doom-cli-get command))
-                                          "TODO")))
+                                      (escape-help-string
+                                       (or (doom-cli-short-docs (doom-cli-get command))
+                                          "TODO"))))
              " \\\n          ")
             "\n      ;;\n"
             "    args)\n"
