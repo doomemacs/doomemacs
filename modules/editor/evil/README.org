@@ -148,7 +148,8 @@ And these are text objects added by this module:
 | ~:ss[ave]~               | ([[doom-module::ui workspaces]]) Save the current session                              |
 | ~:tabc[lose]~            | ([[doom-module::ui workspaces]]) Close the current workspace                           |
 | ~:tabclear~              | ([[doom-module::ui workspaces]]) Kill all buffers in current workspace                 |
-| ~:tabl[ast]~             | ([[doom-module::ui workspaces]]) Switch to last focused workspace                      |
+| ~:tabf[irst]~            | ([[doom-module::ui workspaces]]) Switch to the first workspace                         |
+| ~:tabl[ast]~             | ([[doom-module::ui workspaces]]) Switch to the last workspace                          |
 | ~:tabload [NAME]~        | ([[doom-module::ui workspaces]]) Load a workspace from file                            |
 | ~:tabn[ew][!]~ [NAME]    | ([[doom-module::ui workspaces]]) Create a new workspace                                |
 | ~:tabnext~               | ([[doom-module::ui workspaces]]) Switch to next workspace                              |
