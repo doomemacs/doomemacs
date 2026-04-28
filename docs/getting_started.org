@@ -288,6 +288,15 @@ xcode-select --install
 
 For Emacs itself, these three formulas are the best options, ordered from most
 to least recommended for Doom (based on compatibility).
+- [[https://github.com/jimeh/emacs-builds]].
+  this is what I just used for a fresh setup
+  is at emacs v30 whereas mituharu/emacs-mac is at 29?
+  should this repo be recommended?
+  #+BEGIN_SRC bash
+  brew tap jimey/emacs-builds
+  brew install --cask jimeh/emacs-builds/emacs-app
+  # installs `emacs` cli command also. to run in a terminal need addtl flags
+  #+END_SRC
 
 - [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]]. It offers good integration
   with macOS, native emojis and better childframe support.
