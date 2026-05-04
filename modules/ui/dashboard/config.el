@@ -287,9 +287,11 @@ dashboard reloading is inhibited.")
       (ignore-errors
         (goto-char (point-min))
         (forward-button 1)))
+  ;; Hide the cursor if there are no buttons
   (unless (button-at (point))
     (setq-local cursor-type nil
-                evil-normal-state-cursor nil)))
+                ;; We need (list nil) as a workaround for emacs-evil/evil#2016.
+                evil-normal-state-cursor (list nil))))
 
 (defun +dashboard-reload-maybe-h (&rest _)
   "Reload the dashboard or its state.
