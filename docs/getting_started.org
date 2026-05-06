@@ -297,12 +297,11 @@ to least recommended for Doom (based on compatibility).
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
-- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
-  experienced [flashing artifacts when scrolling](https://github.com/d12frosted/homebrew-emacs-plus/issues/314):
+- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]
   #+BEGIN_SRC bash
   brew tap d12frosted/emacs-plus
-  brew install emacs-plus
-  ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
+  brew install emacs-plus@30 --with-modern-doom3-icon
+  osascript -e 'tell application "Finder" to make alias file to posix file "/opt/homebrew/opt/emacs-plus@30/Emacs.app" at posix file "/Applications" with properties {name:"Emacs.app"}'
   #+END_SRC
 
 - [[https://formulae.brew.sh/formula/emacs][emacs]] is another acceptable option, **but does not provide a Emacs.app**:
