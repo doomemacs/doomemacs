@@ -293,9 +293,11 @@ to least recommended for Doom (based on compatibility).
   with macOS, native emojis and better childframe support.
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
-  brew install emacs-mac --with-modules
-  ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
+  brew install emacs-mac --with-modules --with-native-compilation
+  # Optional: Add launcher script to /Applications 
+  osacompile -o /Applications/Emacs.app -e "tell application \"Finder\" to open POSIX file \"$(brew --prefix)/opt/emacs-mac/Emacs.app\""
   #+END_SRC
+  There are other options for installing a helper launcher scripts for [[https://github.com/railwaycat/homebrew-emacsmacport/blob/master/docs/emacs-start-helpers.md][emacs starter helpers]] in the emacs-mac docs
 
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
   experienced [flashing artifacts when scrolling](https://github.com/d12frosted/homebrew-emacs-plus/issues/314):
