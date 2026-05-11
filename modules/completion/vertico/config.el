@@ -106,6 +106,11 @@ orderless."
 (use-package! consult
   :defer t
   :preface
+  ;; Compatibility shim for consult >= 3.5 where
+  ;; `consult-preview-at-point-mode' was removed.
+  (unless (fboundp 'consult-preview-at-point-mode)
+    (defalias 'consult-preview-at-point-mode #'ignore))
+
   (define-key!
     [remap bookmark-jump]                 #'consult-bookmark
     [remap evil-show-marks]               #'consult-mark
