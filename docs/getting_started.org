@@ -158,9 +158,9 @@ dnf install fd-find    # is 'fd' in Fedora <28
 **** Arch Linux
 #+BEGIN_SRC bash
 # required dependencies
-pacman -S git emacs ripgrep
+pacman -Syu git emacs ripgrep
 # optional dependencies
-pacman -S fd
+pacman -Syu fd
 #+END_SRC
 
 The above installs Emacs 27 (at the time of writing).
