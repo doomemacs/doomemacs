@@ -19,7 +19,7 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 
 (after! projectile
   (add-to-list 'projectile-project-root-files "gradlew")
-  (add-to-list 'projectile-project-root-files "build.gradle"))
+  (add-to-list 'projectile-project-root-files "settings.gradle"))
 
 
 ;;
