@@ -1,3 +1,10 @@
+> [!CAUTION]
+> **`doomemacs.com` is not associated with nor endorsed by this project!**
+> `doomemacs.org` is our one and only domain. [Read our announcement about it
+> here](https://github.com/orgs/doomemacs/discussions/129).
+
+-----
+
 <div align="center">
 
 # Doom Emacs
